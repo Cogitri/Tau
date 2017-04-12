@@ -1,0 +1,24 @@
+[package]
+name = "gxi"
+version = "0.1.0"
+authors = ["Brian Vincent <brainn@gmail.com>"]
+
+[dependencies.gtk]
+version = "0.1.0"
+features = ["v3_10"]
+
+[dependencies]
+cairo-rs = "0.1.2"
+env_logger = "0.3"
+gdk = "0.5.2"
+gdk-sys = "0.3.3"
+gio = "0.1.0"
+gio-sys = "0.3.3"
+glib = "0.1.0"
+gtk-sys = "0.3.3"
+log = "0.3"
+pango = "0.1.0"
+serde = "0.9"
+serde_derive = "0.9"
+serde_json = "0.9"
+xi-core-lib = "0.1.0"
