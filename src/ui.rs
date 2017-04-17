@@ -4,9 +4,10 @@ use std::io::Write;
 use std::process::{Child, ChildStdin, Command};
 use std::rc::Rc;
 
+use cairo::Context;
 use cairo::enums::FontSlant;
 
-use gdk::{Cursor, DisplayManager, EventType, EventMask};
+use gdk::{Cursor, DisplayManager, EventKey, EventType, EventMask};
 use gdk_sys::GdkCursorType;
 use gtk;
 use gtk::prelude::*;
@@ -23,6 +24,7 @@ use linecache::*;
 use structs::*;
 use util::*;
 use GLOBAL;
+use document::Document;
 
 macro_rules! clone {
     (@param _) => ( _ );
@@ -42,21 +44,6 @@ macro_rules! clone {
 }
 
 #[derive(Debug)]
-pub struct Document {
-    line_cache: LineCache,
-    drawing_area: DrawingArea,
-}
-
-impl Document {
-    pub fn new(da: DrawingArea) -> Document {
-        Document {
-            line_cache: LineCache::new(),
-            drawing_area: da,
-        }
-    }
-}
-
-#[derive(Debug)]
 pub struct Ui<'a> {
     rpc_index: usize,
     core_stdin: ChildStdin,
@@ -71,7 +58,7 @@ pub struct Ui<'a> {
 
 impl Ui<'static> {
     pub fn new(core_stdin: ChildStdin) -> Rc<RefCell<Ui<'static>>> {
-        let builder = Builder::new_from_file("gxi.ui");
+        let builder = Builder::new_from_file("resources/gxi.ui");
         let window: Window = builder.get_object("appwindow").unwrap();
         let notebook: Notebook = builder.get_object("notebook").unwrap();
         let new_button: Button = builder.get_object("new_button").unwrap();
@@ -103,7 +90,7 @@ impl Ui<'static> {
     /// Called when xi-core gives us a new line
     pub fn handle_line(&mut self, line: &str) -> Result<(), GxiError> {
         let json: Value = serde_json::from_str(line)?;
-        debug!("json: {:?}", json);
+        //debug!("json: {:?}", json);
         let is_method = json.as_object().map_or(false, |dict|
             dict.contains_key("method"));
         if is_method {
@@ -246,12 +233,15 @@ impl Ui<'static> {
 
     pub fn handle_update(&mut self, tab: &str, ops: &Vec<UpdateOp>) -> Result<(), GxiError> {
         debug!("update: {:?}", ops);
+        let mut doc = self.tab_to_doc.get_mut(tab).unwrap(); //FIXME error handling
+
+        doc.handle_update(ops);
+
         let mut new_invalid_before = 0;
         let new_lines: Vec<Option<Line>> = Vec::new();
         let mut new_invalid_after = 0;
 
         for op in ops {
-            let mut doc = self.tab_to_doc.get_mut(tab).unwrap(); //FIXME error handling
             // let op_type = op.op;
             let mut idx = 0;
             let mut n = op.n;
@@ -290,19 +280,22 @@ impl Ui<'static> {
             //
             //     },
             // }
-            for update_line in op.lines.iter().flat_map(|l| l.iter()) {
-                let mut cursor: Vec<usize> = Vec::new();
-                if let Some(ref ul_cursor) = update_line.cursor {
-                    cursor.append(&mut ul_cursor.clone());
-                }
-                let line = Line{
-                    cursor: cursor,
-                    text: update_line.text.clone(),
-                };
-                doc.line_cache.insert(idx as u64, line);
-                doc.drawing_area.queue_draw();
-                idx += 1;
-            }
+
+
+
+            // for update_line in op.lines.iter().flat_map(|l| l.iter()) {
+            //     let mut cursor: Vec<usize> = Vec::new();
+            //     if let Some(ref ul_cursor) = update_line.cursor {
+            //         cursor.append(&mut ul_cursor.clone());
+            //     }
+            //     let line = Line{
+            //         cursor: cursor,
+            //         text: update_line.text.clone(),
+            //     };
+            //     doc.line_cache.insert(idx as u64, line);
+            //     doc.drawing_area.queue_draw();
+            //     idx += 1;
+            // }
         }
         Ok(())
     }
@@ -332,14 +325,12 @@ impl Ui<'static> {
         self.rpc_index
     }
 
-    fn notify(&mut self, method: &str, params: Value) -> usize {
-        self.rpc_index += 1;
+    fn notify(&mut self, method: &str, params: Value) {
         let message = json!({
             "method": method,
             "params": params,
         });
         self.send(&message);
-        self.rpc_index
     }
 
     /// Serialize JSON object and send it to the server
@@ -364,12 +355,9 @@ impl Ui<'static> {
         Ok(())
     }
 
-    // fn get_ui() -> &mut Ui {
-    //
-    // }
     pub fn response_new_tab(&mut self, tab_name: &str) -> Result<(), GxiError> {
-        let adj = Adjustment::new(0.0, 0.0, 100.0, 1.0, 10.0, 10.0);
-        let scrollbar = Scrollbar::new(Orientation::Vertical, Some(&adj));
+        //let adj = Adjustment::new(0.0, 0.0, 100.0, 1.0, 10.0, 10.0);
+        let scrollbar = Scrollbar::new(Orientation::Vertical, None);
         let hbox = Box::new(Orientation::Horizontal, 0);
         let drawing_area = DrawingArea::new();
         //let ui = self.clone();
@@ -383,78 +371,25 @@ impl Ui<'static> {
             w.grab_focus();
             Inhibit(false)
         });
-        drawing_area.connect_key_press_event(|w,ek| {
-            //{"method":"edit","params": {"method": "insert", "params":{"chars":"A"}, "tab":"0"}}
-            debug!("key press {:?}", ek);
-            debug!("key press {:?}", ek.get_keyval());
-            debug!("key press {:?}", w==w);
-            debug!("key press {:?}", *w==w.clone());
-            GLOBAL.with(|global| if let Some(ref mut ui) = *global.borrow_mut() {
-                let mut ui = ui.borrow_mut();
-                let tab_name = ui.da_to_tab.get(&w.clone()).unwrap().clone();
-                let mut s = String::new();
-                if let Some(ch) = ::gdk::keyval_to_unicode(ek.get_keyval()) {
-                    let mut ch = ch;
-                    if ch == '\r' {ch = '\n';}
-                    //s.push(ch);
-                    let id = ui.notify("edit", json!({"method": "insert",
-                        "params": {"chars":ch},
-                        "tab": tab_name,
-                        }));
-                }
-            });
-            Inhibit(false)
-        });
-        drawing_area.connect_key_release_event(|w,ek| {
-            debug!("key release {:?}", ek);
-            Inhibit(false)
-        });
-        drawing_area.connect_draw(
-            |w,cr| {
-                GLOBAL.with(|global| if let Some(ref mut ui) = *global.borrow_mut() {
-                    let mut ui = ui.borrow_mut();
-                    debug!("We're drawing");
-                    let tab = ui.da_to_tab.get(w).unwrap();
-                    let doc = ui.tab_to_doc.get(tab).unwrap();
-
-                    cr.select_font_face("Mono", ::cairo::enums::FontSlant::Normal, ::cairo::enums::FontWeight::Normal);
-                    cr.set_font_size(12.0);
-                    let font_extents = cr.font_extents();
-
-                    // Draw background
-                    cr.set_source_rgba(0.2, 0.2, 0.2, 1.0);
-                    cr.rectangle(0.0, 0.0, w.get_allocated_width() as f64, w.get_allocated_height()  as f64);
-                    cr.fill();
-
-                    for i in 0..10u64 {
-                        cr.set_source_rgba(0.8, 0.8, 0.8, 1.0);
-                        if let Some(line) = doc.line_cache.get(i) {
-                            cr.move_to(0.0, font_extents.height*((i+1) as f64));
-                            cr.show_text(&line.text);
-
-                            for c in &line.cursor {
-                                cr.set_source_rgba(0.5, 0.5, 1.0, 1.0);
-                                cr.rectangle(font_extents.max_x_advance* (*c as f64), font_extents.height*((i+1) as f64) - font_extents.ascent, 2.0, font_extents.ascent + font_extents.descent);
-                                cr.fill();
-                            }
-                        }
-                    }
-                });
-                Inhibit(false)
-            }
-        );
+        drawing_area.connect_key_press_event(handle_key_press_event);
+        // drawing_area.connect_key_release_event(|w,ek| {
+        //     debug!("key release {:?}", ek);
+        //     Inhibit(false)
+        // });
+        drawing_area.connect_draw(handle_draw);
 
         drawing_area.connect_size_allocate(|_,alloc| {
             debug!("Size changed to w={} h={}", alloc.width, alloc.height);
         });
 
-        // Set the text cursor
         drawing_area.connect_realize(|w|{
+            // Set the text cursor
             DisplayManager::get().get_default_display()
                 .map(|disp| {
                     let cur = Cursor::new_for_display(&disp, GdkCursorType::Xterm);
                     w.get_window().map(|win| win.set_cursor(&cur));
-                });
+            });
+            w.grab_focus();
         });
         drawing_area.connect_scroll_event(|w,e|{
             debug!("scroll event {:?} {:?}", w, e);
@@ -472,4 +407,88 @@ impl Ui<'static> {
         self.notebook.show_all();
         Ok(())
     }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Gtk Handler Functions
+///////////////////////////////////////////////////////////////////////////////
+
+fn handle_draw(w: &DrawingArea, cr: &Context) -> Inhibit {
+    GLOBAL.with(|global| if let Some(ref mut ui) = *global.borrow_mut() {
+        let mut ui = ui.borrow_mut();
+        let tab = ui.da_to_tab.get(w).unwrap().clone();
+
+        // let missing = ui.tab_to_doc.get_mut(&tab).unwrap().line_cache.get_missing(0, 1);
+        // debug!("MISSING={:?}", missing);
+        // for run in missing {
+        //     ui.notify("edit", json!({"method": "request_lines",
+        //         "tab": tab,
+        //         "params": [run.0, run.1],
+        //     }));
+        // }
+
+        let doc = ui.tab_to_doc.get_mut(&tab).unwrap();
+        doc.handle_draw(cr);
+    });
+    Inhibit(true)
+}
+
+fn handle_key_press_event(w: &DrawingArea, ek: &EventKey) -> Inhibit {
+    //{"method":"edit","params": {"method": "insert", "params":{"chars":"A"}, "tab":"0"}}
+    debug!("key press {:?}", ek);
+    debug!("key press keyval={:?}, state={:?}, length={:?} group={:?} uc={:?}",
+        ek.get_keyval(), ek.get_state(), ek.get_length(), ek.get_group(),
+        ::gdk::keyval_to_unicode(ek.get_keyval())
+    );
+    GLOBAL.with(|global| if let Some(ref mut ui) = *global.borrow_mut() {
+        let mut ui = ui.borrow_mut();
+        let tab_name = ui.da_to_tab.get(&w.clone()).unwrap().clone();
+        match ek.get_keyval() {
+            65361 => {
+                ui.notify("edit", json!({"method": "move_left",
+                    "params": [],
+                    "tab": tab_name,
+                }));
+                return;
+            }
+            65362 => {
+                ui.notify("edit", json!({"method": "move_up",
+                    "params": [],
+                    "tab": tab_name,
+                }));
+                return;
+            }
+            65363 => {
+                ui.notify("edit", json!({"method": "move_right",
+                    "params": [],
+                    "tab": tab_name,
+                }));
+                return;
+            }
+            65364 => {
+                ui.notify("edit", json!({"method": "move_down",
+                    "params": [],
+                    "tab": tab_name,
+                }));
+                return;
+            }
+            _ => {},
+        };
+        if let Some(ch) = ::gdk::keyval_to_unicode(ek.get_keyval()) {
+            let mut ch = ch;
+            if ch == '\r' {ch = '\n';}
+            if ch == '\u{0008}' {
+                ui.notify("edit", json!({"method": "delete_backward",
+                    "params": [],
+                    "tab": tab_name,
+                }));
+            } else {
+                ui.notify("edit", json!({"method": "insert",
+                    "params": {"chars":ch},
+                    "tab": tab_name,
+                }));
+            }
+        }
+    });
+    Inhibit(true)
 }

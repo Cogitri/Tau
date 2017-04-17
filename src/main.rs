@@ -23,6 +23,7 @@ use std::process::{ChildStdout, Command, Stdio};
 use std::rc::Rc;
 use std::thread;
 
+mod document;
 mod editview;
 mod error;
 mod linecache;

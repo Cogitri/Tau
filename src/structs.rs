@@ -14,7 +14,7 @@ pub struct UpdateUpdate {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct UpdateOp {
     pub op: String,
-    pub n: usize,
+    pub n: u64,
     pub lines: Option<Vec<UpdateLines>>,
 
 }
@@ -23,5 +23,5 @@ pub struct UpdateOp {
 pub struct UpdateLines {
     pub cursor: Option<Vec<usize>>,
     pub text: String,
-    //TODO styles:
+    pub styles: Option<Vec<usize>>,
 }
