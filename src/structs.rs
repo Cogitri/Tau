@@ -2,7 +2,7 @@
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct UpdateParams {
-    pub tab: String,
+    pub view_id: String,
     pub update: UpdateUpdate,
 }
 
@@ -16,7 +16,6 @@ pub struct UpdateOp {
     pub op: String,
     pub n: u64,
     pub lines: Option<Vec<UpdateLines>>,
-
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]

@@ -17,10 +17,12 @@ use gtk::*;
 //     }
 // }
 
-use gtk_sys as gtk_ffi;
 use gio;
 use gio_sys as gio_ffi;
-
+use gtk_sys as gtk_ffi;
+use gtk::Widget;
+use glib::translate::FromGlibPtrNone;
+use glib::object::Downcast;
 
 // glib_wrapper! {
 //     pub struct EditView(Object<gtk_ffi::GtkDrawingArea>): [
@@ -34,7 +36,10 @@ use gio_sys as gio_ffi;
 //
 // impl EditView {
 //     pub fn new() -> EditView {
-//         EditView{}
+//         //assert_initialized_main_thread!();
+//         unsafe {
+//             Widget::from_glib_none(gtk_ffi::gtk_drawing_area_new()).downcast_unchecked()
+//         }
 //     }
 // }
 

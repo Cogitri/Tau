@@ -74,15 +74,15 @@ impl LineCache {
         let mut new_lines: Vec<Option<Line>> = Vec::new();
         let mut new_invalid_after = 0;
 
+        let mut old_ix = 0u64;
+
         for op in ops {
-            let ref op_type = op.op;
-            debug!("lc before {}-- {:?}", op_type, self);
-            let mut idx = 0u64;
-            let mut n = op.n;
-            let mut old_ix = 0u64;
+            let op_type = &op.op;
+            //debug!("lc before {}-- {} {:?} {}", op_type, new_invalid_before, new_lines, new_invalid_after);
+            let n = op.n;
             match op_type.as_ref() {
                 "invalidate" => {
-                    if new_lines.len() == 0 {
+                    if new_lines.is_empty() {
                         new_invalid_before += n;
                     } else {
                         new_invalid_after += n;
@@ -106,7 +106,7 @@ impl LineCache {
                     let mut n_remaining = n;
                     if old_ix < self.n_invalid_before {
                         let n_invalid = min(n, self.n_invalid_before - old_ix);
-                        if new_lines.len() == 0 {
+                        if new_lines.is_empty() {
                             new_invalid_before += n_invalid;
                         } else {
                             new_invalid_after += n_invalid;
@@ -118,33 +118,31 @@ impl LineCache {
                         let n_copy = min(n_remaining, self.n_invalid_before + self.lines.len() as u64 - old_ix);
                         let start_ix = old_ix - self.n_invalid_before;
                         if op_type == "copy" {
-                            new_lines.extend_from_slice(&mut self.lines[start_ix as usize .. (start_ix + n_copy) as usize]);
-                        } else {
-                            if let Some(ref json_lines) = op.lines {
-                                //let json_lines = op.lines.unwrap_or_else(Vec::new);
-                                let mut json_ix = n - n_remaining;
-                                for ix in start_ix .. start_ix + n_copy {
-                                    if let Some(&Some(ref json_line)) = self.lines.get(ix as usize) {
-                                        let mut new_line = json_line.clone();
-                                        if let Some(ref json_line) = json_lines.get(json_ix as usize) {
-                                            new_line.text = json_line.text.clone();
-                                            if let Some(ref cursor) = json_line.cursor {
-                                                new_line.cursor = cursor.clone();
-                                            }
-                                            if let Some(ref styles) = json_line.styles {
-                                                new_line.styles = styles.clone();
-                                            }
+                            new_lines.extend_from_slice(&self.lines[start_ix as usize .. (start_ix + n_copy) as usize]);
+                        } else if let Some(ref json_lines) = op.lines {
+                            //let json_lines = op.lines.unwrap_or_else(Vec::new);
+                            let mut json_ix = n - n_remaining;
+                            for ix in start_ix .. start_ix + n_copy {
+                                if let Some(&Some(ref json_line)) = self.lines.get(ix as usize) {
+                                    let mut new_line = json_line.clone();
+                                    if let Some(json_line) = json_lines.get(json_ix as usize) {
+                                        new_line.text = json_line.text.clone();
+                                        if let Some(ref cursor) = json_line.cursor {
+                                            new_line.cursor = cursor.clone();
                                         }
-                                        new_lines.push(Some(new_line));
+                                        if let Some(ref styles) = json_line.styles {
+                                            new_line.styles = styles.clone();
+                                        }
                                     }
-                                    json_ix += 1;
+                                    new_lines.push(Some(new_line));
                                 }
+                                json_ix += 1;
                             }
                         }
                         old_ix += n_copy;
                         n_remaining -= n_copy;
                     }
-                    if new_lines.len() == 0 {
+                    if new_lines.is_empty() {
                         new_invalid_before += n_remaining;
                     } else {
                         new_invalid_after += n_remaining;
@@ -162,7 +160,7 @@ impl LineCache {
         self.n_invalid_before = new_invalid_before;
         self.lines = new_lines;
         self.n_invalid_after = new_invalid_after;
-        debug!("lc after update {:?}", self);
+        //debug!("lc after update {:?}", self);
         Ok(())
     }
 }

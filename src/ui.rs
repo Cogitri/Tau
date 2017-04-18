@@ -7,7 +7,7 @@ use std::rc::Rc;
 use cairo::Context;
 use cairo::enums::FontSlant;
 
-use gdk::{Cursor, DisplayManager, EventKey, EventType, EventMask};
+use gdk::{Cursor, DisplayManager, EventKey, EventType, EventMask, SHIFT_MASK};
 use gdk_sys::GdkCursorType;
 use gtk;
 use gtk::prelude::*;
@@ -51,9 +51,10 @@ pub struct Ui<'a> {
     window: Window,
     new_button: Button,
     notebook: Notebook,
-    tab_to_idx: HashMap<String, u32>,
-    da_to_tab: HashMap<DrawingArea, String>,
-    tab_to_doc: HashMap<String, Document>
+    view_to_idx: HashMap<String, u32>,
+    da_to_view: HashMap<Layout, String>,
+    sb_to_view: HashMap<Scrollbar, String>,
+    view_to_doc: HashMap<String, Document>
 }
 
 impl Ui<'static> {
@@ -70,9 +71,10 @@ impl Ui<'static> {
             window: window.clone(),
             new_button: new_button.clone(),
             notebook: notebook.clone(),
-            tab_to_idx: HashMap::new(),
-            da_to_tab: HashMap::new(),
-            tab_to_doc: HashMap::new(),
+            view_to_idx: HashMap::new(),
+            da_to_view: HashMap::new(),
+            sb_to_view: HashMap::new(),
+            view_to_doc: HashMap::new(),
         }));
 
         window.connect_delete_event(|_, _| {
@@ -81,7 +83,7 @@ impl Ui<'static> {
         });
 
         new_button.connect_clicked(clone!(ui => move |_| {
-            ui.borrow_mut().request_new_tab();
+            ui.borrow_mut().request_new_view();
         }));
 
         ui
@@ -89,6 +91,7 @@ impl Ui<'static> {
 
     /// Called when xi-core gives us a new line
     pub fn handle_line(&mut self, line: &str) -> Result<(), GxiError> {
+        debug!(">>> {}", line);
         let json: Value = serde_json::from_str(line)?;
         //debug!("json: {:?}", json);
         let is_method = json.as_object().map_or(false, |dict|
@@ -112,31 +115,17 @@ impl Ui<'static> {
                 .ok_or_else(|| GxiError::MalformedMethodParams(method.to_string(), params.clone()))
                 .and_then(|dict| {
                     debug!("dict={:?}", dict);
-                    if let (Some(tab), Some(line), Some(col)) =
-                        (dict_get_string(dict, "tab"),
+                    if let (Some(view_id), Some(line), Some(col)) =
+                        (dict_get_string(dict, "view_id"),
                         dict_get_u64(dict, "line"),
                         dict_get_u64(dict, "col")) {
-                            self.handle_scroll_to(tab, line, col)
+                            self.handle_scroll_to(view_id, line, col)
                     } else {Err(GxiError::MalformedMethodParams(method.to_string(), params.clone()))}
                 })
             }
-            //"update" => self.handle_update(),
-            // "update" => {
-            //     params
-            //     .as_object()
-            //     .ok_or_else(|| GxiError::MalformedMethodParams(method.to_string(), params.clone()))
-            //     .and_then(|dict| {
-            //         if let (Some(tab), Some(update)) =
-            //         (dict_get_string(dict, "tab"), dict_get_dict(dict, "update")) {
-            //             debug!("tab{}, update={:?}", tab, update);
-            //             if let (Some(ops) = dict_get_)
-            //             self.handle_update(tab, ops)
-            //         } else {Err(GxiError::MalformedMethodParams(method.to_string(), params.clone()))}
-            //     })
-            // }
             "update" => {
                 let p: UpdateParams = serde_json::from_value(params.clone())?;
-                self.handle_update(&p.tab, &p.update.ops)
+                self.handle_update(&p.view_id, &p.update.ops)
             }
             _ => Err(GxiError::UnknownMethod(method.to_string()))
         }
@@ -165,13 +154,13 @@ impl Ui<'static> {
                     .ok_or_else(|| GxiError::Custom("No result on new tab".to_string()))
                     //.as_str()
                     .and_then(|result| {
-                        if let Some(tab_name) = result.as_str() {
-                            self.response_new_tab(tab_name)
-                        } else {Err(GxiError::Custom("Unexpected result type on new tab".to_string()))}
+                        if let Some(view_id) = result.as_str() {
+                            self.response_new_tab(view_id)
+                        } else {Err(GxiError::Custom("Unexpected result type on new view".to_string()))}
                     })
 
                 },
-                TabCommand::DeleteTab{ tab_name } => self.response_delete_tab(tab_name),
+                TabCommand::DeleteTab{ tab_name } => self.response_delete_view(tab_name),
                 _ => Err(GxiError::Custom("Unexpected result".to_string()))
 
                 // TabCommand::Edit{tab_name, edit_command} => match edit_command {
@@ -231,9 +220,9 @@ impl Ui<'static> {
         }
     }
 
-    pub fn handle_update(&mut self, tab: &str, ops: &Vec<UpdateOp>) -> Result<(), GxiError> {
+    pub fn handle_update(&mut self, view_id: &str, ops: &Vec<UpdateOp>) -> Result<(), GxiError> {
         debug!("update: {:?}", ops);
-        let mut doc = self.tab_to_doc.get_mut(tab).unwrap(); //FIXME error handling
+        let mut doc = self.view_to_doc.get_mut(view_id).unwrap(); //FIXME error handling
 
         doc.handle_update(ops);
 
@@ -300,9 +289,9 @@ impl Ui<'static> {
         Ok(())
     }
 
-    pub fn handle_scroll_to(&self, tab: &str, line: u64, col: u64) -> Result<(), GxiError> {
-        debug!("scroll_to {} {} {}", tab, line, col);
-        if let Some(idx) = self.tab_to_idx.get(tab) {
+    pub fn handle_scroll_to(&self, view_id: &str, line: u64, col: u64) -> Result<(), GxiError> {
+        debug!("scroll_to {} {} {}", view_id, line, col);
+        if let Some(idx) = self.view_to_idx.get(view_id) {
             self.notebook.set_current_page(Some(*idx));
         }
         Ok(())
@@ -335,31 +324,31 @@ impl Ui<'static> {
 
     /// Serialize JSON object and send it to the server
     fn send(&mut self, message: &Value) {
-        debug!(">>> {:?}", message);
+        // debug!(">>> {:?}", message);
         let mut str_msg = serde_json::ser::to_string(&message).unwrap();
+        debug!("<<< {}", str_msg);
         str_msg.push('\n');
         self.core_stdin.write_all(str_msg.as_bytes()).unwrap();
     }
 
-    pub fn request_new_tab(&mut self) {
+    pub fn request_new_view(&mut self) {
         let req = Request::TabCommand{tab_command: TabCommand::NewTab};
-        let id = self.request("new_tab", json!([]));
+        let id = self.request("new_view", json!({}));
         self.pending.insert(id, req);
     }
 
-    pub fn request_delete_tab(&mut self, tab_name: &str) -> Result<(), GxiError> {
+    pub fn request_delete_view(&mut self, view_id: &str) -> Result<(), GxiError> {
         Ok(())
     }
 
-    pub fn response_delete_tab(&mut self, tab_name: &str) -> Result<(), GxiError> {
+    pub fn response_delete_view(&mut self, view_id: &str) -> Result<(), GxiError> {
         Ok(())
     }
 
-    pub fn response_new_tab(&mut self, tab_name: &str) -> Result<(), GxiError> {
-        //let adj = Adjustment::new(0.0, 0.0, 100.0, 1.0, 10.0, 10.0);
-        let scrollbar = Scrollbar::new(Orientation::Vertical, None);
-        let hbox = Box::new(Orientation::Horizontal, 0);
-        let drawing_area = DrawingArea::new();
+    pub fn response_new_tab(&mut self, view_id: &str) -> Result<(), GxiError> {
+        let adj = Adjustment::new(0.0, 0.0, 3.0, 1.0, 2.0, 1.0);
+        let scrolled_window = ScrolledWindow::new(None, None);
+        let drawing_area = Layout::new(None, Some(&adj));
         //let ui = self.clone();
         debug!("events={:?}", drawing_area.get_events());
         //drawing_area.set_events(EventMask::all().bits() as i32);
@@ -389,6 +378,7 @@ impl Ui<'static> {
                     let cur = Cursor::new_for_display(&disp, GdkCursorType::Xterm);
                     w.get_window().map(|win| win.set_cursor(&cur));
             });
+            w.set_size(1000,1000);
             w.grab_focus();
         });
         drawing_area.connect_scroll_event(|w,e|{
@@ -396,15 +386,28 @@ impl Ui<'static> {
             Inhibit(false)
         });
 
-        self.da_to_tab.insert(drawing_area.clone(), tab_name.to_owned());
-        self.tab_to_doc.insert(tab_name.to_owned(), Document::new(drawing_area.clone()));
-        hbox.pack_start(&drawing_area, true, true, 0);
-        hbox.pack_start(&scrollbar, false, false, 0);
+        scrolled_window.connect_scroll_child(|w,a,b| {
+            debug!("crolled_window.connect_scroll_child {:?} {:?}", a, b);
+            true
+        });
+
+
+        self.da_to_view.insert(drawing_area.clone(), view_id.to_owned());
+        //self.sb_to_view.insert(scrollbar.clone(), view_id.to_owned());
+        self.view_to_doc.insert(view_id.to_owned(), Document::new(drawing_area.clone()));
+        scrolled_window.add(&drawing_area);
         let label = Label::new("Untitled");
-        let tab_label: Option<&Label> = Some(&label);
-        let idx = self.notebook.insert_page(&hbox, tab_label, Some(0xffffffffu32));
-        self.tab_to_idx.insert(tab_name.to_string(), idx);
+        let view_label: Option<&Label> = Some(&label);
+        let idx = self.notebook.insert_page(&scrolled_window, view_label, Some(0xffffffffu32));
+        self.view_to_idx.insert(view_id.to_string(), idx);
         self.notebook.show_all();
+
+        // self.notify("edit", json!({"method": "scroll",
+        //     "view_id": view_id,
+        //     "params": [0, 30],
+        // }));
+
+        //self.notify("scroll", json!([0, 30]));
         Ok(())
     }
 }
@@ -413,28 +416,27 @@ impl Ui<'static> {
 // Gtk Handler Functions
 ///////////////////////////////////////////////////////////////////////////////
 
-fn handle_draw(w: &DrawingArea, cr: &Context) -> Inhibit {
+fn handle_draw(w: &Layout, cr: &Context) -> Inhibit {
     GLOBAL.with(|global| if let Some(ref mut ui) = *global.borrow_mut() {
         let mut ui = ui.borrow_mut();
-        let tab = ui.da_to_tab.get(w).unwrap().clone();
+        let view_id = ui.da_to_view.get(w).unwrap().clone();
 
-        // let missing = ui.tab_to_doc.get_mut(&tab).unwrap().line_cache.get_missing(0, 1);
+        // let missing = ui.view_to_doc.get_mut(&view_id).unwrap().line_cache.get_missing(0, 1);
         // debug!("MISSING={:?}", missing);
         // for run in missing {
         //     ui.notify("edit", json!({"method": "request_lines",
-        //         "tab": tab,
+        //         "view_id": view_id,
         //         "params": [run.0, run.1],
         //     }));
         // }
 
-        let doc = ui.tab_to_doc.get_mut(&tab).unwrap();
+        let doc = ui.view_to_doc.get_mut(&view_id).unwrap();
         doc.handle_draw(cr);
     });
     Inhibit(true)
 }
 
-fn handle_key_press_event(w: &DrawingArea, ek: &EventKey) -> Inhibit {
-    //{"method":"edit","params": {"method": "insert", "params":{"chars":"A"}, "tab":"0"}}
+fn handle_key_press_event(w: &Layout, ek: &EventKey) -> Inhibit {
     debug!("key press {:?}", ek);
     debug!("key press keyval={:?}, state={:?}, length={:?} group={:?} uc={:?}",
         ek.get_keyval(), ek.get_state(), ek.get_length(), ek.get_group(),
@@ -442,33 +444,61 @@ fn handle_key_press_event(w: &DrawingArea, ek: &EventKey) -> Inhibit {
     );
     GLOBAL.with(|global| if let Some(ref mut ui) = *global.borrow_mut() {
         let mut ui = ui.borrow_mut();
-        let tab_name = ui.da_to_tab.get(&w.clone()).unwrap().clone();
+        let view_id = ui.da_to_view.get(&w.clone()).unwrap().clone();
         match ek.get_keyval() {
-            65361 => {
+            65361 if ek.get_state().is_empty() => {
                 ui.notify("edit", json!({"method": "move_left",
+                    "view_id": view_id,
                     "params": [],
-                    "tab": tab_name,
                 }));
                 return;
             }
-            65362 => {
+            65362 if ek.get_state().is_empty() => {
                 ui.notify("edit", json!({"method": "move_up",
+                    "view_id": view_id,
                     "params": [],
-                    "tab": tab_name,
                 }));
                 return;
             }
-            65363 => {
+            65363 if ek.get_state().is_empty() => {
                 ui.notify("edit", json!({"method": "move_right",
+                    "view_id": view_id,
                     "params": [],
-                    "tab": tab_name,
                 }));
                 return;
             }
-            65364 => {
+            65364 if ek.get_state().is_empty() => {
                 ui.notify("edit", json!({"method": "move_down",
+                    "view_id": view_id,
                     "params": [],
-                    "tab": tab_name,
+                }));
+                return;
+            }
+            65361 if ek.get_state() == SHIFT_MASK => {
+                ui.notify("edit", json!({"method": "move_left_and_modify_selection",
+                    "view_id": view_id,
+                    "params": [],
+                }));
+                return;
+            }
+            65362 if ek.get_state() == SHIFT_MASK => {
+                ui.notify("edit", json!({"method": "move_up_and_modify_selection",
+                    "view_id": view_id,
+                    "params": [],
+                }));
+                return;
+            }
+            65363 if ek.get_state() == SHIFT_MASK => {
+                ui.notify("edit", json!({"method": "move_right_and_modify_selection",
+                    "view_id": view_id,
+                    "params": [],
+                }));
+                return;
+            }
+            65364 if ek.get_state() == SHIFT_MASK => {
+                ui.notify("edit", json!({"method": "move_down_and_modify_selection",
+                    "view_id": view_id,
+                    "params": [],
                 }));
                 return;
             }
@@ -479,13 +509,13 @@ fn handle_key_press_event(w: &DrawingArea, ek: &EventKey) -> Inhibit {
             if ch == '\r' {ch = '\n';}
             if ch == '\u{0008}' {
                 ui.notify("edit", json!({"method": "delete_backward",
+                    "view_id": view_id,
                     "params": [],
-                    "tab": tab_name,
                 }));
             } else {
                 ui.notify("edit", json!({"method": "insert",
+                    "view_id": view_id,
                     "params": {"chars":ch},
-                    "tab": tab_name,
                 }));
             }
         }

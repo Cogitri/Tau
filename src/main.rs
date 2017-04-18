@@ -19,7 +19,7 @@ extern crate xi_core_lib;
 
 use std::cell::RefCell;
 use std::io::{BufRead, BufReader};
-use std::process::{ChildStdout, Command, Stdio};
+use std::process::{ChildStdout, ChildStderr, Command, Stdio};
 use std::rc::Rc;
 use std::thread;
 
@@ -70,10 +70,11 @@ fn gxi_main() -> Result<(), GxiError> {
 
     let child = Command::new("xi-core").stdin(Stdio::piped())
         .stdout(Stdio::piped())
-        .stderr(Stdio::null()) // TODO do something with stderr
+        .stderr(Stdio::piped())
         .spawn()?;
     let stdin = child.stdin.unwrap();
     let stdout = child.stdout.unwrap();
+    let stderr = child.stderr.unwrap();
 
     //let core_writer = Rc::new(RefCell::new(stdin));
 
@@ -87,13 +88,12 @@ fn gxi_main() -> Result<(), GxiError> {
     GLOBAL.with(move |global| *global.borrow_mut() = Some(Ui::new(stdin)));
     GLOBAL.with(|global| if let Some(ref mut ui) = *global.borrow_mut() {
         ui.borrow_mut().show_all();
-        ui.borrow_mut().request_new_tab();
+        ui.borrow_mut().request_new_view();
     });
 
 
     thread::spawn(move || { core_read_thread(stdout); });
-
-    //core_writer.borrow_mut().new_tab();
+    thread::spawn(move || { core_read_stderr_thread(stderr); });
 
     gtk::main();
 
@@ -104,6 +104,33 @@ fn gxi_main() -> Result<(), GxiError> {
 struct JsonRpcResult {
     id: u64,
     result: String,
+}
+
+fn core_read_stderr_thread(stdout: ChildStderr) {
+    let mut reader = BufReader::new(stdout);
+    let mut line = String::new();
+    loop {
+        line.clear();
+        match reader.read_line(&mut line) {
+            Ok(n) => {
+                if n == 0 {
+                    println!("xi-core stderr finished");
+                    break;
+                }
+            }
+            Err(e) => {
+                println!("Failed to read line: {}", e);
+                break;
+            }
+        }
+        error!("xi-core: {}", line);
+
+        // Tell the main thread to process our new line
+        {
+            let line_clone = line.clone();
+            glib::idle_add(move || receive_json(&line_clone));
+        }
+    }
 }
 
 fn core_read_thread(stdout: ChildStdout) {
@@ -127,7 +154,6 @@ fn core_read_thread(stdout: ChildStdout) {
                 break;
             }
         }
-        debug!("Read line: {}", line);
 
         // Tell the main thread to process our new line
         {
