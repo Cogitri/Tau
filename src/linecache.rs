@@ -28,8 +28,16 @@ impl LineCache {
             n_invalid_after: 0,
         }
     }
-    pub fn len(&self) -> u64 {
+    pub fn height(&self) -> u64 {
         self.n_invalid_before + self.lines.len() as u64 + self.n_invalid_after
+    }
+    pub fn width(&self) -> usize {
+        self.lines.iter().map(|l| {
+            match *l {
+                None => 0,
+                Some(ref l) => l.text.len(),
+            }
+        }).max().unwrap_or(0)
     }
     pub fn get(&self, n: u64) -> Option<&Line> {
         if n < self.n_invalid_before
@@ -45,7 +53,7 @@ impl LineCache {
     }
     pub fn get_missing(&self, first: u64, last: u64) -> Vec<(u64, u64)> {
         let mut ret = Vec::new();
-        let last = min(last, self.len());
+        let last = min(last, self.height());
         assert!(first < last);
 
         let mut run = None;

@@ -1,6 +1,7 @@
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::io::Write;
+use std::ops::DerefMut;
 use std::process::{Child, ChildStdin, Command};
 use std::rc::Rc;
 
@@ -44,17 +45,55 @@ macro_rules! clone {
 }
 
 #[derive(Debug)]
-pub struct Ui<'a> {
+pub struct XiCore<'a> {
     rpc_index: usize,
     core_stdin: ChildStdin,
     pending: HashMap<usize, Request<'a>>,
+}
+
+#[derive(Debug)]
+pub struct Ui<'a> {
+    xicore: XiCore<'a>,
     window: Window,
     new_button: Button,
     notebook: Notebook,
     view_to_idx: HashMap<String, u32>,
     da_to_view: HashMap<Layout, String>,
     sb_to_view: HashMap<Scrollbar, String>,
-    view_to_doc: HashMap<String, Document>
+    view_to_doc: HashMap<String, Document>,
+}
+
+impl XiCore<'static> {
+    /// Build and send a JSON RPC request, returning the associated request ID to pair it with
+    /// the response
+    fn request(&mut self, method: &str, params: Value) -> usize {
+        self.rpc_index += 1;
+        let message = json!({
+            "id": self.rpc_index,
+            "method": method,
+            "params": params,
+        });
+        self.send(&message);
+        self.rpc_index
+    }
+
+    fn notify(&mut self, method: &str, params: Value) {
+        let message = json!({
+            "method": method,
+            "params": params,
+        });
+        self.send(&message);
+    }
+
+    /// Serialize JSON object and send it to the server
+    fn send(&mut self, message: &Value) {
+        // debug!(">>> {:?}", message);
+        let mut str_msg = serde_json::ser::to_string(&message).unwrap();
+        debug!("<<< {}", str_msg);
+        str_msg.push('\n');
+        self.core_stdin.write_all(str_msg.as_bytes()).unwrap();
+    }
+
 }
 
 impl Ui<'static> {
@@ -63,11 +102,14 @@ impl Ui<'static> {
         let window: Window = builder.get_object("appwindow").unwrap();
         let notebook: Notebook = builder.get_object("notebook").unwrap();
         let new_button: Button = builder.get_object("new_button").unwrap();
-
-        let ui = Rc::new(RefCell::new(Ui {
+        let xi_core = XiCore{
             rpc_index: 0,
             core_stdin: core_stdin,
             pending: HashMap::new(),
+        };
+
+        let ui = Rc::new(RefCell::new(Ui {
+            xicore: xi_core,
             window: window.clone(),
             new_button: new_button.clone(),
             notebook: notebook.clone(),
@@ -142,7 +184,7 @@ impl Ui<'static> {
         let result = dict.remove("result");
         let error = dict.remove("error");
         //let req = self.pending.remove(id);
-        let req = match self.pending.remove(&id) {
+        let req = match self.xicore.pending.remove(&id) {
             None => {return Err(GxiError::Custom(format!("Unexpected id: {}", id)));}
             Some(req) => req,
         };
@@ -289,11 +331,13 @@ impl Ui<'static> {
         Ok(())
     }
 
-    pub fn handle_scroll_to(&self, view_id: &str, line: u64, col: u64) -> Result<(), GxiError> {
+    pub fn handle_scroll_to(&mut self, view_id: &str, line: u64, col: u64) -> Result<(), GxiError> {
         debug!("scroll_to {} {} {}", view_id, line, col);
         if let Some(idx) = self.view_to_idx.get(view_id) {
             self.notebook.set_current_page(Some(*idx));
         }
+        let mut doc = self.view_to_doc.get_mut(view_id).unwrap();
+        doc.scroll_to(line, col);
         Ok(())
     }
 
@@ -301,40 +345,10 @@ impl Ui<'static> {
         self.window.show_all();
     }
 
-    /// Build and send a JSON RPC request, returning the associated request ID to pair it with
-    /// the response
-    fn request(&mut self, method: &str, params: Value) -> usize {
-        self.rpc_index += 1;
-        let message = json!({
-            "id": self.rpc_index,
-            "method": method,
-            "params": params,
-        });
-        self.send(&message);
-        self.rpc_index
-    }
-
-    fn notify(&mut self, method: &str, params: Value) {
-        let message = json!({
-            "method": method,
-            "params": params,
-        });
-        self.send(&message);
-    }
-
-    /// Serialize JSON object and send it to the server
-    fn send(&mut self, message: &Value) {
-        // debug!(">>> {:?}", message);
-        let mut str_msg = serde_json::ser::to_string(&message).unwrap();
-        debug!("<<< {}", str_msg);
-        str_msg.push('\n');
-        self.core_stdin.write_all(str_msg.as_bytes()).unwrap();
-    }
-
     pub fn request_new_view(&mut self) {
         let req = Request::TabCommand{tab_command: TabCommand::NewTab};
-        let id = self.request("new_view", json!({}));
-        self.pending.insert(id, req);
+        let id = self.xicore.request("new_view", json!({}));
+        self.xicore.pending.insert(id, req);
     }
 
     pub fn request_delete_view(&mut self, view_id: &str) -> Result<(), GxiError> {
@@ -386,10 +400,14 @@ impl Ui<'static> {
             Inhibit(false)
         });
 
-        scrolled_window.connect_scroll_child(|w,a,b| {
-            debug!("crolled_window.connect_scroll_child {:?} {:?}", a, b);
-            true
-        });
+        // scrolled_window.connect_scroll_child(|w,a,b| {
+        //     debug!("scrolled_window.connect_scroll_child {:?} {:?}", a, b);
+        //     true
+        // });
+        // scrolled_window.connect_draw(|w,cr| {
+        //     debug!("connect_draw scrolled_window");
+        //     Inhibit(false)
+        // });
 
 
         self.da_to_view.insert(drawing_area.clone(), view_id.to_owned());
@@ -418,7 +436,8 @@ impl Ui<'static> {
 
 fn handle_draw(w: &Layout, cr: &Context) -> Inhibit {
     GLOBAL.with(|global| if let Some(ref mut ui) = *global.borrow_mut() {
-        let mut ui = ui.borrow_mut();
+        let mut ui_refmut = ui.borrow_mut();
+        let mut ui = ui_refmut.deref_mut();
         let view_id = ui.da_to_view.get(w).unwrap().clone();
 
         // let missing = ui.view_to_doc.get_mut(&view_id).unwrap().line_cache.get_missing(0, 1);
@@ -431,7 +450,28 @@ fn handle_draw(w: &Layout, cr: &Context) -> Inhibit {
         // }
 
         let doc = ui.view_to_doc.get_mut(&view_id).unwrap();
-        doc.handle_draw(cr);
+        let (first_line, last_line, missing) = {
+            doc.handle_draw(cr)
+        };
+        // debug!("MISSING={:?}", missing);
+        // for run in missing {
+        //     ui.notify("edit", json!({"method": "request_lines",
+        //         "view_id": view_id,
+        //         "params": [run.0, run.1],
+        //     }));
+        // }
+        let xicore = &mut ui.xicore;
+        if (first_line, last_line) != (doc.first_line, doc.last_line) {
+            {
+                doc.first_line = first_line;
+                doc.last_line = last_line;
+            }
+            debug!("first,last={},{}", first_line, last_line);
+            xicore.notify("edit", json!({"method": "scroll",
+                "view_id": view_id,
+                "params": [first_line, last_line],
+            }));
+        }
     });
     Inhibit(true)
 }
@@ -447,56 +487,56 @@ fn handle_key_press_event(w: &Layout, ek: &EventKey) -> Inhibit {
         let view_id = ui.da_to_view.get(&w.clone()).unwrap().clone();
         match ek.get_keyval() {
             65361 if ek.get_state().is_empty() => {
-                ui.notify("edit", json!({"method": "move_left",
+                ui.xicore.notify("edit", json!({"method": "move_left",
                     "view_id": view_id,
                     "params": [],
                 }));
                 return;
             }
             65362 if ek.get_state().is_empty() => {
-                ui.notify("edit", json!({"method": "move_up",
+                ui.xicore.notify("edit", json!({"method": "move_up",
                     "view_id": view_id,
                     "params": [],
                 }));
                 return;
             }
             65363 if ek.get_state().is_empty() => {
-                ui.notify("edit", json!({"method": "move_right",
+                ui.xicore.notify("edit", json!({"method": "move_right",
                     "view_id": view_id,
                     "params": [],
                 }));
                 return;
             }
             65364 if ek.get_state().is_empty() => {
-                ui.notify("edit", json!({"method": "move_down",
+                ui.xicore.notify("edit", json!({"method": "move_down",
                     "view_id": view_id,
                     "params": [],
                 }));
                 return;
             }
             65361 if ek.get_state() == SHIFT_MASK => {
-                ui.notify("edit", json!({"method": "move_left_and_modify_selection",
+                ui.xicore.notify("edit", json!({"method": "move_left_and_modify_selection",
                     "view_id": view_id,
                     "params": [],
                 }));
                 return;
             }
             65362 if ek.get_state() == SHIFT_MASK => {
-                ui.notify("edit", json!({"method": "move_up_and_modify_selection",
+                ui.xicore.notify("edit", json!({"method": "move_up_and_modify_selection",
                     "view_id": view_id,
                     "params": [],
                 }));
                 return;
             }
             65363 if ek.get_state() == SHIFT_MASK => {
-                ui.notify("edit", json!({"method": "move_right_and_modify_selection",
+                ui.xicore.notify("edit", json!({"method": "move_right_and_modify_selection",
                     "view_id": view_id,
                     "params": [],
                 }));
                 return;
             }
             65364 if ek.get_state() == SHIFT_MASK => {
-                ui.notify("edit", json!({"method": "move_down_and_modify_selection",
+                ui.xicore.notify("edit", json!({"method": "move_down_and_modify_selection",
                     "view_id": view_id,
                     "params": [],
                 }));
@@ -508,12 +548,12 @@ fn handle_key_press_event(w: &Layout, ek: &EventKey) -> Inhibit {
             let mut ch = ch;
             if ch == '\r' {ch = '\n';}
             if ch == '\u{0008}' {
-                ui.notify("edit", json!({"method": "delete_backward",
+                ui.xicore.notify("edit", json!({"method": "delete_backward",
                     "view_id": view_id,
                     "params": [],
                 }));
             } else {
-                ui.notify("edit", json!({"method": "insert",
+                ui.xicore.notify("edit", json!({"method": "insert",
                     "view_id": view_id,
                     "params": {"chars":ch},
                 }));
