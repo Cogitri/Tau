@@ -579,8 +579,8 @@ pub fn handle_open_button(open_button: &Button) {
     fcd.add_button("Open", 33);
     fcd.set_default_response(33);
     fcd.set_select_multiple(true);
-    debug!("what");
     let response = fcd.run();
+    debug!("open response = {}", response);
     if response == 33 {
         for file in fcd.get_filenames() {
             GLOBAL.with(|global| if let Some(ref mut ui) = *global.borrow_mut() {
@@ -592,7 +592,6 @@ pub fn handle_open_button(open_button: &Button) {
         }
     }
     fcd.destroy();
-    debug!("whatthef {}", response);
 }
 
 fn handle_draw(w: &Layout, cr: &Context) -> Inhibit {
