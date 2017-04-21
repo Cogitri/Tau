@@ -47,8 +47,33 @@ impl Document {
 }
 
 impl Document {
+    fn get_size(&self) -> (f64, f64) {
+        let da_width = self.drawing_area.get_allocated_width() as f64;
+        let da_height = self.drawing_area.get_allocated_height() as f64;
+        let num_lines = self.line_cache.height();
+
+        let all_text_height = num_lines as f64 * self.font_height + self.font_descent;
+        let height = if da_height > all_text_height {
+            da_height
+        } else {
+            all_text_height
+        };
+
+        let all_text_width = self.line_cache.width() as f64 * self.font_width;
+        let width = if da_width > all_text_width {
+            da_width
+        } else {
+            all_text_width
+        };
+        (width, height)
+    }
     pub fn handle_update(&mut self, ops: &[UpdateOp]) -> Result<(), GxiError> {
         self.line_cache.handle_update(ops)?;
+        // set the size of the layout
+        // XXX What about u32max?
+        let (width, height) = self.get_size();
+        self.drawing_area.set_size((width+0.5) as u32, (height+0.5) as u32);
+
         self.drawing_area.queue_draw();
         Ok(())
     }
@@ -70,30 +95,25 @@ impl Document {
         self.font_ascent = font_extents.ascent;
         self.font_descent = font_extents.descent;
 
+        let (area_width, area_height) = self.get_size();
         // Set vertical adjustment
         let vadj = self.drawing_area.get_vadjustment().unwrap();
+        // debug!("vadj1={}, {}", vadj.get_value(), vadj.get_upper());
         vadj.set_lower(0f64);
         let all_text_height = num_lines as f64 * font_extents.height;
-        if all_text_height > da_height as f64 {
-            vadj.set_upper(all_text_height);
-        } else {
-            vadj.set_upper(da_height as f64);
-        }
+        vadj.set_upper(area_height);
         vadj.set_page_size(da_height as f64);
-        vadj.value_changed();
+        //vadj.value_changed();
+        // debug!("vadj2={}, {}", vadj.get_value(), vadj.get_upper());
         self.drawing_area.set_vadjustment(Some(&vadj));
 
         // Set horizontal adjustment
         let hadj = self.drawing_area.get_hadjustment().unwrap();
         hadj.set_lower(0f64);
         let all_text_width = self.line_cache.width() as f64 * font_extents.max_x_advance;
-        if all_text_width > da_width as f64 {
-            hadj.set_upper(all_text_width);
-        } else {
-            hadj.set_upper(da_width as f64);
-        }
+        hadj.set_upper(area_width);
         hadj.set_page_size(da_width as f64);
-        hadj.value_changed();
+        //hadj.value_changed();
         self.drawing_area.set_hadjustment(Some(&hadj));
 
         let first_line = (vadj.get_value() / font_extents.height) as u64;

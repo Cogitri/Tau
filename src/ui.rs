@@ -8,7 +8,7 @@ use std::rc::Rc;
 use cairo::Context;
 use cairo::enums::FontSlant;
 
-use gdk::{Cursor, DisplayManager, EventKey, EventType, EventMask, SHIFT_MASK};
+use gdk::{CONTROL_MASK, Cursor, DisplayManager, EventKey, EventType, EventMask, SHIFT_MASK};
 use gdk_sys::GdkCursorType;
 use gtk;
 use gtk::prelude::*;
@@ -21,6 +21,7 @@ use xi_core_lib::rpc::Request;
 use xi_core_lib::rpc::{EditCommand, TabCommand};
 
 use error::GxiError;
+use key;
 use linecache::*;
 use structs::*;
 use util::*;
@@ -57,6 +58,7 @@ pub struct Ui<'a> {
     window: Window,
     new_button: Button,
     notebook: Notebook,
+    open_file_chooser: FileChooserDialog,
     view_to_idx: HashMap<String, u32>,
     da_to_view: HashMap<Layout, String>,
     sb_to_view: HashMap<Scrollbar, String>,
@@ -85,6 +87,13 @@ impl XiCore<'static> {
         self.send(&message);
     }
 
+    fn edit(&mut self, method: &str, view_id: &str, params: Value) {
+        self.notify("edit", json!({"method": method,
+            "view_id": view_id,
+            "params": params,
+        }));
+    }
+
     /// Serialize JSON object and send it to the server
     fn send(&mut self, message: &Value) {
         // debug!(">>> {:?}", message);
@@ -94,6 +103,108 @@ impl XiCore<'static> {
         self.core_stdin.write_all(str_msg.as_bytes()).unwrap();
     }
 
+    fn delete_forward(&mut self, view_id: &str) {
+        self.edit("delete_forward", view_id, json!([]));
+    }
+    fn delete_backward(&mut self, view_id: &str) {
+        self.edit("delete_backward", view_id, json!([]));
+    }
+    fn insert_newline(&mut self, view_id: &str) {
+        self.edit("insert_newline", view_id, json!([]));
+    }
+    fn insert_tab(&mut self, view_id: &str) {
+        self.edit("insert_tab", view_id, json!([]));
+    }
+    fn move_up(&mut self, view_id: &str) {
+        self.edit("move_up", view_id, json!([]));
+    }
+    fn move_down(&mut self, view_id: &str) {
+        self.edit("move_down", view_id, json!([]));
+    }
+    fn move_left(&mut self, view_id: &str) {
+        self.edit("move_left", view_id, json!([]));
+    }
+    fn move_right(&mut self, view_id: &str) {
+        self.edit("move_right", view_id, json!([]));
+    }
+    fn move_up_and_modify_selection(&mut self, view_id: &str) {
+        self.edit("move_up_and_modify_selection", view_id, json!([]));
+    }
+    fn move_down_and_modify_selection(&mut self, view_id: &str) {
+        self.edit("move_down_and_modify_selection", view_id, json!([]));
+    }
+    fn move_left_and_modify_selection(&mut self, view_id: &str) {
+        self.edit("move_left_and_modify_selection", view_id, json!([]));
+    }
+    fn move_right_and_modify_selection(&mut self, view_id: &str) {
+        self.edit("move_right_and_modify_selection", view_id, json!([]));
+    }
+    fn move_word_left(&mut self, view_id: &str) {
+        self.edit("move_word_left", view_id, json!([]));
+    }
+    fn move_word_right(&mut self, view_id: &str) {
+        self.edit("move_word_right", view_id, json!([]));
+    }
+    fn move_word_left_and_modify_selection(&mut self, view_id: &str) {
+        self.edit("move_word_left_and_modify_selection", view_id, json!([]));
+    }
+    fn move_word_right_and_modify_selection(&mut self, view_id: &str) {
+        self.edit("move_word_right_and_modify_selection", view_id, json!([]));
+    }
+    fn move_to_left_end_of_line(&mut self, view_id: &str) {
+        self.edit("move_to_left_end_of_line", view_id, json!([]));
+    }
+    fn move_to_right_end_of_line(&mut self, view_id: &str) {
+        self.edit("move_to_right_end_of_line", view_id, json!([]));
+    }
+    fn move_to_left_end_of_line_and_modify_selection(&mut self, view_id: &str) {
+        self.edit("move_to_left_end_of_line_and_modify_selection", view_id, json!([]));
+    }
+    fn move_to_right_end_of_line_and_modify_selection(&mut self, view_id: &str) {
+        self.edit("move_to_right_end_of_line_and_modify_selection", view_id, json!([]));
+    }
+    fn move_to_beginning_of_document(&mut self, view_id: &str) {
+        self.edit("move_to_beginning_of_document", view_id, json!([]));
+    }
+    fn move_to_beginning_of_document_and_modify_selection(&mut self, view_id: &str) {
+        self.edit("move_to_beginning_of_document_and_modify_selection", view_id, json!([]));
+    }
+    fn move_to_end_of_document(&mut self, view_id: &str) {
+        self.edit("move_to_end_of_document", view_id, json!([]));
+    }
+    fn move_to_end_of_document_and_modify_selection(&mut self, view_id: &str) {
+        self.edit("move_to_end_of_document_and_modify_selection", view_id, json!([]));
+    }
+    fn page_up(&mut self, view_id: &str) {
+        self.edit("page_up", view_id, json!([]));
+    }
+    fn page_down(&mut self, view_id: &str) {
+        self.edit("page_down", view_id, json!([]));
+    }
+    fn page_up_and_modify_selection(&mut self, view_id: &str) {
+        self.edit("page_up_and_modify_selection", view_id, json!([]));
+    }
+    fn page_down_and_modify_selection(&mut self, view_id: &str) {
+        self.edit("page_down_and_modify_selection", view_id, json!([]));
+    }
+    fn select_all(&mut self, view_id: &str) {
+        self.edit("select_all", view_id, json!([]));
+    }
+    fn transpose(&mut self, view_id: &str) {
+        self.edit("transpose", view_id, json!([]));
+    }
+    fn undo(&mut self, view_id: &str) {
+        self.edit("undo", view_id, json!([]));
+    }
+    fn redo(&mut self, view_id: &str) {
+        self.edit("redo", view_id, json!([]));
+    }
+    fn cut(&mut self, view_id: &str) {
+        self.edit("cut", view_id, json!([]));
+    }
+    fn copy(&mut self, view_id: &str) {
+        self.edit("copy", view_id, json!([]));
+    }
 }
 
 impl Ui<'static> {
@@ -102,6 +213,8 @@ impl Ui<'static> {
         let window: Window = builder.get_object("appwindow").unwrap();
         let notebook: Notebook = builder.get_object("notebook").unwrap();
         let new_button: Button = builder.get_object("new_button").unwrap();
+        let open_button: Button = builder.get_object("open_button").unwrap();
+        let open_file_chooser: FileChooserDialog = builder.get_object("open_file_chooser").unwrap();
         let xi_core = XiCore{
             rpc_index: 0,
             core_stdin: core_stdin,
@@ -113,6 +226,7 @@ impl Ui<'static> {
             window: window.clone(),
             new_button: new_button.clone(),
             notebook: notebook.clone(),
+            open_file_chooser: open_file_chooser.clone(),
             view_to_idx: HashMap::new(),
             da_to_view: HashMap::new(),
             sb_to_view: HashMap::new(),
@@ -127,6 +241,7 @@ impl Ui<'static> {
         new_button.connect_clicked(clone!(ui => move |_| {
             ui.borrow_mut().request_new_view();
         }));
+        open_button.connect_clicked(handle_open_button);
 
         ui
     }
@@ -351,6 +466,12 @@ impl Ui<'static> {
         self.xicore.pending.insert(id, req);
     }
 
+    pub fn request_new_view_file(&mut self, path: &str) {
+        let req = Request::TabCommand{tab_command: TabCommand::NewTab};
+        let id = self.xicore.request("new_view", json!({"file_path": path}));
+        self.xicore.pending.insert(id, req);
+    }
+
     pub fn request_delete_view(&mut self, view_id: &str) -> Result<(), GxiError> {
         Ok(())
     }
@@ -392,13 +513,12 @@ impl Ui<'static> {
                     let cur = Cursor::new_for_display(&disp, GdkCursorType::Xterm);
                     w.get_window().map(|win| win.set_cursor(&cur));
             });
-            w.set_size(1000,1000);
             w.grab_focus();
         });
-        drawing_area.connect_scroll_event(|w,e|{
-            debug!("scroll event {:?} {:?}", w, e);
-            Inhibit(false)
-        });
+        // drawing_area.connect_scroll_event(|w,e|{
+        //     debug!("scroll event {:?} {:?}", w, e);
+        //     Inhibit(false)
+        // });
 
         // scrolled_window.connect_scroll_child(|w,a,b| {
         //     debug!("scrolled_window.connect_scroll_child {:?} {:?}", a, b);
@@ -433,6 +553,47 @@ impl Ui<'static> {
 ///////////////////////////////////////////////////////////////////////////////
 // Gtk Handler Functions
 ///////////////////////////////////////////////////////////////////////////////
+
+pub fn handle_open_button(open_button: &Button) {
+    // let mut fcd: Option<FileChooserDialog> = None;
+    // GLOBAL.with(|global| if let Some(ref mut ui) = *global.borrow_mut() {
+    //     let mut ui_refmut = ui.borrow_mut();
+    //     let ui = ui_refmut.deref_mut();
+    //     fcd = Some(ui.open_file_chooser.clone());
+    // });
+    // if let Some(fcd) = fcd {
+    //     let response = fcd.run();
+    //     debug!("open response={}", response);
+    // }
+
+    let mut main_window: Option<Window> = None;
+    GLOBAL.with(|global| if let Some(ref mut ui) = *global.borrow_mut() {
+        let mut ui_refmut = ui.borrow_mut();
+        let ui = ui_refmut.deref_mut();
+        main_window = Some(ui.window.clone());
+    });
+    let fcd = FileChooserDialog::new::<FileChooserDialog>(None, None, FileChooserAction::Open);
+    if let Some(main_window) = main_window {
+        fcd.set_transient_for(Some(&main_window));
+    }
+    fcd.add_button("Open", 33);
+    fcd.set_default_response(33);
+    fcd.set_select_multiple(true);
+    debug!("what");
+    let response = fcd.run();
+    if response == 33 {
+        for file in fcd.get_filenames() {
+            GLOBAL.with(|global| if let Some(ref mut ui) = *global.borrow_mut() {
+                debug!("opening {:?}", file);
+                let mut ui_refmut = ui.borrow_mut();
+                let ui = ui_refmut.deref_mut();
+                ui.request_new_view_file(&file.to_string_lossy());
+            });
+        }
+    }
+    fcd.destroy();
+    debug!("whatthef {}", response);
+}
 
 fn handle_draw(w: &Layout, cr: &Context) -> Inhibit {
     GLOBAL.with(|global| if let Some(ref mut ui) = *global.borrow_mut() {
@@ -485,80 +646,100 @@ fn handle_key_press_event(w: &Layout, ek: &EventKey) -> Inhibit {
     GLOBAL.with(|global| if let Some(ref mut ui) = *global.borrow_mut() {
         let mut ui = ui.borrow_mut();
         let view_id = ui.da_to_view.get(&w.clone()).unwrap().clone();
+        let ch = ::gdk::keyval_to_unicode(ek.get_keyval());
+
         match ek.get_keyval() {
-            65361 if ek.get_state().is_empty() => {
-                ui.xicore.notify("edit", json!({"method": "move_left",
-                    "view_id": view_id,
-                    "params": [],
-                }));
-                return;
+            key::DEL if ek.get_state().is_empty() => ui.xicore.delete_forward(&view_id),
+            key::BACKSPACE if ek.get_state().is_empty() => ui.xicore.delete_backward(&view_id),
+            key::ENTER | key::ENTER_PAD if ek.get_state().is_empty() => {
+                ui.xicore.insert_newline(&view_id);
+            },
+            key::TAB if ek.get_state().is_empty() => ui.xicore.insert_tab(&view_id),
+            key::ARROW_UP if ek.get_state().is_empty() => ui.xicore.move_up(&view_id),
+            key::ARROW_DOWN if ek.get_state().is_empty() => ui.xicore.move_down(&view_id),
+            key::ARROW_LEFT if ek.get_state().is_empty() => ui.xicore.move_left(&view_id),
+            key::ARROW_RIGHT if ek.get_state().is_empty() => ui.xicore.move_right(&view_id),
+            key::ARROW_UP if ek.get_state() == SHIFT_MASK => {
+                ui.xicore.move_up_and_modify_selection(&view_id);
+            },
+            key::ARROW_DOWN if ek.get_state() == SHIFT_MASK => {
+                ui.xicore.move_down_and_modify_selection(&view_id);
+            },
+            key::ARROW_LEFT if ek.get_state() == SHIFT_MASK => {
+                ui.xicore.move_left_and_modify_selection(&view_id);
+            },
+            key::ARROW_RIGHT if ek.get_state() == SHIFT_MASK => {
+                ui.xicore.move_right_and_modify_selection(&view_id);
+            },
+            key::ARROW_LEFT if ek.get_state() == CONTROL_MASK => {
+                ui.xicore.move_word_left(&view_id);
+            },
+            key::ARROW_RIGHT if ek.get_state() == CONTROL_MASK => {
+                ui.xicore.move_word_right(&view_id);
+            },
+            key::ARROW_LEFT if ek.get_state() == CONTROL_MASK | SHIFT_MASK => {
+                ui.xicore.move_word_left_and_modify_selection(&view_id);
+            },
+            key::ARROW_RIGHT if ek.get_state() == CONTROL_MASK | SHIFT_MASK => {
+                ui.xicore.move_word_right_and_modify_selection(&view_id);
+            },
+            key::HOME if ek.get_state().is_empty() => {
+                ui.xicore.move_to_left_end_of_line(&view_id);
             }
-            65362 if ek.get_state().is_empty() => {
-                ui.xicore.notify("edit", json!({"method": "move_up",
-                    "view_id": view_id,
-                    "params": [],
-                }));
-                return;
+            key::END if ek.get_state().is_empty() => {
+                ui.xicore.move_to_right_end_of_line(&view_id);
             }
-            65363 if ek.get_state().is_empty() => {
-                ui.xicore.notify("edit", json!({"method": "move_right",
-                    "view_id": view_id,
-                    "params": [],
-                }));
-                return;
+            key::HOME if ek.get_state() == SHIFT_MASK => {
+                ui.xicore.move_to_left_end_of_line_and_modify_selection(&view_id);
             }
-            65364 if ek.get_state().is_empty() => {
-                ui.xicore.notify("edit", json!({"method": "move_down",
-                    "view_id": view_id,
-                    "params": [],
-                }));
-                return;
+            key::END if ek.get_state() == SHIFT_MASK => {
+                ui.xicore.move_to_right_end_of_line_and_modify_selection(&view_id);
             }
-            65361 if ek.get_state() == SHIFT_MASK => {
-                ui.xicore.notify("edit", json!({"method": "move_left_and_modify_selection",
-                    "view_id": view_id,
-                    "params": [],
-                }));
-                return;
+            key::PGUP if ek.get_state().is_empty() => {
+                ui.xicore.page_up(&view_id);
             }
-            65362 if ek.get_state() == SHIFT_MASK => {
-                ui.xicore.notify("edit", json!({"method": "move_up_and_modify_selection",
-                    "view_id": view_id,
-                    "params": [],
-                }));
-                return;
+            key::PGDN if ek.get_state().is_empty() => {
+                ui.xicore.page_down(&view_id);
             }
-            65363 if ek.get_state() == SHIFT_MASK => {
-                ui.xicore.notify("edit", json!({"method": "move_right_and_modify_selection",
-                    "view_id": view_id,
-                    "params": [],
-                }));
-                return;
+            key::PGUP if ek.get_state() == SHIFT_MASK => {
+                ui.xicore.page_up_and_modify_selection(&view_id);
             }
-            65364 if ek.get_state() == SHIFT_MASK => {
-                ui.xicore.notify("edit", json!({"method": "move_down_and_modify_selection",
-                    "view_id": view_id,
-                    "params": [],
-                }));
-                return;
+            key::PGDN if ek.get_state() == SHIFT_MASK => {
+                ui.xicore.page_down_and_modify_selection(&view_id);
             }
-            _ => {},
+            _ => {
+                if let Some(ch) = ch {
+                    match ch {
+                        'a' if ek.get_state() == CONTROL_MASK => {
+                            ui.xicore.select_all(&view_id);
+                        },
+                        'c' if ek.get_state() == CONTROL_MASK => {
+                            ui.xicore.copy(&view_id);
+                        },
+                        't' if ek.get_state() == CONTROL_MASK => {
+                            ui.request_new_view();
+                        },
+                        'x' if ek.get_state() == CONTROL_MASK => {
+                            ui.xicore.cut(&view_id);
+                        },
+                        'z' if ek.get_state() == CONTROL_MASK => {
+                            ui.xicore.undo(&view_id);
+                        },
+                        'Z' if ek.get_state() == CONTROL_MASK | SHIFT_MASK => {
+                            ui.xicore.redo(&view_id);
+                        },
+                        c if (ek.get_state().is_empty() || ek.get_state() == SHIFT_MASK)
+                            && c >= '\u{0020}' => {
+                            ui.xicore.notify("edit", json!({"method": "insert",
+                                "view_id": view_id,
+                                "params": {"chars":c},
+                            }));
+                        }
+                        _ => {},
+                    }
+                }
+            },
         };
-        if let Some(ch) = ::gdk::keyval_to_unicode(ek.get_keyval()) {
-            let mut ch = ch;
-            if ch == '\r' {ch = '\n';}
-            if ch == '\u{0008}' {
-                ui.xicore.notify("edit", json!({"method": "delete_backward",
-                    "view_id": view_id,
-                    "params": [],
-                }));
-            } else {
-                ui.xicore.notify("edit", json!({"method": "insert",
-                    "view_id": view_id,
-                    "params": {"chars":ch},
-                }));
-            }
-        }
     });
     Inhibit(true)
 }

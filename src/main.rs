@@ -26,6 +26,7 @@ use std::thread;
 mod document;
 mod editview;
 mod error;
+mod key;
 mod linecache;
 mod request;
 mod structs;
@@ -114,12 +115,12 @@ fn core_read_stderr_thread(stdout: ChildStderr) {
         match reader.read_line(&mut line) {
             Ok(n) => {
                 if n == 0 {
-                    println!("xi-core stderr finished");
+                    debug!("xi-core stderr finished");
                     break;
                 }
             }
             Err(e) => {
-                println!("Failed to read line: {}", e);
+                error!("Failed to read line: {}", e);
                 break;
             }
         }
@@ -145,7 +146,7 @@ fn core_read_thread(stdout: ChildStdout) {
         match reader.read_line(&mut line) {
             Ok(n) => {
                 if n == 0 {
-                    println!("xi-core finished");
+                    debug!("xi-core finished");
                     break;
                 }
             }
