@@ -8,7 +8,8 @@ use std::rc::Rc;
 use cairo::Context;
 use cairo::enums::FontSlant;
 
-use gdk::{CONTROL_MASK, Cursor, DisplayManager, EventKey, EventType, EventMask, SHIFT_MASK};
+use gdk::{CONTROL_MASK, Cursor, DisplayManager, EventButton, EventMotion, EventKey, EventType,
+    EventMask, ModifierType, SHIFT_MASK};
 use gdk_sys::GdkCursorType;
 use gtk;
 use gtk::prelude::*;
@@ -60,6 +61,7 @@ pub struct Ui<'a> {
     notebook: Notebook,
     open_file_chooser: FileChooserDialog,
     view_to_idx: HashMap<String, u32>,
+    idx_to_view: HashMap<u32, String>,
     da_to_view: HashMap<Layout, String>,
     sb_to_view: HashMap<Scrollbar, String>,
     view_to_doc: HashMap<String, Document>,
@@ -88,7 +90,8 @@ impl XiCore<'static> {
     }
 
     fn edit(&mut self, method: &str, view_id: &str, params: Value) {
-        self.notify("edit", json!({"method": method,
+        self.notify("edit", json!({
+            "method": method,
             "view_id": view_id,
             "params": params,
         }));
@@ -101,6 +104,13 @@ impl XiCore<'static> {
         debug!("<<< {}", str_msg);
         str_msg.push('\n');
         self.core_stdin.write_all(str_msg.as_bytes()).unwrap();
+    }
+
+    fn save(&mut self, view_id: &str, file_path: &str) {
+        self.notify("save", json!({
+            "view_id": view_id,
+            "file_path": file_path,
+        }));
     }
 
     fn delete_forward(&mut self, view_id: &str) {
@@ -214,6 +224,7 @@ impl Ui<'static> {
         let notebook: Notebook = builder.get_object("notebook").unwrap();
         let new_button: Button = builder.get_object("new_button").unwrap();
         let open_button: Button = builder.get_object("open_button").unwrap();
+        let save_button: Button = builder.get_object("save_button").unwrap();
         let open_file_chooser: FileChooserDialog = builder.get_object("open_file_chooser").unwrap();
         let xi_core = XiCore{
             rpc_index: 0,
@@ -228,6 +239,7 @@ impl Ui<'static> {
             notebook: notebook.clone(),
             open_file_chooser: open_file_chooser.clone(),
             view_to_idx: HashMap::new(),
+            idx_to_view: HashMap::new(),
             da_to_view: HashMap::new(),
             sb_to_view: HashMap::new(),
             view_to_doc: HashMap::new(),
@@ -242,6 +254,7 @@ impl Ui<'static> {
             ui.borrow_mut().request_new_view();
         }));
         open_button.connect_clicked(handle_open_button);
+        save_button.connect_clicked(handle_save_button);
 
         ui
     }
@@ -487,14 +500,10 @@ impl Ui<'static> {
         //let ui = self.clone();
         debug!("events={:?}", drawing_area.get_events());
         //drawing_area.set_events(EventMask::all().bits() as i32);
-        drawing_area.set_events(::gdk::BUTTON_PRESS_MASK.bits() as i32);
+        drawing_area.set_events(::gdk::BUTTON_PRESS_MASK.bits() as i32 | ::gdk::BUTTON_MOTION_MASK.bits() as i32);
         debug!("events={:?}", drawing_area.get_events());
         drawing_area.set_can_focus(true);
-        drawing_area.connect_button_press_event(|w,eb| {
-            debug!("button press {:?}", eb);
-            w.grab_focus();
-            Inhibit(false)
-        });
+        drawing_area.connect_button_press_event(handle_button_press);
         drawing_area.connect_key_press_event(handle_key_press_event);
         // drawing_area.connect_key_release_event(|w,ek| {
         //     debug!("key release {:?}", ek);
@@ -515,6 +524,12 @@ impl Ui<'static> {
             });
             w.grab_focus();
         });
+
+        drawing_area.connect_drag_motion(|w,dc,a,b,c| {
+            debug!("dc={:?} a={}, b={}, c={}", dc, a, b, c);
+            false
+        });
+        drawing_area.connect_motion_notify_event(handle_drag);
         // drawing_area.connect_scroll_event(|w,e|{
         //     debug!("scroll event {:?} {:?}", w, e);
         //     Inhibit(false)
@@ -538,6 +553,7 @@ impl Ui<'static> {
         let view_label: Option<&Label> = Some(&label);
         let idx = self.notebook.insert_page(&scrolled_window, view_label, Some(0xffffffffu32));
         self.view_to_idx.insert(view_id.to_string(), idx);
+        self.idx_to_view.insert(idx, view_id.to_string());
         self.notebook.show_all();
 
         // self.notify("edit", json!({"method": "scroll",
@@ -553,6 +569,74 @@ impl Ui<'static> {
 ///////////////////////////////////////////////////////////////////////////////
 // Gtk Handler Functions
 ///////////////////////////////////////////////////////////////////////////////
+
+// NSAlphaShiftKeyMask = 1 << 16,
+// NSShiftKeyMask      = 1 << 17,
+// NSControlKeyMask    = 1 << 18,
+// NSAlternateKeyMask  = 1 << 19,
+// NSCommandKeyMask    = 1 << 20,
+// NSNumericPadKeyMask = 1 << 21,
+// NSHelpKeyMask       = 1 << 22,
+// NSFunctionKeyMask   = 1 << 23,
+// NSDeviceIndependentModifierFlagsMask = 0xffff0000U
+
+const XI_SHIFT_KEY_MASK:u32 = 1 << 1;
+const XI_CONTROL_KEY_MASK:u32 = 1 << 2;
+const XI_ALT_KEY_MASK:u32 = 1 << 3;
+
+fn convert_gtk_modifier(mt: ModifierType) -> u32 {
+    let mut ret = 0;
+    if mt.contains(SHIFT_MASK) { ret |= XI_SHIFT_KEY_MASK; }
+    if mt.contains(CONTROL_MASK) { ret |= XI_CONTROL_KEY_MASK; }
+    ret
+}
+
+fn convert_eb_to_xi_click(eb: &EventButton) -> u32 {
+    match eb.get_event_type() {
+        EventType::ButtonPress => 1,
+        EventType::DoubleButtonPress => 2,
+        EventType::TripleButtonPress => 3,
+        _ => 0,
+    }
+}
+
+pub fn handle_button_press(w: &Layout, eb: &EventButton) -> Inhibit {
+    w.grab_focus();
+    GLOBAL.with(|global| if let Some(ref mut ui) = *global.borrow_mut() {
+        let mut ui_refmut = ui.borrow_mut();
+        let mut ui = ui_refmut.deref_mut();
+        let view_id = ui.da_to_view.get(w).unwrap().clone();
+
+        let doc = ui.view_to_doc.get_mut(&view_id).unwrap();
+        let (x,y) = eb.get_position();
+        let (col, line) = doc.pos_to_cell(x, y);
+        ui.xicore.notify("edit", json!({"method": "click",
+            "view_id": view_id,
+            "params": [line, col,
+                convert_gtk_modifier(eb.get_state()),
+                convert_eb_to_xi_click(eb)
+            ],
+        }));
+    });
+    Inhibit(false)
+}
+
+pub fn handle_drag(w: &Layout, em: &EventMotion) -> Inhibit {
+    GLOBAL.with(|global| if let Some(ref mut ui) = *global.borrow_mut() {
+        let mut ui_refmut = ui.borrow_mut();
+        let mut ui = ui_refmut.deref_mut();
+        let view_id = ui.da_to_view.get(w).unwrap().clone();
+
+        let doc = ui.view_to_doc.get_mut(&view_id).unwrap();
+        let (x,y) = em.get_position();
+        let (col, line) = doc.pos_to_cell(x, y);
+        ui.xicore.notify("edit", json!({"method": "drag",
+            "view_id": view_id,
+            "params": [line, col, convert_gtk_modifier(em.get_state())],
+        }));
+    });
+    Inhibit(false)
+}
 
 pub fn handle_open_button(open_button: &Button) {
     // let mut fcd: Option<FileChooserDialog> = None;
@@ -588,6 +672,38 @@ pub fn handle_open_button(open_button: &Button) {
                 let mut ui_refmut = ui.borrow_mut();
                 let ui = ui_refmut.deref_mut();
                 ui.request_new_view_file(&file.to_string_lossy());
+            });
+        }
+    }
+    fcd.destroy();
+}
+
+pub fn handle_save_button(open_button: &Button) {
+    let mut main_window: Option<Window> = None;
+    GLOBAL.with(|global| if let Some(ref mut ui) = *global.borrow_mut() {
+        let mut ui_refmut = ui.borrow_mut();
+        let ui = ui_refmut.deref_mut();
+        main_window = Some(ui.window.clone());
+    });
+    let fcd = FileChooserDialog::new::<FileChooserDialog>(None, None, FileChooserAction::Save);
+    if let Some(main_window) = main_window {
+        fcd.set_transient_for(Some(&main_window));
+    }
+    fcd.add_button("Save", 33);
+    fcd.set_default_response(33);
+    let response = fcd.run();
+    debug!("save response = {}", response);
+    if response == 33 {
+        for file in fcd.get_filenames() {
+            GLOBAL.with(|global| if let Some(ref mut ui) = *global.borrow_mut() {
+                debug!("saving {:?}", file);
+                let mut ui_refmut = ui.borrow_mut();
+                let ui = ui_refmut.deref_mut();
+                if let Some(idx) = ui.notebook.get_current_page() {
+                    if let Some(view_id) = ui.idx_to_view.get(&idx as &u32) {
+                        ui.xicore.save(view_id, &file.to_string_lossy());
+                    }
+                }
             });
         }
     }

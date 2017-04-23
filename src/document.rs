@@ -67,6 +67,11 @@ impl Document {
         };
         (width, height)
     }
+    pub fn pos_to_cell(&self, x: f64, y: f64) -> (u64, u64) {
+        let mut y = y - self.font_descent;
+        if y < 0.0 { y = 0.0; }
+        ( (x / self.font_width + 0.5) as u64, (y / self.font_height) as u64)
+    }
     pub fn handle_update(&mut self, ops: &[UpdateOp]) -> Result<(), GxiError> {
         self.line_cache.handle_update(ops)?;
         // set the size of the layout
