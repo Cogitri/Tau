@@ -18,16 +18,17 @@ use gtk::*;
 use serde_json;
 use serde_json::Value;
 
-use xi_core_lib::rpc::Request;
-use xi_core_lib::rpc::{EditCommand, TabCommand};
+// use xi_core_lib::rpc::Request;
+// use xi_core_lib::rpc::{EditCommand, TabCommand};
 
+use document::Document;
 use error::GxiError;
 use key;
 use linecache::*;
+use GLOBAL;
+use request::Request;
 use structs::*;
 use util::*;
-use GLOBAL;
-use document::Document;
 
 macro_rules! clone {
     (@param _) => ( _ );
@@ -47,15 +48,15 @@ macro_rules! clone {
 }
 
 #[derive(Debug)]
-pub struct XiCore<'a> {
+pub struct XiCore {
     rpc_index: usize,
     core_stdin: ChildStdin,
-    pending: HashMap<usize, Request<'a>>,
+    pending: HashMap<usize, Request>,
 }
 
 #[derive(Debug)]
-pub struct Ui<'a> {
-    xicore: XiCore<'a>,
+pub struct Ui {
+    xicore: XiCore,
     window: Window,
     new_button: Button,
     notebook: Notebook,
@@ -63,11 +64,10 @@ pub struct Ui<'a> {
     view_to_idx: HashMap<String, u32>,
     idx_to_view: HashMap<u32, String>,
     da_to_view: HashMap<Layout, String>,
-    sb_to_view: HashMap<Scrollbar, String>,
     view_to_doc: HashMap<String, Document>,
 }
 
-impl XiCore<'static> {
+impl XiCore {
     /// Build and send a JSON RPC request, returning the associated request ID to pair it with
     /// the response
     fn request(&mut self, method: &str, params: Value) -> usize {
@@ -217,8 +217,8 @@ impl XiCore<'static> {
     }
 }
 
-impl Ui<'static> {
-    pub fn new(core_stdin: ChildStdin) -> Rc<RefCell<Ui<'static>>> {
+impl Ui {
+    pub fn new(core_stdin: ChildStdin) -> Rc<RefCell<Ui>> {
         let builder = Builder::new_from_file("resources/gxi.ui");
         let window: Window = builder.get_object("appwindow").unwrap();
         let notebook: Notebook = builder.get_object("notebook").unwrap();
@@ -241,7 +241,6 @@ impl Ui<'static> {
             view_to_idx: HashMap::new(),
             idx_to_view: HashMap::new(),
             da_to_view: HashMap::new(),
-            sb_to_view: HashMap::new(),
             view_to_doc: HashMap::new(),
         }));
 
@@ -317,76 +316,31 @@ impl Ui<'static> {
             Some(req) => req,
         };
         match req {
-            Request::TabCommand{ tab_command } => match tab_command {
-                TabCommand::NewTab => {
-                    //if let Some(tab_name) = dict_get_string()
-                    result
-                    .ok_or_else(|| GxiError::Custom("No result on new tab".to_string()))
-                    //.as_str()
-                    .and_then(|result| {
-                        if let Some(view_id) = result.as_str() {
-                            self.response_new_tab(view_id)
-                        } else {Err(GxiError::Custom("Unexpected result type on new view".to_string()))}
-                    })
-
-                },
-                TabCommand::DeleteTab{ tab_name } => self.response_delete_view(tab_name),
-                _ => Err(GxiError::Custom("Unexpected result".to_string()))
-
-                // TabCommand::Edit{tab_name, edit_command} => match edit_command {
-                //         EditCommand::RenderLines { first_line, last_line } => {},
-                //         EditCommand::Key { chars, flags } => {},
-                //         EditCommand::Insert { chars } => {},
-                //         EditCommand::DeleteForward => {},
-                //         EditCommand::DeleteBackward => {},
-                //         EditCommand::DeleteToEndOfParagraph => {},
-                //         EditCommand::DeleteToBeginningOfLine => {},
-                //         EditCommand::InsertNewline => {},
-                //         EditCommand::InsertTab => {},
-                //         EditCommand::MoveUp => {},
-                //         EditCommand::MoveUpAndModifySelection => {},
-                //         EditCommand::MoveDown => {},
-                //         EditCommand::MoveDownAndModifySelection => {},
-                //         EditCommand::MoveLeft => {},
-                //         EditCommand::MoveLeftAndModifySelection => {},
-                //         EditCommand::MoveRight => {},
-                //         EditCommand::MoveRightAndModifySelection => {},
-                //         // EditCommand::MoveWordLeft => {},
-                //         // EditCommand::MoveWordLeftAndModifySelection => {},
-                //         // EditCommand::MoveWordRight => {},
-                //         // EditCommand::MoveWordRightAndModifySelection => {},
-                //         EditCommand::MoveToBeginningOfParagraph => {},
-                //         EditCommand::MoveToEndOfParagraph => {},
-                //         EditCommand::MoveToLeftEndOfLine => {},
-                //         EditCommand::MoveToLeftEndOfLineAndModifySelection => {},
-                //         EditCommand::MoveToRightEndOfLine => {},
-                //         EditCommand::MoveToRightEndOfLineAndModifySelection => {},
-                //         EditCommand::MoveToBeginningOfDocument => {},
-                //         EditCommand::MoveToBeginningOfDocumentAndModifySelection => {},
-                //         EditCommand::MoveToEndOfDocument => {},
-                //         EditCommand::MoveToEndOfDocumentAndModifySelection => {},
-                //         EditCommand::ScrollPageUp => {},
-                //         EditCommand::PageUpAndModifySelection => {},
-                //         EditCommand::ScrollPageDown => {},
-                //         EditCommand::PageDownAndModifySelection => {},
-                //         // EditCommand::SelectAll => {},
-                //         EditCommand::Open { file_path } => {},
-                //         EditCommand::Save { file_path } => {},
-                //         EditCommand::Scroll { first, last } => {},
-                //         // EditCommand::RequestLines { first, last } => {},
-                //         EditCommand::Yank => {},
-                //         EditCommand::Transpose => {},
-                //         EditCommand::Click { line, column, flags, click_count } => {},
-                //         EditCommand::Drag { line, column, flags } => {},
-                //         EditCommand::Undo => {},
-                //         EditCommand::Redo => {},
-                //         EditCommand::Cut => {},
-                //         EditCommand::Copy => {},
-                //         EditCommand::DebugRewrap => {},
-                //         EditCommand::DebugTestFgSpans => {},
-                //         EditCommand::DebugRunPlugin => {},
-                    // },
+            Request::NewView{file_path} => {
+                result
+                .ok_or_else(|| GxiError::Custom("No result on new tab".to_string()))
+                .and_then(|result| {
+                    if let Some(view_id) = result.as_str() {
+                        self.response_new_tab(view_id, file_path)
+                    } else {Err(GxiError::Custom("Unexpected result type on new view".to_string()))}
+                })
             }
+            // Request::TabCommand{ tab_command } => match tab_command {
+            //     TabCommand::NewTab{ ref file_path } => {
+            //         //if let Some(tab_name) = dict_get_string()
+            //         result
+            //         .ok_or_else(|| GxiError::Custom("No result on new tab".to_string()))
+            //         //.as_str()
+            //         .and_then(|result| {
+            //             if let Some(view_id) = result.as_str() {
+            //                 self.response_new_tab(view_id)
+            //             } else {Err(GxiError::Custom("Unexpected result type on new view".to_string()))}
+            //         })
+            //
+            //     },
+            //     TabCommand::DeleteTab{ tab_name } => self.response_delete_view(tab_name),
+            //     _ => Err(GxiError::Custom("Unexpected result".to_string()))
+            // }
         }
     }
 
@@ -396,66 +350,6 @@ impl Ui<'static> {
 
         doc.handle_update(ops);
 
-        let mut new_invalid_before = 0;
-        let new_lines: Vec<Option<Line>> = Vec::new();
-        let mut new_invalid_after = 0;
-
-        for op in ops {
-            // let op_type = op.op;
-            let mut idx = 0;
-            let mut n = op.n;
-            // let mut old_ix = 0;
-            // match op_type.as_ref() {
-            //     "invalidate" => {
-            //         if new_lines.len() == 0 {
-            //             new_invalid_before += n;
-            //         } else {
-            //             new_invalid_after += n;
-            //         }
-            //     },
-            //     "ins" => {
-            //         for _ in 0..new_invalid_after {
-            //             new_lines.push(None);
-            //         }
-            //         new_invalid_after = 0;
-            //         let json_lines = op.lines.unwrap_or_else(Vec::new);
-            //         for json_line in json_lines {
-            //             new_lines.push(Some(Line{
-            //                 cursor: json_line.cursor.unwrap_or_else(Vec::new),
-            //                 text: json_line.text,
-            //             }));
-            //         }
-            //     },
-            //     "copy" | "update" => {
-            //         let n_remaining = n;
-            //         if old_ix < n_invalid_before {
-            //
-            //         }
-            //     },
-            //     "skip" => {
-            //
-            //     },
-            //     _ => {
-            //
-            //     },
-            // }
-
-
-
-            // for update_line in op.lines.iter().flat_map(|l| l.iter()) {
-            //     let mut cursor: Vec<usize> = Vec::new();
-            //     if let Some(ref ul_cursor) = update_line.cursor {
-            //         cursor.append(&mut ul_cursor.clone());
-            //     }
-            //     let line = Line{
-            //         cursor: cursor,
-            //         text: update_line.text.clone(),
-            //     };
-            //     doc.line_cache.insert(idx as u64, line);
-            //     doc.drawing_area.queue_draw();
-            //     idx += 1;
-            // }
-        }
         Ok(())
     }
 
@@ -474,15 +368,29 @@ impl Ui<'static> {
     }
 
     pub fn request_new_view(&mut self) {
-        let req = Request::TabCommand{tab_command: TabCommand::NewTab};
+        let req = Request::NewView{file_path: None};
         let id = self.xicore.request("new_view", json!({}));
         self.xicore.pending.insert(id, req);
     }
 
     pub fn request_new_view_file(&mut self, path: &str) {
-        let req = Request::TabCommand{tab_command: TabCommand::NewTab};
+        let req = Request::NewView{file_path: Some(path.to_string())};
         let id = self.xicore.request("new_view", json!({"file_path": path}));
         self.xicore.pending.insert(id, req);
+    }
+
+    pub fn update_view_file(&mut self, view_id: &str, file: &str) {
+        let mut doc = self.view_to_doc.get_mut(view_id).unwrap();
+        doc.file = Some(file.to_string());
+    }
+    pub fn update_view_title(&mut self, view_id: &str) {
+        let mut doc = self.view_to_doc.get_mut(view_id).unwrap();
+        let title = doc.get_title();
+        if let Some(idx) = self.view_to_idx.get(view_id) {
+            if let Some(page) = self.notebook.get_nth_page(Some(*idx)) {
+                self.notebook.set_tab_label_text(&page, &title);
+            }
+        }
     }
 
     pub fn request_delete_view(&mut self, view_id: &str) -> Result<(), GxiError> {
@@ -493,7 +401,7 @@ impl Ui<'static> {
         Ok(())
     }
 
-    pub fn response_new_tab(&mut self, view_id: &str) -> Result<(), GxiError> {
+    pub fn response_new_tab(&mut self, view_id: &str, file_path: Option<String>) -> Result<(), GxiError> {
         let adj = Adjustment::new(0.0, 0.0, 3.0, 1.0, 2.0, 1.0);
         let scrolled_window = ScrolledWindow::new(None, None);
         let drawing_area = Layout::new(None, Some(&adj));
@@ -547,21 +455,16 @@ impl Ui<'static> {
 
         self.da_to_view.insert(drawing_area.clone(), view_id.to_owned());
         //self.sb_to_view.insert(scrollbar.clone(), view_id.to_owned());
-        self.view_to_doc.insert(view_id.to_owned(), Document::new(drawing_area.clone()));
+        let doc = Document::new(file_path, drawing_area.clone());
+        let label = Label::new(Some(doc.get_title().as_ref()));
+        self.view_to_doc.insert(view_id.to_owned(), doc);
         scrolled_window.add(&drawing_area);
-        let label = Label::new("Untitled");
-        let view_label: Option<&Label> = Some(&label);
-        let idx = self.notebook.insert_page(&scrolled_window, view_label, Some(0xffffffffu32));
+        // let label = Label::new("Untitled");
+        let idx = self.notebook.insert_page(&scrolled_window, Some(&label), Some(0xffffffffu32));
         self.view_to_idx.insert(view_id.to_string(), idx);
         self.idx_to_view.insert(idx, view_id.to_string());
         self.notebook.show_all();
 
-        // self.notify("edit", json!({"method": "scroll",
-        //     "view_id": view_id,
-        //     "params": [0, 30],
-        // }));
-
-        //self.notify("scroll", json!([0, 30]));
         Ok(())
     }
 }
@@ -638,7 +541,7 @@ pub fn handle_drag(w: &Layout, em: &EventMotion) -> Inhibit {
     Inhibit(false)
 }
 
-pub fn handle_open_button(open_button: &Button) {
+pub fn handle_open_button(_: &Button) {
     // let mut fcd: Option<FileChooserDialog> = None;
     // GLOBAL.with(|global| if let Some(ref mut ui) = *global.borrow_mut() {
     //     let mut ui_refmut = ui.borrow_mut();
@@ -678,7 +581,7 @@ pub fn handle_open_button(open_button: &Button) {
     fcd.destroy();
 }
 
-pub fn handle_save_button(open_button: &Button) {
+pub fn handle_save_button(_: &Button) {
     let mut main_window: Option<Window> = None;
     GLOBAL.with(|global| if let Some(ref mut ui) = *global.borrow_mut() {
         let mut ui_refmut = ui.borrow_mut();
@@ -694,15 +597,22 @@ pub fn handle_save_button(open_button: &Button) {
     let response = fcd.run();
     debug!("save response = {}", response);
     if response == 33 {
-        for file in fcd.get_filenames() {
+        for file in fcd.get_filename() {
             GLOBAL.with(|global| if let Some(ref mut ui) = *global.borrow_mut() {
                 debug!("saving {:?}", file);
                 let mut ui_refmut = ui.borrow_mut();
-                let ui = ui_refmut.deref_mut();
-                if let Some(idx) = ui.notebook.get_current_page() {
-                    if let Some(view_id) = ui.idx_to_view.get(&idx as &u32) {
-                        ui.xicore.save(view_id, &file.to_string_lossy());
-                    }
+                let mut ui = ui_refmut.deref_mut();
+                let view_id = {
+                    if let Some(idx) = ui.notebook.get_current_page() {
+                        if let Some(view_id) = ui.idx_to_view.get(&idx as &u32) {
+                            Some(view_id.clone())
+                        } else { None }
+                    } else { None }
+                };
+                if let Some(view_id) = view_id {
+                    ui.xicore.save(&view_id, &file.to_string_lossy());
+                    ui.update_view_file(&view_id, &file.to_string_lossy());
+                    ui.update_view_title(&view_id);
                 }
             });
         }

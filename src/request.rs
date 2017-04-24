@@ -1,4 +1,4 @@
 #[derive(Clone, Debug)]
 pub enum Request {
-    NewTab,
+    NewView{file_path: Option<String>},
 }

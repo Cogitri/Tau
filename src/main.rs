@@ -55,7 +55,7 @@ macro_rules! clone {
 
 // declare a new thread local storage key
 thread_local!(
-    static GLOBAL: RefCell<Option<Rc<RefCell<Ui<'static>>>>> = RefCell::new(None)
+    static GLOBAL: RefCell<Option<Rc<RefCell<Ui>>>> = RefCell::new(None)
 );
 
 fn receive_json(line: &str) -> glib::Continue {

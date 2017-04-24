@@ -13,6 +13,7 @@ const CURSOR_WIDTH: f64 = 2.0;
 
 #[derive(Debug)]
 pub struct Document {
+    pub file: Option<String>,
     pub line_cache: LineCache,
     pub drawing_area: Layout,
     pub first_line: u64,
@@ -25,8 +26,9 @@ pub struct Document {
 }
 
 impl Document {
-    pub fn new(da: Layout) -> Document {
+    pub fn new(file: Option<String>, da: Layout) -> Document {
         Document {
+            file: file,
             line_cache: LineCache::new(),
             drawing_area: da,
             first_line: 0u64,
@@ -47,6 +49,14 @@ impl Document {
 }
 
 impl Document {
+    pub fn get_title(&self) -> String {
+        match self.file {
+            Some(ref f) => {
+                f.split(::std::path::MAIN_SEPARATOR).last().unwrap_or("Untitled").to_string()
+            }
+            None => "Untitled".to_string()
+        }
+    }
     fn get_size(&self) -> (f64, f64) {
         let da_width = self.drawing_area.get_allocated_width() as f64;
         let da_height = self.drawing_area.get_allocated_height() as f64;
@@ -124,6 +134,7 @@ impl Document {
         let first_line = (vadj.get_value() / font_extents.height) as u64;
         let last_line = ((vadj.get_value() + da_height as f64) / font_extents.height) as u64 + 1;
 
+        //debug!("asdfjfdkfjdk {} {} {}", self.line_cache.n_invalid_before, self.line_cache.lines.len(), self.line_cache.n_invalid_after);
         let missing = self.line_cache.get_missing(first_line, last_line);
         // if !missing.is_empty() {
         //     return missing;
@@ -135,7 +146,7 @@ impl Document {
         cr.fill();
 
         // Highlight cursor lines
-        for i in 0..self.line_cache.height() {
+        for i in first_line..last_line {
             cr.set_source_rgba(0.8, 0.8, 0.8, 1.0);
             if let Some(line) = self.line_cache.get(i) {
 
@@ -158,7 +169,7 @@ impl Document {
         }
 
         // Draw styles
-        for i in 0..self.line_cache.height() {
+        for i in first_line..last_line {
             cr.set_source_rgba(0.8, 0.8, 0.8, 1.0);
             if let Some(line) = self.line_cache.get(i) {
 
@@ -185,7 +196,7 @@ impl Document {
         }
 
         // Draw text
-        for i in 0..self.line_cache.height() {
+        for i in first_line..last_line {
             cr.set_source_rgba(0.8, 0.8, 0.8, 1.0);
             if let Some(line) = self.line_cache.get(i) {
                 cr.move_to(0.0 - hadj.get_value(),

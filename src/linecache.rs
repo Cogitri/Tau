@@ -14,9 +14,9 @@ pub struct Line {
 #[derive(Debug)]
 pub struct LineCache {
     map: HashMap<u64, Line>,
-    n_invalid_before: u64,
-    lines: Vec<Option<Line>>,
-    n_invalid_after: u64,
+    pub n_invalid_before: u64,
+    pub lines: Vec<Option<Line>>,
+    pub n_invalid_after: u64,
 }
 
 impl LineCache {
@@ -97,6 +97,7 @@ impl LineCache {
                     }
                 },
                 "ins" => {
+                    debug!("ins n={}", n);
                     for _ in 0..new_invalid_after {
                         new_lines.push(None);
                     }
