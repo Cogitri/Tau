@@ -1,6 +1,4 @@
-use std::cmp::max;
-
-use cairo::{Context, FontExtents};
+use cairo::{Context};
 
 use gtk::prelude::*;
 use gtk::*;
@@ -18,7 +16,6 @@ pub struct Document {
     pub drawing_area: Layout,
     pub first_line: u64,
     pub last_line: u64,
-    //font_ext: FontExtents,
     font_height: f64,
     font_width: f64,
     font_ascent: f64,
@@ -37,13 +34,6 @@ impl Document {
             font_width: 1.0,
             font_ascent: 1.0,
             font_descent: 1.0,
-            // font_ext: FontExtents {
-            //     ascent: 1f64,
-            //     descent: 1f64,
-            //     height: 1f64,
-            //     max_x_advance: 1f64,
-            //     max_y_advance: 1f64,
-            // }
         }
     }
 }
@@ -97,7 +87,6 @@ impl Document {
         let da_width = self.drawing_area.get_allocated_width();
         let da_height = self.drawing_area.get_allocated_height();
         //let hadj = self.drawing_area.get_hadjustment().unwrap();
-        let num_lines = self.line_cache.height();
 
         //debug!("Drawing");
         cr.select_font_face("Mono", ::cairo::enums::FontSlant::Normal, ::cairo::enums::FontWeight::Normal);
@@ -115,30 +104,23 @@ impl Document {
         let vadj = self.drawing_area.get_vadjustment().unwrap();
         // debug!("vadj1={}, {}", vadj.get_value(), vadj.get_upper());
         vadj.set_lower(0f64);
-        let all_text_height = num_lines as f64 * font_extents.height;
         vadj.set_upper(area_height);
         vadj.set_page_size(da_height as f64);
-        //vadj.value_changed();
         // debug!("vadj2={}, {}", vadj.get_value(), vadj.get_upper());
         self.drawing_area.set_vadjustment(Some(&vadj));
 
         // Set horizontal adjustment
         let hadj = self.drawing_area.get_hadjustment().unwrap();
         hadj.set_lower(0f64);
-        let all_text_width = self.line_cache.width() as f64 * font_extents.max_x_advance;
         hadj.set_upper(area_width);
         hadj.set_page_size(da_width as f64);
-        //hadj.value_changed();
         self.drawing_area.set_hadjustment(Some(&hadj));
 
         let first_line = (vadj.get_value() / font_extents.height) as u64;
         let last_line = ((vadj.get_value() + da_height as f64) / font_extents.height) as u64 + 1;
 
-        //debug!("asdfjfdkfjdk {} {} {}", self.line_cache.n_invalid_before, self.line_cache.lines.len(), self.line_cache.n_invalid_after);
+        //debug!("line_cache {} {} {}", self.line_cache.n_invalid_before, self.line_cache.lines.len(), self.line_cache.n_invalid_after);
         let missing = self.line_cache.get_missing(first_line, last_line);
-        // if !missing.is_empty() {
-        //     return missing;
-        // }
 
         // Draw background
         cr.set_source_rgba(0.2, 0.2, 0.2, 1.0);

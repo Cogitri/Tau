@@ -2,14 +2,13 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use std::io::Write;
 use std::ops::DerefMut;
-use std::process::{Child, ChildStdin, Command};
+use std::process::{ChildStdin};
 use std::rc::Rc;
 
 use cairo::Context;
-use cairo::enums::FontSlant;
 
 use gdk::{CONTROL_MASK, Cursor, DisplayManager, EventButton, EventMotion, EventKey, EventType,
-    EventMask, ModifierType, SHIFT_MASK};
+    ModifierType, SHIFT_MASK};
 use gdk_sys::GdkCursorType;
 use gtk;
 use gtk::prelude::*;
@@ -18,13 +17,9 @@ use gtk::*;
 use serde_json;
 use serde_json::Value;
 
-// use xi_core_lib::rpc::Request;
-// use xi_core_lib::rpc::{EditCommand, TabCommand};
-
 use document::Document;
 use error::GxiError;
 use key;
-use linecache::*;
 use GLOBAL;
 use request::Request;
 use structs::*;
@@ -348,9 +343,7 @@ impl Ui {
         debug!("update: {:?}", ops);
         let mut doc = self.view_to_doc.get_mut(view_id).unwrap(); //FIXME error handling
 
-        doc.handle_update(ops);
-
-        Ok(())
+        doc.handle_update(ops)
     }
 
     pub fn handle_scroll_to(&mut self, view_id: &str, line: u64, col: u64) -> Result<(), GxiError> {
@@ -384,7 +377,7 @@ impl Ui {
         doc.file = Some(file.to_string());
     }
     pub fn update_view_title(&mut self, view_id: &str) {
-        let mut doc = self.view_to_doc.get_mut(view_id).unwrap();
+        let doc = self.view_to_doc.get_mut(view_id).unwrap();
         let title = doc.get_title();
         if let Some(idx) = self.view_to_idx.get(view_id) {
             if let Some(page) = self.notebook.get_nth_page(Some(*idx)) {
@@ -433,10 +426,6 @@ impl Ui {
             w.grab_focus();
         });
 
-        drawing_area.connect_drag_motion(|w,dc,a,b,c| {
-            debug!("dc={:?} a={}, b={}, c={}", dc, a, b, c);
-            false
-        });
         drawing_area.connect_motion_notify_event(handle_drag);
         // drawing_area.connect_scroll_event(|w,e|{
         //     debug!("scroll event {:?} {:?}", w, e);
@@ -719,6 +708,18 @@ fn handle_key_press_event(w: &Layout, ek: &EventKey) -> Inhibit {
             }
             key::END if ek.get_state() == SHIFT_MASK => {
                 ui.xicore.move_to_right_end_of_line_and_modify_selection(&view_id);
+            }
+            key::HOME if ek.get_state() == CONTROL_MASK => {
+                ui.xicore.move_to_beginning_of_document(&view_id);
+            }
+            key::END if ek.get_state() == CONTROL_MASK => {
+                ui.xicore.move_to_end_of_document(&view_id);
+            }
+            key::HOME if ek.get_state() == CONTROL_MASK | SHIFT_MASK => {
+                ui.xicore.move_to_beginning_of_document_and_modify_selection(&view_id);
+            }
+            key::END if ek.get_state() == CONTROL_MASK | SHIFT_MASK => {
+                ui.xicore.move_to_end_of_document_and_modify_selection(&view_id);
             }
             key::PGUP if ek.get_state().is_empty() => {
                 ui.xicore.page_up(&view_id);

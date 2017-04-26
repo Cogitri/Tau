@@ -4,7 +4,6 @@ extern crate gdk;
 extern crate gdk_sys;
 extern crate gtk;
 extern crate gio;
-#[macro_use]
 extern crate glib;
 extern crate gtk_sys;
 extern crate gio_sys;
@@ -15,7 +14,6 @@ extern crate serde;
 extern crate serde_derive;
 #[macro_use]
 extern crate serde_json;
-extern crate xi_core_lib;
 
 use std::cell::RefCell;
 use std::io::{BufRead, BufReader};
@@ -24,7 +22,6 @@ use std::rc::Rc;
 use std::thread;
 
 mod document;
-mod editview;
 mod error;
 mod key;
 mod linecache;
@@ -77,15 +74,6 @@ fn gxi_main() -> Result<(), GxiError> {
     let stdout = child.stdout.unwrap();
     let stderr = child.stderr.unwrap();
 
-    //let core_writer = Rc::new(RefCell::new(stdin));
-
-    // let builder = Builder::new_from_file("gxi.ui");
-    // let window: Window = builder.get_object("appwindow").unwrap();
-    // window.connect_delete_event(|_, _| {
-    //     gtk::main_quit();
-    //     Inhibit(false)
-    // });
-    //let core_writer_clone = core_writer.clone();
     GLOBAL.with(move |global| *global.borrow_mut() = Some(Ui::new(stdin)));
     GLOBAL.with(|global| if let Some(ref mut ui) = *global.borrow_mut() {
         ui.borrow_mut().show_all();
@@ -135,10 +123,6 @@ fn core_read_stderr_thread(stdout: ChildStderr) {
 }
 
 fn core_read_thread(stdout: ChildStdout) {
-    //let xi_core = XiCore::new();
-    // let child = Command::new("xi-core").spawn()?;
-    // let mut stdin = child.stdin.unwrap();
-    // stdin.write(b"hi");
     let mut reader = BufReader::new(stdout);
     let mut line = String::new();
     loop {

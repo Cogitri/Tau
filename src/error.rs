@@ -43,11 +43,11 @@ impl Error for GxiError {
 
     fn cause(&self) -> Option<&Error> {
         match *self {
-            GxiError::Custom(ref msg) => None,
+            GxiError::Custom(_) => None,
             GxiError::Io(ref err) => Some(err),
             GxiError::SerdeJson(ref err) => Some(err),
-            GxiError::MalformedMethodParams(ref method, ref params) => None,
-            GxiError::UnknownMethod(ref method) => None,
+            GxiError::MalformedMethodParams(_, _) => None,
+            GxiError::UnknownMethod(_) => None,
         }
     }
 }
