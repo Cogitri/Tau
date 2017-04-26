@@ -69,7 +69,12 @@ fn gxi_main() -> Result<(), GxiError> {
     let child = Command::new("xi-core").stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
-        .spawn()?;
+        .spawn();
+    let child = match child {
+        Ok(child) => child,
+        Err(e) => return Err(GxiError::FailedToExec("xi-core".into(), e)),
+    };
+
     let stdin = child.stdin.unwrap();
     let stdout = child.stdout.unwrap();
     let stderr = child.stderr.unwrap();
@@ -153,11 +158,11 @@ fn main() {
     env_logger::init().unwrap();
 
     if gtk::init().is_err() {
-        println!("Failed to initialize GTK.");
+        error!("Failed to initialize GTK.");
         return;
     }
 
     if let Err(e) = gxi_main() {
-        println!("gxi_main Error: {:?}", e);
+        error!("{}", e);
     }
 }

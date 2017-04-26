@@ -11,6 +11,7 @@ pub enum GxiError {
     SerdeJson(serde_json::Error),
     MalformedMethodParams(String, serde_json::Value),
     UnknownMethod(String),
+    FailedToExec(String, io::Error),
 }
 
 impl fmt::Display for GxiError {
@@ -25,6 +26,9 @@ impl fmt::Display for GxiError {
             GxiError::UnknownMethod(ref method) => {
                 write!(f, "{}: {}", self.description(), method)
             }
+            GxiError::FailedToExec(ref program, ref err) => {
+                write!(f, "Failed to execute \"{}\": {}", program, err)
+            }
         }
     }
 }
@@ -35,9 +39,12 @@ impl Error for GxiError {
             GxiError::Custom(ref msg) => msg,
             GxiError::Io(ref err) => err.description(),
             GxiError::SerdeJson(ref err) => err.description(),
-            GxiError::MalformedMethodParams(ref method, ref params) =>
+            GxiError::MalformedMethodParams(_, _) =>
                 "Malformed method params",
-            GxiError::UnknownMethod(ref method) => "Unknown method",
+            GxiError::UnknownMethod(_) => "Unknown method",
+            GxiError::FailedToExec(_, _) => {
+                "Failed to execute program"
+            }
         }
     }
 
@@ -48,6 +55,7 @@ impl Error for GxiError {
             GxiError::SerdeJson(ref err) => Some(err),
             GxiError::MalformedMethodParams(_, _) => None,
             GxiError::UnknownMethod(_) => None,
+            GxiError::FailedToExec(_, ref err) => Some(err),
         }
     }
 }

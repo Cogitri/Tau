@@ -119,7 +119,7 @@ impl Document {
         let first_line = (vadj.get_value() / font_extents.height) as u64;
         let last_line = ((vadj.get_value() + da_height as f64) / font_extents.height) as u64 + 1;
 
-        //debug!("line_cache {} {} {}", self.line_cache.n_invalid_before, self.line_cache.lines.len(), self.line_cache.n_invalid_after);
+        debug!("line_cache {} {} {}", self.line_cache.n_invalid_before, self.line_cache.lines.len(), self.line_cache.n_invalid_after);
         let missing = self.line_cache.get_missing(first_line, last_line);
 
         // Draw background
