@@ -3,7 +3,15 @@ GTK frontend for the xi text editor, written in Rust.
 
 ## Instructions
 
-### Install xi-core
+### Installing dependencies on Debian/Ubuntu
+
+```sh
+sudo apt-get install libgtk-3-dev
+```
+
+### Installing xi-core
+
+xi-core must be executable from your `PATH`.
 
 ```sh
 git clone https://github.com/google/xi-editor.git
