@@ -1,6 +1,8 @@
 # gxi
 GTK frontend for the xi text editor, written in Rust.
 
+gxi is a work in progress!
+
 ## Instructions
 
 ### Installing dependencies on Debian/Ubuntu
