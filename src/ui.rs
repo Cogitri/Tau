@@ -8,7 +8,7 @@ use std::rc::Rc;
 use cairo::Context;
 
 use gdk::{CONTROL_MASK, Cursor, DisplayManager, EventButton, EventMotion, EventKey, EventType,
-    ModifierType, SHIFT_MASK};
+    MOD1_MASK, ModifierType, SHIFT_MASK};
 use gdk_sys::GdkCursorType;
 use gtk;
 use gtk::prelude::*;
@@ -194,9 +194,6 @@ impl XiCore {
     }
     fn select_all(&mut self, view_id: &str) {
         self.edit("select_all", view_id, json!([]));
-    }
-    fn transpose(&mut self, view_id: &str) {
-        self.edit("transpose", view_id, json!([]));
     }
     fn undo(&mut self, view_id: &str) {
         self.edit("undo", view_id, json!([]));
@@ -480,6 +477,7 @@ fn convert_gtk_modifier(mt: ModifierType) -> u32 {
     let mut ret = 0;
     if mt.contains(SHIFT_MASK) { ret |= XI_SHIFT_KEY_MASK; }
     if mt.contains(CONTROL_MASK) { ret |= XI_CONTROL_KEY_MASK; }
+    if mt.contains(MOD1_MASK) { ret |= XI_ALT_KEY_MASK; }    
     ret
 }
 
