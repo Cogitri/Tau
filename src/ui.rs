@@ -55,7 +55,6 @@ pub struct Ui {
     window: Window,
     new_button: Button,
     notebook: Notebook,
-    open_file_chooser: FileChooserDialog,
     view_to_idx: HashMap<String, u32>,
     idx_to_view: HashMap<u32, String>,
     da_to_view: HashMap<Layout, String>,
@@ -217,7 +216,6 @@ impl Ui {
         let new_button: Button = builder.get_object("new_button").unwrap();
         let open_button: Button = builder.get_object("open_button").unwrap();
         let save_button: Button = builder.get_object("save_button").unwrap();
-        let open_file_chooser: FileChooserDialog = builder.get_object("open_file_chooser").unwrap();
         let xi_core = XiCore{
             rpc_index: 0,
             core_stdin: core_stdin,
@@ -229,7 +227,6 @@ impl Ui {
             window: window.clone(),
             new_button: new_button.clone(),
             notebook: notebook.clone(),
-            open_file_chooser: open_file_chooser.clone(),
             view_to_idx: HashMap::new(),
             idx_to_view: HashMap::new(),
             da_to_view: HashMap::new(),
