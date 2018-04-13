@@ -1,5 +1,5 @@
 # gxi
-GTK frontend for the xi text editor, written in Rust.
+GTK frontend for the [xi editor](https://github.com/google/xi-editor), written in Rust.
 
 gxi is a work in progress!
 
