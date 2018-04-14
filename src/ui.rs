@@ -7,8 +7,8 @@ use std::rc::Rc;
 
 use cairo::Context;
 
-use gdk::{CONTROL_MASK, Cursor, DisplayManager, EventButton, EventMotion, EventKey, EventType,
-    MOD1_MASK, ModifierType, SHIFT_MASK};
+use gdk::{Cursor, CursorType, DisplayManager, DisplayManagerExt, EventButton,
+    EventMotion, EventKey, EventMask, EventType, ModifierType, WindowExt};
 use gdk_sys::GdkCursorType;
 use gtk;
 use gtk::prelude::*;
@@ -81,6 +81,16 @@ impl XiCore {
             "params": params,
         });
         self.send(&message);
+    }
+
+    fn client_started(&mut self) {
+        self.notify("client_started", json!({}));
+    }
+
+    fn set_theme(&mut self, theme_name: &str) {
+        self.notify("set_theme", json!({
+            "theme_name": theme_name,
+        }));
     }
 
     fn edit(&mut self, method: &str, view_id: &str, params: Value) {
@@ -179,11 +189,11 @@ impl XiCore {
     fn move_to_end_of_document_and_modify_selection(&mut self, view_id: &str) {
         self.edit("move_to_end_of_document_and_modify_selection", view_id, json!([]));
     }
-    fn page_up(&mut self, view_id: &str) {
-        self.edit("page_up", view_id, json!([]));
+    fn scroll_page_up(&mut self, view_id: &str) {
+        self.edit("scroll_page_up", view_id, json!([]));
     }
-    fn page_down(&mut self, view_id: &str) {
-        self.edit("page_down", view_id, json!([]));
+    fn scroll_page_down(&mut self, view_id: &str) {
+        self.edit("scroll_page_down", view_id, json!([]));
     }
     fn page_up_and_modify_selection(&mut self, view_id: &str) {
         self.edit("page_up_and_modify_selection", view_id, json!([]));
@@ -203,9 +213,6 @@ impl XiCore {
     fn cut(&mut self, view_id: &str) {
         self.edit("cut", view_id, json!([]));
     }
-    fn copy(&mut self, view_id: &str) {
-        self.edit("copy", view_id, json!([]));
-    }
 }
 
 impl Ui {
@@ -216,11 +223,14 @@ impl Ui {
         let new_button: Button = builder.get_object("new_button").unwrap();
         let open_button: Button = builder.get_object("open_button").unwrap();
         let save_button: Button = builder.get_object("save_button").unwrap();
-        let xi_core = XiCore{
+        let mut xi_core = XiCore{
             rpc_index: 0,
             core_stdin: core_stdin,
             pending: HashMap::new(),
         };
+
+        xi_core.client_started();
+        xi_core.set_theme("InspiredGitHub");
 
         let ui = Rc::new(RefCell::new(Ui {
             xicore: xi_core,
@@ -395,7 +405,7 @@ impl Ui {
         //let ui = self.clone();
         debug!("events={:?}", drawing_area.get_events());
         //drawing_area.set_events(EventMask::all().bits() as i32);
-        drawing_area.set_events(::gdk::BUTTON_PRESS_MASK.bits() as i32 | ::gdk::BUTTON_MOTION_MASK.bits() as i32);
+        drawing_area.set_events(EventMask::BUTTON_PRESS_MASK.bits() as i32 | EventMask::BUTTON_MOTION_MASK.bits() as i32);
         debug!("events={:?}", drawing_area.get_events());
         drawing_area.set_can_focus(true);
         drawing_area.connect_button_press_event(handle_button_press);
@@ -414,7 +424,7 @@ impl Ui {
             // Set the text cursor
             DisplayManager::get().get_default_display()
                 .map(|disp| {
-                    let cur = Cursor::new_for_display(&disp, GdkCursorType::Xterm);
+                    let cur = Cursor::new_for_display(&disp, CursorType::Xterm);
                     w.get_window().map(|win| win.set_cursor(&cur));
             });
             w.grab_focus();
@@ -472,9 +482,9 @@ const XI_ALT_KEY_MASK:u32 = 1 << 3;
 
 fn convert_gtk_modifier(mt: ModifierType) -> u32 {
     let mut ret = 0;
-    if mt.contains(SHIFT_MASK) { ret |= XI_SHIFT_KEY_MASK; }
-    if mt.contains(CONTROL_MASK) { ret |= XI_CONTROL_KEY_MASK; }
-    if mt.contains(MOD1_MASK) { ret |= XI_ALT_KEY_MASK; }    
+    if mt.contains(ModifierType::SHIFT_MASK) { ret |= XI_SHIFT_KEY_MASK; }
+    if mt.contains(ModifierType::CONTROL_MASK) { ret |= XI_CONTROL_KEY_MASK; }
+    if mt.contains(ModifierType::MOD1_MASK) { ret |= XI_ALT_KEY_MASK; }    
     ret
 }
 
@@ -657,106 +667,112 @@ fn handle_key_press_event(w: &Layout, ek: &EventKey) -> Inhibit {
         let view_id = ui.da_to_view.get(&w.clone()).unwrap().clone();
         let ch = ::gdk::keyval_to_unicode(ek.get_keyval());
 
+        let alt = ek.get_state().contains(ModifierType::MOD1_MASK);
+        let ctrl = ek.get_state().contains(ModifierType::CONTROL_MASK);
+        let meta = ek.get_state().contains(ModifierType::META_MASK);
+        let shift = ek.get_state().contains(ModifierType::SHIFT_MASK);
+        let norm = !alt && !ctrl && !meta;
+
         match ek.get_keyval() {
-            key::DEL if ek.get_state().is_empty() => ui.xicore.delete_forward(&view_id),
-            key::BACKSPACE if ek.get_state().is_empty() => ui.xicore.delete_backward(&view_id),
-            key::ENTER | key::ENTER_PAD if ek.get_state().is_empty() => {
+            key::DEL if norm => ui.xicore.delete_forward(&view_id),
+            key::BACKSPACE if norm => ui.xicore.delete_backward(&view_id),
+            key::ENTER | key::ENTER_PAD if norm => {
                 ui.xicore.insert_newline(&view_id);
             },
-            key::TAB if ek.get_state().is_empty() => ui.xicore.insert_tab(&view_id),
-            key::ARROW_UP if ek.get_state().is_empty() => ui.xicore.move_up(&view_id),
-            key::ARROW_DOWN if ek.get_state().is_empty() => ui.xicore.move_down(&view_id),
-            key::ARROW_LEFT if ek.get_state().is_empty() => ui.xicore.move_left(&view_id),
-            key::ARROW_RIGHT if ek.get_state().is_empty() => ui.xicore.move_right(&view_id),
-            key::ARROW_UP if ek.get_state() == SHIFT_MASK => {
+            key::TAB if norm && !shift => ui.xicore.insert_tab(&view_id),
+            key::ARROW_UP if norm && !shift  => ui.xicore.move_up(&view_id),
+            key::ARROW_DOWN if norm && !shift  => ui.xicore.move_down(&view_id),
+            key::ARROW_LEFT if norm && !shift => ui.xicore.move_left(&view_id),
+            key::ARROW_RIGHT if norm && !shift  => ui.xicore.move_right(&view_id),
+            key::ARROW_UP if norm && shift => {
                 ui.xicore.move_up_and_modify_selection(&view_id);
             },
-            key::ARROW_DOWN if ek.get_state() == SHIFT_MASK => {
+            key::ARROW_DOWN if norm && shift => {
                 ui.xicore.move_down_and_modify_selection(&view_id);
             },
-            key::ARROW_LEFT if ek.get_state() == SHIFT_MASK => {
+            key::ARROW_LEFT if norm && shift => {
                 ui.xicore.move_left_and_modify_selection(&view_id);
             },
-            key::ARROW_RIGHT if ek.get_state() == SHIFT_MASK => {
+            key::ARROW_RIGHT if norm && shift => {
                 ui.xicore.move_right_and_modify_selection(&view_id);
             },
-            key::ARROW_LEFT if ek.get_state() == CONTROL_MASK => {
+            key::ARROW_LEFT if ctrl => {
                 ui.xicore.move_word_left(&view_id);
             },
-            key::ARROW_RIGHT if ek.get_state() == CONTROL_MASK => {
+            key::ARROW_RIGHT if ctrl => {
                 ui.xicore.move_word_right(&view_id);
             },
-            key::ARROW_LEFT if ek.get_state() == CONTROL_MASK | SHIFT_MASK => {
+            key::ARROW_LEFT if ctrl && shift => {
                 ui.xicore.move_word_left_and_modify_selection(&view_id);
             },
-            key::ARROW_RIGHT if ek.get_state() == CONTROL_MASK | SHIFT_MASK => {
+            key::ARROW_RIGHT if ctrl && shift => {
                 ui.xicore.move_word_right_and_modify_selection(&view_id);
             },
-            key::HOME if ek.get_state().is_empty() => {
+            key::HOME if norm && !shift => {
                 ui.xicore.move_to_left_end_of_line(&view_id);
             }
-            key::END if ek.get_state().is_empty() => {
+            key::END if norm && !shift => {
                 ui.xicore.move_to_right_end_of_line(&view_id);
             }
-            key::HOME if ek.get_state() == SHIFT_MASK => {
+            key::HOME if norm && shift => {
                 ui.xicore.move_to_left_end_of_line_and_modify_selection(&view_id);
             }
-            key::END if ek.get_state() == SHIFT_MASK => {
+            key::END if norm && shift => {
                 ui.xicore.move_to_right_end_of_line_and_modify_selection(&view_id);
             }
-            key::HOME if ek.get_state() == CONTROL_MASK => {
+            key::HOME if ctrl => {
                 ui.xicore.move_to_beginning_of_document(&view_id);
             }
-            key::END if ek.get_state() == CONTROL_MASK => {
+            key::END if ctrl => {
                 ui.xicore.move_to_end_of_document(&view_id);
             }
-            key::HOME if ek.get_state() == CONTROL_MASK | SHIFT_MASK => {
+            key::HOME if ctrl && shift => {
                 ui.xicore.move_to_beginning_of_document_and_modify_selection(&view_id);
             }
-            key::END if ek.get_state() == CONTROL_MASK | SHIFT_MASK => {
+            key::END if ctrl && shift => {
                 ui.xicore.move_to_end_of_document_and_modify_selection(&view_id);
             }
-            key::PGUP if ek.get_state().is_empty() => {
-                ui.xicore.page_up(&view_id);
+            key::PGUP if norm && !shift => {
+                ui.xicore.scroll_page_up(&view_id);
             }
-            key::PGDN if ek.get_state().is_empty() => {
-                ui.xicore.page_down(&view_id);
+            key::PGDN if norm && !shift => {
+                ui.xicore.scroll_page_down(&view_id);
             }
-            key::PGUP if ek.get_state() == SHIFT_MASK => {
+            key::PGUP if norm && shift => {
                 ui.xicore.page_up_and_modify_selection(&view_id);
             }
-            key::PGDN if ek.get_state() == SHIFT_MASK => {
+            key::PGDN if norm && shift => {
                 ui.xicore.page_down_and_modify_selection(&view_id);
             }
             _ => {
                 if let Some(ch) = ch {
                     match ch {
-                        'a' if ek.get_state() == CONTROL_MASK => {
+                        'a' if ctrl => {
                             ui.xicore.select_all(&view_id);
                         },
-                        'c' if ek.get_state() == CONTROL_MASK => {
-                            ui.xicore.copy(&view_id);
-                        },
-                        't' if ek.get_state() == CONTROL_MASK => {
+                        't' if ctrl => {
                             ui.request_new_view();
                         },
-                        'x' if ek.get_state() == CONTROL_MASK => {
+                        'x' if ctrl => {
                             ui.xicore.cut(&view_id);
                         },
-                        'z' if ek.get_state() == CONTROL_MASK => {
+                        'z' if ctrl => {
                             ui.xicore.undo(&view_id);
                         },
-                        'Z' if ek.get_state() == CONTROL_MASK | SHIFT_MASK => {
+                        'Z' if ctrl && shift => {
                             ui.xicore.redo(&view_id);
                         },
-                        c if (ek.get_state().is_empty() || ek.get_state() == SHIFT_MASK)
+                        c if (norm)
                             && c >= '\u{0020}' => {
+                            debug!("inserting key");
                             ui.xicore.notify("edit", json!({"method": "insert",
                                 "view_id": view_id,
                                 "params": {"chars":c},
                             }));
                         }
-                        _ => {},
+                        _ => {
+                            debug!("unhandled key: {:?}", ch);
+                        },
                     }
                 }
             },

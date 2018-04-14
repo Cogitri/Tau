@@ -79,15 +79,14 @@ fn gxi_main() -> Result<(), GxiError> {
     let stdout = child.stdout.unwrap();
     let stderr = child.stderr.unwrap();
 
+    thread::spawn(move || { core_read_thread(stdout); });
+    thread::spawn(move || { core_read_stderr_thread(stderr); });
+
     GLOBAL.with(move |global| *global.borrow_mut() = Some(Ui::new(stdin)));
     GLOBAL.with(|global| if let Some(ref mut ui) = *global.borrow_mut() {
         ui.borrow_mut().show_all();
         ui.borrow_mut().request_new_view();
     });
-
-
-    thread::spawn(move || { core_read_thread(stdout); });
-    thread::spawn(move || { core_read_stderr_thread(stderr); });
 
     gtk::main();
 
@@ -155,7 +154,7 @@ fn core_read_thread(stdout: ChildStdout) {
 }
 
 fn main() {
-    env_logger::init().unwrap();
+    env_logger::init();
 
     if gtk::init().is_err() {
         error!("Failed to initialize GTK.");
