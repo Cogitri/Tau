@@ -11,14 +11,10 @@ gxi is a work in progress!
 sudo apt-get install libgtk-3-dev
 ```
 
-### Installing xi-core
-
-xi-core must be executable from your `PATH`.
+### Installing dependencies on Redhat
 
 ```sh
-git clone https://github.com/google/xi-editor.git
-cd xi-editor/rust
-cargo install
+sudo yum install gtk3-devel
 ```
 
 ### Running gxi
