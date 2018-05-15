@@ -1,167 +1,148 @@
 extern crate cairo;
 extern crate env_logger;
 extern crate gdk;
-extern crate gdk_sys;
-extern crate gtk;
 extern crate gio;
 extern crate glib;
-extern crate gtk_sys;
-extern crate gio_sys;
-#[macro_use]
-extern crate log;
-extern crate serde;
-#[macro_use]
-extern crate serde_derive;
-#[macro_use]
-extern crate serde_json;
+extern crate glib_sys;
+extern crate gtk;
+extern crate libc;
+#[macro_use] extern crate log;
+extern crate mio;
+#[macro_use] extern crate serde_json;
+extern crate syntect;
+extern crate xi_core_lib;
+extern crate xi_rpc;
 
-use std::cell::RefCell;
-use std::io::{BufRead, BufReader};
-use std::process::{ChildStdout, ChildStderr, Command, Stdio};
-use std::rc::Rc;
-use std::thread;
+#[macro_use] mod macros;
 
-mod document;
-mod error;
-mod key;
+mod rpc;
+mod edit_view;
 mod linecache;
-mod request;
-mod structs;
-mod ui;
-mod util;
+mod main_win;
+mod source;
+mod xi_thread;
 
-use error::GxiError;
-use ui::Ui;
+use gio::{
+    ApplicationExt,
+    ApplicationExtManual,
+};
+use glib::MainContext;
 
-macro_rules! clone {
-    (@param _) => ( _ );
-    (@param $x:ident) => ( $x );
-    ($($n:ident),+ => move || $body:expr) => (
-        {
-            $( let $n = $n.clone(); )+
-                move || $body
-        }
-    );
-    ($($n:ident),+ => move |$($p:tt),+| $body:expr) => (
-        {
-            $( let $n = $n.clone(); )+
-                move |$(clone!(@param $p),)+| $body
-        }
-    );
+use main_win::MainWin;
+use mio::unix::{PipeReader, PipeWriter, pipe};
+use mio::TryRead;
+use serde_json::Value;
+use source::{SourceFuncs, new_source};
+use std::any::Any;
+use std::cell::RefCell;
+use std::collections::VecDeque;
+use std::io::Write;
+use std::os::unix::io::AsRawFd;
+use std::rc::Rc;
+use std::sync::{Arc, Mutex};
+
+
+#[derive(Clone, Debug)]
+pub enum CoreMsg {
+    Notification{method: String, params: Value},
+    NewViewReply{file_name: Option<String>, value: Value},
 }
 
-// declare a new thread local storage key
-thread_local!(
-    static GLOBAL: RefCell<Option<Rc<RefCell<Ui>>>> = RefCell::new(None)
-);
-
-fn receive_json(line: &str) -> glib::Continue {
-    GLOBAL.with(|global| if let Some(ref mut ui) = *global.borrow_mut() {
-        if let Err(e) = ui.borrow_mut().handle_line(line) {
-            error!("Failed to handle xi-core line {}: {}", line, e);
-        }
-    });
-    glib::Continue(false)
+pub struct SharedQueue {
+    queue: VecDeque<CoreMsg>,
+    pipe_writer: PipeWriter,
+    pipe_reader: PipeReader,
 }
 
-fn gxi_main() -> Result<(), GxiError> {
-
-    let child = Command::new("xi-core").stdin(Stdio::piped())
-        .stdout(Stdio::piped())
-        .stderr(Stdio::piped())
-        .spawn();
-    let child = match child {
-        Ok(child) => child,
-        Err(e) => return Err(GxiError::FailedToExec("xi-core".into(), e)),
-    };
-
-    let stdin = child.stdin.unwrap();
-    let stdout = child.stdout.unwrap();
-    let stderr = child.stderr.unwrap();
-
-    thread::spawn(move || { core_read_thread(stdout); });
-    thread::spawn(move || { core_read_stderr_thread(stderr); });
-
-    GLOBAL.with(move |global| *global.borrow_mut() = Some(Ui::new(stdin)));
-    GLOBAL.with(|global| if let Some(ref mut ui) = *global.borrow_mut() {
-        ui.borrow_mut().show_all();
-        ui.borrow_mut().request_new_view();
-    });
-
-    gtk::main();
-
-    Ok(())
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-struct JsonRpcResult {
-    id: u64,
-    result: String,
-}
-
-fn core_read_stderr_thread(stdout: ChildStderr) {
-    let mut reader = BufReader::new(stdout);
-    let mut line = String::new();
-    loop {
-        line.clear();
-        match reader.read_line(&mut line) {
-            Ok(n) => {
-                if n == 0 {
-                    debug!("xi-core stderr finished");
-                    break;
-                }
-            }
-            Err(e) => {
-                error!("Failed to read line: {}", e);
-                break;
-            }
+impl SharedQueue {
+    pub fn add_core_msg(&mut self, msg: CoreMsg)
+    {
+        if self.queue.is_empty() {
+            self.pipe_writer.write(&[0u8])
+                .expect("failed to write to signalling pipe");
         }
-        error!("xi-core: {}", line);
-
-        // Tell the main thread to process our new line
-        {
-            let line_clone = line.clone();
-            glib::idle_add(move || receive_json(&line_clone));
-        }
+        trace!("pushing to queue");
+        self.queue.push_back(msg);
     }
 }
 
-fn core_read_thread(stdout: ChildStdout) {
-    let mut reader = BufReader::new(stdout);
-    let mut line = String::new();
-    loop {
-        line.clear();
-        match reader.read_line(&mut line) {
-            Ok(n) => {
-                if n == 0 {
-                    debug!("xi-core finished");
-                    break;
-                }
-            }
-            Err(e) => {
-                println!("Failed to read line: {}", e);
-                break;
-            }
-        }
+trait IdleCallback: Send {
+    fn call(self: Box<Self>, a: &Any);
+}
 
-        // Tell the main thread to process our new line
-        {
-            let line_clone = line.clone();
-            glib::idle_add(move || receive_json(&line_clone));
-        }
+impl<F: FnOnce(&Any) + Send> IdleCallback for F {
+    fn call(self: Box<F>, a: &Any) {
+        (*self)(a)
+    }
+}
+
+struct QueueSource {
+    win: Rc<RefCell<MainWin>>,
+    queue: Arc<Mutex<SharedQueue>>,
+}
+
+impl SourceFuncs for QueueSource {
+    fn check(&self) -> bool {
+        false
     }
 
+    fn prepare(&self) -> (bool, Option<u32>) {
+        (false, None)
+    }
+
+    fn dispatch(&self) -> bool {
+        trace!("dispatch");
+        let mut shared_queue = self.queue.lock().unwrap();
+        while let Some(msg) = shared_queue.queue.pop_front() {
+            trace!("found a msg");
+            self.win.borrow_mut().handle_msg(msg);
+        }
+        let mut buf = [0u8; 64];
+        shared_queue.pipe_reader.try_read(&mut buf)
+            .expect("failed to read signalling pipe");
+        true
+    }
 }
 
 fn main() {
     env_logger::init();
+    let queue: VecDeque<CoreMsg> = Default::default();
+    let (reader, writer) = pipe().unwrap();
+    let reader_raw_fd = reader.as_raw_fd();
 
-    if gtk::init().is_err() {
-        error!("Failed to initialize GTK.");
-        return;
-    }
+    let shared_queue = Arc::new(Mutex::new(SharedQueue{
+        queue: queue.clone(),
+        pipe_writer: writer,
+        pipe_reader: reader,
+    }));
 
-    if let Err(e) = gxi_main() {
-        error!("{}", e);
-    }
+    let application = MainWin::new_application();
+
+    application.connect_startup(move |_|{
+        debug!("startup");
+    });
+
+    application.connect_activate(move |application| {
+        debug!("activate");
+        let main_win = MainWin::new(application, shared_queue.clone());
+
+        let source = new_source(QueueSource {
+            win: main_win.clone(),
+            queue: shared_queue.clone(),
+        });
+        unsafe {
+            use glib::translate::ToGlibPtr;
+            ::glib_sys::g_source_add_unix_fd(source.to_glib_none().0, reader_raw_fd, ::glib_sys::GIOCondition::IN);
+        }
+        let main_context = MainContext::default().expect("no main context");
+        source.attach(&main_context);
+    });
+    application.connect_open(move |_,files,s| {
+        debug!("open {:?} {}", files, s);
+    });
+    application.connect_shutdown(move |_| {
+        debug!("shutdown");
+    });
+
+    application.run(&Vec::new());
 }

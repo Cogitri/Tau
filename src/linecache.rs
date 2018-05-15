@@ -1,175 +1,136 @@
-use std::collections::HashMap;
-use std::cmp::min;
+// Copyright 2017 Google Inc. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
-use error::*;
-use structs::*;
+//! The line cache (text, styles and cursors for a view).
 
-#[derive(Debug, Clone)]
+use std::mem;
+
+use serde_json::Value;
+
+#[derive(Copy, Clone, Debug)]
+pub struct StyleSpan {
+    pub start: usize,
+    pub len: usize,
+    pub style_id: u32,
+}
+
+#[derive(Clone, Debug)]
 pub struct Line {
-    pub cursor: Vec<usize>,
-    pub text: String,
-    pub styles: Vec<usize>,
+    text: String,
+    cursor: Vec<usize>,
+    pub styles: Vec<StyleSpan>,
+}
+
+impl Line {
+    pub fn from_json(v: &Value) -> Line {
+        let text = v["text"].as_str().unwrap().to_owned();
+        let mut cursor = Vec::new();
+        if let Some(arr) = v["cursor"].as_array() {
+            for c in arr {
+                cursor.push(c.as_u64().unwrap() as usize);
+            }
+        }
+        let mut styles = Vec::new();
+        if let Some(arr) = v["styles"].as_array() {
+            
+            // Convert style triples into a `Vec` of `StyleSpan`s
+            let mut i = 0;
+            let mut style_span = StyleSpan {start: 0, len:0, style_id:0};
+            for c in arr {
+                if i == 3 {
+                    i=0;
+                    styles.push(style_span);
+                }
+                match i {
+                    0 => style_span.start = c.as_u64().unwrap() as usize,
+                    1 => style_span.len = c.as_u64().unwrap() as usize,
+                    2 => style_span.style_id = c.as_u64().unwrap() as u32,
+                    _ => unreachable!(),
+                };
+                i+=1;
+            }
+            if i == 3 {
+                styles.push(style_span);
+            }
+        }
+        Line { text, cursor, styles }
+    }
+
+    pub fn text(&self) -> &str {
+        &self.text
+    }
+
+    pub fn cursor(&self) -> &[usize] {
+        &self.cursor
+    }
 }
 
 #[derive(Debug)]
 pub struct LineCache {
-    map: HashMap<u64, Line>,
-    pub n_invalid_before: u64,
-    pub lines: Vec<Option<Line>>,
-    pub n_invalid_after: u64,
+    lines: Vec<Option<Line>>
 }
 
 impl LineCache {
     pub fn new() -> LineCache {
         LineCache {
-            map: HashMap::new(),
-            n_invalid_before: 0,
             lines: Vec::new(),
-            n_invalid_after: 0,
         }
     }
-    pub fn height(&self) -> u64 {
-        self.n_invalid_before + self.lines.len() as u64 + self.n_invalid_after
-    }
-    pub fn width(&self) -> usize {
-        self.lines.iter().map(|l| {
-            match *l {
-                None => 0,
-                Some(ref l) => l.text.len(),
-            }
-        }).max().unwrap_or(0)
-    }
-    pub fn get(&self, n: u64) -> Option<&Line> {
-        if n < self.n_invalid_before
-            || n > self.n_invalid_before + self.lines.len() as u64 {
-                return None;
-        }
-        let ix = (n - self.n_invalid_before) as usize;
-        if let Some(&Some(ref line)) = self.lines.get(ix) {
-            Some(line)
-        } else {
-            None
-        }
-    }
-    pub fn get_missing(&self, first: u64, last: u64) -> Vec<(u64, u64)> {
-        let mut ret = Vec::new();
-        let last = min(last, self.height());
-        assert!(first < last);
 
-        let mut run = None;
-        for ix in first..last {
-            if ix < self.n_invalid_before
-                || ix >= self.n_invalid_before + self.lines.len() as u64
-                || self.lines[(ix - self.n_invalid_before) as usize].is_none() {
+    fn push_opt_line(&mut self, line: Option<Line>) {
+        self.lines.push(line);
+    }
 
-                match run {
-                    None => {run = Some((ix, ix+1));}
-                    Some((f,l)) if l == ix => {run = Some((f, ix + 1));}
-                    Some((f,l)) => {
-                        ret.push((f,l));
-                        run = Some((ix, ix + 1));
-                    }
+    pub fn apply_update(&mut self, update: &Value) {
+        debug!("applying update: {:?}", update);
+        let old_cache = mem::replace(self, LineCache::new());
+        let mut old_iter = old_cache.lines.into_iter();
+        for op in update["ops"].as_array().unwrap() {
+            let op_type = &op["op"];
+            if op_type == "ins" {
+                for line in op["lines"].as_array().unwrap() {
+                    let line = Line::from_json(line);
+                    self.push_opt_line(Some(line));
+                }
+            } else if op_type == "copy" {
+                let n = op["n"].as_u64().unwrap();
+                for _ in 0..n {
+                    self.push_opt_line(old_iter.next().unwrap_or_default());
+                }
+            } else if op_type == "skip" {
+                let n = op["n"].as_u64().unwrap();
+                for _ in 0..n {
+                    let _ = old_iter.next();
+                }
+            } else if op_type == "invalidate" {
+                let n = op["n"].as_u64().unwrap();
+                for _ in 0..n {
+                    self.push_opt_line(None);
                 }
             }
         }
-        if let Some((f,l)) = run {
-            ret.push((f,l));
-        }
-        ret
     }
-    pub fn handle_update(&mut self, ops: &[UpdateOp]) -> Result<(), GxiError> {
-        let mut new_invalid_before = 0;
-        let mut new_lines: Vec<Option<Line>> = Vec::new();
-        let mut new_invalid_after = 0;
 
-        let mut old_ix = 0u64;
+    pub fn height(&self) -> usize {
+        self.lines.len()
+    }
 
-        for op in ops {
-            let op_type = &op.op;
-            //debug!("lc before {}-- {} {:?} {}", op_type, new_invalid_before, new_lines, new_invalid_after);
-            let n = op.n;
-            match op_type.as_ref() {
-                "invalidate" => {
-                    if new_lines.is_empty() {
-                        new_invalid_before += n;
-                    } else {
-                        new_invalid_after += n;
-                    }
-                },
-                "ins" => {
-                    debug!("ins n={}", n);
-                    for _ in 0..new_invalid_after {
-                        new_lines.push(None);
-                    }
-                    new_invalid_after = 0;
-                    //let json_lines = op.lines.unwrap_or_else(Vec::new);
-                    for json_line in op.lines.iter().flat_map(|l| l.iter()) {
-                        new_lines.push(Some(Line{
-                            cursor: json_line.cursor.clone().unwrap_or_else(Vec::new),
-                            text: json_line.text.clone(),
-                            styles: json_line.styles.clone().unwrap_or_else(Vec::new),
-                        }));
-                    }
-                },
-                "copy" | "update" => {
-                    let mut n_remaining = n;
-                    if old_ix < self.n_invalid_before {
-                        let n_invalid = min(n, self.n_invalid_before - old_ix);
-                        if new_lines.is_empty() {
-                            new_invalid_before += n_invalid;
-                        } else {
-                            new_invalid_after += n_invalid;
-                        }
-                        old_ix += n_invalid;
-                        n_remaining -= n_invalid;
-                    }
-                    if n_remaining > 0 && old_ix < self.n_invalid_before + self.lines.len() as u64 {
-                        let n_copy = min(n_remaining, self.n_invalid_before + self.lines.len() as u64 - old_ix);
-                        let start_ix = old_ix - self.n_invalid_before;
-                        if op_type == "copy" {
-                            new_lines.extend_from_slice(&self.lines[start_ix as usize .. (start_ix + n_copy) as usize]);
-                        } else if let Some(ref json_lines) = op.lines {
-                            //let json_lines = op.lines.unwrap_or_else(Vec::new);
-                            let mut json_ix = n - n_remaining;
-                            for ix in start_ix .. start_ix + n_copy {
-                                if let Some(&Some(ref json_line)) = self.lines.get(ix as usize) {
-                                    let mut new_line = json_line.clone();
-                                    if let Some(json_line) = json_lines.get(json_ix as usize) {
-                                        new_line.text = json_line.text.clone();
-                                        if let Some(ref cursor) = json_line.cursor {
-                                            new_line.cursor = cursor.clone();
-                                        }
-                                        if let Some(ref styles) = json_line.styles {
-                                            new_line.styles = styles.clone();
-                                        }
-                                    }
-                                    new_lines.push(Some(new_line));
-                                }
-                                json_ix += 1;
-                            }
-                        }
-                        old_ix += n_copy;
-                        n_remaining -= n_copy;
-                    }
-                    if new_lines.is_empty() {
-                        new_invalid_before += n_remaining;
-                    } else {
-                        new_invalid_after += n_remaining;
-                    }
-                    old_ix += n_remaining;
-                },
-                "skip" => {
-                    old_ix += n;
-                },
-                _ => {
-
-                },
-            }
+    pub fn get_line(&self, ix: usize) -> Option<&Line> {
+        if ix < self.lines.len() {
+            self.lines[ix].as_ref()
+        } else {
+            None
         }
-        self.n_invalid_before = new_invalid_before;
-        self.lines = new_lines;
-        self.n_invalid_after = new_invalid_after;
-        //debug!("lc after update {:?}", self);
-        Ok(())
     }
 }
