@@ -25,43 +25,14 @@ use std::cell::RefCell;
 use std::collections::{BTreeMap, HashMap};
 use std::rc::Rc;
 use std::sync::{Arc, Mutex};
-use syntect::highlighting::{Color, ThemeSettings, UnderlineOption};
+use theme::{Theme};
 use xi_thread;
 
-const DEFAULT_THEME: ThemeSettings = ThemeSettings {
-    foreground: Some(Color{r: 50, g: 50, b: 50, a: 255}),
-    background: Some(Color::WHITE),
-    caret: Some(Color{r: 50, g: 50, b: 50, a: 255}),
-    line_highlight: Some(Color::BLACK),
-    misspelling: Some(Color::BLACK),
-    minimap_border: Some(Color::BLACK),
-    accent: Some(Color::BLACK),
-    popup_css: None,
-    phantom_css: None,
-    bracket_contents_foreground: Some(Color::BLACK),
-    bracket_contents_options: Some(UnderlineOption::Underline),
-    brackets_foreground: Some(Color::BLACK),
-    brackets_background: None,
-    brackets_options: Some(UnderlineOption::Underline),
-    tags_foreground: Some(Color::BLACK),
-    tags_options: Some(UnderlineOption::Underline),
-    highlight: Some(Color::BLACK),
-    find_highlight: Some(Color::BLACK),
-    find_highlight_foreground: Some(Color{r: 50, g: 50, b: 50, a: 255}),
-    gutter: Some(Color::WHITE),
-    gutter_foreground: Some(Color{r: 179, g: 179, b: 179, a: 255}),
-    selection: Some(Color::BLACK),
-    selection_foreground: Some(Color::BLACK),
-    selection_background: None,
-    selection_border: Some(Color::WHITE),
-    inactive_selection: Some(Color::BLACK),
-    inactive_selection_foreground: Some(Color::BLACK),
-    guide: Some(Color::BLACK),
-    active_guide: Some(Color{r: 179, g: 179, b: 179, a: 255}),
-    stack_guide: Some(Color::BLACK),
-    highlight_foreground: Some(Color::BLACK),
-    shadow: None,
-};
+pub struct MainState {
+    pub themes: Vec<String>,
+    pub theme_name: String,
+    pub theme: Theme,
+}
 
 pub struct MainWin {
     core: Rc<RefCell<Core>>,
@@ -70,8 +41,7 @@ pub struct MainWin {
     notebook: Notebook,
     views: BTreeMap<String, Rc<RefCell<EditView>>>,
     w_to_view: HashMap<Widget, Rc<RefCell<EditView>>>,
-    themes: Vec<String>,
-    theme_settings: ThemeSettings,
+    state: Rc<RefCell<MainState>>,
 }
 
 impl MainWin {
@@ -105,8 +75,13 @@ impl MainWin {
             notebook: notebook.clone(),
             views: Default::default(),
             w_to_view: Default::default(),
-            themes: Default::default(),
-            theme_settings: DEFAULT_THEME,
+            state: Rc::new(RefCell::new(
+                MainState{
+                    themes: Default::default(),
+                    theme_name: "default".to_string(),
+                    theme: Default::default(),
+                }
+            ))
         }));
 
         window.set_application(application);
@@ -165,15 +140,16 @@ impl MainWin {
     }
     pub fn available_themes(&mut self, params: &Value) {
         debug!("available_themes {:?}", params);
-        self.themes.clear();
+        let mut state = self.state.borrow_mut();
+        state.themes.clear();
         if let Some(themes) = params["themes"].as_array() {
             for theme in themes {
                 if let Some(theme) = theme.as_str() {
-                    self.themes.push(theme.to_string());
+                    state.themes.push(theme.to_string());
                 }
             }
         }
-        if let Some(theme) = self.themes.first() {
+        if let Some(theme) = state.themes.first() {
             self.core.borrow().send_notification("set_theme", &json!({"theme_name": theme}));
         }
     }
@@ -301,7 +277,7 @@ impl MainWin {
 
     fn new_view_response(&mut self, file_name: Option<String>, value: Value) {
         if let Some(view_id) = value.as_str() {
-            let edit_view = EditView::new(self.core.clone(), file_name, view_id.to_string());
+            let edit_view = EditView::new(self.state.clone(), self.core.clone(), file_name, view_id.to_string());
             {
                 {
                     let ev = edit_view.borrow();

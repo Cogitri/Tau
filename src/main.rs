@@ -20,6 +20,7 @@ mod edit_view;
 mod linecache;
 mod main_win;
 mod source;
+mod theme;
 mod xi_thread;
 
 use gio::{

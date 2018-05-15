@@ -118,6 +118,7 @@ impl Core {
         self.send_edit_cmd(view_id, "request_lines", &json!([first_line, last_line]));
     }
 
+    /// Inserts the `chars` string at the current cursor location.
     pub fn insert(&self, view_id: &str, chars: &str) {
         self.send_edit_cmd(view_id, "insert", &json!({
             "chars": chars.to_string(),
@@ -203,18 +204,80 @@ impl Core {
         self.send_edit_cmd(view_id, "scroll_page_down", &json!({}))
     }
     pub fn page_up_and_modify_selection(&self, view_id: &str) {
-        self.send_edit_cmd(view_id, "scroll_page_up_and_modify_selection", &json!({}))
+        self.send_edit_cmd(view_id, "page_up_and_modify_selection", &json!({}))
     }
     pub fn page_down_and_modify_selection(&self, view_id: &str) {
-        self.send_edit_cmd(view_id, "scroll_page_down_and_modify_selection", &json!({}))
+        self.send_edit_cmd(view_id, "page_down_and_modify_selection", &json!({}))
     }
     pub fn select_all(&self, view_id: &str) {
         self.send_edit_cmd(view_id, "select_all", &json!({}))
     }
 
-    pub fn click(&self, view_id: &str, line: u64, col: u64, modifier: u32, button: u32) {
-        self.send_edit_cmd(view_id, "click", &json!([line, col, modifier, button]))
+    /// moves the cursor to a point
+    pub fn gesture_point_select(&self, view_id: &str, line: u64, col: u64) {
+        self.send_edit_cmd(view_id, "gesture", &json!({
+            "line": line,
+            "col": col,
+            "ty": "point_select",
+        }))
     }
+    /// adds or removes a selection at a point
+    pub fn gesture_toggle_sel(&self, view_id: &str, line: u64, col: u64) {
+        self.send_edit_cmd(view_id, "gesture", &json!({
+            "line": line,
+            "col": col,
+            "ty": "toggle_sel",
+        }))
+    }
+    /// modifies the selection to include a point (shift+click)
+    pub fn gesture_range_select(&self, view_id: &str, line: u64, col: u64) {
+        self.send_edit_cmd(view_id, "gesture", &json!({
+            "line": line,
+            "col": col,
+            "ty": "range_select",
+        }))
+    }
+    /// sets the selection to a given line
+    pub fn gesture_line_select(&self, view_id: &str, line: u64, col: u64) {
+        self.send_edit_cmd(view_id, "gesture", &json!({
+            "line": line,
+            "col": col,
+            "ty": "line_select",
+        }))
+    }
+    /// sets the selection to a given word (double click)
+    pub fn gesture_word_select(&self, view_id: &str, line: u64, col: u64) {
+        self.send_edit_cmd(view_id, "gesture", &json!({
+            "line": line,
+            "col": col,
+            "ty": "word_select",
+        }))
+    }
+    /// adds a line to the selection (triple click)
+    pub fn gesture_multi_line_select(&self, view_id: &str, line: u64, col: u64) {
+        self.send_edit_cmd(view_id, "gesture", &json!({
+            "line": line,
+            "col": col,
+            "ty": "multi_line_select",
+        }))
+    }
+    /// adds a word to the selection
+    pub fn gesture_multi_word_select(&self, view_id: &str, line: u64, col: u64) {
+        self.send_edit_cmd(view_id, "gesture", &json!({
+            "line": line,
+            "col": col,
+            "ty": "multi_word_select",
+        }))
+    }
+
+    /// Notifies the back-end of the visible scroll region, defined as the first and last
+    /// (non-inclusive) formatted lines. The visible scroll region is used to compute movement
+    /// distance for page up and page down commands, and also controls the size of the fragment
+    /// sent in the `update` method.
+    pub fn scroll(&self, view_id: &str, first: u64, last: u64) {
+        self.send_edit_cmd(view_id, "scroll", &json!([first, last]))
+    }
+
     pub fn drag(&self, view_id: &str, line: u64, col: u64, modifier: u32) {
         self.send_edit_cmd(view_id, "drag", &json!([line, col, modifier]))
     }

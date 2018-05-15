@@ -12,10 +12,13 @@ use std::cmp::min;
 use std::rc::Rc;
 use std::u32;
 
+use main_win::MainState;
 use linecache::LineCache;
+use theme::set_source_color;
 
 pub struct EditView {
     core: Rc<RefCell<Core>>,
+    main_state: Rc<RefCell<MainState>>,
     pub view_id: String,
     pub file_name: Option<String>,
     pub da: DrawingArea,
@@ -31,7 +34,7 @@ pub struct EditView {
 }
 
 impl EditView {
-    pub fn new(core: Rc<RefCell<Core>>, file_name: Option<String>, view_id: String) -> Rc<RefCell<EditView>> {
+    pub fn new(main_state: Rc<RefCell<MainState>>, core: Rc<RefCell<Core>>, file_name: Option<String>, view_id: String) -> Rc<RefCell<EditView>> {
         let da = DrawingArea::new();
         let hscrollbar = Scrollbar::new(Orientation::Horizontal, None);
         let vscrollbar = Scrollbar::new(Orientation::Vertical, None);
@@ -53,6 +56,7 @@ impl EditView {
 
         let edit_view = Rc::new(RefCell::new(EditView {
             core: core.clone(),
+            main_state: main_state.clone(),
             file_name,
             view_id: view_id.clone(),
             da: da.clone(),
@@ -104,6 +108,10 @@ impl EditView {
             edit_view.borrow_mut().da_size_allocate(alloc.width, alloc.height);
         }));
 
+        vscrollbar.connect_change_value(clone!(edit_view => move |_,_,value| {
+            edit_view.borrow_mut().vscrollbar_change_value(value)
+        }));
+
         edit_view
     }
 }
@@ -115,15 +123,6 @@ fn convert_gtk_modifier(mt: ModifierType) -> u32 {
     if mt.contains(ModifierType::CONTROL_MASK) { ret |= rpc::XI_CONTROL_KEY_MASK; }
     if mt.contains(ModifierType::MOD1_MASK) { ret |= rpc::XI_ALT_KEY_MASK; }    
     ret
-}
-
-fn convert_eb_to_xi_click(eb: &EventButton) -> u32 {
-    match eb.get_event_type() {
-        EventType::ButtonPress => 1,
-        EventType::DoubleButtonPress => 2,
-        EventType::TripleButtonPress => 3,
-        _ => 0,
-    }
 }
 
 impl EditView {
@@ -184,6 +183,19 @@ impl EditView {
         hadj.set_page_size(da_width as f64);
     }
 
+    fn vscrollbar_change_value(&mut self, value: f64) -> Inhibit {
+        debug!("scroll changed value {}", value);
+        let da_height = self.da.get_allocated_height();
+        let (_, first_line) = self.pos_to_cell(0.0, value);
+        let (_, last_line) = self.pos_to_cell(0.0, value + da_height as f64 + 1.0);
+        self.core.borrow().scroll(&self.view_id, first_line, last_line);
+
+        // TODO is this needed?  It prevents flashing if we request it early
+        self.core.borrow().request_lines(&self.view_id, first_line, last_line);
+
+        Inhibit(false)
+    }
+
     fn get_text_size(&self) -> (f64, f64) {
         let da_width = self.da.get_allocated_width() as f64;
         let da_height = self.da.get_allocated_height() as f64;
@@ -211,8 +223,8 @@ impl EditView {
     }
 
     pub fn handle_draw(&mut self, cr: &Context) -> Inhibit {
-
-        let sc = self.da.get_style_context().unwrap();
+        // let foreground = self.main_state.borrow().theme.foreground;
+        let theme = &self.main_state.borrow().theme;
 
         let da_width = self.da.get_allocated_width();
         let da_height = self.da.get_allocated_height();
@@ -243,7 +255,10 @@ impl EditView {
         // let missing = self.line_cache.get_missing(first_line, last_line);
 
         // Draw background
-        render_background(&sc, cr, 0.0, 0.0, da_width as f64, da_height  as f64);
+        set_source_color(cr, theme.background);
+        cr.rectangle(0.0, 0.0, da_width as f64, da_height as f64);
+        cr.fill();
+
 
         // Highlight cursor lines
         // for i in first_line..last_line {
@@ -263,10 +278,9 @@ impl EditView {
 
         // Draw styles
         for i in first_line..last_line {
-            cr.set_source_rgba(0.8, 0.8, 0.8, 1.0);
+            set_source_color(cr, theme.selection);
             if let Some(line) = self.line_cache.get_line(i) {
                 for style in &line.styles {
-                    cr.set_source_rgba(0.35, 0.35, 0.35, 1.0);
                     cr.rectangle(font_extents.max_x_advance* (style.start as f64) - hadj.get_value(),
                         font_extents.height*((i+1) as f64) - font_extents.ascent - vadj.get_value(),
                         font_extents.max_x_advance* (style.len as f64),
@@ -281,7 +295,7 @@ impl EditView {
 
         // Draw text
         for i in first_line..last_line {
-            cr.set_source_rgba(1.0, 1.0, 1.0, 1.0);
+            set_source_color(cr, theme.foreground);
             if let Some(line) = self.line_cache.get_line(i) {
                 cr.move_to(0.0 - hadj.get_value(),
                     font_extents.height*((i+1) as f64) - vadj.get_value()
@@ -353,10 +367,19 @@ impl EditView {
 
         let (x,y) = eb.get_position();
         let (col, line) = self.pos_to_cell(x, y);
-        self.core.borrow().click(&self.view_id, line, col,
-            convert_gtk_modifier(eb.get_state()),
-            convert_eb_to_xi_click(eb),
-        );
+        let core = self.core.borrow();
+
+        if eb.get_button() == 1 {
+            if eb.get_state().contains(ModifierType::SHIFT_MASK) {
+                core.gesture_range_select(&self.view_id, line, col);
+            } else if eb.get_event_type() == EventType::DoubleButtonPress {
+                core.gesture_word_select(&self.view_id, line, col);
+            } else if eb.get_event_type() == EventType::TripleButtonPress {
+                core.gesture_line_select(&self.view_id, line, col);
+            } else {
+                core.gesture_point_select(&self.view_id, line, col);
+            }
+        }
         Inhibit(false)
     }
 
@@ -424,10 +447,10 @@ impl EditView {
             key::Right if norm && shift => {
                 core.move_right_and_modify_selection(view_id);
             },
-            key::Left if ctrl => {
+            key::Left if ctrl && !shift => {
                 core.move_word_left(view_id);
             },
-            key::Right if ctrl => {
+            key::Right if ctrl && !shift => {
                 core.move_word_right(view_id);
             },
             key::Left if ctrl && shift => {
@@ -448,10 +471,10 @@ impl EditView {
             key::End if norm && shift => {
                 core.move_to_right_end_of_line_and_modify_selection(view_id);
             }
-            key::Home if ctrl => {
+            key::Home if ctrl && !shift => {
                 core.move_to_beginning_of_document(view_id);
             }
-            key::End if ctrl => {
+            key::End if ctrl && !shift => {
                 core.move_to_end_of_document(view_id);
             }
             key::Home if ctrl && shift => {
