@@ -9,6 +9,7 @@ extern crate libc;
 #[macro_use] extern crate log;
 extern crate mio;
 #[macro_use] extern crate serde_json;
+extern crate fontconfig;
 extern crate syntect;
 extern crate xi_core_lib;
 extern crate xi_rpc;

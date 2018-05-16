@@ -8,7 +8,7 @@ use gtk::{
 use rpc::{Core, self};
 use serde_json::Value;
 use std::cell::RefCell;
-use std::cmp::min;
+use std::cmp::{max, min};
 use std::rc::Rc;
 use std::u32;
 
@@ -112,6 +112,16 @@ impl EditView {
             edit_view.borrow_mut().vscrollbar_change_value(value)
         }));
 
+        use std::ffi::CString;
+        use fontconfig::fontconfig;
+        unsafe {
+            let ret = fontconfig::FcConfigAppFontAddDir(
+                fontconfig::FcConfigGetCurrent(),
+                CString::new("fonts").unwrap().as_ptr() as *const u8,
+            );
+            debug!("fc ret = {}", ret);
+        }
+
         edit_view
     }
 }
@@ -167,7 +177,8 @@ impl EditView {
         self.da.queue_draw();
     }
 
-    pub fn pos_to_cell(&self, x: f64, y: f64) -> (u64, u64) {
+    pub fn da_px_to_cell(&self, x: f64, y: f64) -> (u64, u64) {
+        // let first_line = (vadj.get_value() / font_extents.height) as usize;
         let x = x + self.hscrollbar.get_adjustment().get_value();
         let y = y + self.vscrollbar.get_adjustment().get_value();
 
@@ -181,19 +192,26 @@ impl EditView {
         vadj.set_page_size(da_height as f64);
         let hadj = self.hscrollbar.get_adjustment();
         hadj.set_page_size(da_width as f64);
+
+        self.update_visible_scroll_region();
     }
 
     fn vscrollbar_change_value(&mut self, value: f64) -> Inhibit {
         debug!("scroll changed value {}", value);
-        let da_height = self.da.get_allocated_height();
-        let (_, first_line) = self.pos_to_cell(0.0, value);
-        let (_, last_line) = self.pos_to_cell(0.0, value + da_height as f64 + 1.0);
-        self.core.borrow().scroll(&self.view_id, first_line, last_line);
 
-        // TODO is this needed?  It prevents flashing if we request it early
-        self.core.borrow().request_lines(&self.view_id, first_line, last_line);
+        self.update_visible_scroll_region();
 
         Inhibit(false)
+    }
+
+    fn update_visible_scroll_region(&self) {
+        let da_height = self.da.get_allocated_height();
+        let (_, first_line) = self.da_px_to_cell(0.0, 0.0);
+        let (_, last_line) = self.da_px_to_cell(0.0, da_height as f64);
+        let last_line = last_line + 1;
+
+        debug!("update visible scroll region {} {}", first_line, last_line);
+        self.core.borrow().scroll(&self.view_id, first_line, last_line);
     }
 
     fn get_text_size(&self) -> (f64, f64) {
@@ -230,9 +248,9 @@ impl EditView {
         let da_height = self.da.get_allocated_height();
 
         //debug!("Drawing");
-        cr.select_font_face("Mono", ::cairo::enums::FontSlant::Normal, ::cairo::enums::FontWeight::Normal);
-        // cr.select_font_face("InconsolataGo", ::cairo::enums::FontSlant::Normal, ::cairo::enums::FontWeight::Normal);
-        cr.set_font_size(14.0);
+        // cr.select_font_face("Mono", ::cairo::enums::FontSlant::Normal, ::cairo::enums::FontWeight::Normal);
+        cr.select_font_face("Inconsolata", ::cairo::enums::FontSlant::Normal, ::cairo::enums::FontWeight::Normal);
+        cr.set_font_size(18.0);
         let font_extents = cr.font_extents();
 
         self.font_height = font_extents.height;
@@ -245,7 +263,7 @@ impl EditView {
 
         let vadj = self.vscrollbar.get_adjustment();
         let hadj = self.hscrollbar.get_adjustment();
-        debug!("vadj1={}, {}", vadj.get_value(), vadj.get_upper());
+        debug!("drawing.  vadj={}, {}", vadj.get_value(), vadj.get_upper());
 
         let first_line = (vadj.get_value() / font_extents.height) as usize;
         let last_line = ((vadj.get_value() + da_height as f64) / font_extents.height) as usize + 1;
@@ -253,6 +271,22 @@ impl EditView {
 
         // debug!("line_cache {} {} {}", self.line_cache.n_invalid_before, self.line_cache.lines.len(), self.line_cache.n_invalid_after);
         // let missing = self.line_cache.get_missing(first_line, last_line);
+
+        // Find missing lines
+        let mut found_missing = false;
+        for i in first_line..last_line {
+            if self.line_cache.get_line(i).is_none() {
+                error!("missing line {}", i);
+                found_missing = true;
+            }
+        }
+
+        // We've already missed our chance to draw these lines, but we need to request them for the
+        // next frame.  This needs to be improved to prevent flashing.
+        if found_missing {
+            error!("didn't have some lines, requesting, lines {}-{}", first_line, last_line);
+            self.core.borrow().request_lines(&self.view_id, first_line as u64, last_line as u64);
+        }
 
         // Draw background
         set_source_color(cr, theme.background);
@@ -291,7 +325,6 @@ impl EditView {
         }
 
         const CURSOR_WIDTH: f64 = 2.0;
-        let mut missing_lines = false;
 
         // Draw text
         for i in first_line..last_line {
@@ -316,15 +349,7 @@ impl EditView {
                         font_extents.ascent + font_extents.descent);
                     cr.fill();
                 }
-            } else {
-                missing_lines = true;
             }
-        }
-
-        // We've already missed our chance to draw these lines, but we need to request them for the
-        // next frame.  This needs to be improved to prevent flashing.
-        if missing_lines {
-            self.core.borrow().request_lines(&self.view_id, first_line as u64, last_line as u64);
         }
 
         Inhibit(false)
@@ -366,7 +391,7 @@ impl EditView {
         self.da.grab_focus();
 
         let (x,y) = eb.get_position();
-        let (col, line) = self.pos_to_cell(x, y);
+        let (col, line) = self.da_px_to_cell(x, y);
         let core = self.core.borrow();
 
         if eb.get_button() == 1 {
@@ -385,7 +410,7 @@ impl EditView {
 
     pub fn handle_drag(&mut self, em: &EventMotion) -> Inhibit {
         let (x,y) = em.get_position();
-        let (col, line) = self.pos_to_cell(x, y);
+        let (col, line) = self.da_px_to_cell(x, y);
         self.core.borrow().drag(&self.view_id, line, col, convert_gtk_modifier(em.get_state()));
         Inhibit(false)
     }
@@ -404,6 +429,8 @@ impl EditView {
             ScrollDirection::Right => hadj.set_value(hadj.get_value() + amt),
             _ => {},
         }
+
+        self.update_visible_scroll_region();
 
         Inhibit(false)
     }

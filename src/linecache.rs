@@ -93,7 +93,6 @@ impl LineCache {
     }
 
     pub fn apply_update(&mut self, update: &Value) {
-        debug!("applying update: {:?}", update);
         let old_cache = mem::replace(self, LineCache::new());
         let mut old_iter = old_cache.lines.into_iter();
         for op in update["ops"].as_array().unwrap() {
