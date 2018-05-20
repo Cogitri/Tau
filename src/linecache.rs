@@ -15,14 +15,15 @@
 //! The line cache (text, styles and cursors for a view).
 
 use std::mem;
+use std::usize;
 
 use serde_json::Value;
 
 #[derive(Copy, Clone, Debug)]
 pub struct StyleSpan {
-    pub start: usize,
+    pub start: i64,
     pub len: usize,
-    pub style_id: u32,
+    pub id: usize,
 }
 
 #[derive(Clone, Debug)]
@@ -46,22 +47,13 @@ impl Line {
             
             // Convert style triples into a `Vec` of `StyleSpan`s
             let mut i = 0;
-            let mut style_span = StyleSpan {start: 0, len:0, style_id:0};
-            for c in arr {
-                if i == 3 {
-                    i=0;
-                    styles.push(style_span);
-                }
-                match i {
-                    0 => style_span.start = c.as_u64().unwrap() as usize,
-                    1 => style_span.len = c.as_u64().unwrap() as usize,
-                    2 => style_span.style_id = c.as_u64().unwrap() as u32,
-                    _ => unreachable!(),
-                };
+            while arr.len() > i*3 + 2 {
+                styles.push(StyleSpan{
+                    start: arr[i*3].as_i64().unwrap() as i64,
+                    len:   arr[i*3+1].as_i64().unwrap() as usize,
+                    id:    arr[i*3+2].as_u64().unwrap() as usize,
+                });
                 i+=1;
-            }
-            if i == 3 {
-                styles.push(style_span);
             }
         }
         Line { text, cursor, styles }
@@ -121,11 +113,15 @@ impl LineCache {
         }
     }
 
-    pub fn height(&self) -> usize {
-        self.lines.len()
+    pub fn height(&self) -> u64 {
+        self.lines.len() as u64
     }
 
-    pub fn get_line(&self, ix: usize) -> Option<&Line> {
+    pub fn get_line(&self, ix: u64) -> Option<&Line> {
+        if ix > usize::MAX as u64 {
+            return None
+        }
+        let ix = ix as usize;
         if ix < self.lines.len() {
             self.lines[ix].as_ref()
         } else {

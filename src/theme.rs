@@ -17,6 +17,14 @@ impl Color {
     pub fn make_u8(r: u8, g: u8, b: u8, a: u8) -> Color {
         Color{r: r as f64/255.0, g: g as f64/255.0, b: b as f64/255.0, a: a as f64/255.0}
     }
+    pub fn make_u32_argb(c: u32) -> Color {
+        Color::make_u8(
+            (c >> 16) as u8,
+            (c >> 8) as u8,
+            c as u8,
+            (c >> 24) as u8,
+        )
+    }
 }
 
 #[inline]

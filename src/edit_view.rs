@@ -1,4 +1,5 @@
 use cairo::Context;
+use cairo::enums::HintStyle;
 use gdk::*;
 use gdk::enums::key;
 use gtk::{
@@ -21,9 +22,12 @@ pub struct EditView {
     main_state: Rc<RefCell<MainState>>,
     pub view_id: String,
     pub file_name: Option<String>,
+    pub pristine: bool,
     pub da: DrawingArea,
     pub root_widget: gtk::Box,
+    pub tab_widget: gtk::Box,
     pub label: Label,
+    pub close_button: Button,
     hscrollbar: Scrollbar,
     vscrollbar: Scrollbar,
     line_cache: LineCache,
@@ -54,14 +58,25 @@ impl EditView {
         vbox.pack_start(&hscrollbar, false, false, 0);
         hbox.show_all();
 
+        // Make the widgets for the tab
+        let tab_hbox = gtk::Box::new(Orientation::Horizontal, 5);
+        let label = Label::new(Some("blah"));
+        tab_hbox.add(&label);
+        let close_button = Button::new_from_icon_name("window-close", 0);
+        tab_hbox.add(&close_button);
+        tab_hbox.show_all();
+
         let edit_view = Rc::new(RefCell::new(EditView {
             core: core.clone(),
             main_state: main_state.clone(),
             file_name,
+            pristine: true,
             view_id: view_id.clone(),
             da: da.clone(),
             root_widget: hbox.clone(),
-            label: Label::new(None),
+            tab_widget: tab_hbox.clone(),
+            label: label.clone(),
+            close_button: close_button.clone(),
             hscrollbar: hscrollbar.clone(),
             vscrollbar: vscrollbar.clone(),
             line_cache: LineCache::new(),
@@ -74,7 +89,7 @@ impl EditView {
         edit_view.borrow_mut().update_title();
 
         da.connect_button_press_event(clone!(edit_view => move |_,eb| {
-            edit_view.borrow_mut().handle_button_press(eb)
+            edit_view.borrow().handle_button_press(eb)
         }));
 
         da.connect_draw(clone!(edit_view => move |_,ctx| {
@@ -136,7 +151,7 @@ fn convert_gtk_modifier(mt: ModifierType) -> u32 {
 }
 
 impl EditView {
-    pub fn update_file(&mut self, file_name: &str) {
+    pub fn set_file(&mut self, file_name: &str) {
         self.file_name = Some(file_name.to_string());
         self.update_title();
     }
@@ -149,11 +164,19 @@ impl EditView {
             None => "Untitled".to_string()
         };
 
-        self.label.set_text(&title);
+        let mut full_title = String::new();
+        if !self.pristine {
+            full_title.push('*');
+        }
+        full_title.push_str(&title);
+
+        trace!("setting title to {}", full_title);
+        self.label.set_text(&full_title);
     }
 
     pub fn update(&mut self, params: &Value) {
-        self.line_cache.apply_update(&params["update"]);
+        let update = &params["update"];
+        self.line_cache.apply_update(update);
 
 
         // let (text_width, text_height) = self.get_text_size();
@@ -170,11 +193,47 @@ impl EditView {
         let vadj = self.vscrollbar.get_adjustment();
         vadj.set_lower(0f64);
         vadj.set_upper(text_height as f64);
+        if vadj.get_value() + vadj.get_page_size() > vadj.get_upper() {
+            vadj.set_value(vadj.get_upper() - vadj.get_page_size())
+        }
+
         let hadj = self.hscrollbar.get_adjustment();
         hadj.set_lower(0f64);
         hadj.set_upper(text_width as f64);
+        if hadj.get_value() + hadj.get_page_size() > hadj.get_upper() {
+            hadj.set_value(hadj.get_upper() - hadj.get_page_size())
+        }
+
+        if let Some(pristine) = update["pristine"].as_bool() {
+            if self.pristine != pristine {
+                self.pristine = pristine;
+                self.update_title();
+            }
+        }
+
+        // self.change_scrollbar_visibility();
 
         self.da.queue_draw();
+    }
+
+    fn change_scrollbar_visibility(&self) {
+        let vadj = self.vscrollbar.get_adjustment();
+        let hadj = self.hscrollbar.get_adjustment();
+
+        if vadj.get_value() <= vadj.get_lower()
+            && vadj.get_value() + vadj.get_page_size() >= vadj.get_upper() {
+            self.vscrollbar.hide();
+        } else {
+            self.vscrollbar.show();
+        }
+
+        if hadj.get_value() <= hadj.get_lower()
+            && hadj.get_value() + hadj.get_page_size() >= hadj.get_upper() {
+            self.hscrollbar.hide();
+        } else {
+            debug!("SHOWING HSCROLLBAR: {} {}-{} {}", hadj.get_value(), hadj.get_lower(), hadj.get_upper(), hadj.get_page_size());
+            self.hscrollbar.show();
+        }
     }
 
     pub fn da_px_to_cell(&self, x: f64, y: f64) -> (u64, u64) {
@@ -188,6 +247,7 @@ impl EditView {
     }
 
     fn da_size_allocate(&mut self, da_width: i32, da_height: i32) {
+        debug!("DA SIZE ALLOCATE");
         let vadj = self.vscrollbar.get_adjustment();
         vadj.set_page_size(da_height as f64);
         let hadj = self.hscrollbar.get_adjustment();
@@ -249,8 +309,11 @@ impl EditView {
 
         //debug!("Drawing");
         // cr.select_font_face("Mono", ::cairo::enums::FontSlant::Normal, ::cairo::enums::FontWeight::Normal);
+        // let mut font_options = cr.get_font_options();
+        // debug!("font options: {:?} {:?} {:?}", font_options, font_options.get_antialias(), font_options.get_hint_style());
+        // font_options.set_hint_style(HintStyle::Full);
         cr.select_font_face("Inconsolata", ::cairo::enums::FontSlant::Normal, ::cairo::enums::FontWeight::Normal);
-        cr.set_font_size(18.0);
+        cr.set_font_size(16.0);
         let font_extents = cr.font_extents();
 
         self.font_height = font_extents.height;
@@ -263,10 +326,10 @@ impl EditView {
 
         let vadj = self.vscrollbar.get_adjustment();
         let hadj = self.hscrollbar.get_adjustment();
-        debug!("drawing.  vadj={}, {}", vadj.get_value(), vadj.get_upper());
+        trace!("drawing.  vadj={}, {}", vadj.get_value(), vadj.get_upper());
 
-        let first_line = (vadj.get_value() / font_extents.height) as usize;
-        let last_line = ((vadj.get_value() + da_height as f64) / font_extents.height) as usize + 1;
+        let first_line = (vadj.get_value() / font_extents.height) as u64;
+        let last_line = ((vadj.get_value() + da_height as f64) / font_extents.height) as u64 + 1;
         let last_line = min(last_line, num_lines);
 
         // debug!("line_cache {} {} {}", self.line_cache.n_invalid_before, self.line_cache.lines.len(), self.line_cache.n_invalid_after);
@@ -310,38 +373,89 @@ impl EditView {
         //     }
         // }
 
-        // Draw styles
-        for i in first_line..last_line {
-            set_source_color(cr, theme.selection);
-            if let Some(line) = self.line_cache.get_line(i) {
-                for style in &line.styles {
-                    cr.rectangle(font_extents.max_x_advance* (style.start as f64) - hadj.get_value(),
-                        font_extents.height*((i+1) as f64) - font_extents.ascent - vadj.get_value(),
-                        font_extents.max_x_advance* (style.len as f64),
-                        font_extents.ascent + font_extents.descent);
-                    cr.fill();
-                }
-            }
-        }
-
         const CURSOR_WIDTH: f64 = 2.0;
 
-        // Draw text
-        for i in first_line..last_line {
-            set_source_color(cr, theme.foreground);
-            if let Some(line) = self.line_cache.get_line(i) {
-                cr.move_to(0.0 - hadj.get_value(),
-                    font_extents.height*((i+1) as f64) - vadj.get_value()
-                );
+        let main_state = self.main_state.borrow();
 
-                // Don't draw the newline
+        for i in first_line..last_line {
+            // Keep track of the starting x position
+
+            if let Some(line) = self.line_cache.get_line(i) {
+
                 let line_view = if line.text().ends_with('\n') {
                     &line.text()[0..line.text().len()-1]
                 } else {
                     &line.text()
                 };
+
+                // Draw the whole line, no styles
+                cr.move_to(-hadj.get_value(),
+                    font_extents.height*((i+1) as f64) - vadj.get_value()
+                );
+                set_source_color(cr, theme.foreground);
                 cr.show_text(line_view);
 
+
+                // KLUDGE  until we have real font and style handling, for now, we just draw the
+                // styles in reverse order, on top of each other, overwriting the previous styles
+                struct AbsStyle {
+                    id: usize,
+                    start: i64,
+                    len: i64,
+                }
+                let mut abs_styles = Vec::new();
+
+                let mut ix = 0;
+                for style in &line.styles {
+                    abs_styles.push(AbsStyle{
+                        id: style.id,
+                        start: ix + style.start,
+                        len: style.len as i64,
+                    });
+                    ix += style.start + style.len as i64;
+                }
+                abs_styles.reverse();
+
+                for style in &abs_styles {
+                    cr.save();
+
+                    // Draw background, create clip
+                    if let Some(bg_color) = main_state.styles.get(style.id).and_then(|s| s.bg_color) {
+                        set_source_color(cr, ::theme::Color::make_u32_argb(bg_color));
+                    } else if style.id == 0 {
+                        set_source_color(cr, theme.selection);
+                    } else {
+                        set_source_color(cr, theme.background);
+                    }
+                    // set_source_color(cr, ::theme::Color::make_u8((((style.id>>2) & 1)*255) as u8, (((style.id>>1) & 1)*255) as u8, (((style.id>>0) & 1)*255) as u8, 255));
+
+                    cr.rectangle(font_extents.max_x_advance* (style.start as f64) - hadj.get_value(),
+                        font_extents.height*((i+1) as f64) - font_extents.ascent - vadj.get_value(),
+                        font_extents.max_x_advance* (style.len as f64),
+                        font_extents.ascent + font_extents.descent);
+                    cr.clip_preserve();
+                    cr.fill();
+
+                    
+                    // Draw the whole line, clipped
+                    cr.move_to(-hadj.get_value(),
+                        font_extents.height*((i+1) as f64) - vadj.get_value()
+                    );
+                    // set_source_color(cr, theme.foreground); // TODO styled def color
+                    if let Some(fg_color) = main_state.styles.get(style.id).and_then(|s| s.fg_color) {
+                        set_source_color(cr, ::theme::Color::make_u32_argb(fg_color));
+                    } else if style.id == 0 {
+                        set_source_color(cr, theme.selection_foreground);
+                    } else {
+                        set_source_color(cr, theme.foreground);
+                    }
+                    cr.show_text(line_view);
+
+                    cr.restore();
+                }
+
+                // Draw the cursor
+                set_source_color(cr, theme.caret);
                 for c in line.cursor() {
                     cr.rectangle(font_extents.max_x_advance* (*c as f64) - hadj.get_value(),
                         font_extents.height*((i+1) as f64) - font_extents.ascent - vadj.get_value(),
@@ -349,6 +463,7 @@ impl EditView {
                         font_extents.ascent + font_extents.descent);
                     cr.fill();
                 }
+
             }
         }
 
@@ -357,53 +472,50 @@ impl EditView {
 
     pub fn scroll_to(&mut self, line: u64, col: u64) {
         {
-            let da_height = self.da.get_allocated_height() as f64;
             let cur_top = self.font_height*((line+1) as f64) - self.font_ascent;
             let cur_bottom = cur_top + self.font_ascent + self.font_descent;
             let vadj = self.vscrollbar.get_adjustment();
             if cur_top < vadj.get_value() {
                 vadj.set_value(cur_top);
-            } else if cur_bottom > vadj.get_value() + da_height {
-                if cur_bottom > vadj.get_upper() {
-                    vadj.set_upper(cur_bottom);
-                }
-                vadj.set_value(cur_bottom - da_height);
+            } else if cur_bottom > vadj.get_value() + vadj.get_page_size() && vadj.get_page_size() != 0.0 {
+                vadj.set_value(cur_bottom - vadj.get_page_size());
             }
         }
 
         {
-            let da_width = self.da.get_allocated_width() as f64;
             let cur_left = self.font_width*(col as f64) - self.font_ascent;
             let cur_right = cur_left + self.font_width*2.0;
             let hadj = self.hscrollbar.get_adjustment();
             if cur_left < hadj.get_value() {
                 hadj.set_value(cur_left);
-            } else if cur_right > hadj.get_value() + da_width {
-                if cur_right > hadj.get_upper() {
-                    hadj.set_upper(cur_right);
-                }
-                hadj.set_value(cur_right - da_width);
+            } else if cur_right > hadj.get_value() + hadj.get_page_size() && hadj.get_page_size() != 0.0 {
+                hadj.set_value(cur_right - hadj.get_page_size());
             }
         }
     }
 
-    pub fn handle_button_press(&mut self, eb: &EventButton) -> Inhibit {
+    pub fn handle_button_press(&self, eb: &EventButton) -> Inhibit {
         self.da.grab_focus();
 
         let (x,y) = eb.get_position();
         let (col, line) = self.da_px_to_cell(x, y);
-        let core = self.core.borrow();
 
-        if eb.get_button() == 1 {
-            if eb.get_state().contains(ModifierType::SHIFT_MASK) {
-                core.gesture_range_select(&self.view_id, line, col);
-            } else if eb.get_event_type() == EventType::DoubleButtonPress {
-                core.gesture_word_select(&self.view_id, line, col);
-            } else if eb.get_event_type() == EventType::TripleButtonPress {
-                core.gesture_line_select(&self.view_id, line, col);
-            } else {
-                core.gesture_point_select(&self.view_id, line, col);
-            }
+        match eb.get_button() {
+            1 => {
+                if eb.get_state().contains(ModifierType::SHIFT_MASK) {
+                    self.core.borrow().gesture_range_select(&self.view_id, line, col);
+                } else if eb.get_event_type() == EventType::DoubleButtonPress {
+                    self.core.borrow().gesture_word_select(&self.view_id, line, col);
+                } else if eb.get_event_type() == EventType::TripleButtonPress {
+                    self.core.borrow().gesture_line_select(&self.view_id, line, col);
+                } else {
+                    self.core.borrow().gesture_point_select(&self.view_id, line, col);
+                }
+            },
+            2 => {
+                self.do_paste_primary(&self.view_id, line, col);
+            },
+            _ => {},
         }
         Inhibit(false)
     }
@@ -441,7 +553,6 @@ impl EditView {
             ek.get_keyval(), ek.get_state(), ek.get_length(), ek.get_group(),
             ::gdk::keyval_to_unicode(ek.get_keyval())
         );
-        let core = self.core.borrow();
         let view_id = &self.view_id;
         let ch = ::gdk::keyval_to_unicode(ek.get_keyval());
 
@@ -452,97 +563,103 @@ impl EditView {
         let norm = !alt && !ctrl && !meta;
 
         match ek.get_keyval() {
-            key::Delete if norm => core.delete_forward(view_id),
-            key::BackSpace if norm => core.delete_backward(view_id),
-            key::Return | key::KP_Enter if norm => {
-                core.insert_newline(&view_id);
+            key::Delete if norm => self.core.borrow().delete_forward(view_id),
+            key::BackSpace if norm => self.core.borrow().delete_backward(view_id),
+            key::Return | key::KP_Enter => {
+                self.core.borrow().insert_newline(&view_id);
             },
-            key::Tab if norm && !shift => core.insert_tab(view_id),
-            key::Up if norm && !shift  => core.move_up(view_id),
-            key::Down if norm && !shift  => core.move_down(view_id),
-            key::Left if norm && !shift => core.move_left(view_id),
-            key::Right if norm && !shift  => core.move_right(view_id),
+            key::Tab if norm && !shift => self.core.borrow().insert_tab(view_id),
+            key::Up if norm && !shift  => self.core.borrow().move_up(view_id),
+            key::Down if norm && !shift  => self.core.borrow().move_down(view_id),
+            key::Left if norm && !shift => self.core.borrow().move_left(view_id),
+            key::Right if norm && !shift  => self.core.borrow().move_right(view_id),
             key::Up if norm && shift => {
-                core.move_up_and_modify_selection(view_id);
+                self.core.borrow().move_up_and_modify_selection(view_id);
             },
             key::Down if norm && shift => {
-                core.move_down_and_modify_selection(view_id);
+                self.core.borrow().move_down_and_modify_selection(view_id);
             },
             key::Left if norm && shift => {
-                core.move_left_and_modify_selection(view_id);
+                self.core.borrow().move_left_and_modify_selection(view_id);
             },
             key::Right if norm && shift => {
-                core.move_right_and_modify_selection(view_id);
+                self.core.borrow().move_right_and_modify_selection(view_id);
             },
             key::Left if ctrl && !shift => {
-                core.move_word_left(view_id);
+                self.core.borrow().move_word_left(view_id);
             },
             key::Right if ctrl && !shift => {
-                core.move_word_right(view_id);
+                self.core.borrow().move_word_right(view_id);
             },
             key::Left if ctrl && shift => {
-                core.move_word_left_and_modify_selection(view_id);
+                self.core.borrow().move_word_left_and_modify_selection(view_id);
             },
             key::Right if ctrl && shift => {
-                core.move_word_right_and_modify_selection(view_id);
+                self.core.borrow().move_word_right_and_modify_selection(view_id);
             },
             key::Home if norm && !shift => {
-                core.move_to_left_end_of_line(view_id);
+                self.core.borrow().move_to_left_end_of_line(view_id);
             }
             key::End if norm && !shift => {
-                core.move_to_right_end_of_line(view_id);
+                self.core.borrow().move_to_right_end_of_line(view_id);
             }
             key::Home if norm && shift => {
-                core.move_to_left_end_of_line_and_modify_selection(view_id);
+                self.core.borrow().move_to_left_end_of_line_and_modify_selection(view_id);
             }
             key::End if norm && shift => {
-                core.move_to_right_end_of_line_and_modify_selection(view_id);
+                self.core.borrow().move_to_right_end_of_line_and_modify_selection(view_id);
             }
             key::Home if ctrl && !shift => {
-                core.move_to_beginning_of_document(view_id);
+                self.core.borrow().move_to_beginning_of_document(view_id);
             }
             key::End if ctrl && !shift => {
-                core.move_to_end_of_document(view_id);
+                self.core.borrow().move_to_end_of_document(view_id);
             }
             key::Home if ctrl && shift => {
-                core.move_to_beginning_of_document_and_modify_selection(view_id);
+                self.core.borrow().move_to_beginning_of_document_and_modify_selection(view_id);
             }
             key::End if ctrl && shift => {
-                core.move_to_end_of_document_and_modify_selection(view_id);
+                self.core.borrow().move_to_end_of_document_and_modify_selection(view_id);
             }
             key::Page_Up if norm && !shift => {
-                core.page_up(view_id);
+                self.core.borrow().page_up(view_id);
             }
             key::Page_Down if norm && !shift => {
-                core.page_down(view_id);
+                self.core.borrow().page_down(view_id);
             }
             key::Page_Up if norm && shift => {
-                core.page_up_and_modify_selection(view_id);
+                self.core.borrow().page_up_and_modify_selection(view_id);
             }
             key::Page_Down if norm && shift => {
-                core.page_down_and_modify_selection(view_id);
+                self.core.borrow().page_down_and_modify_selection(view_id);
             }
             _ => {
                 if let Some(ch) = ch {
                     match ch {
                         'a' if ctrl => {
-                            core.select_all(view_id);
+                            self.core.borrow().select_all(view_id);
+                        },
+                        'c' if ctrl => {
+                            self.do_copy(view_id);
+                        },
+                        'v' if ctrl => {
+                            self.do_paste(view_id);
                         },
                         't' if ctrl => {
                             // TODO new tab
                         },
                         'x' if ctrl => {
-                            // TODO cut
+                            self.do_cut(view_id);
                         },
                         'z' if ctrl => {
-                            core.undo(view_id);
+                            self.core.borrow().undo(view_id);
                         },
                         'Z' if ctrl && shift => {
-                            core.redo(view_id);
+                            self.core.borrow().redo(view_id);
                         },
                         c if (norm) && c >= '\u{0020}' => {
                             debug!("inserting key");
-                            core.insert(view_id, &c.to_string());
+                            self.core.borrow().insert(view_id, &c.to_string());
                         }
                         _ => {
                             debug!("unhandled key: {:?}", ch);
@@ -554,4 +671,40 @@ impl EditView {
         Inhibit(true)
     }
 
+    fn do_cut(&self, view_id: &str) {
+        if let Some(text) = self.core.borrow_mut().cut(view_id) {
+            Clipboard::get(&SELECTION_CLIPBOARD).set_text(&text);
+        }
+    }
+
+    fn do_copy(&self, view_id: &str) {
+        if let Some(text) = self.core.borrow_mut().copy(view_id) {
+            Clipboard::get(&SELECTION_CLIPBOARD).set_text(&text);
+        }
+    }
+
+    fn do_paste(&self, view_id: &str) {
+        // if let Some(text) = Clipboard::get(&SELECTION_CLIPBOARD).wait_for_text() {
+        //     self.core.borrow().insert(view_id, &text);
+        // }
+        use clipboard::ClipboardRequest;
+        let view_id2 = view_id.to_string().clone();
+        let core = self.core.clone();
+        Clipboard::get(&SELECTION_CLIPBOARD).request_text(move |_, text|{
+            core.borrow().insert(&view_id2, &text);
+        });
+    }
+
+    fn do_paste_primary(&self, view_id: &str, line: u64, col: u64) {
+        // if let Some(text) = Clipboard::get(&SELECTION_PRIMARY).wait_for_text() {
+        //     self.core.borrow().insert(view_id, &text);
+        // }
+        use clipboard::ClipboardRequest;
+        let view_id2 = view_id.to_string().clone();
+        let core = self.core.clone();
+        Clipboard::get(&SELECTION_PRIMARY).request_text(move |_, text|{
+            core.borrow().gesture_point_select(&view_id2, line, col);
+            core.borrow().insert(&view_id2, &text);
+        });
+    }
 }

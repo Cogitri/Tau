@@ -1,28 +1,15 @@
 use gio::ApplicationFlags;
-use gtk::{
-    Application,
-    ApplicationWindow,
-    Builder,
-    Button,
-    ButtonExt,
-    DialogExt,
-    FileChooserAction,
-    FileChooserExt,
-    FileChooserDialog,
-    GtkWindowExt,
-    Inhibit,
-    Notebook,
-    NotebookExtManual,
-    Widget,
-    WidgetExt,
-};
+use gtk::{self, *};
 use CoreMsg;
 use SharedQueue;
 use edit_view::EditView;
+use proto::Style;
 use rpc::{Core, Handler};
-use serde_json::Value;
+use serde_json::{self, Value};
 use std::cell::RefCell;
 use std::collections::{BTreeMap, HashMap};
+use std::env::home_dir;
+use std::path::Path;
 use std::rc::Rc;
 use std::sync::{Arc, Mutex};
 use theme::{Theme};
@@ -32,6 +19,7 @@ pub struct MainState {
     pub themes: Vec<String>,
     pub theme_name: String,
     pub theme: Theme,
+    pub styles: Vec<Style>,
 }
 
 pub struct MainWin {
@@ -40,7 +28,8 @@ pub struct MainWin {
     window: ApplicationWindow,
     notebook: Notebook,
     views: BTreeMap<String, Rc<RefCell<EditView>>>,
-    w_to_view: HashMap<Widget, Rc<RefCell<EditView>>>,
+    w_to_ev: HashMap<Widget, Rc<RefCell<EditView>>>,
+    view_id_to_w: HashMap<String, Widget>,
     state: Rc<RefCell<MainState>>,
 }
 
@@ -55,7 +44,15 @@ impl MainWin {
         let handler = MyHandler::new(shared_queue.clone());
         let core = Core::new(xi_peer, rx, handler.clone());
 
-        core.send_notification("client_started", &json!({}));
+        let mut config_dir = None;
+        let mut plugin_dir = None;
+        if let Some(home_dir) = home_dir() {
+            let xi_config = home_dir.join(".config").join("xi");
+            let xi_plugin = xi_config.join("plugins");
+            config_dir = xi_config.to_str().map(|s| s.to_string());
+            plugin_dir = xi_plugin.to_str().map(|s| s.to_string());
+        }
+        core.client_started(config_dir, plugin_dir);
 
         let glade_src = include_str!("gxi.glade");
         let builder = Builder::new_from_string(glade_src);
@@ -74,12 +71,14 @@ impl MainWin {
             window: window.clone(),
             notebook: notebook.clone(),
             views: Default::default(),
-            w_to_view: Default::default(),
+            w_to_ev: Default::default(),
+            view_id_to_w: Default::default(),
             state: Rc::new(RefCell::new(
                 MainState{
                     themes: Default::default(),
                     theme_name: "default".to_string(),
                     theme: Default::default(),
+                    styles: Default::default(),
                 }
             ))
         }));
@@ -118,19 +117,20 @@ impl MainWin {
 }
 
 impl MainWin {
-    pub fn handle_msg(&mut self, msg: CoreMsg) {
+    pub fn handle_msg(main_win: Rc<RefCell<MainWin>>, msg: CoreMsg) {
         match msg {
             CoreMsg::NewViewReply{file_name, value} => {
-                self.new_view_response(file_name, value)
+                MainWin::new_view_response(main_win, file_name, value)
             },
             CoreMsg::Notification{ref method, ref params} => {
                 match method.as_ref() {
-                    "available_themes" => self.available_themes(params),
-                    "available_plugins" => self.available_plugins(params),
-                    "config_changed" => self.config_changed(params),
-                    "update" => self.update(params),
-                    "scroll_to" => self.scroll_to(params),
-                    "theme_changed" => self.theme_changed(params),
+                    "available_themes" => main_win.borrow_mut().available_themes(params),
+                    "available_plugins" => main_win.borrow_mut().available_plugins(params),
+                    "config_changed" => main_win.borrow_mut().config_changed(params),
+                    "def_style" => main_win.borrow_mut().def_style(params),
+                    "update" => main_win.borrow_mut().update(params),
+                    "scroll_to" => main_win.borrow_mut().scroll_to(params),
+                    "theme_changed" => main_win.borrow_mut().theme_changed(params),
                     _ => {
                         error!("!!! UNHANDLED NOTIFICATION: {}", method);
                     }
@@ -160,6 +160,30 @@ impl MainWin {
 
     pub fn config_changed(&mut self, params: &Value) {
         error!("UNHANDLED config_changed {:?}", params);
+    }
+
+    pub fn def_style(&mut self, params: &Value) {
+        error!("UNHANDLED def_style {:?}", params);
+        let mut state = self.state.borrow_mut();
+        if let Some(id) = params["id"].as_u64() {
+            let id = id as usize;
+            
+            // bump the array size up if needed
+            while state.styles.len() < id {
+                let new_id = state.styles.len();
+                state.styles.push(Style{
+                    id: new_id,
+                    fg_color: None,
+                    bg_color: None,
+                    weight: None,
+                    italic: None,
+                    underline: None,
+                })
+            }
+
+            let style = serde_json::from_value(params.clone()).unwrap();
+            state.styles.push(style);
+        }
     }
 
     pub fn update(&mut self, params: &Value) {
@@ -230,6 +254,21 @@ impl MainWin {
     }
 
     pub fn handle_save_button(&self) {
+        let edit_view = self.get_current_edit_view();
+        if edit_view.borrow().file_name.is_some() {
+            let ev = edit_view.borrow_mut();
+            self.core.borrow().save(&ev.view_id, ev.file_name.as_ref().unwrap());
+        } else {
+            self.save_as(edit_view);
+        }
+    }
+
+    // fn save_edit_view_to_file(&self, edit_view: &mut EditView, file: &str) {
+    //     self.core.borrow().save(&edit_view.view_id, &file);
+    //     edit_view.set_file(&file);
+    // }
+
+    fn save_as(&self, edit_view: Rc<RefCell<EditView>>) {
         let fcd = FileChooserDialog::new::<FileChooserDialog>(None, None, FileChooserAction::Save);
         fcd.set_transient_for(Some(&self.window));
         fcd.add_button("Save", 33);
@@ -237,22 +276,26 @@ impl MainWin {
         let response = fcd.run();
         debug!("save response = {}", response);
         if response == 33 {
-            for file in fcd.get_filename() {
-
-                if let Some(idx) = self.notebook.get_current_page() {
-                    if let Some(w) = self.notebook.get_nth_page(Some(idx)) {
-                        if let Some(edit_view) = self.w_to_view.get(&w) {
-                            debug!("saving {:?}", file);
-                            let view_id = edit_view.borrow().view_id.clone();
-                            let file = file.to_string_lossy();
-                            self.core.borrow().save(&view_id, &file);
-                            edit_view.borrow_mut().update_file(&file);
-                        }
-                    }
-                }
+            if let Some(file) = fcd.get_filename() {
+                debug!("saving {:?}", file);
+                let view_id = edit_view.borrow().view_id.clone();
+                let file = file.to_string_lossy();
+                self.core.borrow().save(&view_id, &file);
+                edit_view.borrow_mut().set_file(&file);
             }
         }
         fcd.destroy();
+    }
+
+    fn get_current_edit_view(&self) -> Rc<RefCell<EditView>> {
+        if let Some(idx) = self.notebook.get_current_page() {
+            if let Some(w) = self.notebook.get_nth_page(Some(idx)) {
+                if let Some(edit_view) = self.w_to_ev.get(&w) {
+                    return edit_view.clone();
+                }
+            }
+        }
+        unreachable!("failed to get the current editview");
     }
 
     fn req_new_view(&self, file_name: Option<&str>) {
@@ -275,22 +318,37 @@ impl MainWin {
         );
     }
 
-    fn new_view_response(&mut self, file_name: Option<String>, value: Value) {
+    fn new_view_response(main_win: Rc<RefCell<MainWin>>, file_name: Option<String>, value: Value) {
+        let mut win = main_win.borrow_mut();
         if let Some(view_id) = value.as_str() {
-            let edit_view = EditView::new(self.state.clone(), self.core.clone(), file_name, view_id.to_string());
+            let edit_view = EditView::new(win.state.clone(), win.core.clone(), file_name, view_id.to_string());
             {
-                {
-                    let ev = edit_view.borrow();
-                    let label = ev.label.clone();
-                    let idx = self.notebook.insert_page(&ev.root_widget, Some(&label), None);
-                    if let Some(w) = self.notebook.get_nth_page(Some(idx)) {
-                        self.w_to_view.insert(w, edit_view.clone());
-                    }
+                let ev = edit_view.borrow();
+                let page_num = win.notebook.insert_page(&ev.root_widget, Some(&ev.tab_widget), None);
+                if let Some(w) = win.notebook.get_nth_page(Some(page_num)) {
+                    win.w_to_ev.insert(w.clone(), edit_view.clone());
+                    win.view_id_to_w.insert(view_id.to_string(), w);
                 }
+
+                let view_id_clone = view_id.to_string();
+                ev.close_button.connect_clicked(clone!(main_win => move |_| {
+                    main_win.borrow_mut().handle_close(&view_id_clone)
+                }));
             }
 
-            self.views.insert(view_id.to_string(), edit_view);
+            win.views.insert(view_id.to_string(), edit_view);
         }
+    }
+
+    fn handle_close(&mut self, view_id: &str) {
+        if let Some(w) = self.view_id_to_w.get(view_id) {
+            if let Some(page_num) = self.notebook.page_num(w) {
+                self.notebook.remove_page(Some(page_num));
+            }
+            self.w_to_ev.remove(&w.clone());
+        }
+        self.view_id_to_w.remove(view_id);
+        self.core.borrow().close_view(view_id);
     }
 }
 

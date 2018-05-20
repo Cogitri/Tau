@@ -1,6 +1,6 @@
 use std::collections::BTreeMap;
 use std::sync::{Arc, Mutex};
-use std::sync::mpsc::Receiver;
+use std::sync::mpsc::{Receiver, channel};
 use std::thread;
 
 use serde_json::Value;
@@ -105,6 +105,12 @@ impl Core {
         }))
     }
 
+    pub fn close_view(&self, view_id: &str) {
+        self.send_notification("close_view", &json!({
+            "view_id": view_id,
+        }))
+    }
+
     fn send_edit_cmd(&self, view_id: &str, method: &str, params: &Value) {
         let edit_params = json!({
             "method": method,
@@ -112,6 +118,13 @@ impl Core {
             "view_id": view_id,
         });
         self.send_notification("edit", &edit_params);
+    }
+    
+    pub fn client_started(&self, config_dir: Option<String>, client_extras_dir: Option<String>) {
+        self.send_notification("client_started", &json!({
+            "config_dir": config_dir,
+            "client_extras_dir": client_extras_dir,
+        }));
     }
 
     pub fn request_lines(&self, view_id: &str, first_line: u64, last_line: u64) {
@@ -289,4 +302,45 @@ impl Core {
         self.send_edit_cmd(view_id, "redo", &json!({}))
     }
 
+    pub fn cut(&mut self, view_id: &str) -> Option<String> {
+        let (sender, receiver) = channel();
+
+        self.send_request("edit",
+            &json!({
+                "view_id": view_id,
+                "method": "cut",
+                "params:": &json!({}),
+            }),
+            move |value| {
+                if let Some(selection) = value.as_str() {
+                    sender.send(Some(selection.to_string())).unwrap();
+                } else {
+                    sender.send(None).unwrap();
+                }
+            }
+        );
+
+        receiver.recv().unwrap()
+    }
+
+    pub fn copy(&mut self, view_id: &str) -> Option<String> {
+        let (sender, receiver) = channel();
+
+        self.send_request("edit",
+            &json!({
+                "view_id": view_id,
+                "method": "copy",
+                "params:": &json!({}),
+            }),
+            move |value| {
+                if let Some(selection) = value.as_str() {
+                    sender.send(Some(selection.to_string())).unwrap();
+                } else {
+                    sender.send(None).unwrap();
+                }
+            }
+        );
+
+        receiver.recv().unwrap()
+    }
 }

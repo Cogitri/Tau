@@ -2,12 +2,15 @@ extern crate cairo;
 extern crate env_logger;
 extern crate gdk;
 extern crate gio;
-extern crate glib;
+#[macro_use] extern crate glib;
 extern crate glib_sys;
 extern crate gtk;
+extern crate gtk_sys;
 extern crate libc;
 #[macro_use] extern crate log;
 extern crate mio;
+extern crate serde;
+#[macro_use] extern crate serde_derive;
 #[macro_use] extern crate serde_json;
 extern crate fontconfig;
 extern crate syntect;
@@ -16,10 +19,12 @@ extern crate xi_rpc;
 
 #[macro_use] mod macros;
 
-mod rpc;
+mod clipboard;
 mod edit_view;
 mod linecache;
 mod main_win;
+mod proto;
+mod rpc;
 mod source;
 mod theme;
 mod xi_thread;
@@ -97,7 +102,7 @@ impl SourceFuncs for QueueSource {
         let mut shared_queue = self.queue.lock().unwrap();
         while let Some(msg) = shared_queue.queue.pop_front() {
             trace!("found a msg");
-            self.win.borrow_mut().handle_msg(msg);
+            MainWin::handle_msg(self.win.clone(), msg);
         }
         let mut buf = [0u8; 64];
         shared_queue.pipe_reader.try_read(&mut buf)
