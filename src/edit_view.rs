@@ -1,5 +1,4 @@
 use cairo::Context;
-use cairo::enums::HintStyle;
 use gdk::*;
 use gdk::enums::key;
 use gtk::{
@@ -7,9 +6,11 @@ use gtk::{
     self,
 };
 use rpc::{Core, self};
+use pango::{self, *, ContextExt, LayoutExt};
+use pangocairo::functions::*;
 use serde_json::Value;
 use std::cell::RefCell;
-use std::cmp::{max, min};
+use std::cmp::min;
 use std::rc::Rc;
 use std::u32;
 
@@ -35,6 +36,7 @@ pub struct EditView {
     font_width: f64,
     font_ascent: f64,
     font_descent: f64,
+    font_desc: FontDescription,
 }
 
 impl EditView {
@@ -60,11 +62,48 @@ impl EditView {
 
         // Make the widgets for the tab
         let tab_hbox = gtk::Box::new(Orientation::Horizontal, 5);
-        let label = Label::new(Some("blah"));
+        let label = Label::new(Some(""));
         tab_hbox.add(&label);
         let close_button = Button::new_from_icon_name("window-close", 0);
         tab_hbox.add(&close_button);
         tab_hbox.show_all();
+
+        use std::ffi::CString;
+        use fontconfig::fontconfig;
+        unsafe {
+            let ret = fontconfig::FcConfigAppFontAddDir(
+                fontconfig::FcConfigGetCurrent(),
+                CString::new("fonts").unwrap().as_ptr() as *const u8,
+            );
+            debug!("fc ret = {}", ret);
+        }
+
+        let pango_ctx = da.get_pango_context().expect("failed to get pango ctx");
+        for family in pango_ctx.list_families() {
+            if !family.is_monospace() { continue; }
+            debug!("font family {:?} monospace: {}", family.get_name(), family.is_monospace());
+        }
+        let font_desc = FontDescription::from_string("Inconsolata 16");
+        pango_ctx.set_font_description(&font_desc);
+        let language = pango_ctx.get_language().expect("failed to get pango language");
+        let fontset = pango_ctx.load_fontset(&font_desc, &language).expect("failed to load font set");
+        let metrics = fontset.get_metrics().expect("failed to load font metrics");
+
+        // cr.select_font_face("Inconsolata", ::cairo::enums::FontSlant::Normal, ::cairo::enums::FontWeight::Normal);
+        // cr.set_font_size(16.0);
+        // let font_extents = cr.font_extents();
+
+        let layout = pango::Layout::new(&pango_ctx);
+        layout.set_text("a");
+        let (_, log_extents) = layout.get_extents();
+        debug!("size: {:?}", log_extents);
+
+        let font_height = log_extents.height as f64 / pango::SCALE as f64;
+        let font_width = log_extents.width as f64 / pango::SCALE as f64;
+        let font_ascent = metrics.get_ascent() as f64 / pango::SCALE as f64;
+        let font_descent = metrics.get_descent() as f64 / pango::SCALE as f64;
+
+        debug!("font metrics: {} {} {} {}", font_width, font_height, font_ascent, font_descent);
 
         let edit_view = Rc::new(RefCell::new(EditView {
             core: core.clone(),
@@ -80,10 +119,11 @@ impl EditView {
             hscrollbar: hscrollbar.clone(),
             vscrollbar: vscrollbar.clone(),
             line_cache: LineCache::new(),
-            font_height: 1.0,
-            font_width: 1.0,
-            font_ascent: 1.0,
-            font_descent: 1.0,
+            font_height,
+            font_width,
+            font_ascent,
+            font_descent,
+            font_desc,
         }));
 
         edit_view.borrow_mut().update_title();
@@ -126,16 +166,6 @@ impl EditView {
         vscrollbar.connect_change_value(clone!(edit_view => move |_,_,value| {
             edit_view.borrow_mut().vscrollbar_change_value(value)
         }));
-
-        use std::ffi::CString;
-        use fontconfig::fontconfig;
-        unsafe {
-            let ret = fontconfig::FcConfigAppFontAddDir(
-                fontconfig::FcConfigGetCurrent(),
-                CString::new("fonts").unwrap().as_ptr() as *const u8,
-            );
-            debug!("fc ret = {}", ret);
-        }
 
         edit_view
     }
@@ -312,14 +342,6 @@ impl EditView {
         // let mut font_options = cr.get_font_options();
         // debug!("font options: {:?} {:?} {:?}", font_options, font_options.get_antialias(), font_options.get_hint_style());
         // font_options.set_hint_style(HintStyle::Full);
-        cr.select_font_face("Inconsolata", ::cairo::enums::FontSlant::Normal, ::cairo::enums::FontWeight::Normal);
-        cr.set_font_size(16.0);
-        let font_extents = cr.font_extents();
-
-        self.font_height = font_extents.height;
-        self.font_width = font_extents.max_x_advance;
-        self.font_ascent = font_extents.ascent;
-        self.font_descent = font_extents.descent;
 
         // let (text_width, text_height) = self.get_text_size();
         let num_lines = self.line_cache.height();
@@ -328,8 +350,8 @@ impl EditView {
         let hadj = self.hscrollbar.get_adjustment();
         trace!("drawing.  vadj={}, {}", vadj.get_value(), vadj.get_upper());
 
-        let first_line = (vadj.get_value() / font_extents.height) as u64;
-        let last_line = ((vadj.get_value() + da_height as f64) / font_extents.height) as u64 + 1;
+        let first_line = (vadj.get_value() / self.font_height) as u64;
+        let last_line = ((vadj.get_value() + da_height as f64) / self.font_height) as u64 + 1;
         let last_line = min(last_line, num_lines);
 
         // debug!("line_cache {} {} {}", self.line_cache.n_invalid_before, self.line_cache.lines.len(), self.line_cache.n_invalid_after);
@@ -351,11 +373,15 @@ impl EditView {
             self.core.borrow().request_lines(&self.view_id, first_line as u64, last_line as u64);
         }
 
+        let pango_ctx = self.da.get_pango_context().unwrap();
+        pango_ctx.set_font_description(&self.font_desc);
+
         // Draw background
         set_source_color(cr, theme.background);
         cr.rectangle(0.0, 0.0, da_width as f64, da_height as f64);
         cr.fill();
 
+        set_source_color(cr, theme.foreground);
 
         // Highlight cursor lines
         // for i in first_line..last_line {
@@ -390,77 +416,101 @@ impl EditView {
 
                 // Draw the whole line, no styles
                 cr.move_to(-hadj.get_value(),
-                    font_extents.height*((i+1) as f64) - vadj.get_value()
+                    self.font_height*((i+1) as f64) - vadj.get_value()
                 );
                 set_source_color(cr, theme.foreground);
-                cr.show_text(line_view);
+                // cr.show_text(line_view);
 
 
-                // KLUDGE  until we have real font and style handling, for now, we just draw the
-                // styles in reverse order, on top of each other, overwriting the previous styles
-                struct AbsStyle {
-                    id: usize,
-                    start: i64,
-                    len: i64,
-                }
-                let mut abs_styles = Vec::new();
+                cr.move_to(-hadj.get_value(),
+                    self.font_height*(i as f64) - vadj.get_value()
+                );
+                let layout = create_layout(cr).unwrap();
+                layout.set_font_description(&self.font_desc);
+                layout.set_text(line_view);
+
 
                 let mut ix = 0;
+                let mut attr_list = pango::AttrList::new();
                 for style in &line.styles {
-                    abs_styles.push(AbsStyle{
-                        id: style.id,
-                        start: ix + style.start,
-                        len: style.len as i64,
-                    });
+                    let start_index = (ix + style.start) as u32;
+                    let end_index = (ix + style.start + style.len as i64) as u32;
+
+                    let foreground = main_state.styles.get(style.id).and_then(|s| s.fg_color);
+                    if let Some(foreground) = foreground {
+                        let mut attr = Attribute::new_foreground(
+                            foreground.r_u16(),
+                            foreground.g_u16(),
+                            foreground.b_u16(),
+                        ).unwrap();                    
+                        attr.set_start_index(start_index);
+                        attr.set_end_index(end_index);
+                        attr_list.insert(attr);
+                    }
+
+
+                    let background = main_state.styles.get(style.id).and_then(|s| s.bg_color);
+                    if let Some(background) = background {
+                        let mut attr = Attribute::new_background(
+                            background.r_u16(),
+                            background.g_u16(),
+                            background.b_u16(),
+                        ).unwrap();                    
+                        attr.set_start_index(start_index);
+                        attr.set_end_index(end_index);
+                        attr_list.insert(attr);
+                    }
+
+                    let weight = main_state.styles.get(style.id).and_then(|s| s.weight);
+                    if let Some(weight) = weight {
+                        let mut attr = Attribute::new_weight(
+                            pango::Weight::__Unknown(weight as i32)
+                        ).unwrap();                    
+                        attr.set_start_index(start_index);
+                        attr.set_end_index(end_index);
+                        attr_list.insert(attr);
+                    }
+
+                    let italic = main_state.styles.get(style.id).and_then(|s| s.italic);
+                    if let Some(italic) = italic {
+                        let mut attr = if italic {
+                            Attribute::new_style(pango::Style::Italic).unwrap()
+                        } else {
+                            Attribute::new_style(pango::Style::Normal).unwrap()
+                        };
+                        attr.set_start_index(start_index);
+                        attr.set_end_index(end_index);
+                        attr_list.insert(attr);
+                    }
+
+                    let underline = main_state.styles.get(style.id).and_then(|s| s.underline);
+                    if let Some(underline) = underline {
+                        let mut attr = if underline {
+                            Attribute::new_underline(pango::Underline::Single).unwrap()
+                        } else {
+                            Attribute::new_underline(pango::Underline::None).unwrap()
+                        };
+                        attr.set_start_index(start_index);
+                        attr.set_end_index(end_index);
+                        attr_list.insert(attr);
+                    }
+
                     ix += style.start + style.len as i64;
                 }
-                abs_styles.reverse();
 
-                for style in &abs_styles {
-                    cr.save();
+                layout.set_attributes(&attr_list);
 
-                    // Draw background, create clip
-                    if let Some(bg_color) = main_state.styles.get(style.id).and_then(|s| s.bg_color) {
-                        set_source_color(cr, ::theme::Color::make_u32_argb(bg_color));
-                    } else if style.id == 0 {
-                        set_source_color(cr, theme.selection);
-                    } else {
-                        set_source_color(cr, theme.background);
-                    }
-                    // set_source_color(cr, ::theme::Color::make_u8((((style.id>>2) & 1)*255) as u8, (((style.id>>1) & 1)*255) as u8, (((style.id>>0) & 1)*255) as u8, 255));
-
-                    cr.rectangle(font_extents.max_x_advance* (style.start as f64) - hadj.get_value(),
-                        font_extents.height*((i+1) as f64) - font_extents.ascent - vadj.get_value(),
-                        font_extents.max_x_advance* (style.len as f64),
-                        font_extents.ascent + font_extents.descent);
-                    cr.clip_preserve();
-                    cr.fill();
-
-                    
-                    // Draw the whole line, clipped
-                    cr.move_to(-hadj.get_value(),
-                        font_extents.height*((i+1) as f64) - vadj.get_value()
-                    );
-                    // set_source_color(cr, theme.foreground); // TODO styled def color
-                    if let Some(fg_color) = main_state.styles.get(style.id).and_then(|s| s.fg_color) {
-                        set_source_color(cr, ::theme::Color::make_u32_argb(fg_color));
-                    } else if style.id == 0 {
-                        set_source_color(cr, theme.selection_foreground);
-                    } else {
-                        set_source_color(cr, theme.foreground);
-                    }
-                    cr.show_text(line_view);
-
-                    cr.restore();
-                }
-
+                update_layout(cr, &layout);
+                show_layout(cr, &layout);
+                
+                
                 // Draw the cursor
                 set_source_color(cr, theme.caret);
                 for c in line.cursor() {
-                    cr.rectangle(font_extents.max_x_advance* (*c as f64) - hadj.get_value(),
-                        font_extents.height*((i+1) as f64) - font_extents.ascent - vadj.get_value(),
+                    cr.rectangle(self.font_width * (*c as f64) - hadj.get_value(),
+                        (((self.font_ascent + self.font_descent) as u64)*i) as f64 - vadj.get_value(),
                         CURSOR_WIDTH,
-                        font_extents.ascent + font_extents.descent);
+                        self.font_ascent + self.font_descent);
                     cr.fill();
                 }
 
@@ -528,7 +578,6 @@ impl EditView {
     }
 
     pub fn handle_scroll(&mut self, es: &EventScroll) -> Inhibit {
-        debug!("scroll {:?}", es);
         self.da.grab_focus();
         let amt = self.font_height * 3.0;
 
@@ -548,7 +597,6 @@ impl EditView {
     }
 
     fn handle_key_press_event(&mut self, ek: &EventKey) -> Inhibit {
-        debug!("key press {:?}", ek);
         debug!("key press keyval={:?}, state={:?}, length={:?} group={:?} uc={:?}",
             ek.get_keyval(), ek.get_state(), ek.get_length(), ek.get_group(),
             ::gdk::keyval_to_unicode(ek.get_keyval())

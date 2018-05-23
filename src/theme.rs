@@ -1,35 +1,78 @@
 use cairo;
-use syntect::highlighting::Color as SynColor;
-use syntect::highlighting::{ThemeSettings, UnderlineOption};
+use proto;
 
 #[derive(Clone, Copy, Debug)]
 pub struct Color {
-    pub r: f64,
-    pub g: f64,
-    pub b: f64,
-    pub a: f64,
+    r: u8,
+    g: u8,
+    b: u8,
+    a: u8,
 }
 
 impl Color {
-    pub const WHITE: Color = Color{r: 1.0, g: 1.0, b: 1.0, a: 1.0};
-    pub const BLACK: Color = Color{r: 0.0, g: 0.0, b: 0.0, a: 1.0};
+    pub const WHITE: Color = Color{r: 255, g: 255, b: 255, a: 255};
+    pub const BLACK: Color = Color{r: 0, g: 0, b: 0, a: 255};
 
-    pub fn make_u8(r: u8, g: u8, b: u8, a: u8) -> Color {
-        Color{r: r as f64/255.0, g: g as f64/255.0, b: b as f64/255.0, a: a as f64/255.0}
+    pub fn from_u8s(r: u8, g: u8, b: u8, a: u8) -> Color {
+        Color{r, g, b, a}
     }
-    pub fn make_u32_argb(c: u32) -> Color {
-        Color::make_u8(
+    pub fn from_ts_proto(c: proto::Color) -> Color {
+        Color::from_u8s(c.r, c.g, c.b, c.a)
+    }
+    pub fn from_u32_argb(c: u32) -> Color {
+        Color::from_u8s(
             (c >> 16) as u8,
             (c >> 8) as u8,
             c as u8,
             (c >> 24) as u8,
         )
     }
+
+    pub fn r_u16(&self) -> u16 {
+        (self.r as u16) << 8
+    }
+    pub fn g_u16(&self) -> u16 {
+        (self.g as u16) << 8
+    }
+    pub fn b_u16(&self) -> u16 {
+        (self.b as u16) << 8
+    }
 }
 
 #[inline]
 pub fn set_source_color(cr: &cairo::Context, c: Color) {
-    cr.set_source_rgba(c.r, c.g, c.b, c.a);
+    cr.set_source_rgba(
+        c.r as f64 / 255.0,
+        c.g as f64 / 255.0,
+        c.b as f64 / 255.0,
+        c.a as f64 / 255.0,
+    );
+}
+
+#[derive(Clone, Copy, Debug)]
+pub struct Style {
+    /// 32-bit RGBA value
+    pub fg_color: Option<Color>,
+    /// 32-bit RGBA value, default 0
+    pub bg_color: Option<Color>,
+    /// 100..900, default 400
+    pub weight: Option<u32>,
+    /// default false
+    pub italic: Option<bool>, 
+    /// default false
+    pub underline: Option<bool>,
+}
+
+impl Style {
+    pub fn from_proto(style: proto::Style) -> Style {
+        Style {
+            fg_color: style.fg_color.map(Color::from_u32_argb),
+            bg_color: style.bg_color.map(Color::from_u32_argb),
+            weight: style.weight,
+            italic: style.italic,
+            underline: style.underline,
+        }
+    }
 }
 
 #[derive(Clone, Debug)]
@@ -68,20 +111,61 @@ pub struct Theme {
 impl Default for Theme {
     fn default() -> Theme {
         Theme {
-            foreground: Color::make_u8(50, 50, 50, 255),
+            foreground: Color::from_u8s(50, 50, 50, 255),
             background: Color::WHITE,
-            caret: Color::make_u8(50, 50, 50, 255),
-            line_highlight: Some(Color::make_u8(245, 245, 245, 255)),
+            caret: Color::from_u8s(50, 50, 50, 255),
+            line_highlight: Some(Color::from_u8s(245, 245, 245, 255)),
             find_highlight: Color::BLACK,
-            find_highlight_foreground: Some(Color::make_u8(50, 50, 50, 255)),
+            find_highlight_foreground: Some(Color::from_u8s(50, 50, 50, 255)),
             gutter: Color::WHITE,
-            gutter_foreground: Color::make_u8(179, 179, 179, 255),
-            selection: Color::make_u8(248, 238, 199, 255),
+            gutter_foreground: Color::from_u8s(179, 179, 179, 255),
+            selection: Color::from_u8s(248, 238, 199, 255),
             selection_foreground: Color::BLACK,
             selection_border: Some(Color::WHITE),
             inactive_selection: None,
             inactive_selection_foreground: None,
             shadow: Color::WHITE,
         }        
+    }
+}
+
+impl Theme {
+    pub fn from_proto(theme_settings: proto::ThemeSettings) -> Theme {
+        let mut theme: Theme = Default::default();
+
+        if let Some(foreground) = theme_settings.foreground {
+            theme.foreground = Color::from_ts_proto(foreground);
+        }
+        if let Some(background) = theme_settings.background {
+            theme.background = Color::from_ts_proto(background);
+        }
+        if let Some(caret) = theme_settings.caret {
+            theme.caret = Color::from_ts_proto(caret);
+        }
+        theme.line_highlight = theme_settings.line_highlight.map(Color::from_ts_proto);
+        if let Some(find_highlight) = theme_settings.find_highlight {
+            theme.find_highlight = Color::from_ts_proto(find_highlight);
+        }
+        theme.find_highlight_foreground = theme_settings.find_highlight_foreground.map(Color::from_ts_proto);
+        if let Some(gutter) = theme_settings.gutter {
+            theme.gutter = Color::from_ts_proto(gutter);
+        }
+        if let Some(gutter_foreground) = theme_settings.gutter_foreground {
+            theme.gutter_foreground = Color::from_ts_proto(gutter_foreground);
+        }
+        if let Some(selection) = theme_settings.selection {
+            theme.selection = Color::from_ts_proto(selection);
+        }
+        if let Some(selection_foreground) = theme_settings.selection_foreground {
+            theme.selection_foreground = Color::from_ts_proto(selection_foreground);
+        }
+        theme.selection_border = theme_settings.selection_border.map(Color::from_ts_proto);
+        theme.inactive_selection = theme_settings.inactive_selection.map(Color::from_ts_proto);
+        theme.inactive_selection_foreground = theme_settings.inactive_selection_foreground.map(Color::from_ts_proto);
+        if let Some(shadow) = theme_settings.shadow {
+            theme.shadow = Color::from_ts_proto(shadow);
+        }
+
+        theme
     }
 }

@@ -4,10 +4,6 @@ use std::thread;
 #[allow(unused_imports)]
 use std::time::Duration;
 
-// Needed for semaphore, currently disabled
-//use winapi::um::synchapi::{CreateSemaphoreW, ReleaseSemaphore};
-//use winapi::shared::ntdef::HANDLE;
-
 use serde_json::{self, Value};
 
 use xi_core_lib::XiCore;
@@ -92,41 +88,8 @@ impl Write for ChanWriter {
 
     fn write_all(&mut self, buf: &[u8]) -> io::Result<()> {
         let json = serde_json::from_slice::<Value>(buf).unwrap();
-        //thread::sleep(Duration::from_secs(1));
         self.sender.send(json).map_err(|_|
             io::Error::new(ErrorKind::BrokenPipe, "rpc rx thread lost")
         )
     }
 }
-
-// We're not using the semaphore for now, but it might come in handy at
-// some point.
-/*
-pub struct Semaphore(HANDLE);
-unsafe impl Send for Semaphore {}
-
-impl Semaphore {
-    fn new() -> Semaphore {
-        unsafe {
-            let handle = CreateSemaphoreW(null_mut(), 0, 0xffff, null_mut());
-            Semaphore(handle)
-        }
-    }
-
-    // Note: this just leaks the semaphore, which is fine for this app,
-    // but in general we'd want to use DuplicateHandle / CloseHandle
-    fn clone(&self) -> Semaphore {
-        Semaphore(self.0)
-    }
-
-    fn release(&self) {
-        unsafe {
-            let _ok = ReleaseSemaphore(self.0, 1, null_mut());
-        }
-    }
-
-    pub fn get_handle(&self) -> HANDLE {
-        self.0
-    }
-}
-*/

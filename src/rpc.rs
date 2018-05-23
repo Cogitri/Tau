@@ -77,7 +77,7 @@ impl Core {
             "params": params,
         });
         let state = self.state.lock().unwrap();
-        debug!("CORE <-- {:?}", cmd);
+        debug!("CORE <-- {}", cmd);
         state.xi_peer.send_json(&cmd);
     }
 

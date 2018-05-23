@@ -1,18 +1,17 @@
 use gio::ApplicationFlags;
-use gtk::{self, *};
+use gtk::*;
 use CoreMsg;
 use SharedQueue;
 use edit_view::EditView;
-use proto::Style;
+use proto::{self, ThemeSettings};
 use rpc::{Core, Handler};
 use serde_json::{self, Value};
 use std::cell::RefCell;
 use std::collections::{BTreeMap, HashMap};
 use std::env::home_dir;
-use std::path::Path;
 use std::rc::Rc;
 use std::sync::{Arc, Mutex};
-use theme::{Theme};
+use theme::{Color, Style, Theme};
 use xi_thread;
 
 pub struct MainState {
@@ -122,14 +121,14 @@ impl MainWin {
             CoreMsg::NewViewReply{file_name, value} => {
                 MainWin::new_view_response(main_win, file_name, value)
             },
-            CoreMsg::Notification{ref method, ref params} => {
+            CoreMsg::Notification{method, params} => {
                 match method.as_ref() {
-                    "available_themes" => main_win.borrow_mut().available_themes(params),
-                    "available_plugins" => main_win.borrow_mut().available_plugins(params),
-                    "config_changed" => main_win.borrow_mut().config_changed(params),
-                    "def_style" => main_win.borrow_mut().def_style(params),
-                    "update" => main_win.borrow_mut().update(params),
-                    "scroll_to" => main_win.borrow_mut().scroll_to(params),
+                    "available_themes" => main_win.borrow_mut().available_themes(&params),
+                    "available_plugins" => main_win.borrow_mut().available_plugins(&params),
+                    "config_changed" => main_win.borrow_mut().config_changed(&params),
+                    "def_style" => main_win.borrow_mut().def_style(&params),
+                    "update" => main_win.borrow_mut().update(&params),
+                    "scroll_to" => main_win.borrow_mut().scroll_to(&params),
                     "theme_changed" => main_win.borrow_mut().theme_changed(params),
                     _ => {
                         error!("!!! UNHANDLED NOTIFICATION: {}", method);
@@ -139,7 +138,6 @@ impl MainWin {
         };
     }
     pub fn available_themes(&mut self, params: &Value) {
-        debug!("available_themes {:?}", params);
         let mut state = self.state.borrow_mut();
         state.themes.clear();
         if let Some(themes) = params["themes"].as_array() {
@@ -154,35 +152,71 @@ impl MainWin {
         }
     }
 
+    pub fn theme_changed(&mut self, params: Value) {
+        let theme_settings = params["theme"].clone();
+        let theme_settings: ThemeSettings = match serde_json::from_value(theme_settings) {
+            Err(e) => {
+                error!("failed to convert theme settings: {}", e);
+                return;
+            }
+            Ok(ts) => ts,
+        };
+
+        let selection_foreground = theme_settings.selection_foreground.map(Color::from_ts_proto);
+        let selection = theme_settings.selection.map(Color::from_ts_proto);
+
+        let theme = Theme::from_proto(theme_settings);
+        {
+            let mut state = self.state.borrow_mut();
+            state.theme = theme;
+        }
+
+        let selection_sytle = Style{
+            fg_color: selection_foreground,
+            bg_color: selection,
+            weight: None,
+            italic: None,
+            underline: None,
+        };
+
+        self.set_style(0, selection_sytle);
+    }
+
     pub fn available_plugins(&mut self, params: &Value) {
-        error!("UNHANDLED available_plugins {:?}", params);
+        error!("UNHANDLED available_plugins {}", params);
     }
 
     pub fn config_changed(&mut self, params: &Value) {
-        error!("UNHANDLED config_changed {:?}", params);
+        error!("UNHANDLED config_changed {}", params);
     }
 
     pub fn def_style(&mut self, params: &Value) {
-        error!("UNHANDLED def_style {:?}", params);
-        let mut state = self.state.borrow_mut();
+        let style: proto::Style = serde_json::from_value(params.clone()).unwrap();
+        let style = Style::from_proto(style);
+
         if let Some(id) = params["id"].as_u64() {
             let id = id as usize;
             
-            // bump the array size up if needed
-            while state.styles.len() < id {
-                let new_id = state.styles.len();
-                state.styles.push(Style{
-                    id: new_id,
-                    fg_color: None,
-                    bg_color: None,
-                    weight: None,
-                    italic: None,
-                    underline: None,
-                })
-            }
+            self.set_style(id, style);
+        }
+    }
 
-            let style = serde_json::from_value(params.clone()).unwrap();
+    pub fn set_style(&self, id: usize, style: Style) {
+        let mut state = self.state.borrow_mut();
+        // bump the array size up if needed
+        while state.styles.len() < id {
+            state.styles.push(Style{
+                fg_color: None,
+                bg_color: None,
+                weight: None,
+                italic: None,
+                underline: None,
+            })
+        }
+        if state.styles.len() == id {
             state.styles.push(style);
+        } else {
+            state.styles[id] = style;
         }
     }
 
@@ -232,18 +266,13 @@ impl MainWin {
         }
     }
 
-    pub fn theme_changed(&mut self, params: &Value) {
-        error!("UNHANDLED theme_changed {:?}", params);
-    }
-
-
     pub fn handle_open_button(&self) {
         let fcd = FileChooserDialog::new::<FileChooserDialog>(None, None, FileChooserAction::Open);
         fcd.set_transient_for(Some(&self.window));
         fcd.add_button("Open", 33);
         fcd.set_default_response(33);
         fcd.set_select_multiple(true);
-        let response = fcd.run();
+        let response = fcd.run(); // XXX FIXME: This can run the GTK main loop again and panic because we already have edit_view borrowed
         debug!("open response = {}", response);
         if response == 33 {
             for file in fcd.get_filenames() {

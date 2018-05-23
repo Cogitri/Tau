@@ -16,10 +16,11 @@ lazy_static = "1.0"
 libc = "0.2"
 log = "0.4"
 mio = "0.5"
+pango = { version = "0.4", features = ["v1_38"] }
+pangocairo = "0.5.0"
 serde = "1.0"
 serde_json = "1.0"
 serde_derive = "1.0"
 servo-fontconfig = "0.4.0"
-syntect = "2.0"
 xi-core-lib = { git = "https://github.com/google/xi-editor", rev = "90f90efc" }
 xi-rpc = { git = "https://github.com/google/xi-editor", rev = "90f90efc" }
