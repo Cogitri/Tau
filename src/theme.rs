@@ -29,23 +29,23 @@ impl Color {
     }
 
     pub fn r_u16(&self) -> u16 {
-        (self.r as u16) << 8
+        u16::from(self.r) << 8
     }
     pub fn g_u16(&self) -> u16 {
-        (self.g as u16) << 8
+        u16::from(self.g) << 8
     }
     pub fn b_u16(&self) -> u16 {
-        (self.b as u16) << 8
+        u16::from(self.b) << 8
     }
 }
 
 #[inline]
 pub fn set_source_color(cr: &cairo::Context, c: Color) {
     cr.set_source_rgba(
-        c.r as f64 / 255.0,
-        c.g as f64 / 255.0,
-        c.b as f64 / 255.0,
-        c.a as f64 / 255.0,
+        f64::from(c.r) / 255.0,
+        f64::from(c.g) / 255.0,
+        f64::from(c.b) / 255.0,
+        f64::from(c.a) / 255.0,
     );
 }
 
@@ -64,7 +64,7 @@ pub struct Style {
 }
 
 impl Style {
-    pub fn from_proto(style: proto::Style) -> Style {
+    pub fn from_proto(style: &proto::Style) -> Style {
         Style {
             fg_color: style.fg_color.map(Color::from_u32_argb),
             bg_color: style.bg_color.map(Color::from_u32_argb),
@@ -130,7 +130,7 @@ impl Default for Theme {
 }
 
 impl Theme {
-    pub fn from_proto(theme_settings: proto::ThemeSettings) -> Theme {
+    pub fn from_proto(theme_settings: &proto::ThemeSettings) -> Theme {
         let mut theme: Theme = Default::default();
 
         if let Some(foreground) = theme_settings.foreground {

@@ -10,7 +10,7 @@ use pango::{self, *, ContextExt, LayoutExt};
 use pangocairo::functions::*;
 use serde_json::Value;
 use std::cell::RefCell;
-use std::cmp::min;
+use std::cmp::{max, min};
 use std::rc::Rc;
 use std::u32;
 
@@ -40,7 +40,7 @@ pub struct EditView {
 }
 
 impl EditView {
-    pub fn new(main_state: Rc<RefCell<MainState>>, core: Rc<RefCell<Core>>, file_name: Option<String>, view_id: String) -> Rc<RefCell<EditView>> {
+    pub fn new(main_state: Rc<RefCell<MainState>>, core: Rc<RefCell<Core>>, file_name: Option<String>, view_id: &str) -> Rc<RefCell<EditView>> {
         let da = DrawingArea::new();
         let hscrollbar = Scrollbar::new(Orientation::Horizontal, None);
         let vscrollbar = Scrollbar::new(Orientation::Vertical, None);
@@ -71,9 +71,10 @@ impl EditView {
         use std::ffi::CString;
         use fontconfig::fontconfig;
         unsafe {
+            let fonts_dir = CString::new("fonts").unwrap();
             let ret = fontconfig::FcConfigAppFontAddDir(
                 fontconfig::FcConfigGetCurrent(),
-                CString::new("fonts").unwrap().as_ptr() as *const u8,
+                fonts_dir.as_ptr() as *const u8,
             );
             debug!("fc ret = {}", ret);
         }
@@ -98,10 +99,10 @@ impl EditView {
         let (_, log_extents) = layout.get_extents();
         debug!("size: {:?}", log_extents);
 
-        let font_height = log_extents.height as f64 / pango::SCALE as f64;
-        let font_width = log_extents.width as f64 / pango::SCALE as f64;
-        let font_ascent = metrics.get_ascent() as f64 / pango::SCALE as f64;
-        let font_descent = metrics.get_descent() as f64 / pango::SCALE as f64;
+        let font_height = f64::from(log_extents.height) / f64::from(pango::SCALE);
+        let font_width = f64::from(log_extents.width) / f64::from(pango::SCALE);
+        let font_ascent = f64::from(metrics.get_ascent()) / f64::from(pango::SCALE);
+        let font_descent = f64::from(metrics.get_descent()) / f64::from(pango::SCALE);
 
         debug!("font metrics: {} {} {} {}", font_width, font_height, font_ascent, font_descent);
 
@@ -110,7 +111,7 @@ impl EditView {
             main_state: main_state.clone(),
             file_name,
             pristine: true,
-            view_id: view_id.clone(),
+            view_id: view_id.to_string(),
             da: da.clone(),
             root_widget: hbox.clone(),
             tab_widget: tab_hbox.clone(),
@@ -146,11 +147,12 @@ impl EditView {
 
         da.connect_realize(|w|{
             // Set the text cursor
-            DisplayManager::get().get_default_display()
-                .map(|disp| {
-                    let cur = Cursor::new_for_display(&disp, CursorType::Xterm);
-                    w.get_window().map(|win| win.set_cursor(&cur));
-            });
+            if let Some(disp) = DisplayManager::get().get_default_display() {
+                let cur = Cursor::new_for_display(&disp, CursorType::Xterm);
+                if let Some(win) = w.get_window() {
+                    win.set_cursor(&cur)
+                }
+            }
             w.grab_focus();
         });
 
@@ -227,12 +229,12 @@ impl EditView {
             vadj.set_value(vadj.get_upper() - vadj.get_page_size())
         }
 
-        let hadj = self.hscrollbar.get_adjustment();
-        hadj.set_lower(0f64);
-        hadj.set_upper(text_width as f64);
-        if hadj.get_value() + hadj.get_page_size() > hadj.get_upper() {
-            hadj.set_value(hadj.get_upper() - hadj.get_page_size())
-        }
+        // let hadj = self.hscrollbar.get_adjustment();
+        // hadj.set_lower(0f64);
+        // hadj.set_upper(text_width as f64);
+        // if hadj.get_value() + hadj.get_page_size() > hadj.get_upper() {
+        //     hadj.set_value(hadj.get_upper() - hadj.get_page_size())
+        // }
 
         if let Some(pristine) = update["pristine"].as_bool() {
             if self.pristine != pristine {
@@ -279,9 +281,9 @@ impl EditView {
     fn da_size_allocate(&mut self, da_width: i32, da_height: i32) {
         debug!("DA SIZE ALLOCATE");
         let vadj = self.vscrollbar.get_adjustment();
-        vadj.set_page_size(da_height as f64);
+        vadj.set_page_size(f64::from(da_height));
         let hadj = self.hscrollbar.get_adjustment();
-        hadj.set_page_size(da_width as f64);
+        hadj.set_page_size(f64::from(da_width));
 
         self.update_visible_scroll_region();
     }
@@ -297,7 +299,7 @@ impl EditView {
     fn update_visible_scroll_region(&self) {
         let da_height = self.da.get_allocated_height();
         let (_, first_line) = self.da_px_to_cell(0.0, 0.0);
-        let (_, last_line) = self.da_px_to_cell(0.0, da_height as f64);
+        let (_, last_line) = self.da_px_to_cell(0.0, f64::from(da_height));
         let last_line = last_line + 1;
 
         debug!("update visible scroll region {} {}", first_line, last_line);
@@ -305,8 +307,8 @@ impl EditView {
     }
 
     fn get_text_size(&self) -> (f64, f64) {
-        let da_width = self.da.get_allocated_width() as f64;
-        let da_height = self.da.get_allocated_height() as f64;
+        let da_width = f64::from(self.da.get_allocated_width());
+        let da_height = f64::from(self.da.get_allocated_height());
         let num_lines = self.line_cache.height();
 
         let all_text_height = num_lines as f64 * self.font_height + self.font_descent;
@@ -316,12 +318,7 @@ impl EditView {
             all_text_height
         };
 
-        // let all_text_width = self.line_cache.width() as f64 * self.font_width;
-        // TODO FIX 100
-        // TODO FIX 100
-        // TODO FIX 100
-        // TODO FIX 100
-        let all_text_width = 100 as f64 * self.font_width;
+        let all_text_width = self.line_cache.width() as f64 * self.font_width;
         let width = if da_width > all_text_width {
             da_width
         } else {
@@ -351,7 +348,7 @@ impl EditView {
         trace!("drawing.  vadj={}, {}", vadj.get_value(), vadj.get_upper());
 
         let first_line = (vadj.get_value() / self.font_height) as u64;
-        let last_line = ((vadj.get_value() + da_height as f64) / self.font_height) as u64 + 1;
+        let last_line = ((vadj.get_value() + f64::from(da_height)) / self.font_height) as u64 + 1;
         let last_line = min(last_line, num_lines);
 
         // debug!("line_cache {} {} {}", self.line_cache.n_invalid_before, self.line_cache.lines.len(), self.line_cache.n_invalid_after);
@@ -378,7 +375,7 @@ impl EditView {
 
         // Draw background
         set_source_color(cr, theme.background);
-        cr.rectangle(0.0, 0.0, da_width as f64, da_height as f64);
+        cr.rectangle(0.0, 0.0, f64::from(da_width), f64::from(da_height));
         cr.fill();
 
         set_source_color(cr, theme.foreground);
@@ -401,11 +398,12 @@ impl EditView {
 
         const CURSOR_WIDTH: f64 = 2.0;
 
+        let mut max_width = 0;
+
         let main_state = self.main_state.borrow();
 
         for i in first_line..last_line {
             // Keep track of the starting x position
-
             if let Some(line) = self.line_cache.get_line(i) {
 
                 let line_view = if line.text().ends_with('\n') {
@@ -500,6 +498,9 @@ impl EditView {
 
                 layout.set_attributes(&attr_list);
 
+                max_width = max(max_width, layout.get_extents().1.width);
+                // debug!("width={}", layout.get_extents().1.width);
+
                 update_layout(cr, &layout);
                 show_layout(cr, &layout);
                 
@@ -513,9 +514,10 @@ impl EditView {
                         self.font_ascent + self.font_descent);
                     cr.fill();
                 }
-
             }
         }
+
+        hadj.set_upper(f64::from(max_width / pango::SCALE));
 
         Inhibit(false)
     }
@@ -539,7 +541,11 @@ impl EditView {
             if cur_left < hadj.get_value() {
                 hadj.set_value(cur_left);
             } else if cur_right > hadj.get_value() + hadj.get_page_size() && hadj.get_page_size() != 0.0 {
-                hadj.set_value(cur_right - hadj.get_page_size());
+                let new_value = cur_right - hadj.get_page_size();
+                if new_value + hadj.get_page_size() > hadj.get_upper() {
+                    hadj.set_upper(new_value + hadj.get_page_size());
+                }
+                hadj.set_value(new_value);
             }
         }
     }
@@ -554,6 +560,8 @@ impl EditView {
             1 => {
                 if eb.get_state().contains(ModifierType::SHIFT_MASK) {
                     self.core.borrow().gesture_range_select(&self.view_id, line, col);
+                } else if eb.get_state().contains(ModifierType::CONTROL_MASK) {
+                    self.core.borrow().gesture_toggle_sel(&self.view_id, line, col);
                 } else if eb.get_event_type() == EventType::DoubleButtonPress {
                     self.core.borrow().gesture_word_select(&self.view_id, line, col);
                 } else if eb.get_event_type() == EventType::TripleButtonPress {

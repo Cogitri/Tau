@@ -127,6 +127,13 @@ impl Core {
         }));
     }
 
+    pub fn modify_user_config(&self, domain: &Value, changes: &Value) {
+        self.send_notification("modify_user_config", &json!({
+            "domain": domain,
+            "changes": changes,
+        }));
+    }
+
     pub fn request_lines(&self, view_id: &str, first_line: u64, last_line: u64) {
         self.send_edit_cmd(view_id, "request_lines", &json!([first_line, last_line]));
     }
@@ -250,7 +257,7 @@ impl Core {
             "ty": "range_select",
         }))
     }
-    /// sets the selection to a given line
+    /// sets the selection to a given line (triple click)
     pub fn gesture_line_select(&self, view_id: &str, line: u64, col: u64) {
         self.send_edit_cmd(view_id, "gesture", &json!({
             "line": line,
@@ -266,7 +273,7 @@ impl Core {
             "ty": "word_select",
         }))
     }
-    /// adds a line to the selection (triple click)
+    /// adds a line to the selection
     pub fn gesture_multi_line_select(&self, view_id: &str, line: u64, col: u64) {
         self.send_edit_cmd(view_id, "gesture", &json!({
             "line": line,

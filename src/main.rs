@@ -1,3 +1,5 @@
+#![recursion_limit="128"]
+
 extern crate cairo;
 extern crate env_logger;
 extern crate gdk;
@@ -66,7 +68,7 @@ impl SharedQueue {
     pub fn add_core_msg(&mut self, msg: CoreMsg)
     {
         if self.queue.is_empty() {
-            self.pipe_writer.write(&[0u8])
+            self.pipe_writer.write_all(&[0u8])
                 .expect("failed to write to signalling pipe");
         }
         trace!("pushing to queue");
