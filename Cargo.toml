@@ -6,6 +6,7 @@ authors = ["Brian Vincent <brainn@gmail.com>"]
 [dependencies]
 cairo-rs = "0.4.1"
 env_logger = "0.5.9"
+failure = "0.1"
 gdk = "0.8"
 gio = "0.4"
 glib = "0.5"

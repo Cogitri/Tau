@@ -226,7 +226,7 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
-            <property name="action_name">app.preferences</property>
+            <property name="action_name">app.prefs</property>
             <property name="text" translatable="yes">Preferences</property>
           </object>
           <packing>

@@ -26,6 +26,7 @@ mod clipboard;
 mod edit_view;
 mod linecache;
 mod main_win;
+mod prefs_win;
 mod proto;
 mod rpc;
 mod source;

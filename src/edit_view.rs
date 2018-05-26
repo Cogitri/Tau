@@ -15,7 +15,7 @@ use std::rc::Rc;
 use std::u32;
 
 use main_win::MainState;
-use linecache::LineCache;
+use linecache::{Line, LineCache};
 use theme::set_source_color;
 
 pub struct EditView {
@@ -84,7 +84,8 @@ impl EditView {
             if !family.is_monospace() { continue; }
             debug!("font family {:?} monospace: {}", family.get_name(), family.is_monospace());
         }
-        let font_desc = FontDescription::from_string("Inconsolata 16");
+        let mut font_desc = FontDescription::from_string("Inconsolata 16");
+        // font_desc.set_size(14 * pango::SCALE);
         pango_ctx.set_font_description(&font_desc);
         let language = pango_ctx.get_language().expect("failed to get pango language");
         let fontset = pango_ctx.load_fontset(&font_desc, &language).expect("failed to load font set");
@@ -206,6 +207,34 @@ impl EditView {
         self.label.set_text(&full_title);
     }
 
+    pub fn config_changed(&mut self, changes: &Value) {
+        if let Some(map) = changes.as_object() {
+            for (name, value) in map {
+                match name.as_ref() {
+                    "font_size" => {
+                        if let Some(font_size) = value.as_u64() {
+                            self.font_desc.set_size(font_size as i32 * pango::SCALE);
+                        }
+                    }
+                    "font_face" => {
+                        if let Some(font_face) = value.as_str() {
+                            if font_face == "InconsolataGo" {
+                                // TODO This shouldn't be necessary, but the only font I've found
+                                // to bundle is "Inconsolata"
+                                self.font_desc.set_family("Inconsolata");
+                            } else {
+                                self.font_desc.set_family(font_face);
+                            }
+                        }
+                    }
+                    _ => {
+                        error!("unhandled config option {}", name);
+                    },
+                }
+            }
+        }
+    }
+
     pub fn update(&mut self, params: &Value) {
         let update = &params["update"];
         self.line_cache.apply_update(update);
@@ -268,14 +297,23 @@ impl EditView {
         }
     }
 
-    pub fn da_px_to_cell(&self, x: f64, y: f64) -> (u64, u64) {
+    pub fn da_px_to_cell(&self, main_state: &MainState, x: f64, y: f64) -> (u64, u64) {
         // let first_line = (vadj.get_value() / font_extents.height) as usize;
         let x = x + self.hscrollbar.get_adjustment().get_value();
         let y = y + self.vscrollbar.get_adjustment().get_value();
 
         let mut y = y - self.font_descent;
         if y < 0.0 { y = 0.0; }
-        ( (x / self.font_width + 0.5) as u64, (y / self.font_height) as u64)
+        let line_num = (y / self.font_height) as u64;
+        let index = if let Some(line) = self.line_cache.get_line(line_num) {
+            let pango_ctx = self.da.get_pango_context().expect("failed to get pango ctx");
+            let layout = self.create_layout_for_line(&pango_ctx, &main_state, line);
+            let (_, index, trailing) = layout.xy_to_index(x as i32 * pango::SCALE, 0);
+            index + trailing
+        } else {
+            0
+        };
+        ( index as u64, (y / self.font_height) as u64)
     }
 
     fn da_size_allocate(&mut self, da_width: i32, da_height: i32) {
@@ -297,9 +335,10 @@ impl EditView {
     }
 
     fn update_visible_scroll_region(&self) {
+        let main_state = self.main_state.borrow();
         let da_height = self.da.get_allocated_height();
-        let (_, first_line) = self.da_px_to_cell(0.0, 0.0);
-        let (_, last_line) = self.da_px_to_cell(0.0, f64::from(da_height));
+        let (_, first_line) = self.da_px_to_cell(&main_state, 0.0, 0.0);
+        let (_, last_line) = self.da_px_to_cell(&main_state, 0.0, f64::from(da_height));
         let last_line = last_line + 1;
 
         debug!("update visible scroll region {} {}", first_line, last_line);
@@ -406,97 +445,12 @@ impl EditView {
             // Keep track of the starting x position
             if let Some(line) = self.line_cache.get_line(i) {
 
-                let line_view = if line.text().ends_with('\n') {
-                    &line.text()[0..line.text().len()-1]
-                } else {
-                    &line.text()
-                };
-
-                // Draw the whole line, no styles
-                cr.move_to(-hadj.get_value(),
-                    self.font_height*((i+1) as f64) - vadj.get_value()
-                );
-                set_source_color(cr, theme.foreground);
-                // cr.show_text(line_view);
-
-
                 cr.move_to(-hadj.get_value(),
                     self.font_height*(i as f64) - vadj.get_value()
                 );
-                let layout = create_layout(cr).unwrap();
-                layout.set_font_description(&self.font_desc);
-                layout.set_text(line_view);
 
-
-                let mut ix = 0;
-                let mut attr_list = pango::AttrList::new();
-                for style in &line.styles {
-                    let start_index = (ix + style.start) as u32;
-                    let end_index = (ix + style.start + style.len as i64) as u32;
-
-                    let foreground = main_state.styles.get(style.id).and_then(|s| s.fg_color);
-                    if let Some(foreground) = foreground {
-                        let mut attr = Attribute::new_foreground(
-                            foreground.r_u16(),
-                            foreground.g_u16(),
-                            foreground.b_u16(),
-                        ).unwrap();                    
-                        attr.set_start_index(start_index);
-                        attr.set_end_index(end_index);
-                        attr_list.insert(attr);
-                    }
-
-
-                    let background = main_state.styles.get(style.id).and_then(|s| s.bg_color);
-                    if let Some(background) = background {
-                        let mut attr = Attribute::new_background(
-                            background.r_u16(),
-                            background.g_u16(),
-                            background.b_u16(),
-                        ).unwrap();                    
-                        attr.set_start_index(start_index);
-                        attr.set_end_index(end_index);
-                        attr_list.insert(attr);
-                    }
-
-                    let weight = main_state.styles.get(style.id).and_then(|s| s.weight);
-                    if let Some(weight) = weight {
-                        let mut attr = Attribute::new_weight(
-                            pango::Weight::__Unknown(weight as i32)
-                        ).unwrap();                    
-                        attr.set_start_index(start_index);
-                        attr.set_end_index(end_index);
-                        attr_list.insert(attr);
-                    }
-
-                    let italic = main_state.styles.get(style.id).and_then(|s| s.italic);
-                    if let Some(italic) = italic {
-                        let mut attr = if italic {
-                            Attribute::new_style(pango::Style::Italic).unwrap()
-                        } else {
-                            Attribute::new_style(pango::Style::Normal).unwrap()
-                        };
-                        attr.set_start_index(start_index);
-                        attr.set_end_index(end_index);
-                        attr_list.insert(attr);
-                    }
-
-                    let underline = main_state.styles.get(style.id).and_then(|s| s.underline);
-                    if let Some(underline) = underline {
-                        let mut attr = if underline {
-                            Attribute::new_underline(pango::Underline::Single).unwrap()
-                        } else {
-                            Attribute::new_underline(pango::Underline::None).unwrap()
-                        };
-                        attr.set_start_index(start_index);
-                        attr.set_end_index(end_index);
-                        attr_list.insert(attr);
-                    }
-
-                    ix += style.start + style.len as i64;
-                }
-
-                layout.set_attributes(&attr_list);
+                let pango_ctx = self.da.get_pango_context().expect("failed to get pango ctx");
+                let layout = self.create_layout_for_line(&pango_ctx, &main_state, line);
 
                 max_width = max(max_width, layout.get_extents().1.width);
                 // debug!("width={}", layout.get_extents().1.width);
@@ -504,11 +458,15 @@ impl EditView {
                 update_layout(cr, &layout);
                 show_layout(cr, &layout);
                 
-                
+                let layout_line = layout.get_line(0);
+                if layout_line.is_none() { continue; }
+                let layout_line = layout_line.unwrap();
+
                 // Draw the cursor
                 set_source_color(cr, theme.caret);
                 for c in line.cursor() {
-                    cr.rectangle(self.font_width * (*c as f64) - hadj.get_value(),
+                    let x = layout_line.index_to_x(*c as i32, false) / pango::SCALE;
+                    cr.rectangle((x as f64) - hadj.get_value(),
                         (((self.font_ascent + self.font_descent) as u64)*i) as f64 - vadj.get_value(),
                         CURSOR_WIDTH,
                         self.font_ascent + self.font_descent);
@@ -520,6 +478,91 @@ impl EditView {
         hadj.set_upper(f64::from(max_width / pango::SCALE));
 
         Inhibit(false)
+    }
+
+    // Creates a pango layout for a particular line in the linecache
+    fn create_layout_for_line(&self, pango_ctx: &pango::Context, main_state: &MainState, line: &Line) -> pango::Layout {
+        let line_view = if line.text().ends_with('\n') {
+            &line.text()[0..line.text().len()-1]
+        } else {
+            &line.text()
+        };
+
+        // let layout = create_layout(cr).unwrap();
+        let layout = pango::Layout::new(&pango_ctx);
+        layout.set_font_description(&self.font_desc);
+        layout.set_text(line_view);
+
+        let mut ix = 0;
+        let attr_list = pango::AttrList::new();
+        for style in &line.styles {
+            let start_index = (ix + style.start) as u32;
+            let end_index = (ix + style.start + style.len as i64) as u32;
+
+            let foreground = main_state.styles.get(style.id).and_then(|s| s.fg_color);
+            if let Some(foreground) = foreground {
+                let mut attr = Attribute::new_foreground(
+                    foreground.r_u16(),
+                    foreground.g_u16(),
+                    foreground.b_u16(),
+                ).unwrap();                    
+                attr.set_start_index(start_index);
+                attr.set_end_index(end_index);
+                attr_list.insert(attr);
+            }
+
+
+            let background = main_state.styles.get(style.id).and_then(|s| s.bg_color);
+            if let Some(background) = background {
+                let mut attr = Attribute::new_background(
+                    background.r_u16(),
+                    background.g_u16(),
+                    background.b_u16(),
+                ).unwrap();                    
+                attr.set_start_index(start_index);
+                attr.set_end_index(end_index);
+                attr_list.insert(attr);
+            }
+
+            let weight = main_state.styles.get(style.id).and_then(|s| s.weight);
+            if let Some(weight) = weight {
+                let mut attr = Attribute::new_weight(
+                    pango::Weight::__Unknown(weight as i32)
+                ).unwrap();                    
+                attr.set_start_index(start_index);
+                attr.set_end_index(end_index);
+                attr_list.insert(attr);
+            }
+
+            let italic = main_state.styles.get(style.id).and_then(|s| s.italic);
+            if let Some(italic) = italic {
+                let mut attr = if italic {
+                    Attribute::new_style(pango::Style::Italic).unwrap()
+                } else {
+                    Attribute::new_style(pango::Style::Normal).unwrap()
+                };
+                attr.set_start_index(start_index);
+                attr.set_end_index(end_index);
+                attr_list.insert(attr);
+            }
+
+            let underline = main_state.styles.get(style.id).and_then(|s| s.underline);
+            if let Some(underline) = underline {
+                let mut attr = if underline {
+                    Attribute::new_underline(pango::Underline::Single).unwrap()
+                } else {
+                    Attribute::new_underline(pango::Underline::None).unwrap()
+                };
+                attr.set_start_index(start_index);
+                attr.set_end_index(end_index);
+                attr_list.insert(attr);
+            }
+
+            ix += style.start + style.len as i64;
+        }
+
+        layout.set_attributes(&attr_list);
+        layout
     }
 
     pub fn scroll_to(&mut self, line: u64, col: u64) {
@@ -554,7 +597,10 @@ impl EditView {
         self.da.grab_focus();
 
         let (x,y) = eb.get_position();
-        let (col, line) = self.da_px_to_cell(x, y);
+        let (col, line) = {
+            let main_state = self.main_state.borrow();
+            self.da_px_to_cell(&main_state, x, y)
+        };
 
         match eb.get_button() {
             1 => {
@@ -580,7 +626,10 @@ impl EditView {
 
     pub fn handle_drag(&mut self, em: &EventMotion) -> Inhibit {
         let (x,y) = em.get_position();
-        let (col, line) = self.da_px_to_cell(x, y);
+        let (col, line) = {
+            let main_state = self.main_state.borrow();
+            self.da_px_to_cell(&main_state, x, y)
+        };
         self.core.borrow().drag(&self.view_id, line, col, convert_gtk_modifier(em.get_state()));
         Inhibit(false)
     }

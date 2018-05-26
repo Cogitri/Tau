@@ -5,10 +5,12 @@ use gio::{
     SimpleAction,
     SimpleActionExt,
 };
+use glib::variant::{FromVariant, Variant};
 use gtk::*;
 use CoreMsg;
 use SharedQueue;
 use edit_view::EditView;
+use prefs_win::PrefsWin;
 use proto::{self, ThemeSettings};
 use rpc::{Core, Handler};
 use serde_json::{self, Value};
@@ -58,16 +60,12 @@ impl MainWin {
             plugin_dir = xi_plugin.to_str().map(|s| s.to_string());
         }
         core.client_started(config_dir, plugin_dir);
-        core.modify_user_config(&json!("general"), &json!({"auto_indent": true}));
 
-        let glade_src = include_str!("gxi.glade");
+        let glade_src = include_str!("ui/gxi.glade");
         let builder = Builder::new_from_string(glade_src);
 
         let window: ApplicationWindow = builder.get_object("appwindow").unwrap();
         let notebook: Notebook = builder.get_object("notebook").unwrap();
-        let new_button: Button = builder.get_object("new_button").unwrap();
-        let open_button: Button = builder.get_object("open_button").unwrap();
-        let save_button: Button = builder.get_object("save_button").unwrap();
 
         notebook.remove_page(Some(0));
 
@@ -112,6 +110,13 @@ impl MainWin {
             application.add_action(&new_action);
         }
         {
+            let prefs_action = SimpleAction::new("prefs", None);
+            prefs_action.connect_activate(clone!(main_win => move |_,_| {
+                MainWin::prefs(main_win.clone());
+            }));
+            application.add_action(&prefs_action);
+        }
+        {
             let save_action = SimpleAction::new("save", None);
             save_action.connect_activate(clone!(main_win => move |_,_| {
                 MainWin::handle_save_button(main_win.clone());
@@ -140,6 +145,14 @@ impl MainWin {
                 main_win.window.destroy();
             }));
             application.add_action(&quit_action);
+        }
+        {
+            let auto_indent_action = SimpleAction::new_stateful("auto_indent", None, &false.to_variant());;
+            auto_indent_action.connect_change_state(clone!(main_win => move |action, value| {
+                let mut main_win = main_win.borrow_mut();
+                main_win.set_auto_indent(action, value);
+            }));
+            application.add_action(&auto_indent_action);
         }
 
         main_win.borrow_mut().req_new_view(None);
@@ -230,7 +243,25 @@ impl MainWin {
     }
 
     pub fn config_changed(&mut self, params: &Value) {
-        error!("UNHANDLED config_changed {}", params);
+        let view_id = {
+            let view_id = params["view_id"].as_str();
+            if view_id.is_none() { return; }
+            view_id.unwrap().to_string()
+        };
+
+        if let Some(ev) = self.views.get(&view_id) {
+            ev.borrow_mut().config_changed(&params["changes"]);
+        }
+    }
+
+    pub fn set_auto_indent(&mut self, action: &SimpleAction, value: &Option<Variant>) {
+        if value.is_none() { return; }
+        if let Some(value) = value.as_ref() {
+            action.set_state(value);
+            let value: bool = value.get().unwrap();
+            debug!("auto indent {}", value);
+            self.core.borrow().modify_user_config(&json!("general"), &json!({"auto_indent": value}));
+        }
     }
 
     pub fn def_style(&mut self, params: &Value) {
@@ -366,6 +397,14 @@ impl MainWin {
             }
         }
         fcd.destroy();
+    }
+
+    fn prefs(main_win: Rc<RefCell<MainWin>>) {
+        let (main_state, core) = {
+            let main_win = main_win.borrow();
+            (main_win.state.clone(), main_win.core.clone())
+        };
+        let prefs_win = PrefsWin::new(&main_state, &core);
     }
 
     fn get_current_edit_view(&self) -> Rc<RefCell<EditView>> {
