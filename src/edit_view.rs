@@ -307,8 +307,13 @@ impl EditView {
         let line_num = (y / self.font_height) as u64;
         let index = if let Some(line) = self.line_cache.get_line(line_num) {
             let pango_ctx = self.da.get_pango_context().expect("failed to get pango ctx");
+
+            let padding: usize = format!("{}", self.line_cache.height()).len();
+            let linecount_layout = self.create_linecount_for_line(&pango_ctx, &main_state, line_num, padding);
+            let linecount_offset = (linecount_layout.get_extents().1.width / pango::SCALE) as f64;
+
             let layout = self.create_layout_for_line(&pango_ctx, &main_state, line);
-            let (_, index, trailing) = layout.xy_to_index(x as i32 * pango::SCALE, 0);
+            let (_, index, trailing) = layout.xy_to_index((x - linecount_offset) as i32 * pango::SCALE, 0);
             index + trailing
         } else {
             0
@@ -436,6 +441,8 @@ impl EditView {
         // }
 
         const CURSOR_WIDTH: f64 = 2.0;
+        // Calculate ordinal or max line length
+        let padding: usize = format!("{}", num_lines).len();
 
         let mut max_width = 0;
 
@@ -450,11 +457,17 @@ impl EditView {
                 );
 
                 let pango_ctx = self.da.get_pango_context().expect("failed to get pango ctx");
-                let layout = self.create_layout_for_line(&pango_ctx, &main_state, line);
+                let linecount_layout = self.create_linecount_for_line(&pango_ctx, &main_state, i, padding);
+                update_layout(cr, &linecount_layout);
+                show_layout(cr, &linecount_layout);
 
+                let linecount_offset = (linecount_layout.get_extents().1.width / pango::SCALE) as f64;
+                cr.move_to(linecount_offset,
+                    self.font_height*(i as f64) - vadj.get_value());
+
+                let layout = self.create_layout_for_line(&pango_ctx, &main_state, line);
                 max_width = max(max_width, layout.get_extents().1.width);
                 // debug!("width={}", layout.get_extents().1.width);
-
                 update_layout(cr, &layout);
                 show_layout(cr, &layout);
                 
@@ -464,9 +477,10 @@ impl EditView {
 
                 // Draw the cursor
                 set_source_color(cr, theme.caret);
+
                 for c in line.cursor() {
                     let x = layout_line.index_to_x(*c as i32, false) / pango::SCALE;
-                    cr.rectangle((x as f64) - hadj.get_value(),
+                    cr.rectangle((x as f64) + linecount_offset - hadj.get_value(),
                         (((self.font_ascent + self.font_descent) as u64)*i) as f64 - vadj.get_value(),
                         CURSOR_WIDTH,
                         self.font_ascent + self.font_descent);
@@ -478,6 +492,15 @@ impl EditView {
         hadj.set_upper(f64::from(max_width / pango::SCALE));
 
         Inhibit(false)
+    }
+
+    // Creates a pango layout for a particular line in the linecache
+    fn create_linecount_for_line(&self, pango_ctx: &pango::Context, main_state: &MainState, n: u64, padding: usize) -> pango::Layout {
+        let line_view = format!("{:>offset$} ", n, offset=padding);
+        let layout = pango::Layout::new(&pango_ctx);
+        layout.set_font_description(&self.font_desc);
+        layout.set_text(line_view.as_str());
+        layout
     }
 
     // Creates a pango layout for a particular line in the linecache
