@@ -1,6 +1,7 @@
 #![recursion_limit="128"]
 
 extern crate cairo;
+extern crate clap;
 extern crate env_logger;
 extern crate gdk;
 extern crate gio;
@@ -35,12 +36,12 @@ mod source;
 mod theme;
 mod xi_thread;
 
+use clap::{Arg, App, SubCommand};
 use gio::{
     ApplicationExt,
     ApplicationExtManual,
 };
 use glib::MainContext;
-
 use main_win::MainWin;
 use mio::unix::{PipeReader, PipeWriter, pipe};
 use mio::TryRead;
@@ -119,6 +120,19 @@ impl SourceFuncs for QueueSource {
 
 fn main() {
     env_logger::init();
+    let matches = App::new("gxi")
+        .version("0.2.0")
+        .author("brainn <brainn@gmail.com>")
+        .about("Xi frontend")
+        .arg(Arg::with_name("FILE")
+            .help("file to open")
+        )
+        .get_matches();
+
+    if let Some(in_file) = matches.value_of("FILE") {
+        debug!("Opening {}", in_file);
+    }
+
     let queue: VecDeque<CoreMsg> = Default::default();
     let (reader, writer) = pipe().unwrap();
     let reader_raw_fd = reader.as_raw_fd();
