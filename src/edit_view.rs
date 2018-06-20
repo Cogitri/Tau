@@ -8,6 +8,7 @@ use gtk::{
 use rpc::{Core, self};
 use pango::{self, *, ContextExt, LayoutExt};
 use pangocairo::functions::*;
+use scrollable_drawing_area::ScrollableDrawingArea;
 use serde_json::Value;
 use std::cell::RefCell;
 use std::cmp::{max, min};
@@ -24,13 +25,13 @@ pub struct EditView {
     pub view_id: String,
     pub file_name: Option<String>,
     pub pristine: bool,
-    pub da: DrawingArea,
+    pub da: ScrollableDrawingArea,
     pub root_widget: gtk::Box,
     pub tab_widget: gtk::Box,
     pub label: Label,
     pub close_button: Button,
-    hscrollbar: Scrollbar,
-    vscrollbar: Scrollbar,
+    hadj: Adjustment,
+    vadj: Adjustment,
     line_cache: LineCache,
     font_height: f64,
     font_width: f64,
@@ -41,13 +42,23 @@ pub struct EditView {
 
 impl EditView {
     pub fn new(main_state: Rc<RefCell<MainState>>, core: Rc<RefCell<Core>>, file_name: Option<String>, view_id: &str) -> Rc<RefCell<EditView>> {
-        let da = DrawingArea::new();
-        let hscrollbar = Scrollbar::new(Orientation::Horizontal, None);
-        let vscrollbar = Scrollbar::new(Orientation::Vertical, None);
+        // let da = DrawingArea::new();
+        let da = ScrollableDrawingArea::new();
+        let scrolled_window = ScrolledWindow::new(None, None);
+        scrolled_window.add(&da);
+
+        let hadj = Adjustment::new(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+        let vadj = Adjustment::new(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+        vadj.set_step_increment(1.0);
+
+        scrolled_window.set_hadjustment(&hadj);
+        scrolled_window.set_vadjustment(&vadj);
+        scrolled_window.set_kinetic_scrolling(true);
 
         da.set_events(EventMask::BUTTON_PRESS_MASK.bits() as i32
             | EventMask::BUTTON_MOTION_MASK.bits() as i32
             | EventMask::SCROLL_MASK.bits() as i32
+            | EventMask::SMOOTH_SCROLL_MASK.bits() as i32
         );
         debug!("events={:?}", da.get_events());
         da.set_can_focus(true);
@@ -55,9 +66,7 @@ impl EditView {
         let hbox = Box::new(Orientation::Horizontal, 0);
         let vbox = Box::new(Orientation::Vertical, 0);
         hbox.pack_start(&vbox, true, true, 0);
-        hbox.pack_start(&vscrollbar, false, false, 0);
-        vbox.pack_start(&da, true, true, 0);
-        vbox.pack_start(&hscrollbar, false, false, 0);
+        vbox.pack_start(&scrolled_window, true, true, 0);
         hbox.show_all();
 
         // Make the widgets for the tab
@@ -118,8 +127,8 @@ impl EditView {
             tab_widget: tab_hbox.clone(),
             label: label.clone(),
             close_button: close_button.clone(),
-            hscrollbar: hscrollbar.clone(),
-            vscrollbar: vscrollbar.clone(),
+            hadj: hadj.clone(),
+            vadj: vadj.clone(),
             line_cache: LineCache::new(),
             font_height,
             font_width,
@@ -164,10 +173,6 @@ impl EditView {
         da.connect_size_allocate(clone!(edit_view => move |_,alloc| {
             debug!("Size changed to w={} h={}", alloc.width, alloc.height);
             edit_view.borrow_mut().da_size_allocate(alloc.width, alloc.height);
-        }));
-
-        vscrollbar.connect_change_value(clone!(edit_view => move |_,_,value| {
-            edit_view.borrow_mut().vscrollbar_change_value(value)
         }));
 
         edit_view
@@ -251,7 +256,7 @@ impl EditView {
 
         // update scrollbars to the new text width and height
         let (text_width, text_height) = self.get_text_size();
-        let vadj = self.vscrollbar.get_adjustment();
+        let vadj = self.vadj.clone();
         vadj.set_lower(0f64);
         vadj.set_upper(text_height as f64);
         if vadj.get_value() + vadj.get_page_size() > vadj.get_upper() {
@@ -277,30 +282,30 @@ impl EditView {
         self.da.queue_draw();
     }
 
-    fn change_scrollbar_visibility(&self) {
-        let vadj = self.vscrollbar.get_adjustment();
-        let hadj = self.hscrollbar.get_adjustment();
+    // fn change_scrollbar_visibility(&self) {
+    //     let vadj = self.vscrollbar.get_adjustment();
+    //     let hadj = self.hscrollbar.get_adjustment();
 
-        if vadj.get_value() <= vadj.get_lower()
-            && vadj.get_value() + vadj.get_page_size() >= vadj.get_upper() {
-            self.vscrollbar.hide();
-        } else {
-            self.vscrollbar.show();
-        }
+    //     if vadj.get_value() <= vadj.get_lower()
+    //         && vadj.get_value() + vadj.get_page_size() >= vadj.get_upper() {
+    //         self.vscrollbar.hide();
+    //     } else {
+    //         self.vscrollbar.show();
+    //     }
 
-        if hadj.get_value() <= hadj.get_lower()
-            && hadj.get_value() + hadj.get_page_size() >= hadj.get_upper() {
-            self.hscrollbar.hide();
-        } else {
-            debug!("SHOWING HSCROLLBAR: {} {}-{} {}", hadj.get_value(), hadj.get_lower(), hadj.get_upper(), hadj.get_page_size());
-            self.hscrollbar.show();
-        }
-    }
+    //     if hadj.get_value() <= hadj.get_lower()
+    //         && hadj.get_value() + hadj.get_page_size() >= hadj.get_upper() {
+    //         self.hscrollbar.hide();
+    //     } else {
+    //         debug!("SHOWING HSCROLLBAR: {} {}-{} {}", hadj.get_value(), hadj.get_lower(), hadj.get_upper(), hadj.get_page_size());
+    //         self.hscrollbar.show();
+    //     }
+    // }
 
     pub fn da_px_to_cell(&self, main_state: &MainState, x: f64, y: f64) -> (u64, u64) {
         // let first_line = (vadj.get_value() / font_extents.height) as usize;
-        let x = x + self.hscrollbar.get_adjustment().get_value();
-        let y = y + self.vscrollbar.get_adjustment().get_value();
+        let x = x + self.hadj.get_value();
+        let y = y + self.vadj.get_value();
 
         let mut y = y - self.font_descent;
         if y < 0.0 { y = 0.0; }
@@ -309,7 +314,7 @@ impl EditView {
             let pango_ctx = self.da.get_pango_context().expect("failed to get pango ctx");
 
             let padding: usize = format!("{}", self.line_cache.height()).len();
-            let linecount_layout = self.create_linecount_for_line(&pango_ctx, &main_state, line_num, padding);
+            let linecount_layout = self.create_layout_for_linecount(&pango_ctx, &main_state, line_num, padding);
             let linecount_offset = (linecount_layout.get_extents().1.width / pango::SCALE) as f64;
 
             let layout = self.create_layout_for_line(&pango_ctx, &main_state, line);
@@ -323,9 +328,9 @@ impl EditView {
 
     fn da_size_allocate(&mut self, da_width: i32, da_height: i32) {
         debug!("DA SIZE ALLOCATE");
-        let vadj = self.vscrollbar.get_adjustment();
+        let vadj = self.vadj.clone();
         vadj.set_page_size(f64::from(da_height));
-        let hadj = self.hscrollbar.get_adjustment();
+        let hadj = self.hadj.clone();
         hadj.set_page_size(f64::from(da_width));
 
         self.update_visible_scroll_region();
@@ -387,8 +392,8 @@ impl EditView {
         // let (text_width, text_height) = self.get_text_size();
         let num_lines = self.line_cache.height();
 
-        let vadj = self.vscrollbar.get_adjustment();
-        let hadj = self.hscrollbar.get_adjustment();
+        let vadj = self.vadj.clone();
+        let hadj = self.hadj.clone();
         trace!("drawing.  vadj={}, {}", vadj.get_value(), vadj.get_upper());
 
         let first_line = (vadj.get_value() / self.font_height) as u64;
@@ -402,7 +407,7 @@ impl EditView {
         let mut found_missing = false;
         for i in first_line..last_line {
             if self.line_cache.get_line(i).is_none() {
-                error!("missing line {}", i);
+                debug!("missing line {}", i);
                 found_missing = true;
             }
         }
@@ -410,7 +415,7 @@ impl EditView {
         // We've already missed our chance to draw these lines, but we need to request them for the
         // next frame.  This needs to be improved to prevent flashing.
         if found_missing {
-            error!("didn't have some lines, requesting, lines {}-{}", first_line, last_line);
+            debug!("didn't have some lines, requesting, lines {}-{}", first_line, last_line);
             self.core.borrow().request_lines(&self.view_id, first_line as u64, last_line as u64);
         }
 
@@ -448,6 +453,32 @@ impl EditView {
 
         let main_state = self.main_state.borrow();
 
+        // Just get the gutter size
+        let mut gutter_size = 0.0;
+        for i in first_line..last_line {
+            if let Some(_) = self.line_cache.get_line(i) {
+                cr.move_to(-hadj.get_value(),
+                    self.font_height*(i as f64) - vadj.get_value()
+                );
+
+                let pango_ctx = self.da.get_pango_context().expect("failed to get pango ctx");
+                let linecount_layout = self.create_layout_for_linecount(&pango_ctx, &main_state, i, padding);
+                update_layout(cr, &linecount_layout);
+                // show_layout(cr, &linecount_layout);
+
+                let linecount_offset = (linecount_layout.get_extents().1.width / pango::SCALE) as f64;
+                if linecount_offset > gutter_size {
+                    gutter_size = linecount_offset;
+                }
+            }
+        }
+
+        // Draw the gutter background
+        set_source_color(cr, theme.gutter);
+        cr.set_source_rgba(255.0,255.0,255.0,255.0);
+        cr.rectangle(0.0, 0.0, gutter_size, f64::from(da_height));
+        cr.fill();
+
         for i in first_line..last_line {
             // Keep track of the starting x position
             if let Some(line) = self.line_cache.get_line(i) {
@@ -456,15 +487,16 @@ impl EditView {
                     self.font_height*(i as f64) - vadj.get_value()
                 );
 
+                set_source_color(cr, theme.gutter_foreground);
                 let pango_ctx = self.da.get_pango_context().expect("failed to get pango ctx");
-                let linecount_layout = self.create_linecount_for_line(&pango_ctx, &main_state, i, padding);
+                let linecount_layout = self.create_layout_for_linecount(&pango_ctx, &main_state, i, padding);
                 update_layout(cr, &linecount_layout);
                 show_layout(cr, &linecount_layout);
-
+                
                 let linecount_offset = (linecount_layout.get_extents().1.width / pango::SCALE) as f64;
-                cr.move_to(linecount_offset,
-                    self.font_height*(i as f64) - vadj.get_value());
+                cr.rel_move_to(linecount_offset, 0.0);
 
+                set_source_color(cr, theme.foreground);
                 let layout = self.create_layout_for_line(&pango_ctx, &main_state, line);
                 max_width = max(max_width, layout.get_extents().1.width);
                 // debug!("width={}", layout.get_extents().1.width);
@@ -495,7 +527,7 @@ impl EditView {
     }
 
     // Creates a pango layout for a particular line in the linecache
-    fn create_linecount_for_line(&self, pango_ctx: &pango::Context, main_state: &MainState, n: u64, padding: usize) -> pango::Layout {
+    fn create_layout_for_linecount(&self, pango_ctx: &pango::Context, main_state: &MainState, n: u64, padding: usize) -> pango::Layout {
         let line_view = format!("{:>offset$} ", n, offset=padding);
         let layout = pango::Layout::new(&pango_ctx);
         layout.set_font_description(&self.font_desc);
@@ -592,7 +624,7 @@ impl EditView {
         {
             let cur_top = self.font_height*((line+1) as f64) - self.font_ascent;
             let cur_bottom = cur_top + self.font_ascent + self.font_descent;
-            let vadj = self.vscrollbar.get_adjustment();
+            let vadj = self.vadj.clone();
             if cur_top < vadj.get_value() {
                 vadj.set_value(cur_top);
             } else if cur_bottom > vadj.get_value() + vadj.get_page_size() && vadj.get_page_size() != 0.0 {
@@ -603,7 +635,7 @@ impl EditView {
         {
             let cur_left = self.font_width*(col as f64) - self.font_ascent;
             let cur_right = cur_left + self.font_width*2.0;
-            let hadj = self.hscrollbar.get_adjustment();
+            let hadj = self.hadj.clone();
             if cur_left < hadj.get_value() {
                 hadj.set_value(cur_left);
             } else if cur_right > hadj.get_value() + hadj.get_page_size() && hadj.get_page_size() != 0.0 {
@@ -658,18 +690,24 @@ impl EditView {
     }
 
     pub fn handle_scroll(&mut self, es: &EventScroll) -> Inhibit {
-        self.da.grab_focus();
-        let amt = self.font_height * 3.0;
+        // self.da.grab_focus();
+        // // let amt = self.font_height * 3.0;
 
-        let vadj = self.vscrollbar.get_adjustment();
-        let hadj = self.hscrollbar.get_adjustment();
-        match es.get_direction() {
-            ScrollDirection::Up => vadj.set_value(vadj.get_value() - amt),
-            ScrollDirection::Down => vadj.set_value(vadj.get_value() + amt),
-            ScrollDirection::Left => hadj.set_value(hadj.get_value() - amt),
-            ScrollDirection::Right => hadj.set_value(hadj.get_value() + amt),
-            _ => {},
-        }
+        // if let ScrollDirection::Smooth = es.get_direction() {
+        //     error!("Smooth scroll!");
+        // }
+
+        // debug!("handle scroll {:?}", es);
+        // let vadj = self.vadj.clone();
+        // let hadj = self.hadj.clone();
+        // match es.get_direction() {
+        //     ScrollDirection::Up => vadj.set_value(vadj.get_value() - amt),
+        //     ScrollDirection::Down => vadj.set_value(vadj.get_value() + amt),
+        //     ScrollDirection::Left => hadj.set_value(hadj.get_value() - amt),
+        //     ScrollDirection::Right => hadj.set_value(hadj.get_value() + amt),
+        //     ScrollDirection::Smooth => debug!("scroll Smooth"),
+        //     _ => {},
+        // }
 
         self.update_visible_scroll_region();
 

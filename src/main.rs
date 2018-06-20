@@ -4,8 +4,9 @@ extern crate cairo;
 extern crate env_logger;
 extern crate gdk;
 extern crate gio;
-extern crate glib;
+#[macro_use] extern crate glib;
 extern crate glib_sys;
+extern crate gobject_sys;
 extern crate gtk;
 extern crate gtk_sys;
 extern crate libc;
@@ -24,6 +25,7 @@ extern crate xi_rpc;
 
 mod clipboard;
 mod edit_view;
+mod scrollable_drawing_area;
 mod linecache;
 mod main_win;
 mod prefs_win;

@@ -11,6 +11,7 @@ gdk = "0.8"
 gio = "0.4"
 glib = "0.5"
 glib-sys = { version = "0.6", features = ["v2_36"] }
+gobject-sys = "0.6"
 gtk = { version = "0.4", features = ["v3_22"] }
 gtk-sys = { version = "0.6", features = ["v3_22"] }
 lazy_static = "1.0"
@@ -23,5 +24,5 @@ serde = "1.0"
 serde_json = "1.0"
 serde_derive = "1.0"
 servo-fontconfig = "0.4.0"
-xi-core-lib = { git = "https://github.com/google/xi-editor", rev = "90f90efc" }
-xi-rpc = { git = "https://github.com/google/xi-editor", rev = "90f90efc" }
+xi-core-lib = { git = "https://github.com/google/xi-editor", rev = "befef5cf" }
+xi-rpc = { git = "https://github.com/google/xi-editor", rev = "befef5cf" }

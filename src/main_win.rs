@@ -34,11 +34,14 @@ pub struct MainWin {
     shared_queue: Arc<Mutex<SharedQueue>>,
     window: ApplicationWindow,
     notebook: Notebook,
+    builder: Builder,
     views: BTreeMap<String, Rc<RefCell<EditView>>>,
     w_to_ev: HashMap<Widget, Rc<RefCell<EditView>>>,
     view_id_to_w: HashMap<String, Widget>,
     state: Rc<RefCell<MainState>>,
 }
+
+const GLADE_SRC: &str = include_str!("ui/gxi.glade");
 
 impl MainWin {
 
@@ -66,6 +69,7 @@ impl MainWin {
 
         let window: ApplicationWindow = builder.get_object("appwindow").unwrap();
         let notebook: Notebook = builder.get_object("notebook").unwrap();
+        // let ask_save_dialog: Dialog = builder.get_object("ask_save_dialog").unwrap();
 
         notebook.remove_page(Some(0));
 
@@ -74,6 +78,7 @@ impl MainWin {
             shared_queue: shared_queue.clone(),
             window: window.clone(),
             notebook: notebook.clone(),
+            builder: builder.clone(),
             views: Default::default(),
             w_to_ev: Default::default(),
             view_id_to_w: Default::default(),
@@ -119,24 +124,30 @@ impl MainWin {
         {
             let save_action = SimpleAction::new("save", None);
             save_action.connect_activate(clone!(main_win => move |_,_| {
-                MainWin::handle_save_button(main_win.clone());
+                MainWin::handle_save_button(&main_win.clone());
             }));
             application.add_action(&save_action);
         }
         {
             let save_as_action = SimpleAction::new("save_as", None);
             save_as_action.connect_activate(clone!(main_win => move |_,_| {
-                MainWin::current_save_as(main_win.clone());
+                MainWin::current_save_as(&main_win.clone());
             }));
             application.add_action(&save_as_action);
         }
         {
             let close_action = SimpleAction::new("close", None);
             close_action.connect_activate(clone!(main_win => move |_,_| {
-                let mut main_win = main_win.borrow_mut();
-                main_win.close();
+                MainWin::close(&main_win.clone());
             }));
             application.add_action(&close_action);
+        }
+        {
+            let close_all_action = SimpleAction::new("close_all", None);
+            close_all_action.connect_activate(clone!(main_win => move |_,_| {
+                MainWin::close_all(&main_win.clone());
+            }));
+            application.add_action(&close_all_action);
         }
         {
             let quit_action = SimpleAction::new("quit", None);
@@ -203,8 +214,9 @@ impl MainWin {
                 }
             }
         }
-        if let Some(theme) = state.themes.first() {
-            self.core.borrow().send_notification("set_theme", &json!({"theme_name": theme}));
+        if let Some(theme_name) = state.themes.first().map(Clone::clone) {
+            state.theme_name = theme_name.clone();
+            self.core.borrow().send_notification("set_theme", &json!({"theme_name": theme_name}));
         }
     }
 
@@ -360,26 +372,26 @@ impl MainWin {
         fcd.destroy();
     }
 
-    pub fn handle_save_button(main_win: Rc<RefCell<MainWin>>) {
+    pub fn handle_save_button(main_win: &Rc<RefCell<MainWin>>) {
         let edit_view = main_win.borrow().get_current_edit_view().clone();
         if edit_view.borrow().file_name.is_some() {
             let ev = edit_view.borrow_mut();
             let core = main_win.borrow().core.clone();
             core.borrow().save(&ev.view_id, ev.file_name.as_ref().unwrap());
         } else {
-            MainWin::save_as(main_win, edit_view);
+            MainWin::save_as(main_win, &edit_view);
         }
     }
 
-    fn current_save_as(main_win: Rc<RefCell<MainWin>>) {
+    fn current_save_as(main_win: &Rc<RefCell<MainWin>>) {
         let edit_view = main_win.borrow().get_current_edit_view().clone();
-        MainWin::save_as(main_win, edit_view);
+        MainWin::save_as(main_win, &edit_view);
     }
 
     /// Display the FileChooserDialog, send the result to the Xi core.
     /// This may call the GTK main loop.  There must not be any RefCell borrows out while this
     /// function runs.
-    fn save_as(main_win: Rc<RefCell<MainWin>>, edit_view: Rc<RefCell<EditView>>) {
+    fn save_as(main_win: &Rc<RefCell<MainWin>>, edit_view: &Rc<RefCell<EditView>>) {
         let fcd = FileChooserDialog::new::<FileChooserDialog>(None, None, FileChooserAction::Save);
         fcd.set_transient_for(Some(&main_win.borrow().window.clone()));
         fcd.add_button("Save", 33);
@@ -400,11 +412,15 @@ impl MainWin {
     }
 
     fn prefs(main_win: Rc<RefCell<MainWin>>) {
-        let (main_state, core) = {
-            let main_win = main_win.borrow();
-            (main_win.state.clone(), main_win.core.clone())
-        };
-        let prefs_win = PrefsWin::new(&main_state, &core);
+        // let (main_state, core) = {
+        //     let main_win = main_win.borrow();
+        //     (main_win.state.clone(), main_win.core.clone())
+        // };
+        let main_win = main_win.borrow();
+        let main_state = main_win.state.clone();
+        let core = main_win.core.clone();
+        let prefs_win = PrefsWin::new(&main_win.window, &main_state, &core);
+        // prefs_win.run();
     }
 
     fn get_current_edit_view(&self) -> Rc<RefCell<EditView>> {
@@ -451,8 +467,8 @@ impl MainWin {
                 }
 
                 let view_id_clone = view_id.to_string();
-                ev.close_button.connect_clicked(clone!(main_win => move |_| {
-                    main_win.borrow_mut().close_view(&view_id_clone)
+                ev.close_button.connect_clicked(clone!(main_win, edit_view => move |_| {
+                    MainWin::close_view(&main_win, &edit_view);
                 }));
             }
 
@@ -460,24 +476,40 @@ impl MainWin {
         }
     }
 
-    fn close(&mut self) {
-        let view_id = {
-            let edit_view = self.get_current_edit_view();
-            let edit_view = edit_view.borrow();
-            edit_view.view_id.clone()
-        };
-        self.close_view(&view_id);
+    fn close_all(main_win: &Rc<RefCell<MainWin>>) {
+        let edit_view = main_win.borrow().get_current_edit_view();
+        MainWin::close_view(&main_win, &edit_view);
     }
 
-    fn close_view(&mut self, view_id: &str) {
-        if let Some(w) = self.view_id_to_w.get(view_id) {
-            if let Some(page_num) = self.notebook.page_num(w) {
-                self.notebook.remove_page(Some(page_num));
-            }
-            self.w_to_ev.remove(&w.clone());
+    fn close(main_win: &Rc<RefCell<MainWin>>) {
+        let edit_view = main_win.borrow().get_current_edit_view();
+        MainWin::close_view(&main_win, &edit_view);
+    }
+
+    fn close_view(main_win: &Rc<RefCell<MainWin>>, edit_view: &Rc<RefCell<EditView>>) {
+        let pristine = edit_view.borrow().pristine;
+        if !pristine {
+            let builder = Builder::new_from_string(&GLADE_SRC);
+            let ask_save_dialog: Dialog = builder.get_object("ask_save_dialog").unwrap();
+            let ret = ask_save_dialog.run();
+            ask_save_dialog.destroy();
+            debug!("ask_save_dialog = {}", ret);
+            match ret {
+                1 => MainWin::save_as(main_win, edit_view),
+                2 => return,
+                _ => {},
+            };
         }
-        self.view_id_to_w.remove(view_id);
-        self.core.borrow().close_view(view_id);
+        let view_id = edit_view.borrow().view_id.clone();
+        let mut main_win = main_win.borrow_mut();
+        if let Some(w) = main_win.view_id_to_w.get(&view_id).map(Clone::clone) {
+            if let Some(page_num) = main_win.notebook.page_num(&w) {
+                main_win.notebook.remove_page(Some(page_num));
+            }
+            main_win.w_to_ev.remove(&w.clone());
+        }
+        main_win.view_id_to_w.remove(&view_id);
+        main_win.core.borrow().close_view(&view_id);
     }
 }
 
