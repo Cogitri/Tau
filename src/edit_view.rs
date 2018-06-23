@@ -26,10 +26,12 @@ pub struct EditView {
     pub file_name: Option<String>,
     pub pristine: bool,
     pub da: ScrollableDrawingArea,
-    pub root_widget: gtk::Box,
+    pub root_widget: Overlay,
     pub tab_widget: gtk::Box,
     pub label: Label,
     pub close_button: Button,
+    search_entry: SearchEntry,
+    search_revealer: Revealer,
     hadj: Adjustment,
     vadj: Adjustment,
     line_cache: LineCache,
@@ -63,11 +65,17 @@ impl EditView {
         debug!("events={:?}", da.get_events());
         da.set_can_focus(true);
 
-        let hbox = Box::new(Orientation::Horizontal, 0);
-        let vbox = Box::new(Orientation::Vertical, 0);
-        hbox.pack_start(&vbox, true, true, 0);
-        vbox.pack_start(&scrolled_window, true, true, 0);
-        hbox.show_all();
+        let frame_src = include_str!("ui/edit_view_frame.glade");
+        let frame_builder = Builder::new_from_string(frame_src);
+
+        let overlay: Overlay = frame_builder.get_object("overlay").unwrap();
+        let search_revealer: Revealer = frame_builder.get_object("revealer").unwrap();
+        let search_entry: SearchEntry = frame_builder.get_object("search_entry").unwrap();
+        let go_down_button: Button = frame_builder.get_object("go_down_button").unwrap();
+        let go_up_button: Button = frame_builder.get_object("go_up_button").unwrap();
+
+        overlay.add(&scrolled_window);
+        overlay.show_all();
 
         // Make the widgets for the tab
         let tab_hbox = gtk::Box::new(Orientation::Horizontal, 5);
@@ -93,8 +101,7 @@ impl EditView {
             if !family.is_monospace() { continue; }
             debug!("font family {:?} monospace: {}", family.get_name(), family.is_monospace());
         }
-        let mut font_desc = FontDescription::from_string("Inconsolata 16");
-        // font_desc.set_size(14 * pango::SCALE);
+        let font_desc = FontDescription::from_string("Inconsolata 14");
         pango_ctx.set_font_description(&font_desc);
         let language = pango_ctx.get_language().expect("failed to get pango language");
         let fontset = pango_ctx.load_fontset(&font_desc, &language).expect("failed to load font set");
@@ -123,10 +130,12 @@ impl EditView {
             pristine: true,
             view_id: view_id.to_string(),
             da: da.clone(),
-            root_widget: hbox.clone(),
+            root_widget: overlay.clone(),
             tab_widget: tab_hbox.clone(),
             label: label.clone(),
             close_button: close_button.clone(),
+            search_entry: search_entry.clone(),
+            search_revealer: search_revealer.clone(),
             hadj: hadj.clone(),
             vadj: vadj.clone(),
             line_cache: LineCache::new(),
@@ -173,6 +182,26 @@ impl EditView {
         da.connect_size_allocate(clone!(edit_view => move |_,alloc| {
             debug!("Size changed to w={} h={}", alloc.width, alloc.height);
             edit_view.borrow_mut().da_size_allocate(alloc.width, alloc.height);
+        }));
+
+        search_entry.connect_changed(clone!(edit_view => move |w| {
+            edit_view.borrow_mut().search_changed(w.get_text());
+        }));
+
+        search_entry.connect_activate(clone!(edit_view => move |w| {
+            edit_view.borrow_mut().find_next();
+        }));
+
+        search_entry.connect_stop_search(clone!(edit_view => move |w| {
+            edit_view.borrow().stop_search();
+        }));
+
+        go_down_button.connect_clicked(clone!(edit_view => move |_| {
+            edit_view.borrow_mut().find_next();
+        }));
+
+        go_up_button.connect_clicked(clone!(edit_view => move |_| {
+            edit_view.borrow_mut().find_prev();
         }));
 
         edit_view
@@ -447,7 +476,7 @@ impl EditView {
 
         const CURSOR_WIDTH: f64 = 2.0;
         // Calculate ordinal or max line length
-        let padding: usize = format!("{}", num_lines).len();
+        let padding: usize = format!("{}", num_lines.saturating_sub(1)).len();
 
         let mut max_width = 0;
 
@@ -455,28 +484,21 @@ impl EditView {
 
         // Just get the gutter size
         let mut gutter_size = 0.0;
-        for i in first_line..last_line {
-            if let Some(_) = self.line_cache.get_line(i) {
-                cr.move_to(-hadj.get_value(),
-                    self.font_height*(i as f64) - vadj.get_value()
-                );
+        if let Some(_) = self.line_cache.get_line(first_line) {
+            let pango_ctx = self.da.get_pango_context().expect("failed to get pango ctx");
+            let linecount_layout = self.create_layout_for_linecount(&pango_ctx, &main_state, first_line, padding);
+            update_layout(cr, &linecount_layout);
+            // show_layout(cr, &linecount_layout);
 
-                let pango_ctx = self.da.get_pango_context().expect("failed to get pango ctx");
-                let linecount_layout = self.create_layout_for_linecount(&pango_ctx, &main_state, i, padding);
-                update_layout(cr, &linecount_layout);
-                // show_layout(cr, &linecount_layout);
-
-                let linecount_offset = (linecount_layout.get_extents().1.width / pango::SCALE) as f64;
-                if linecount_offset > gutter_size {
-                    gutter_size = linecount_offset;
-                }
+            let linecount_offset = (linecount_layout.get_extents().1.width / pango::SCALE) as f64;
+            if linecount_offset > gutter_size {
+                gutter_size = linecount_offset;
             }
         }
 
         // Draw the gutter background
         set_source_color(cr, theme.gutter);
-        cr.set_source_rgba(255.0,255.0,255.0,255.0);
-        cr.rectangle(0.0, 0.0, gutter_size, f64::from(da_height));
+        cr.rectangle(0.0 - hadj.get_value(), 0.0, gutter_size, f64::from(da_height));
         cr.fill();
 
         for i in first_line..last_line {
@@ -808,6 +830,9 @@ impl EditView {
                         'c' if ctrl => {
                             self.do_copy(view_id);
                         },
+                        'f' if ctrl => {
+                            self.start_search();
+                        },
                         'v' if ctrl => {
                             self.do_paste(view_id);
                         },
@@ -872,5 +897,36 @@ impl EditView {
             core.borrow().gesture_point_select(&view_id2, line, col);
             core.borrow().insert(&view_id2, &text);
         });
+    }
+
+    pub fn start_search(&self) {
+        self.search_revealer.set_reveal_child(true);
+        let needle = self.search_entry.get_text().unwrap_or_default();
+        self.core.borrow().find(&self.view_id, needle, false, Some(false));
+    }
+
+    pub fn stop_search(&self) {
+        self.search_revealer.set_reveal_child(false);
+    }
+
+    pub fn find_status(&self, queries: &Value) {
+        if let Some(queries) = queries.as_array() {
+            for query in queries {
+                debug!("query {}", query);
+            }
+        }
+    }
+
+    pub fn find_next(&self) {
+        self.core.borrow().find_next(&self.view_id, Some(true), Some(true));
+    }
+
+    pub fn find_prev(&self) {
+        self.core.borrow().find_previous(&self.view_id, Some(true));
+    }
+
+    pub fn search_changed(&self, s: Option<String>) {
+        let needle = s.unwrap_or_default();
+        self.core.borrow().find(&self.view_id, needle, false, Some(false));
     }
 }

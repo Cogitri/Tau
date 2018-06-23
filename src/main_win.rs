@@ -45,10 +45,6 @@ const GLADE_SRC: &str = include_str!("ui/gxi.glade");
 
 impl MainWin {
 
-    pub fn new_application() -> Application {
-        Application::new("com.github.bvinc.gxi", ApplicationFlags::FLAGS_NONE)
-            .expect("failed to make application")
-    }
     pub fn new(application: &Application, shared_queue: Arc<Mutex<SharedQueue>>) -> Rc<RefCell<MainWin>> {
         let (xi_peer, rx) = xi_thread::start_xi_thread();
         let handler = MyHandler::new(shared_queue.clone());
@@ -69,9 +65,6 @@ impl MainWin {
 
         let window: ApplicationWindow = builder.get_object("appwindow").unwrap();
         let notebook: Notebook = builder.get_object("notebook").unwrap();
-        // let ask_save_dialog: Dialog = builder.get_object("ask_save_dialog").unwrap();
-
-        notebook.remove_page(Some(0));
 
         let main_win = Rc::new(RefCell::new(MainWin{
             core: Rc::new(RefCell::new(core)),
@@ -120,6 +113,13 @@ impl MainWin {
                 MainWin::prefs(main_win.clone());
             }));
             application.add_action(&prefs_action);
+        }
+        {
+            let find_action = SimpleAction::new("find", None);
+            find_action.connect_activate(clone!(main_win => move |_,_| {
+                MainWin::find(main_win.clone());
+            }));
+            application.add_action(&find_action);
         }
         {
             let save_action = SimpleAction::new("save", None);
@@ -194,6 +194,7 @@ impl MainWin {
                     "available_plugins" => main_win.borrow_mut().available_plugins(&params),
                     "config_changed" => main_win.borrow_mut().config_changed(&params),
                     "def_style" => main_win.borrow_mut().def_style(&params),
+                    "find_status" => main_win.borrow_mut().find_status(&params),
                     "update" => main_win.borrow_mut().update(&params),
                     "scroll_to" => main_win.borrow_mut().scroll_to(&params),
                     "theme_changed" => main_win.borrow_mut().theme_changed(&params),
@@ -263,6 +264,18 @@ impl MainWin {
 
         if let Some(ev) = self.views.get(&view_id) {
             ev.borrow_mut().config_changed(&params["changes"]);
+        }
+    }
+
+    pub fn find_status(&mut self, params: &Value) {
+        let view_id = {
+            let view_id = params["view_id"].as_str();
+            if view_id.is_none() { return; }
+            view_id.unwrap().to_string()
+        };
+
+        if let Some(ev) = self.views.get(&view_id) {
+            ev.borrow_mut().find_status(&params["queries"]);
         }
     }
 
@@ -423,6 +436,11 @@ impl MainWin {
         // prefs_win.run();
     }
 
+    fn find(main_win: Rc<RefCell<MainWin>>) {
+        let edit_view = main_win.borrow().get_current_edit_view().clone();
+        edit_view.borrow().start_search();
+    }
+
     fn get_current_edit_view(&self) -> Rc<RefCell<EditView>> {
         if let Some(idx) = self.notebook.get_current_page() {
             if let Some(w) = self.notebook.get_nth_page(Some(idx)) {
@@ -466,7 +484,6 @@ impl MainWin {
                     win.view_id_to_w.insert(view_id.to_string(), w);
                 }
 
-                let view_id_clone = view_id.to_string();
                 ev.close_button.connect_clicked(clone!(main_win, edit_view => move |_| {
                     MainWin::close_view(&main_win, &edit_view);
                 }));

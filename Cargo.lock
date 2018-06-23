@@ -511,8 +511,8 @@ dependencies = [
  "serde_derive 1.0.66 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde_json 1.0.21 (registry+https://github.com/rust-lang/crates.io-index)",
  "servo-fontconfig 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "xi-core-lib 0.2.0 (git+https://github.com/google/xi-editor?rev=befef5cf)",
- "xi-rpc 0.2.0 (git+https://github.com/google/xi-editor?rev=befef5cf)",
+ "xi-core-lib 0.2.0 (git+https://github.com/google/xi-editor?rev=a66bbd68)",
+ "xi-rpc 0.2.0 (git+https://github.com/google/xi-editor?rev=a66bbd68)",
 ]
 
 [[package]]
@@ -1115,7 +1115,7 @@ dependencies = [
 [[package]]
 name = "xi-core-lib"
 version = "0.2.0"
-source = "git+https://github.com/google/xi-editor?rev=befef5cf#befef5cfb07a46df3407718ff3431e4115a74454"
+source = "git+https://github.com/google/xi-editor?rev=a66bbd68#a66bbd68037e392074ed69be5d3b84bc59c4ed44"
 dependencies = [
  "notify 4.0.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "regex 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -1126,17 +1126,17 @@ dependencies = [
  "syntect 2.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "time 0.1.40 (registry+https://github.com/rust-lang/crates.io-index)",
  "toml 0.4.6 (registry+https://github.com/rust-lang/crates.io-index)",
- "xi-rope 0.2.0 (git+https://github.com/google/xi-editor?rev=befef5cf)",
- "xi-rpc 0.2.0 (git+https://github.com/google/xi-editor?rev=befef5cf)",
- "xi-trace 0.1.0 (git+https://github.com/google/xi-editor?rev=befef5cf)",
- "xi-trace-dump 0.1.0 (git+https://github.com/google/xi-editor?rev=befef5cf)",
- "xi-unicode 0.1.0 (git+https://github.com/google/xi-editor?rev=befef5cf)",
+ "xi-rope 0.2.0 (git+https://github.com/google/xi-editor?rev=a66bbd68)",
+ "xi-rpc 0.2.0 (git+https://github.com/google/xi-editor?rev=a66bbd68)",
+ "xi-trace 0.1.0 (git+https://github.com/google/xi-editor?rev=a66bbd68)",
+ "xi-trace-dump 0.1.0 (git+https://github.com/google/xi-editor?rev=a66bbd68)",
+ "xi-unicode 0.1.0 (git+https://github.com/google/xi-editor?rev=a66bbd68)",
 ]
 
 [[package]]
 name = "xi-rope"
 version = "0.2.0"
-source = "git+https://github.com/google/xi-editor?rev=befef5cf#befef5cfb07a46df3407718ff3431e4115a74454"
+source = "git+https://github.com/google/xi-editor?rev=a66bbd68#a66bbd68037e392074ed69be5d3b84bc59c4ed44"
 dependencies = [
  "bytecount 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "memchr 2.0.1 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -1149,19 +1149,19 @@ dependencies = [
 [[package]]
 name = "xi-rpc"
 version = "0.2.0"
-source = "git+https://github.com/google/xi-editor?rev=befef5cf#befef5cfb07a46df3407718ff3431e4115a74454"
+source = "git+https://github.com/google/xi-editor?rev=a66bbd68#a66bbd68037e392074ed69be5d3b84bc59c4ed44"
 dependencies = [
  "crossbeam 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde 1.0.66 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde_derive 1.0.66 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde_json 1.0.21 (registry+https://github.com/rust-lang/crates.io-index)",
- "xi-trace 0.1.0 (git+https://github.com/google/xi-editor?rev=befef5cf)",
+ "xi-trace 0.1.0 (git+https://github.com/google/xi-editor?rev=a66bbd68)",
 ]
 
 [[package]]
 name = "xi-trace"
 version = "0.1.0"
-source = "git+https://github.com/google/xi-editor?rev=befef5cf#befef5cfb07a46df3407718ff3431e4115a74454"
+source = "git+https://github.com/google/xi-editor?rev=a66bbd68#a66bbd68037e392074ed69be5d3b84bc59c4ed44"
 dependencies = [
  "lazy_static 1.0.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "libc 0.2.42 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -1173,18 +1173,18 @@ dependencies = [
 [[package]]
 name = "xi-trace-dump"
 version = "0.1.0"
-source = "git+https://github.com/google/xi-editor?rev=befef5cf#befef5cfb07a46df3407718ff3431e4115a74454"
+source = "git+https://github.com/google/xi-editor?rev=a66bbd68#a66bbd68037e392074ed69be5d3b84bc59c4ed44"
 dependencies = [
  "serde 1.0.66 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde_derive 1.0.66 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde_json 1.0.21 (registry+https://github.com/rust-lang/crates.io-index)",
- "xi-trace 0.1.0 (git+https://github.com/google/xi-editor?rev=befef5cf)",
+ "xi-trace 0.1.0 (git+https://github.com/google/xi-editor?rev=a66bbd68)",
 ]
 
 [[package]]
 name = "xi-unicode"
 version = "0.1.0"
-source = "git+https://github.com/google/xi-editor?rev=befef5cf#befef5cfb07a46df3407718ff3431e4115a74454"
+source = "git+https://github.com/google/xi-editor?rev=a66bbd68#a66bbd68037e392074ed69be5d3b84bc59c4ed44"
 
 [[package]]
 name = "xml-rs"
@@ -1321,10 +1321,10 @@ dependencies = [
 "checksum winapi-x86_64-pc-windows-gnu 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = "712e227841d057c1ee1cd2fb22fa7e5a5461ae8e48fa2ca79ec42cfc1931183f"
 "checksum wincolor 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)" = "eeb06499a3a4d44302791052df005d5232b927ed1a9658146d842165c4de7767"
 "checksum ws2_32-sys 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)" = "d59cefebd0c892fa2dd6de581e937301d8552cb44489cdff035c6187cb63fa5e"
-"checksum xi-core-lib 0.2.0 (git+https://github.com/google/xi-editor?rev=befef5cf)" = "<none>"
-"checksum xi-rope 0.2.0 (git+https://github.com/google/xi-editor?rev=befef5cf)" = "<none>"
-"checksum xi-rpc 0.2.0 (git+https://github.com/google/xi-editor?rev=befef5cf)" = "<none>"
-"checksum xi-trace 0.1.0 (git+https://github.com/google/xi-editor?rev=befef5cf)" = "<none>"
-"checksum xi-trace-dump 0.1.0 (git+https://github.com/google/xi-editor?rev=befef5cf)" = "<none>"
-"checksum xi-unicode 0.1.0 (git+https://github.com/google/xi-editor?rev=befef5cf)" = "<none>"
+"checksum xi-core-lib 0.2.0 (git+https://github.com/google/xi-editor?rev=a66bbd68)" = "<none>"
+"checksum xi-rope 0.2.0 (git+https://github.com/google/xi-editor?rev=a66bbd68)" = "<none>"
+"checksum xi-rpc 0.2.0 (git+https://github.com/google/xi-editor?rev=a66bbd68)" = "<none>"
+"checksum xi-trace 0.1.0 (git+https://github.com/google/xi-editor?rev=a66bbd68)" = "<none>"
+"checksum xi-trace-dump 0.1.0 (git+https://github.com/google/xi-editor?rev=a66bbd68)" = "<none>"
+"checksum xi-unicode 0.1.0 (git+https://github.com/google/xi-editor?rev=a66bbd68)" = "<none>"
 "checksum xml-rs 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)" = "3c1cb601d29fe2c2ac60a2b2e5e293994d87a1f6fa9687a31a15270f909be9c2"

@@ -354,4 +354,33 @@ impl Core {
 
         receiver.recv().unwrap()
     }
+
+    /// Searches the document for `chars`, if present, falling back on
+    /// the last selection region if `chars` is `None`.
+    ///
+    /// If `chars` is `None` and there is an active selection, returns
+    /// the string value used for the search, else returns `Null`.
+    pub fn find(&self, view_id: &str, chars: String, case_sensitive: bool, regex: Option<bool>) {
+        self.send_edit_cmd(view_id, "find", &json!({
+            "chars": chars,
+            "case_sensitive": case_sensitive,
+            "regex": regex,
+        }))
+    }
+    pub fn find_next(&self, view_id: &str, wrap_around: Option<bool>, allow_same: Option<bool>) {
+        self.send_edit_cmd(view_id, "find_next", &json!({
+            "wrap_around": wrap_around,
+            "allow_same": allow_same,
+        }))
+    }
+    pub fn find_previous(&self, view_id: &str, wrap_around: Option<bool>) {
+        self.send_edit_cmd(view_id, "find_previous", &json!({
+            "wrap_around": wrap_around,
+        }))
+    }
+    pub fn highlight_find(&self, view_id: &str, visible: bool) {
+        self.send_edit_cmd(view_id, "highlight_find", &json!({
+            "visible": visible,
+        }))
+    }
 }

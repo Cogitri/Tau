@@ -40,8 +40,13 @@ use clap::{Arg, App, SubCommand};
 use gio::{
     ApplicationExt,
     ApplicationExtManual,
+    ApplicationFlags,
 };
 use glib::MainContext;
+use gtk::{
+    Application,
+    GtkApplicationExt,
+};
 use main_win::MainWin;
 use mio::unix::{PipeReader, PipeWriter, pipe};
 use mio::TryRead;
@@ -50,11 +55,11 @@ use source::{SourceFuncs, new_source};
 use std::any::Any;
 use std::cell::RefCell;
 use std::collections::VecDeque;
+use std::env::args;
 use std::io::Write;
 use std::os::unix::io::AsRawFd;
 use std::rc::Rc;
 use std::sync::{Arc, Mutex};
-
 
 #[derive(Clone, Debug)]
 pub enum CoreMsg {
@@ -120,18 +125,21 @@ impl SourceFuncs for QueueSource {
 
 fn main() {
     env_logger::init();
-    let matches = App::new("gxi")
-        .version("0.2.0")
-        .author("brainn <brainn@gmail.com>")
-        .about("Xi frontend")
-        .arg(Arg::with_name("FILE")
-            .help("file to open")
-        )
-        .get_matches();
+    // let matches = App::new("gxi")
+    //     .version("0.2.0")
+    //     .author("brainn <brainn@gmail.com>")
+    //     .about("Xi frontend")
+    //     .arg(Arg::with_name("FILE")
+    //         .multiple(true)
+    //         .help("file to open")
+    //     )
+    //     .get_matches();
 
-    if let Some(in_file) = matches.value_of("FILE") {
-        debug!("Opening {}", in_file);
-    }
+    // let mut files = vec![];
+    // if matches.is_present("FILE") {
+    //     files = matches.values_of("FILE").unwrap().collect::<Vec<_>>();
+    // }
+    // debug!("files {:?}", files);
 
     let queue: VecDeque<CoreMsg> = Default::default();
     let (reader, writer) = pipe().unwrap();
@@ -143,7 +151,8 @@ fn main() {
         pipe_reader: reader,
     }));
 
-    let application = MainWin::new_application();
+    let application = Application::new("com.github.bvinc.gxi", ApplicationFlags::HANDLES_OPEN)
+        .expect("failed to create gtk application");
 
     application.connect_startup(move |_|{
         debug!("startup");
@@ -171,5 +180,5 @@ fn main() {
         debug!("shutdown");
     });
 
-    application.run(&Vec::new());
+    application.run(&args().collect::<Vec<_>>());
 }
