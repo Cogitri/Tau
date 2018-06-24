@@ -58,6 +58,7 @@ impl EditView {
         scrolled_window.set_kinetic_scrolling(true);
 
         da.set_events(EventMask::BUTTON_PRESS_MASK.bits() as i32
+            | EventMask::BUTTON_RELEASE_MASK.bits() as i32
             | EventMask::BUTTON_MOTION_MASK.bits() as i32
             | EventMask::SCROLL_MASK.bits() as i32
             | EventMask::SMOOTH_SCROLL_MASK.bits() as i32
