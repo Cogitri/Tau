@@ -205,6 +205,10 @@ impl EditView {
             edit_view.borrow_mut().find_prev();
         }));
 
+        vadj.connect_value_changed(clone!(edit_view => move |_| {
+            edit_view.borrow_mut().update_visible_scroll_region();
+        }));
+
         edit_view
     }
 }
@@ -643,31 +647,37 @@ impl EditView {
         layout
     }
 
-    pub fn scroll_to(&mut self, line: u64, col: u64) {
-        {
-            let cur_top = self.font_height*((line+1) as f64) - self.font_ascent;
-            let cur_bottom = cur_top + self.font_ascent + self.font_descent;
-            let vadj = self.vadj.clone();
-            if cur_top < vadj.get_value() {
-                vadj.set_value(cur_top);
-            } else if cur_bottom > vadj.get_value() + vadj.get_page_size() && vadj.get_page_size() != 0.0 {
-                vadj.set_value(cur_bottom - vadj.get_page_size());
-            }
+    pub fn scroll_to(edit_view: &Rc<RefCell<EditView>>, line: u64, col: u64) {
+        // We can't have edit_view borrowed when we call set_value on adjustments
+        // because set_value can call the value_changed handlers.  So first, we
+        // need to extract the information we're going to need.
+        let (cur_top, cur_bottom, vadj, cur_left, cur_right, hadj) =  {
+            let ev = edit_view.borrow();
+            let cur_top = ev.font_height*((line+1) as f64) - ev.font_ascent;
+            let cur_bottom = cur_top + ev.font_ascent + ev.font_descent;
+            let vadj = ev.vadj.clone();
+            
+            let cur_left = ev.font_width*(col as f64) - ev.font_ascent;
+            let cur_right = cur_left + ev.font_width*2.0;
+            let hadj = ev.hadj.clone();
+
+            (cur_top, cur_bottom, vadj, cur_left, cur_right, hadj)
+        };
+
+        if cur_top < vadj.get_value() {
+            vadj.set_value(cur_top);
+        } else if cur_bottom > vadj.get_value() + vadj.get_page_size() && vadj.get_page_size() != 0.0 {
+            vadj.set_value(cur_bottom - vadj.get_page_size());
         }
 
-        {
-            let cur_left = self.font_width*(col as f64) - self.font_ascent;
-            let cur_right = cur_left + self.font_width*2.0;
-            let hadj = self.hadj.clone();
-            if cur_left < hadj.get_value() {
-                hadj.set_value(cur_left);
-            } else if cur_right > hadj.get_value() + hadj.get_page_size() && hadj.get_page_size() != 0.0 {
-                let new_value = cur_right - hadj.get_page_size();
-                if new_value + hadj.get_page_size() > hadj.get_upper() {
-                    hadj.set_upper(new_value + hadj.get_page_size());
-                }
-                hadj.set_value(new_value);
+        if cur_left < hadj.get_value() {
+            hadj.set_value(cur_left);
+        } else if cur_right > hadj.get_value() + hadj.get_page_size() && hadj.get_page_size() != 0.0 {
+            let new_value = cur_right - hadj.get_page_size();
+            if new_value + hadj.get_page_size() > hadj.get_upper() {
+                hadj.set_upper(new_value + hadj.get_page_size());
             }
+            hadj.set_value(new_value);
         }
     }
 

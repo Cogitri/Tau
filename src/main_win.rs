@@ -16,7 +16,6 @@ use rpc::{Core, Handler};
 use serde_json::{self, Value};
 use std::cell::RefCell;
 use std::collections::{BTreeMap, HashMap};
-use std::env::home_dir;
 use std::rc::Rc;
 use std::sync::{Arc, Mutex};
 use theme::{Color, Style, Theme};
@@ -45,21 +44,7 @@ const GLADE_SRC: &str = include_str!("ui/gxi.glade");
 
 impl MainWin {
 
-    pub fn new(application: &Application, shared_queue: Arc<Mutex<SharedQueue>>) -> Rc<RefCell<MainWin>> {
-        let (xi_peer, rx) = xi_thread::start_xi_thread();
-        let handler = MyHandler::new(shared_queue.clone());
-        let core = Core::new(xi_peer, rx, handler.clone());
-
-        let mut config_dir = None;
-        let mut plugin_dir = None;
-        if let Some(home_dir) = home_dir() {
-            let xi_config = home_dir.join(".config").join("xi");
-            let xi_plugin = xi_config.join("plugins");
-            config_dir = xi_config.to_str().map(|s| s.to_string());
-            plugin_dir = xi_plugin.to_str().map(|s| s.to_string());
-        }
-        core.client_started(config_dir, plugin_dir);
-
+    pub fn new(application: &Application, shared_queue: Arc<Mutex<SharedQueue>>, core: Rc<RefCell<Core>>) -> Rc<RefCell<MainWin>> {
         let glade_src = include_str!("ui/gxi.glade");
         let builder = Builder::new_from_string(glade_src);
 
@@ -67,7 +52,7 @@ impl MainWin {
         let notebook: Notebook = builder.get_object("notebook").unwrap();
 
         let main_win = Rc::new(RefCell::new(MainWin{
-            core: Rc::new(RefCell::new(core)),
+            core: core.clone(),
             shared_queue: shared_queue.clone(),
             window: window.clone(),
             notebook: notebook.clone(),
@@ -165,8 +150,6 @@ impl MainWin {
             }));
             application.add_action(&auto_indent_action);
         }
-
-        main_win.borrow_mut().req_new_view(None);
 
         window.show_all();
 
@@ -360,7 +343,7 @@ impl MainWin {
             Some(edit_view) => {
                 let idx = self.notebook.page_num(&edit_view.borrow().root_widget);
                 self.notebook.set_current_page(idx);
-                edit_view.borrow_mut().scroll_to(line, col);
+                EditView::scroll_to(edit_view, line, col);
             }
         }
     }
@@ -530,29 +513,3 @@ impl MainWin {
     }
 }
 
-#[derive(Clone)]
-struct MyHandler {
-    shared_queue: Arc<Mutex<SharedQueue>>,
-}
-
-impl MyHandler {
-    fn new(shared_queue: Arc<Mutex<SharedQueue>>) -> MyHandler {
-        MyHandler {
-            shared_queue,
-        }
-    }
-}
-
-impl Handler for MyHandler {
-    fn notification(&self, method: &str, params: &Value) {
-        debug!("CORE --> {{\"method\": \"{}\", \"params\":{}}}", method, params);
-        let method2 = method.to_string();
-        let params2 = params.clone();
-        self.shared_queue.lock().unwrap().add_core_msg(
-            CoreMsg::Notification{
-                method: method2,
-                params: params2
-            }
-        );
-    }
-}

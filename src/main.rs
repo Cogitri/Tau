@@ -41,6 +41,7 @@ use gio::{
     ApplicationExt,
     ApplicationExtManual,
     ApplicationFlags,
+    FileExt,
 };
 use glib::MainContext;
 use gtk::{
@@ -50,12 +51,13 @@ use gtk::{
 use main_win::MainWin;
 use mio::unix::{PipeReader, PipeWriter, pipe};
 use mio::TryRead;
+use rpc::{Core, Handler};
 use serde_json::Value;
 use source::{SourceFuncs, new_source};
 use std::any::Any;
 use std::cell::RefCell;
 use std::collections::VecDeque;
-use std::env::args;
+use std::env::{args, home_dir};
 use std::io::Write;
 use std::os::unix::io::AsRawFd;
 use std::rc::Rc;
@@ -123,6 +125,33 @@ impl SourceFuncs for QueueSource {
     }
 }
 
+#[derive(Clone)]
+struct MyHandler {
+    shared_queue: Arc<Mutex<SharedQueue>>,
+}
+
+impl MyHandler {
+    fn new(shared_queue: Arc<Mutex<SharedQueue>>) -> MyHandler {
+        MyHandler {
+            shared_queue,
+        }
+    }
+}
+
+impl Handler for MyHandler {
+    fn notification(&self, method: &str, params: &Value) {
+        debug!("CORE --> {{\"method\": \"{}\", \"params\":{}}}", method, params);
+        let method2 = method.to_string();
+        let params2 = params.clone();
+        self.shared_queue.lock().unwrap().add_core_msg(
+            CoreMsg::Notification{
+                method: method2,
+                params: params2
+            }
+        );
+    }
+}
+
 fn main() {
     env_logger::init();
     // let matches = App::new("gxi")
@@ -151,16 +180,27 @@ fn main() {
         pipe_reader: reader,
     }));
 
+    let (xi_peer, rx) = xi_thread::start_xi_thread();
+    let handler = MyHandler::new(shared_queue.clone());
+    let core = Core::new(xi_peer, rx, handler.clone());
+
     let application = Application::new("com.github.bvinc.gxi", ApplicationFlags::HANDLES_OPEN)
         .expect("failed to create gtk application");
 
-    application.connect_startup(move |_|{
-        debug!("startup");
-    });
+    let mut config_dir = None;
+    let mut plugin_dir = None;
+    if let Some(home_dir) = home_dir() {
+        let xi_config = home_dir.join(".config").join("xi");
+        let xi_plugin = xi_config.join("plugins");
+        config_dir = xi_config.to_str().map(|s| s.to_string());
+        plugin_dir = xi_plugin.to_str().map(|s| s.to_string());
+    }
 
-    application.connect_activate(move |application| {
-        debug!("activate");
-        let main_win = MainWin::new(application, shared_queue.clone());
+    application.connect_startup(clone!(shared_queue, core => move |application| {
+        debug!("startup");
+        core.client_started(config_dir.clone(), plugin_dir.clone());
+
+        let main_win = MainWin::new(application, shared_queue.clone(), Rc::new(RefCell::new(core.clone())));
 
         let source = new_source(QueueSource {
             win: main_win.clone(),
@@ -172,10 +212,51 @@ fn main() {
         }
         let main_context = MainContext::default().expect("no main context");
         source.attach(&main_context);
-    });
-    application.connect_open(move |_,files,s| {
-        debug!("open {:?} {}", files, s);
-    });
+    }));
+
+
+    application.connect_activate(clone!(shared_queue, core => move |application| {
+        debug!("activate");
+
+        let mut params = json!({});
+        params["file_path"] = Value::Null;
+
+        let shared_queue2 = shared_queue.clone();
+        core.send_request("new_view", &params,
+            move |value| {
+                let mut shared_queue = shared_queue2.lock().unwrap();
+                shared_queue.add_core_msg(CoreMsg::NewViewReply{
+                    file_name: None,
+                    value: value.clone(),
+                })
+            }
+        );
+    }));
+
+    application.connect_open(clone!(shared_queue, core => move |_,files,s| {
+        debug!("open");
+
+        for file in files {
+            let path = file.get_path();
+            if path.is_none() { continue; }
+            let path = path.unwrap();
+            let path = path.to_string_lossy().into_owned();
+            
+            let mut params = json!({});
+            params["file_path"] = json!(path);
+
+            let shared_queue2 = shared_queue.clone();
+            core.send_request("new_view", &params,
+                move |value| {
+                    let mut shared_queue = shared_queue2.lock().unwrap();
+                    shared_queue.add_core_msg(CoreMsg::NewViewReply{
+                        file_name: Some(path),
+                    value: value.clone(),
+                    })
+                }
+            );
+        }
+    }));
     application.connect_shutdown(move |_| {
         debug!("shutdown");
     });

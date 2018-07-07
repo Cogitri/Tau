@@ -82,7 +82,7 @@ impl Core {
     }
 
     /// Calls the callback with the result (from a different thread).
-    pub fn send_request<F>(&mut self, method: &str, params: &Value, callback: F)
+    pub fn send_request<F>(&self, method: &str, params: &Value, callback: F)
         where F: FnOnce(&Value) + Send + 'static
     {
         let mut state = self.state.lock().unwrap();
