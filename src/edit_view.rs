@@ -326,26 +326,6 @@ impl EditView {
         // }
     }
 
-    // fn change_scrollbar_visibility(&self) {
-    //     let vadj = self.vscrollbar.get_adjustment();
-    //     let hadj = self.hscrollbar.get_adjustment();
-
-    //     if vadj.get_value() <= vadj.get_lower()
-    //         && vadj.get_value() + vadj.get_page_size() >= vadj.get_upper() {
-    //         self.vscrollbar.hide();
-    //     } else {
-    //         self.vscrollbar.show();
-    //     }
-
-    //     if hadj.get_value() <= hadj.get_lower()
-    //         && hadj.get_value() + hadj.get_page_size() >= hadj.get_upper() {
-    //         self.hscrollbar.hide();
-    //     } else {
-    //         debug!("SHOWING HSCROLLBAR: {} {}-{} {}", hadj.get_value(), hadj.get_lower(), hadj.get_upper(), hadj.get_page_size());
-    //         self.hscrollbar.show();
-    //     }
-    // }
-
     pub fn da_px_to_cell(&self, main_state: &MainState, x: f64, y: f64) -> (u64, u64) {
         // let first_line = (vadj.get_value() / font_extents.height) as usize;
         let x = x + self.hadj.get_value();
@@ -603,13 +583,21 @@ impl EditView {
             }
         }
 
-        let h_upper = f64::from(max_width / pango::SCALE);
-        debug!("1 h_upper={} {} {} {}", h_upper, hadj.get_value(), hadj.get_page_size(), hadj.get_upper());
-        hadj.set_upper(h_upper);
-        if hadj.get_value() > h_upper {
-            hadj.set_value(h_upper-hadj.get_page_size());
+        // Now that we know actual length of the text, adjust the scrollbar properly.
+        // But we need to make sure we don't make the upper value smaller than the current viewport
+        let mut h_upper = f64::from(max_width / pango::SCALE);
+        let cur_h_max = hadj.get_value() + hadj.get_page_size();
+        if cur_h_max > h_upper {
+            h_upper = cur_h_max;
         }
-        debug!("2 {} {} {}", hadj.get_value(), hadj.get_page_size(), hadj.get_upper());
+
+        if hadj.get_upper() != h_upper {
+            hadj.set_upper(h_upper);
+            // If I don't signal that the value changed, sometimes the overscroll "shadow" will stick
+            // This seems to make sure to tell the viewport that something has changed so it can
+            // reevaluate it's need for a scroll shadow.
+            hadj.value_changed();
+        }
 
         Inhibit(false)
     }

@@ -34,11 +34,15 @@ impl PrefsWin {
             }
         }
 
-        theme_combo_box.connect_changed(clone!(core => move |cb|{
+        theme_combo_box.connect_changed(clone!(core, main_state => move |cb|{
             if let Some(theme_name) = cb.get_active_text() {
                 debug!("theme changed to {:?}", cb.get_active_text());
+
                 let core = core.borrow();
                 core.set_theme(&theme_name);
+
+                let mut main_state = main_state.borrow_mut();
+                main_state.theme_name = theme_name;
             }
         }));
 
