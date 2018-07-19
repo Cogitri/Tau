@@ -3,6 +3,8 @@ GTK frontend, written in Rust for the [xi editor](https://github.com/google/xi-e
 
 gxi is a work in progress!
 
+![screenshot](https://raw.githubusercontent.com/bvinc/gxi/master/screenshot.png)
+
 ## Instructions
 
 ### Installing dependencies on Debian/Ubuntu
