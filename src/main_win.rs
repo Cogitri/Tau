@@ -312,7 +312,7 @@ impl MainWin {
         };
 
         if let Some(ev) = self.views.get(&view_id) {
-            ev.borrow_mut().update(params)
+            EditView::update(&ev, params);
         }
     }
 

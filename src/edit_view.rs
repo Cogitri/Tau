@@ -12,6 +12,7 @@ use scrollable_drawing_area::ScrollableDrawingArea;
 use serde_json::Value;
 use std::cell::RefCell;
 use std::cmp::{max, min};
+use std::ops::Range;
 use std::rc::Rc;
 use std::u32;
 
@@ -25,6 +26,7 @@ pub struct EditView {
     pub view_id: String,
     pub file_name: Option<String>,
     pub pristine: bool,
+    pub line_da: ScrollableDrawingArea,
     pub da: ScrollableDrawingArea,
     pub root_widget: Overlay,
     pub tab_widget: gtk::Box,
@@ -40,12 +42,15 @@ pub struct EditView {
     font_ascent: f64,
     font_descent: f64,
     font_desc: FontDescription,
+    visible_lines: Range<u64>,
 }
 
 impl EditView {
     pub fn new(main_state: Rc<RefCell<MainState>>, core: Rc<RefCell<Core>>, file_name: Option<String>, view_id: &str) -> Rc<RefCell<EditView>> {
         // let da = DrawingArea::new();
         let da = ScrollableDrawingArea::new();
+        let line_da = ScrollableDrawingArea::new();
+        line_da.set_size_request(100,100);
         let scrolled_window = ScrolledWindow::new(None, None);
         scrolled_window.add(&da);
 
@@ -75,7 +80,11 @@ impl EditView {
         let go_down_button: Button = frame_builder.get_object("go_down_button").unwrap();
         let go_up_button: Button = frame_builder.get_object("go_up_button").unwrap();
 
-        overlay.add(&scrolled_window);
+        let line_hbox = Box::new(Orientation::Horizontal, 0);
+        line_hbox.pack_start(&line_da, false, false, 0);
+        line_hbox.pack_start(&scrolled_window, true, true, 0);
+
+        overlay.add(&line_hbox);
         overlay.show_all();
 
         // Make the widgets for the tab
@@ -130,6 +139,7 @@ impl EditView {
             file_name,
             pristine: true,
             view_id: view_id.to_string(),
+            line_da: line_da.clone(),
             da: da.clone(),
             root_widget: overlay.clone(),
             tab_widget: tab_hbox.clone(),
@@ -145,9 +155,14 @@ impl EditView {
             font_ascent,
             font_descent,
             font_desc,
+            visible_lines: 0..1,
         }));
 
         edit_view.borrow_mut().update_title();
+
+        line_da.connect_draw(clone!(edit_view => move |_,ctx| {
+            edit_view.borrow_mut().handle_line_draw(&ctx)
+        }));
 
         da.connect_button_press_event(clone!(edit_view => move |_,eb| {
             edit_view.borrow().handle_button_press(eb)
@@ -274,46 +289,41 @@ impl EditView {
         }
     }
 
-    pub fn update(&mut self, params: &Value) {
+    pub fn update(edit_view: &Rc<RefCell<EditView>>, params: &Value) {
         let update = &params["update"];
-        self.line_cache.apply_update(update);
+        let (text_width, text_height, vadj, hadj) = {
+            let mut ev = edit_view.borrow_mut();
+            ev.line_cache.apply_update(update);
 
+            if let Some(pristine) = update["pristine"].as_bool() {
+                if ev.pristine != pristine {
+                    ev.pristine = pristine;
+                    ev.update_title();
+                }
+            }
+    
+            ev.line_da.queue_draw();
+            ev.da.queue_draw();
 
-        // let (text_width, text_height) = self.get_text_size();
-        // debug!("{}{}", text_width, text_height);
-        // let (lwidth, lheight) = self.layout.get_size();
-        // debug!("{}{}", lwidth, lheight);
-        // if (lwidth as f64) < text_width || (lheight as f64) < text_height {
-        //     error!("hi");
-        //     self.layout.set_size(text_width as u32 * 2, text_height as u32 * 2);
-        // }
+            let (text_width, text_height) = ev.get_text_size();
+            let vadj = ev.vadj.clone();
+            let hadj = ev.hadj.clone();
+            
+            (text_width, text_height, vadj, hadj)
+        };
 
         // update scrollbars to the new text width and height
-        let (text_width, text_height) = self.get_text_size();
-        let vadj = self.vadj.clone();
         vadj.set_lower(0f64);
         vadj.set_upper(text_height as f64);
         if vadj.get_value() + vadj.get_page_size() > vadj.get_upper() {
             vadj.set_value(vadj.get_upper() - vadj.get_page_size())
         }
 
-        // let hadj = self.hscrollbar.get_adjustment();
         // hadj.set_lower(0f64);
         // hadj.set_upper(text_width as f64);
         // if hadj.get_value() + hadj.get_page_size() > hadj.get_upper() {
         //     hadj.set_value(hadj.get_upper() - hadj.get_page_size())
         // }
-
-        if let Some(pristine) = update["pristine"].as_bool() {
-            if self.pristine != pristine {
-                self.pristine = pristine;
-                self.update_title();
-            }
-        }
-
-        // self.change_scrollbar_visibility();
-
-        self.da.queue_draw();
     }
 
     // fn change_scrollbar_visibility(&self) {
@@ -347,12 +357,8 @@ impl EditView {
         let index = if let Some(line) = self.line_cache.get_line(line_num) {
             let pango_ctx = self.da.get_pango_context().expect("failed to get pango ctx");
 
-            let padding: usize = format!("{}", self.line_cache.height()).len();
-            let linecount_layout = self.create_layout_for_linecount(&pango_ctx, &main_state, line_num, padding);
-            let linecount_offset = (linecount_layout.get_extents().1.width / pango::SCALE) as f64;
-
             let layout = self.create_layout_for_line(&pango_ctx, &main_state, line);
-            let (_, index, trailing) = layout.xy_to_index((x - linecount_offset) as i32 * pango::SCALE, 0);
+            let (_, index, trailing) = layout.xy_to_index(x as i32 * pango::SCALE, 0);
             index + trailing
         } else {
             0
@@ -370,23 +376,18 @@ impl EditView {
         self.update_visible_scroll_region();
     }
 
-    fn vscrollbar_change_value(&mut self, value: f64) -> Inhibit {
-        debug!("scroll changed value {}", value);
-
-        self.update_visible_scroll_region();
-
-        Inhibit(false)
-    }
-
-    fn update_visible_scroll_region(&self) {
+    /// Inform core that the visible scroll region has changed
+    fn update_visible_scroll_region(&mut self) {
         let main_state = self.main_state.borrow();
         let da_height = self.da.get_allocated_height();
         let (_, first_line) = self.da_px_to_cell(&main_state, 0.0, 0.0);
         let (_, last_line) = self.da_px_to_cell(&main_state, 0.0, f64::from(da_height));
         let last_line = last_line + 1;
-
-        debug!("update visible scroll region {} {}", first_line, last_line);
-        self.core.borrow().scroll(&self.view_id, first_line, last_line);
+        let visible_lines = first_line..last_line;
+        if visible_lines != self.visible_lines {
+            self.visible_lines = visible_lines;
+            self.core.borrow().scroll(&self.view_id, first_line, last_line);
+        }
     }
 
     fn get_text_size(&self) -> (f64, f64) {
@@ -408,6 +409,86 @@ impl EditView {
             all_text_width
         };
         (width, height)
+    }
+
+    pub fn handle_line_draw(&mut self, cr: &Context) -> Inhibit {
+        // let foreground = self.main_state.borrow().theme.foreground;
+        let theme = &self.main_state.borrow().theme;
+
+        let da_width = self.line_da.get_allocated_width();
+        let da_height = self.line_da.get_allocated_height();
+
+        let num_lines = self.line_cache.height();
+
+        let vadj = self.vadj.clone();
+        // let hadj = self.hadj.clone();
+        trace!("drawing.  vadj={}, {}", vadj.get_value(), vadj.get_upper());
+
+        let first_line = (vadj.get_value() / self.font_height) as u64;
+        let last_line = ((vadj.get_value() + f64::from(da_height)) / self.font_height) as u64 + 1;
+        let last_line = min(last_line, num_lines);
+
+        // Find missing lines
+        let mut found_missing = false;
+        for i in first_line..last_line {
+            if self.line_cache.get_line(i).is_none() {
+                debug!("missing line {}", i);
+                found_missing = true;
+            }
+        }
+
+        // We've already missed our chance to draw these lines, but we need to request them for the
+        // next frame.  This needs to be improved to prevent flashing.
+        if found_missing {
+            debug!("didn't have some lines, requesting, lines {}-{}", first_line, last_line);
+            self.core.borrow().request_lines(&self.view_id, first_line as u64, last_line as u64);
+        }
+
+        let pango_ctx = self.da.get_pango_context().unwrap();
+        pango_ctx.set_font_description(&self.font_desc);
+
+        // Calculate ordinal or max line length
+        let padding: usize = format!("{}", num_lines.saturating_sub(1)).len();
+
+        let main_state = self.main_state.borrow();
+
+        // Just get the gutter size
+        let mut gutter_size = 0.0;
+        let pango_ctx = self.da.get_pango_context().expect("failed to get pango ctx");
+        let linecount_layout = self.create_layout_for_linecount(&pango_ctx, &main_state, 0, padding);
+        update_layout(cr, &linecount_layout);
+        // show_layout(cr, &linecount_layout);
+
+        let linecount_offset = (linecount_layout.get_extents().1.width / pango::SCALE) as f64;
+        if linecount_offset > gutter_size {
+            gutter_size = linecount_offset;
+        }
+        let gutter_size = gutter_size as i32;
+
+        self.line_da.set_size_request(gutter_size, 0);
+
+        // Draw the gutter background
+        set_source_color(cr, theme.gutter);
+        cr.rectangle(0.0, 0.0, f64::from(da_width), f64::from(da_height));
+        cr.fill();
+
+        for i in first_line..last_line {
+            // Keep track of the starting x position
+            if let Some(line) = self.line_cache.get_line(i) {
+
+                cr.move_to(0.0,
+                    self.font_height*(i as f64) - vadj.get_value()
+                );
+
+                set_source_color(cr, theme.gutter_foreground);
+                let pango_ctx = self.da.get_pango_context().expect("failed to get pango ctx");
+                let linecount_layout = self.create_layout_for_linecount(&pango_ctx, &main_state, i, padding);
+                update_layout(cr, &linecount_layout);
+                show_layout(cr, &linecount_layout);
+            }
+        }
+
+        Inhibit(false)
     }
 
     pub fn handle_draw(&mut self, cr: &Context) -> Inhibit {
@@ -487,25 +568,6 @@ impl EditView {
 
         let main_state = self.main_state.borrow();
 
-        // Just get the gutter size
-        let mut gutter_size = 0.0;
-        if let Some(_) = self.line_cache.get_line(first_line) {
-            let pango_ctx = self.da.get_pango_context().expect("failed to get pango ctx");
-            let linecount_layout = self.create_layout_for_linecount(&pango_ctx, &main_state, first_line, padding);
-            update_layout(cr, &linecount_layout);
-            // show_layout(cr, &linecount_layout);
-
-            let linecount_offset = (linecount_layout.get_extents().1.width / pango::SCALE) as f64;
-            if linecount_offset > gutter_size {
-                gutter_size = linecount_offset;
-            }
-        }
-
-        // Draw the gutter background
-        set_source_color(cr, theme.gutter);
-        cr.rectangle(0.0 - hadj.get_value(), 0.0, gutter_size, f64::from(da_height));
-        cr.fill();
-
         for i in first_line..last_line {
             // Keep track of the starting x position
             if let Some(line) = self.line_cache.get_line(i) {
@@ -514,14 +576,7 @@ impl EditView {
                     self.font_height*(i as f64) - vadj.get_value()
                 );
 
-                set_source_color(cr, theme.gutter_foreground);
                 let pango_ctx = self.da.get_pango_context().expect("failed to get pango ctx");
-                let linecount_layout = self.create_layout_for_linecount(&pango_ctx, &main_state, i, padding);
-                update_layout(cr, &linecount_layout);
-                show_layout(cr, &linecount_layout);
-                
-                let linecount_offset = (linecount_layout.get_extents().1.width / pango::SCALE) as f64;
-                cr.rel_move_to(linecount_offset, 0.0);
 
                 set_source_color(cr, theme.foreground);
                 let layout = self.create_layout_for_line(&pango_ctx, &main_state, line);
@@ -539,7 +594,7 @@ impl EditView {
 
                 for c in line.cursor() {
                     let x = layout_line.index_to_x(*c as i32, false) / pango::SCALE;
-                    cr.rectangle((x as f64) + linecount_offset - hadj.get_value(),
+                    cr.rectangle((x as f64) - hadj.get_value(),
                         (((self.font_ascent + self.font_descent) as u64)*i) as f64 - vadj.get_value(),
                         CURSOR_WIDTH,
                         self.font_ascent + self.font_descent);
@@ -548,12 +603,18 @@ impl EditView {
             }
         }
 
-        hadj.set_upper(f64::from(max_width / pango::SCALE));
+        let h_upper = f64::from(max_width / pango::SCALE);
+        debug!("1 h_upper={} {} {} {}", h_upper, hadj.get_value(), hadj.get_page_size(), hadj.get_upper());
+        hadj.set_upper(h_upper);
+        if hadj.get_value() > h_upper {
+            hadj.set_value(h_upper-hadj.get_page_size());
+        }
+        debug!("2 {} {} {}", hadj.get_value(), hadj.get_page_size(), hadj.get_upper());
 
         Inhibit(false)
     }
 
-    // Creates a pango layout for a particular line in the linecache
+    /// Creates a pango layout for a particular line in the linecache
     fn create_layout_for_linecount(&self, pango_ctx: &pango::Context, main_state: &MainState, n: u64, padding: usize) -> pango::Layout {
         let line_view = format!("{:>offset$} ", n, offset=padding);
         let layout = pango::Layout::new(&pango_ctx);
@@ -562,7 +623,7 @@ impl EditView {
         layout
     }
 
-    // Creates a pango layout for a particular line in the linecache
+    /// Creates a pango layout for a particular line in the linecache
     fn create_layout_for_line(&self, pango_ctx: &pango::Context, main_state: &MainState, line: &Line) -> pango::Layout {
         let line_view = if line.text().ends_with('\n') {
             &line.text()[0..line.text().len()-1]
@@ -673,7 +734,7 @@ impl EditView {
         if cur_left < hadj.get_value() {
             hadj.set_value(cur_left);
         } else if cur_right > hadj.get_value() + hadj.get_page_size() && hadj.get_page_size() != 0.0 {
-            let new_value = cur_right - hadj.get_page_size();
+             let new_value = cur_right - hadj.get_page_size();
             if new_value + hadj.get_page_size() > hadj.get_upper() {
                 hadj.set_upper(new_value + hadj.get_page_size());
             }
