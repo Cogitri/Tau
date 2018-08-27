@@ -23,6 +23,7 @@ install:
 script:
   - docker exec -t ubuntu-test bash -c "(curl https://sh.rustup.rs -sSf | sh -s -- -y) &&
     source \$HOME/.cargo/env &&
+    cd /travis &&
     rustup install $RUST_VER &&
     rustc --version &&
     cargo test &&
