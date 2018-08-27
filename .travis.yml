@@ -2,10 +2,13 @@ sudo: true
 env:
   matrix:
     - DIST: "xenial"
+      RUST_VER: "stable"
+    - DIST: "xenial"
+      RUST_VER: "nightly"
     - DIST: "bionic"
-  matrix:
-    - RUST_VER: "stable"
-    - RUST_VER: "nightly"
+      RUST_VER: "stable"
+    - DIST: "bionic"
+      RUST_VER: "nightly"
 addons:
   apt:
     packages:
