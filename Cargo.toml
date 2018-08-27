@@ -17,12 +17,12 @@ clap = "2.31"
 env_logger = "0.5.9"
 failure = "0.1"
 gdk = "0.8"
-gio = {version = "0.4", features = ["v2_40"] }
+gio = "0.4"
 glib = "0.5"
 glib-sys = { version = "0.6", features = ["v2_36"] }
 gobject-sys = "0.6"
-gtk = { version = "0.4", features = ["v3_22"] }
-gtk-sys = { version = "0.6", features = ["v3_22"] }
+gtk = { version = "0.4", features = ["v3_18"] }
+gtk-sys = { version = "0.6", features = ["v3_18"] }
 lazy_static = "1.0"
 libc = "0.2"
 log = "0.4"
