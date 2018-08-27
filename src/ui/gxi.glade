@@ -319,6 +319,7 @@
   </object>
   <object class="GtkDialog" id="ask_save_dialog">
     <property name="can_focus">False</property>
+    <property name="window_position">center</property>
     <property name="type_hint">dialog</property>
     <property name="transient_for">appwindow</property>
     <child type="titlebar">

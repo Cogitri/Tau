@@ -355,6 +355,12 @@ impl Core {
         receiver.recv().unwrap()
     }
 
+    pub fn paste(&self, view_id: &str, chars: &str) {
+        self.send_edit_cmd(view_id, "paste", &json!({
+            "chars": chars,
+        }))
+    }
+
     /// Searches the document for `chars`, if present, falling back on
     /// the last selection region if `chars` is `None`.
     ///
@@ -378,9 +384,25 @@ impl Core {
             "wrap_around": wrap_around,
         }))
     }
+
     pub fn highlight_find(&self, view_id: &str, visible: bool) {
         self.send_edit_cmd(view_id, "highlight_find", &json!({
             "visible": visible,
         }))
+    }
+
+    pub fn replace(&self, view_id: &str, chars: &str, preserve_case: bool) {
+        self.send_edit_cmd(view_id, "replace", &json!({
+            "chars": chars,
+            "preserve_case": preserve_case,
+        }))
+    }
+
+    pub fn replace_next(&self, view_id: &str) {
+        self.send_edit_cmd(view_id, "replace_next", &json!({}))
+    }
+
+    pub fn replace_all(&self, view_id: &str) {
+        self.send_edit_cmd(view_id, "replace_all", &json!({}))
     }
 }

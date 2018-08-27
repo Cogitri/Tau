@@ -28,12 +28,18 @@ pub struct EditView {
     pub pristine: bool,
     pub line_da: ScrollableDrawingArea,
     pub da: ScrollableDrawingArea,
-    pub root_widget: Overlay,
+    pub root_widget: gtk::Box,
     pub tab_widget: gtk::Box,
     pub label: Label,
     pub close_button: Button,
+    search_bar: SearchBar,
     search_entry: SearchEntry,
-    search_revealer: Revealer,
+    replace_expander: Expander,
+    replace_revealer: Revealer,
+    replace_entry: Entry,
+    replace_button: Button,
+    replace_all_button: Button,
+    find_status_label: Label,
     hadj: Adjustment,
     vadj: Adjustment,
     line_cache: LineCache,
@@ -71,21 +77,35 @@ impl EditView {
         debug!("events={:?}", da.get_events());
         da.set_can_focus(true);
 
-        let frame_src = include_str!("ui/edit_view_frame.glade");
-        let frame_builder = Builder::new_from_string(frame_src);
+        let find_rep_src = include_str!("ui/find_replace.glade");
+        let find_rep_builder = Builder::new_from_string(find_rep_src);
+        let search_bar: SearchBar = find_rep_builder.get_object("search_bar").unwrap();
+        let replace_expander: Expander = find_rep_builder.get_object("replace_expander").unwrap();
+        let replace_revealer: Revealer = find_rep_builder.get_object("replace_revealer").unwrap();
+        let replace_entry: Entry = find_rep_builder.get_object("replace_entry").unwrap();
+        let replace_button: Button = find_rep_builder.get_object("replace_button").unwrap();
+        let replace_all_button: Button = find_rep_builder.get_object("replace_all_button").unwrap();
+        let find_status_label: Label = find_rep_builder.get_object("find_status_label").unwrap();
 
-        let overlay: Overlay = frame_builder.get_object("overlay").unwrap();
-        let search_revealer: Revealer = frame_builder.get_object("revealer").unwrap();
-        let search_entry: SearchEntry = frame_builder.get_object("search_entry").unwrap();
-        let go_down_button: Button = frame_builder.get_object("go_down_button").unwrap();
-        let go_up_button: Button = frame_builder.get_object("go_up_button").unwrap();
+        // let overlay: Overlay = frame_builder.get_object("overlay").unwrap();
+        // let search_revealer: Revealer = frame_builder.get_object("revealer").unwrap();
+        // let frame: Frame = frame_builder.get_object("frame").unwrap();
+        let search_entry: SearchEntry = find_rep_builder.get_object("search_entry").unwrap();
+        let go_down_button: Button = find_rep_builder.get_object("go_down_button").unwrap();
+        let go_up_button: Button = find_rep_builder.get_object("go_up_button").unwrap();
+
+        // let style_context = frame.get_style_context().unwrap();
+        // style_context.add_provider(&css_provider, 1);
 
         let line_hbox = Box::new(Orientation::Horizontal, 0);
         line_hbox.pack_start(&line_da, false, false, 0);
         line_hbox.pack_start(&scrolled_window, true, true, 0);
 
-        overlay.add(&line_hbox);
-        overlay.show_all();
+        let main_vbox = Box::new(Orientation::Vertical, 0);
+        main_vbox.pack_start(&search_bar, false, false, 0);
+        main_vbox.pack_start(&line_hbox, true, true, 0);
+
+        main_vbox.show_all();
 
         // Make the widgets for the tab
         let tab_hbox = gtk::Box::new(Orientation::Horizontal, 5);
@@ -141,12 +161,18 @@ impl EditView {
             view_id: view_id.to_string(),
             line_da: line_da.clone(),
             da: da.clone(),
-            root_widget: overlay.clone(),
+            root_widget: main_vbox.clone(),
             tab_widget: tab_hbox.clone(),
             label: label.clone(),
             close_button: close_button.clone(),
+            search_bar: search_bar.clone(),
             search_entry: search_entry.clone(),
-            search_revealer: search_revealer.clone(),
+            replace_expander: replace_expander.clone(),
+            replace_revealer: replace_revealer.clone(),
+            replace_entry: replace_entry.clone(),
+            replace_button: replace_button.clone(),
+            replace_all_button: replace_all_button.clone(),
+            find_status_label: find_status_label.clone(),
             hadj: hadj.clone(),
             vadj: vadj.clone(),
             line_cache: LineCache::new(),
@@ -200,7 +226,7 @@ impl EditView {
             edit_view.borrow_mut().da_size_allocate(alloc.width, alloc.height);
         }));
 
-        search_entry.connect_changed(clone!(edit_view => move |w| {
+        search_entry.connect_search_changed(clone!(edit_view => move |w| {
             edit_view.borrow_mut().search_changed(w.get_text());
         }));
 
@@ -211,6 +237,23 @@ impl EditView {
         search_entry.connect_stop_search(clone!(edit_view => move |w| {
             edit_view.borrow().stop_search();
         }));
+
+        replace_expander.connect_property_expanded_notify(clone!(replace_revealer => move|w| {
+            if w.get_expanded() {
+                replace_revealer.set_reveal_child(true);
+            } else {
+                replace_revealer.set_reveal_child(false);
+            }
+        }));
+
+        replace_button.connect_clicked(clone!(edit_view => move |w| {
+            edit_view.borrow().replace();
+        }));
+
+        replace_all_button.connect_clicked(clone!(edit_view => move |w| {
+            edit_view.borrow().replace_all();
+        }));
+
 
         go_down_button.connect_clicked(clone!(edit_view => move |_| {
             edit_view.borrow_mut().find_next();
@@ -595,14 +638,14 @@ impl EditView {
             hadj.set_upper(h_upper);
             // If I don't signal that the value changed, sometimes the overscroll "shadow" will stick
             // This seems to make sure to tell the viewport that something has changed so it can
-            // reevaluate it's need for a scroll shadow.
+            // reevaluate its need for a scroll shadow.
             hadj.value_changed();
         }
 
         Inhibit(false)
     }
 
-    /// Creates a pango layout for a particular line in the linecache
+    /// Creates a pango layout for a particular line number
     fn create_layout_for_linecount(&self, pango_ctx: &pango::Context, main_state: &MainState, n: u64, padding: usize) -> pango::Layout {
         let line_view = format!("{:>offset$} ", n, offset=padding);
         let layout = pango::Layout::new(&pango_ctx);
@@ -935,21 +978,15 @@ impl EditView {
     }
 
     fn do_paste(&self, view_id: &str) {
-        // if let Some(text) = Clipboard::get(&SELECTION_CLIPBOARD).wait_for_text() {
-        //     self.core.borrow().insert(view_id, &text);
-        // }
         use clipboard::ClipboardRequest;
         let view_id2 = view_id.to_string().clone();
         let core = self.core.clone();
         Clipboard::get(&SELECTION_CLIPBOARD).request_text(move |_, text|{
-            core.borrow().insert(&view_id2, &text);
+            core.borrow().paste(&view_id2, &text);
         });
     }
 
     fn do_paste_primary(&self, view_id: &str, line: u64, col: u64) {
-        // if let Some(text) = Clipboard::get(&SELECTION_PRIMARY).wait_for_text() {
-        //     self.core.borrow().insert(view_id, &text);
-        // }
         use clipboard::ClipboardRequest;
         let view_id2 = view_id.to_string().clone();
         let core = self.core.clone();
@@ -960,18 +997,27 @@ impl EditView {
     }
 
     pub fn start_search(&self) {
-        self.search_revealer.set_reveal_child(true);
+        self.search_bar.set_search_mode(true);
+        self.replace_expander.set_expanded(false);
+        self.replace_revealer.set_reveal_child(false);
+        self.search_entry.grab_focus();
         let needle = self.search_entry.get_text().unwrap_or_default();
         self.core.borrow().find(&self.view_id, needle, false, Some(false));
     }
 
     pub fn stop_search(&self) {
-        self.search_revealer.set_reveal_child(false);
+        self.search_bar.set_search_mode(false);
+        self.da.grab_focus();
     }
 
     pub fn find_status(&self, queries: &Value) {
         if let Some(queries) = queries.as_array() {
             for query in queries {
+                if let Some(query_obj) = query.as_object() {
+                    if let Some(matches) = query_obj["matches"].as_u64() {
+                        self.find_status_label.set_text(&format!("{} Results", matches));
+                    }
+                }
                 debug!("query {}", query);
             }
         }
@@ -988,5 +1034,17 @@ impl EditView {
     pub fn search_changed(&self, s: Option<String>) {
         let needle = s.unwrap_or_default();
         self.core.borrow().find(&self.view_id, needle, false, Some(false));
+    }
+
+    pub fn replace(&self) {
+        let replace_chars = self.replace_entry.get_text().unwrap_or_default();
+        self.core.borrow().replace(&self.view_id, &replace_chars, false);
+        self.core.borrow().replace_next(&self.view_id);
+    }
+
+    pub fn replace_all(&self) {
+        let replace_chars = self.replace_entry.get_text().unwrap_or_default();
+        self.core.borrow().replace(&self.view_id, &replace_chars, false);
+        self.core.borrow().replace_all(&self.view_id);
     }
 }
