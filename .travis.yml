@@ -51,7 +51,7 @@ before_install:
     fi
 script:
   - rustc --version
-  - cargo test --jobs 1
+  - cargo test
   - cargo doc
-  - cargo build --jobs 1
+  - cargo build
   - git diff -R --exit-code
