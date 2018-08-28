@@ -28,5 +28,4 @@ script:
     rustc --version &&
     cargo test &&
     cargo doc &&
-    cargo build &&
-    git diff -R --exit-code"
+    cargo build"
