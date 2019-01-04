@@ -312,7 +312,7 @@ impl MainWin {
         };
 
         if let Some(ev) = self.views.get(&view_id) {
-            EditView::update(&ev, params);
+            ev.borrow_mut().update(params)
         }
     }
 
@@ -343,7 +343,7 @@ impl MainWin {
             Some(edit_view) => {
                 let idx = self.notebook.page_num(&edit_view.borrow().root_widget);
                 self.notebook.set_current_page(idx);
-                EditView::scroll_to(edit_view, line, col);
+                edit_view.borrow_mut().scroll_to(line, col)
             }
         }
     }
@@ -415,7 +415,7 @@ impl MainWin {
         let main_win = main_win.borrow();
         let main_state = main_win.state.clone();
         let core = main_win.core.clone();
-        let prefs_win = PrefsWin::new(&main_win.window, &main_state, &core);
+        let prefs_win = PrefsWin::new(&main_state, &core);
         // prefs_win.run();
     }
 
