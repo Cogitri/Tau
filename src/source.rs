@@ -1,9 +1,9 @@
 use std::mem;
 use std::ptr;
 
-use glib::Source;
 use glib::translate::from_glib_none;
-use glib_sys::{GSource, GSourceFunc, GSourceFuncs, gboolean, g_source_new};
+use glib::Source;
+use glib_sys::{g_source_new, gboolean, GSource, GSourceFunc, GSourceFuncs};
 use libc;
 
 pub trait SourceFuncs {
@@ -41,9 +41,11 @@ unsafe extern "C" fn check<T: SourceFuncs>(source: *mut GSource) -> gboolean {
     bool_to_int((*object).data.check())
 }
 
-unsafe extern "C" fn dispatch<T: SourceFuncs>(source: *mut GSource, _callback: GSourceFunc, _user_data: *mut libc::c_void)
-    -> gboolean
-{
+unsafe extern "C" fn dispatch<T: SourceFuncs>(
+    source: *mut GSource,
+    _callback: GSourceFunc,
+    _user_data: *mut libc::c_void,
+) -> gboolean {
     let object = source as *mut SourceData<T>;
     bool_to_int((*object).data.dispatch())
 }
@@ -59,7 +61,9 @@ extern "C" fn prepare<T: SourceFuncs>(source: *mut GSource, timeout: *mut libc::
     let object = source as *mut SourceData<T>;
     let (result, source_timeout) = unsafe { (*object).data.prepare() };
     if let Some(source_timeout) = source_timeout {
-        unsafe { *timeout = source_timeout as i32; }
+        unsafe {
+            *timeout = source_timeout as i32;
+        }
     }
     bool_to_int(result)
 }
@@ -67,8 +71,7 @@ extern "C" fn prepare<T: SourceFuncs>(source: *mut GSource, timeout: *mut libc::
 fn bool_to_int(boolean: bool) -> gboolean {
     if boolean {
         1
-    }
-    else {
+    } else {
         0
     }
 }

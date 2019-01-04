@@ -1,4 +1,3 @@
-
 #[derive(Clone, PartialEq, Eq, Default, Hash, Debug, Serialize, Deserialize)]
 /// A mergeable style. All values except priority are optional.
 ///
@@ -14,7 +13,7 @@ pub struct Style {
     /// 100..900, default 400
     pub weight: Option<u32>,
     /// default false
-    pub italic: Option<bool>, 
+    pub italic: Option<bool>,
     /// default false
     pub underline: Option<bool>,
 }
@@ -124,7 +123,6 @@ pub struct ThemeSettings {
     /// in a view that is not currently focused.
     pub inactive_selection_foreground: Option<Color>,
 
-
     /// Color of the guides displayed to indicate nesting levels.
     pub guide: Option<Color>,
     /// Color of the guide lined up with the caret.
@@ -136,7 +134,7 @@ pub struct ThemeSettings {
 
     /// Foreground color for regions added via `sublime.add_regions()`
     /// with the `sublime.DRAW_OUTLINED` flag added.
-    /// 
+    ///
     /// Deprecated!
     /// This setting does not exist in any available documentation.
     /// Use is discouraged, and it may be removed in a future release.

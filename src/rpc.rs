@@ -1,15 +1,15 @@
 use std::collections::BTreeMap;
+use std::sync::mpsc::{channel, Receiver};
 use std::sync::{Arc, Mutex};
-use std::sync::mpsc::{Receiver, channel};
 use std::thread;
 
 use serde_json::Value;
 
 use xi_thread::XiPeer;
 
-pub const XI_SHIFT_KEY_MASK:u32 = 1 << 1;
-pub const XI_CONTROL_KEY_MASK:u32 = 1 << 2;
-pub const XI_ALT_KEY_MASK:u32 = 1 << 3;
+pub const XI_SHIFT_KEY_MASK: u32 = 1 << 1;
+pub const XI_CONTROL_KEY_MASK: u32 = 1 << 2;
+pub const XI_ALT_KEY_MASK: u32 = 1 << 3;
 
 #[derive(Clone)]
 pub struct Core {
@@ -43,14 +43,17 @@ impl Core {
     /// The handler is invoked for incoming RPC notifications. Note that
     /// it must be `Send` because it is called from a dedicated thread.
     pub fn new<H>(xi_peer: XiPeer, rx: Receiver<Value>, handler: H) -> Core
-        where H: Handler + Send + 'static
+    where
+        H: Handler + Send + 'static,
     {
         let state = CoreState {
             xi_peer,
             id: 0,
             pending: BTreeMap::new(),
         };
-        let core = Core { state: Arc::new(Mutex::new(state)) };
+        let core = Core {
+            state: Arc::new(Mutex::new(state)),
+        };
         let rx_core_handle = core.clone();
         thread::spawn(move || {
             while let Ok(msg) = rx.recv() {
@@ -83,7 +86,8 @@ impl Core {
 
     /// Calls the callback with the result (from a different thread).
     pub fn send_request<F>(&self, method: &str, params: &Value, callback: F)
-        where F: FnOnce(&Value) + Send + 'static
+    where
+        F: FnOnce(&Value) + Send + 'static,
     {
         let mut state = self.state.lock().unwrap();
         let id = state.id;
@@ -92,23 +96,32 @@ impl Core {
             "params": params,
             "id": id,
         });
-        debug!("CORE <-- {{\"id\"={}, \"method\": {}, \"params\":{}}}", id, method, params);
+        debug!(
+            "CORE <-- {{\"id\"={}, \"method\": {}, \"params\":{}}}",
+            id, method, params
+        );
         state.xi_peer.send_json(&cmd);
         state.pending.insert(id, Box::new(callback));
         state.id += 1;
     }
 
     pub fn save(&self, view_id: &str, file_path: &str) {
-        self.send_notification("save", &json!({
-            "view_id": view_id,
-            "file_path": file_path,
-        }))
+        self.send_notification(
+            "save",
+            &json!({
+                "view_id": view_id,
+                "file_path": file_path,
+            }),
+        )
     }
 
     pub fn close_view(&self, view_id: &str) {
-        self.send_notification("close_view", &json!({
-            "view_id": view_id,
-        }))
+        self.send_notification(
+            "close_view",
+            &json!({
+                "view_id": view_id,
+            }),
+        )
     }
 
     fn send_edit_cmd(&self, view_id: &str, method: &str, params: &Value) {
@@ -119,23 +132,29 @@ impl Core {
         });
         self.send_notification("edit", &edit_params);
     }
-    
+
     pub fn client_started(&self, config_dir: Option<String>, client_extras_dir: Option<String>) {
-        self.send_notification("client_started", &json!({
-            "config_dir": config_dir,
-            "client_extras_dir": client_extras_dir,
-        }));
+        self.send_notification(
+            "client_started",
+            &json!({
+                "config_dir": config_dir,
+                "client_extras_dir": client_extras_dir,
+            }),
+        );
     }
 
     pub fn modify_user_config(&self, domain: &Value, changes: &Value) {
-        self.send_notification("modify_user_config", &json!({
-            "domain": domain,
-            "changes": changes,
-        }));
+        self.send_notification(
+            "modify_user_config",
+            &json!({
+                "domain": domain,
+                "changes": changes,
+            }),
+        );
     }
 
     pub fn set_theme(&self, theme_name: &str) {
-        self.send_notification("set_theme", &json!({"theme_name": theme_name}));
+        self.send_notification("set_theme", &json!({ "theme_name": theme_name }));
     }
 
     pub fn request_lines(&self, view_id: &str, first_line: u64, last_line: u64) {
@@ -144,9 +163,13 @@ impl Core {
 
     /// Inserts the `chars` string at the current cursor location.
     pub fn insert(&self, view_id: &str, chars: &str) {
-        self.send_edit_cmd(view_id, "insert", &json!({
-            "chars": chars.to_string(),
-        }));
+        self.send_edit_cmd(
+            view_id,
+            "insert",
+            &json!({
+                "chars": chars.to_string(),
+            }),
+        );
     }
 
     pub fn delete_forward(&self, view_id: &str) {
@@ -204,10 +227,18 @@ impl Core {
         self.send_edit_cmd(view_id, "move_to_right_end_of_line", &json!({}))
     }
     pub fn move_to_left_end_of_line_and_modify_selection(&self, view_id: &str) {
-        self.send_edit_cmd(view_id, "move_to_left_end_of_line_and_modify_selection", &json!({}))
+        self.send_edit_cmd(
+            view_id,
+            "move_to_left_end_of_line_and_modify_selection",
+            &json!({}),
+        )
     }
     pub fn move_to_right_end_of_line_and_modify_selection(&self, view_id: &str) {
-        self.send_edit_cmd(view_id, "move_to_right_end_of_line_and_modify_selection", &json!({}))
+        self.send_edit_cmd(
+            view_id,
+            "move_to_right_end_of_line_and_modify_selection",
+            &json!({}),
+        )
     }
     pub fn move_to_beginning_of_document(&self, view_id: &str) {
         self.send_edit_cmd(view_id, "move_to_beginning_of_document", &json!({}))
@@ -216,10 +247,18 @@ impl Core {
         self.send_edit_cmd(view_id, "move_to_end_of_document", &json!({}))
     }
     pub fn move_to_beginning_of_document_and_modify_selection(&self, view_id: &str) {
-        self.send_edit_cmd(view_id, "move_to_beginning_of_document_and_modify_selection", &json!({}))
+        self.send_edit_cmd(
+            view_id,
+            "move_to_beginning_of_document_and_modify_selection",
+            &json!({}),
+        )
     }
     pub fn move_to_end_of_document_and_modify_selection(&self, view_id: &str) {
-        self.send_edit_cmd(view_id, "move_to_end_of_document_and_modify_selection", &json!({}))
+        self.send_edit_cmd(
+            view_id,
+            "move_to_end_of_document_and_modify_selection",
+            &json!({}),
+        )
     }
     pub fn page_up(&self, view_id: &str) {
         self.send_edit_cmd(view_id, "scroll_page_up", &json!({}))
@@ -239,59 +278,87 @@ impl Core {
 
     /// moves the cursor to a point (click)
     pub fn gesture_point_select(&self, view_id: &str, line: u64, col: u64) {
-        self.send_edit_cmd(view_id, "gesture", &json!({
-            "line": line,
-            "col": col,
-            "ty": "point_select",
-        }))
+        self.send_edit_cmd(
+            view_id,
+            "gesture",
+            &json!({
+                "line": line,
+                "col": col,
+                "ty": "point_select",
+            }),
+        )
     }
     /// adds or removes a selection at a point (new cursor)
     pub fn gesture_toggle_sel(&self, view_id: &str, line: u64, col: u64) {
-        self.send_edit_cmd(view_id, "gesture", &json!({
-            "line": line,
-            "col": col,
-            "ty": "toggle_sel",
-        }))
+        self.send_edit_cmd(
+            view_id,
+            "gesture",
+            &json!({
+                "line": line,
+                "col": col,
+                "ty": "toggle_sel",
+            }),
+        )
     }
     /// modifies the selection to include a point (shift+click)
     pub fn gesture_range_select(&self, view_id: &str, line: u64, col: u64) {
-        self.send_edit_cmd(view_id, "gesture", &json!({
-            "line": line,
-            "col": col,
-            "ty": "range_select",
-        }))
+        self.send_edit_cmd(
+            view_id,
+            "gesture",
+            &json!({
+                "line": line,
+                "col": col,
+                "ty": "range_select",
+            }),
+        )
     }
     /// sets the selection to a given line (triple click)
     pub fn gesture_line_select(&self, view_id: &str, line: u64, col: u64) {
-        self.send_edit_cmd(view_id, "gesture", &json!({
-            "line": line,
-            "col": col,
-            "ty": "line_select",
-        }))
+        self.send_edit_cmd(
+            view_id,
+            "gesture",
+            &json!({
+                "line": line,
+                "col": col,
+                "ty": "line_select",
+            }),
+        )
     }
     /// sets the selection to a given word (double click)
     pub fn gesture_word_select(&self, view_id: &str, line: u64, col: u64) {
-        self.send_edit_cmd(view_id, "gesture", &json!({
-            "line": line,
-            "col": col,
-            "ty": "word_select",
-        }))
+        self.send_edit_cmd(
+            view_id,
+            "gesture",
+            &json!({
+                "line": line,
+                "col": col,
+                "ty": "word_select",
+            }),
+        )
     }
     /// adds a line to the selection
     pub fn gesture_multi_line_select(&self, view_id: &str, line: u64, col: u64) {
-        self.send_edit_cmd(view_id, "gesture", &json!({
-            "line": line,
-            "col": col,
-            "ty": "multi_line_select",
-        }))
+        self.send_edit_cmd(
+            view_id,
+            "gesture",
+            &json!({
+                "line": line,
+                "col": col,
+                "ty": "multi_line_select",
+            }),
+        )
     }
     /// adds a word to the selection
     pub fn gesture_multi_word_select(&self, view_id: &str, line: u64, col: u64) {
-        self.send_edit_cmd(view_id, "gesture", &json!({
-            "line": line,
-            "col": col,
-            "ty": "multi_word_select",
-        }))
+        self.send_edit_cmd(
+            view_id,
+            "gesture",
+            &json!({
+                "line": line,
+                "col": col,
+                "ty": "multi_word_select",
+            }),
+        )
     }
 
     /// Notifies the back-end of the visible scroll region, defined as the first and last
@@ -316,7 +383,8 @@ impl Core {
     pub fn cut(&mut self, view_id: &str) -> Option<String> {
         let (sender, receiver) = channel();
 
-        self.send_request("edit",
+        self.send_request(
+            "edit",
             &json!({
                 "view_id": view_id,
                 "method": "cut",
@@ -328,7 +396,7 @@ impl Core {
                 } else {
                     sender.send(None).unwrap();
                 }
-            }
+            },
         );
 
         receiver.recv().unwrap()
@@ -337,7 +405,8 @@ impl Core {
     pub fn copy(&mut self, view_id: &str) -> Option<String> {
         let (sender, receiver) = channel();
 
-        self.send_request("edit",
+        self.send_request(
+            "edit",
             &json!({
                 "view_id": view_id,
                 "method": "copy",
@@ -349,16 +418,20 @@ impl Core {
                 } else {
                     sender.send(None).unwrap();
                 }
-            }
+            },
         );
 
         receiver.recv().unwrap()
     }
 
     pub fn paste(&self, view_id: &str, chars: &str) {
-        self.send_edit_cmd(view_id, "paste", &json!({
-            "chars": chars,
-        }))
+        self.send_edit_cmd(
+            view_id,
+            "paste",
+            &json!({
+                "chars": chars,
+            }),
+        )
     }
 
     /// Searches the document for `chars`, if present, falling back on
@@ -367,35 +440,55 @@ impl Core {
     /// If `chars` is `None` and there is an active selection, returns
     /// the string value used for the search, else returns `Null`.
     pub fn find(&self, view_id: &str, chars: String, case_sensitive: bool, regex: Option<bool>) {
-        self.send_edit_cmd(view_id, "find", &json!({
-            "chars": chars,
-            "case_sensitive": case_sensitive,
-            "regex": regex,
-        }))
+        self.send_edit_cmd(
+            view_id,
+            "find",
+            &json!({
+                "chars": chars,
+                "case_sensitive": case_sensitive,
+                "regex": regex,
+            }),
+        )
     }
     pub fn find_next(&self, view_id: &str, wrap_around: Option<bool>, allow_same: Option<bool>) {
-        self.send_edit_cmd(view_id, "find_next", &json!({
-            "wrap_around": wrap_around,
-            "allow_same": allow_same,
-        }))
+        self.send_edit_cmd(
+            view_id,
+            "find_next",
+            &json!({
+                "wrap_around": wrap_around,
+                "allow_same": allow_same,
+            }),
+        )
     }
     pub fn find_previous(&self, view_id: &str, wrap_around: Option<bool>) {
-        self.send_edit_cmd(view_id, "find_previous", &json!({
-            "wrap_around": wrap_around,
-        }))
+        self.send_edit_cmd(
+            view_id,
+            "find_previous",
+            &json!({
+                "wrap_around": wrap_around,
+            }),
+        )
     }
 
     pub fn highlight_find(&self, view_id: &str, visible: bool) {
-        self.send_edit_cmd(view_id, "highlight_find", &json!({
-            "visible": visible,
-        }))
+        self.send_edit_cmd(
+            view_id,
+            "highlight_find",
+            &json!({
+                "visible": visible,
+            }),
+        )
     }
 
     pub fn replace(&self, view_id: &str, chars: &str, preserve_case: bool) {
-        self.send_edit_cmd(view_id, "replace", &json!({
-            "chars": chars,
-            "preserve_case": preserve_case,
-        }))
+        self.send_edit_cmd(
+            view_id,
+            "replace",
+            &json!({
+                "chars": chars,
+                "preserve_case": preserve_case,
+            }),
+        )
     }
 
     pub fn replace_next(&self, view_id: &str) {

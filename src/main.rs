@@ -1,59 +1,56 @@
-#![recursion_limit="128"]
+#![recursion_limit = "128"]
 
 extern crate cairo;
 extern crate clap;
 extern crate env_logger;
 extern crate gdk;
 extern crate gio;
-#[macro_use] extern crate glib;
+#[macro_use]
+extern crate glib;
 extern crate glib_sys;
 extern crate gobject_sys;
 extern crate gtk;
 extern crate gtk_sys;
 extern crate libc;
-#[macro_use] extern crate log;
+#[macro_use]
+extern crate log;
 extern crate mio;
 extern crate pango;
 extern crate pangocairo;
 extern crate serde;
-#[macro_use] extern crate serde_derive;
-#[macro_use] extern crate serde_json;
+#[macro_use]
+extern crate serde_derive;
+#[macro_use]
+extern crate serde_json;
 extern crate fontconfig;
 extern crate xi_core_lib;
 extern crate xi_rpc;
 
-#[macro_use] mod macros;
+#[macro_use]
+mod macros;
 
 mod clipboard;
 mod edit_view;
-mod scrollable_drawing_area;
 mod linecache;
 mod main_win;
 mod prefs_win;
 mod proto;
 mod rpc;
+mod scrollable_drawing_area;
 mod source;
 mod theme;
 mod xi_thread;
 
-use clap::{Arg, App, SubCommand};
-use gio::{
-    ApplicationExt,
-    ApplicationExtManual,
-    ApplicationFlags,
-    FileExt,
-};
+use clap::{App, Arg, SubCommand};
+use gio::{ApplicationExt, ApplicationExtManual, ApplicationFlags, FileExt};
 use glib::MainContext;
-use gtk::{
-    Application,
-    GtkApplicationExt,
-};
+use gtk::{Application, GtkApplicationExt};
 use main_win::MainWin;
-use mio::unix::{PipeReader, PipeWriter, pipe};
+use mio::unix::{pipe, PipeReader, PipeWriter};
 use mio::TryRead;
 use rpc::{Core, Handler};
 use serde_json::Value;
-use source::{SourceFuncs, new_source};
+use source::{new_source, SourceFuncs};
 use std::any::Any;
 use std::cell::RefCell;
 use std::collections::VecDeque;
@@ -65,8 +62,14 @@ use std::sync::{Arc, Mutex};
 
 #[derive(Clone, Debug)]
 pub enum CoreMsg {
-    Notification{method: String, params: Value},
-    NewViewReply{file_name: Option<String>, value: Value},
+    Notification {
+        method: String,
+        params: Value,
+    },
+    NewViewReply {
+        file_name: Option<String>,
+        value: Value,
+    },
 }
 
 pub struct SharedQueue {
@@ -76,10 +79,10 @@ pub struct SharedQueue {
 }
 
 impl SharedQueue {
-    pub fn add_core_msg(&mut self, msg: CoreMsg)
-    {
+    pub fn add_core_msg(&mut self, msg: CoreMsg) {
         if self.queue.is_empty() {
-            self.pipe_writer.write_all(&[0u8])
+            self.pipe_writer
+                .write_all(&[0u8])
                 .expect("failed to write to signalling pipe");
         }
         trace!("pushing to queue");
@@ -119,7 +122,9 @@ impl SourceFuncs for QueueSource {
             MainWin::handle_msg(self.win.clone(), msg);
         }
         let mut buf = [0u8; 64];
-        shared_queue.pipe_reader.try_read(&mut buf)
+        shared_queue
+            .pipe_reader
+            .try_read(&mut buf)
             .expect("failed to read signalling pipe");
         true
     }
@@ -132,23 +137,25 @@ struct MyHandler {
 
 impl MyHandler {
     fn new(shared_queue: Arc<Mutex<SharedQueue>>) -> MyHandler {
-        MyHandler {
-            shared_queue,
-        }
+        MyHandler { shared_queue }
     }
 }
 
 impl Handler for MyHandler {
     fn notification(&self, method: &str, params: &Value) {
-        debug!("CORE --> {{\"method\": \"{}\", \"params\":{}}}", method, params);
+        debug!(
+            "CORE --> {{\"method\": \"{}\", \"params\":{}}}",
+            method, params
+        );
         let method2 = method.to_string();
         let params2 = params.clone();
-        self.shared_queue.lock().unwrap().add_core_msg(
-            CoreMsg::Notification{
+        self.shared_queue
+            .lock()
+            .unwrap()
+            .add_core_msg(CoreMsg::Notification {
                 method: method2,
-                params: params2
-            }
-        );
+                params: params2,
+            });
     }
 }
 
@@ -174,7 +181,7 @@ fn main() {
     let (reader, writer) = pipe().unwrap();
     let reader_raw_fd = reader.as_raw_fd();
 
-    let shared_queue = Arc::new(Mutex::new(SharedQueue{
+    let shared_queue = Arc::new(Mutex::new(SharedQueue {
         queue: queue.clone(),
         pipe_writer: writer,
         pipe_reader: reader,
@@ -214,7 +221,6 @@ fn main() {
         source.attach(&main_context);
     }));
 
-
     application.connect_activate(clone!(shared_queue, core => move |application| {
         debug!("activate");
 
@@ -241,7 +247,7 @@ fn main() {
             if path.is_none() { continue; }
             let path = path.unwrap();
             let path = path.to_string_lossy().into_owned();
-            
+
             let mut params = json!({});
             params["file_path"] = json!(path);
 

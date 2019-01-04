@@ -1,15 +1,7 @@
-use gio::{
-    ActionExt,
-    ActionMapExt,
-    ApplicationFlags,
-    SimpleAction,
-    SimpleActionExt,
-};
+use edit_view::EditView;
+use gio::{ActionExt, ActionMapExt, ApplicationFlags, SimpleAction, SimpleActionExt};
 use glib::variant::{FromVariant, Variant};
 use gtk::*;
-use CoreMsg;
-use SharedQueue;
-use edit_view::EditView;
 use prefs_win::PrefsWin;
 use proto::{self, ThemeSettings};
 use rpc::{Core, Handler};
@@ -20,6 +12,8 @@ use std::rc::Rc;
 use std::sync::{Arc, Mutex};
 use theme::{Color, Style, Theme};
 use xi_thread;
+use CoreMsg;
+use SharedQueue;
 
 pub struct MainState {
     pub themes: Vec<String>,
@@ -43,15 +37,18 @@ pub struct MainWin {
 const GLADE_SRC: &str = include_str!("ui/gxi.glade");
 
 impl MainWin {
-
-    pub fn new(application: &Application, shared_queue: Arc<Mutex<SharedQueue>>, core: Rc<RefCell<Core>>) -> Rc<RefCell<MainWin>> {
+    pub fn new(
+        application: &Application,
+        shared_queue: Arc<Mutex<SharedQueue>>,
+        core: Rc<RefCell<Core>>,
+    ) -> Rc<RefCell<MainWin>> {
         let glade_src = include_str!("ui/gxi.glade");
         let builder = Builder::new_from_string(glade_src);
 
         let window: ApplicationWindow = builder.get_object("appwindow").unwrap();
         let notebook: Notebook = builder.get_object("notebook").unwrap();
 
-        let main_win = Rc::new(RefCell::new(MainWin{
+        let main_win = Rc::new(RefCell::new(MainWin {
             core: core.clone(),
             shared_queue: shared_queue.clone(),
             window: window.clone(),
@@ -60,16 +57,13 @@ impl MainWin {
             views: Default::default(),
             w_to_ev: Default::default(),
             view_id_to_w: Default::default(),
-            state: Rc::new(RefCell::new(
-                MainState{
-                    themes: Default::default(),
-                    theme_name: "default".to_string(),
-                    theme: Default::default(),
-                    styles: Default::default(),
-                }
-            ))
+            state: Rc::new(RefCell::new(MainState {
+                themes: Default::default(),
+                theme_name: "default".to_string(),
+                theme: Default::default(),
+                styles: Default::default(),
+            })),
         }));
-
 
         window.set_application(application);
 
@@ -143,7 +137,8 @@ impl MainWin {
             application.add_action(&quit_action);
         }
         {
-            let auto_indent_action = SimpleAction::new_stateful("auto_indent", None, &false.to_variant());;
+            let auto_indent_action =
+                SimpleAction::new_stateful("auto_indent", None, &false.to_variant());;
             auto_indent_action.connect_change_state(clone!(main_win => move |action, value| {
                 let mut main_win = main_win.borrow_mut();
                 main_win.set_auto_indent(action, value);
@@ -168,10 +163,10 @@ impl MainWin {
 impl MainWin {
     pub fn handle_msg(main_win: Rc<RefCell<MainWin>>, msg: CoreMsg) {
         match msg {
-            CoreMsg::NewViewReply{file_name, value} => {
+            CoreMsg::NewViewReply { file_name, value } => {
                 MainWin::new_view_response(main_win, file_name, &value)
-            },
-            CoreMsg::Notification{method, params} => {
+            }
+            CoreMsg::Notification { method, params } => {
                 match method.as_ref() {
                     "available_themes" => main_win.borrow_mut().available_themes(&params),
                     "available_plugins" => main_win.borrow_mut().available_plugins(&params),
@@ -185,7 +180,7 @@ impl MainWin {
                         error!("!!! UNHANDLED NOTIFICATION: {}", method);
                     }
                 };
-            },
+            }
         };
     }
     pub fn available_themes(&mut self, params: &Value) {
@@ -200,7 +195,9 @@ impl MainWin {
         }
         if let Some(theme_name) = state.themes.first().map(Clone::clone) {
             state.theme_name = theme_name.clone();
-            self.core.borrow().send_notification("set_theme", &json!({"theme_name": theme_name}));
+            self.core
+                .borrow()
+                .send_notification("set_theme", &json!({ "theme_name": theme_name }));
         }
     }
 
@@ -214,7 +211,9 @@ impl MainWin {
             Ok(ts) => ts,
         };
 
-        let selection_foreground = theme_settings.selection_foreground.map(Color::from_ts_proto);
+        let selection_foreground = theme_settings
+            .selection_foreground
+            .map(Color::from_ts_proto);
         let selection = theme_settings.selection.map(Color::from_ts_proto);
 
         let theme = Theme::from_proto(&theme_settings);
@@ -223,7 +222,7 @@ impl MainWin {
             state.theme = theme;
         }
 
-        let selection_sytle = Style{
+        let selection_sytle = Style {
             fg_color: selection_foreground,
             bg_color: selection,
             weight: None,
@@ -241,7 +240,9 @@ impl MainWin {
     pub fn config_changed(&mut self, params: &Value) {
         let view_id = {
             let view_id = params["view_id"].as_str();
-            if view_id.is_none() { return; }
+            if view_id.is_none() {
+                return;
+            }
             view_id.unwrap().to_string()
         };
 
@@ -253,7 +254,9 @@ impl MainWin {
     pub fn find_status(&mut self, params: &Value) {
         let view_id = {
             let view_id = params["view_id"].as_str();
-            if view_id.is_none() { return; }
+            if view_id.is_none() {
+                return;
+            }
             view_id.unwrap().to_string()
         };
 
@@ -263,12 +266,16 @@ impl MainWin {
     }
 
     pub fn set_auto_indent(&mut self, action: &SimpleAction, value: &Option<Variant>) {
-        if value.is_none() { return; }
+        if value.is_none() {
+            return;
+        }
         if let Some(value) = value.as_ref() {
             action.set_state(value);
             let value: bool = value.get().unwrap();
             debug!("auto indent {}", value);
-            self.core.borrow().modify_user_config(&json!("general"), &json!({"auto_indent": value}));
+            self.core
+                .borrow()
+                .modify_user_config(&json!("general"), &json!({ "auto_indent": value }));
         }
     }
 
@@ -278,7 +285,7 @@ impl MainWin {
 
         if let Some(id) = params["id"].as_u64() {
             let id = id as usize;
-            
+
             self.set_style(id, style);
         }
     }
@@ -287,7 +294,7 @@ impl MainWin {
         let mut state = self.state.borrow_mut();
         // bump the array size up if needed
         while state.styles.len() < id {
-            state.styles.push(Style{
+            state.styles.push(Style {
                 fg_color: None,
                 bg_color: None,
                 weight: None,
@@ -307,7 +314,9 @@ impl MainWin {
 
         let view_id = {
             let view_id = params["view_id"].as_str();
-            if view_id.is_none() { return; }
+            if view_id.is_none() {
+                return;
+            }
             view_id.unwrap().to_string()
         };
 
@@ -320,7 +329,9 @@ impl MainWin {
         trace!("handling scroll_to {:?}", params);
         let view_id = {
             let view_id = params["view_id"].as_str();
-            if view_id.is_none() { return; }
+            if view_id.is_none() {
+                return;
+            }
             view_id.unwrap().to_string()
         };
 
@@ -373,7 +384,8 @@ impl MainWin {
         if edit_view.borrow().file_name.is_some() {
             let ev = edit_view.borrow_mut();
             let core = main_win.borrow().core.clone();
-            core.borrow().save(&ev.view_id, ev.file_name.as_ref().unwrap());
+            core.borrow()
+                .save(&ev.view_id, ev.file_name.as_ref().unwrap());
         } else {
             MainWin::save_as(main_win, &edit_view);
         }
@@ -443,16 +455,16 @@ impl MainWin {
 
         let shared_queue2 = self.shared_queue.clone();
         let file_name2 = file_name.map(|s| s.to_string());
-        self.core.borrow_mut().send_request("new_view", &params,
-            move |value| {
+        self.core
+            .borrow_mut()
+            .send_request("new_view", &params, move |value| {
                 let value = value.clone();
                 let mut shared_queue = shared_queue2.lock().unwrap();
-                shared_queue.add_core_msg(CoreMsg::NewViewReply{
+                shared_queue.add_core_msg(CoreMsg::NewViewReply {
                     file_name: file_name2,
                     value,
                 })
-            }
-        );
+            });
     }
 
     fn new_view_response(main_win: Rc<RefCell<MainWin>>, file_name: Option<String>, value: &Value) {
@@ -461,15 +473,18 @@ impl MainWin {
             let edit_view = EditView::new(win.state.clone(), win.core.clone(), file_name, view_id);
             {
                 let ev = edit_view.borrow();
-                let page_num = win.notebook.insert_page(&ev.root_widget, Some(&ev.tab_widget), None);
+                let page_num =
+                    win.notebook
+                        .insert_page(&ev.root_widget, Some(&ev.tab_widget), None);
                 if let Some(w) = win.notebook.get_nth_page(Some(page_num)) {
                     win.w_to_ev.insert(w.clone(), edit_view.clone());
                     win.view_id_to_w.insert(view_id.to_string(), w);
                 }
 
-                ev.close_button.connect_clicked(clone!(main_win, edit_view => move |_| {
-                    MainWin::close_view(&main_win, &edit_view);
-                }));
+                ev.close_button
+                    .connect_clicked(clone!(main_win, edit_view => move |_| {
+                        MainWin::close_view(&main_win, &edit_view);
+                    }));
             }
 
             win.views.insert(view_id.to_string(), edit_view);
@@ -497,7 +512,7 @@ impl MainWin {
             match ret {
                 1 => MainWin::save_as(main_win, edit_view),
                 2 => return,
-                _ => {},
+                _ => {}
             };
         }
         let view_id = edit_view.borrow().view_id.clone();
@@ -512,4 +527,3 @@ impl MainWin {
         main_win.core.borrow().close_view(&view_id);
     }
 }
-

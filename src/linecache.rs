@@ -1,6 +1,6 @@
-use std::collections::HashMap;
-use std::cmp::min;
 use serde_json::Value;
+use std::cmp::min;
+use std::collections::HashMap;
 
 #[derive(Copy, Clone, Debug)]
 pub struct StyleSpan {
@@ -27,13 +27,16 @@ impl Line {
         }
         let mut styles = Vec::new();
         if let Some(arr) = v["styles"].as_array() {
-            
             // Convert style triples into a `Vec` of `StyleSpan`s
             let mut i = 0;
-            let mut style_span = StyleSpan {start: 0, len:0, id:0};
+            let mut style_span = StyleSpan {
+                start: 0,
+                len: 0,
+                id: 0,
+            };
             for c in arr {
                 if i == 3 {
-                    i=0;
+                    i = 0;
                     styles.push(style_span);
                 }
                 match i {
@@ -42,13 +45,17 @@ impl Line {
                     2 => style_span.id = c.as_u64().unwrap() as usize,
                     _ => unreachable!(),
                 };
-                i+=1;
+                i += 1;
             }
             if i == 3 {
                 styles.push(style_span);
             }
         }
-        Line { text, cursor, styles }
+        Line {
+            text,
+            cursor,
+            styles,
+        }
     }
 
     pub fn text(&self) -> &str {
@@ -81,17 +88,18 @@ impl LineCache {
         self.n_invalid_before + self.lines.len() as u64 + self.n_invalid_after
     }
     pub fn width(&self) -> usize {
-        self.lines.iter().map(|l| {
-            match *l {
+        self.lines
+            .iter()
+            .map(|l| match *l {
                 None => 0,
                 Some(ref l) => l.text.len(),
-            }
-        }).max().unwrap_or(0)
+            })
+            .max()
+            .unwrap_or(0)
     }
     pub fn get_line(&self, n: u64) -> Option<&Line> {
-        if n < self.n_invalid_before
-            || n > self.n_invalid_before + self.lines.len() as u64 {
-                return None;
+        if n < self.n_invalid_before || n > self.n_invalid_before + self.lines.len() as u64 {
+            return None;
         }
         let ix = (n - self.n_invalid_before) as usize;
         if let Some(&Some(ref line)) = self.lines.get(ix) {
@@ -109,20 +117,24 @@ impl LineCache {
         for ix in first..last {
             if ix < self.n_invalid_before
                 || ix >= self.n_invalid_before + self.lines.len() as u64
-                || self.lines[(ix - self.n_invalid_before) as usize].is_none() {
-
+                || self.lines[(ix - self.n_invalid_before) as usize].is_none()
+            {
                 match run {
-                    None => {run = Some((ix, ix+1));}
-                    Some((f,l)) if l == ix => {run = Some((f, ix + 1));}
-                    Some((f,l)) => {
-                        ret.push((f,l));
+                    None => {
+                        run = Some((ix, ix + 1));
+                    }
+                    Some((f, l)) if l == ix => {
+                        run = Some((f, ix + 1));
+                    }
+                    Some((f, l)) => {
+                        ret.push((f, l));
                         run = Some((ix, ix + 1));
                     }
                 }
             }
         }
-        if let Some((f,l)) = run {
-            ret.push((f,l));
+        if let Some((f, l)) = run {
+            ret.push((f, l));
         }
         ret
     }
@@ -145,7 +157,7 @@ impl LineCache {
                     } else {
                         new_invalid_after += n;
                     }
-                },
+                }
                 "ins" => {
                     trace!("ins n={}", n);
                     for _ in 0..new_invalid_after {
@@ -156,13 +168,13 @@ impl LineCache {
                     // for json_line in op.lines.iter().flat_map(|l| l.iter()) {
                     for line in op["lines"].as_array().unwrap() {
                         let line = Line::from_json(line);
-                        new_lines.push(Some(Line{
+                        new_lines.push(Some(Line {
                             cursor: line.cursor.clone(),
                             text: line.text.clone(),
                             styles: line.styles.clone(),
                         }));
                     }
-                },
+                }
                 "copy" => {
                     trace!("copy n={}", n);
 
@@ -170,7 +182,6 @@ impl LineCache {
                         new_lines.push(None);
                     }
                     new_invalid_after = 0;
-
 
                     let mut n_remaining = n;
                     if old_ix < self.n_invalid_before {
@@ -184,15 +195,25 @@ impl LineCache {
                         n_remaining -= n_invalid;
                     }
                     if n_remaining > 0 && old_ix < self.n_invalid_before + self.lines.len() as u64 {
-                        let n_copy = min(n_remaining, self.n_invalid_before + self.lines.len() as u64 - old_ix);
+                        let n_copy = min(
+                            n_remaining,
+                            self.n_invalid_before + self.lines.len() as u64 - old_ix,
+                        );
                         let start_ix = old_ix - self.n_invalid_before;
 
-                        for i in start_ix as usize .. (start_ix + n_copy) as usize {
+                        for i in start_ix as usize..(start_ix + n_copy) as usize {
                             if self.lines[i].is_none() {
-                                error!("line {}+{}={}, a copy source is none", self.n_invalid_before, i, self.n_invalid_before+i as u64);
+                                error!(
+                                    "line {}+{}={}, a copy source is none",
+                                    self.n_invalid_before,
+                                    i,
+                                    self.n_invalid_before + i as u64
+                                );
                             }
                         }
-                        new_lines.extend_from_slice(&self.lines[start_ix as usize .. (start_ix + n_copy) as usize]);
+                        new_lines.extend_from_slice(
+                            &self.lines[start_ix as usize..(start_ix + n_copy) as usize],
+                        );
 
                         old_ix += n_copy;
                         n_remaining -= n_copy;
@@ -203,14 +224,12 @@ impl LineCache {
                         new_invalid_after += n_remaining;
                     }
                     old_ix += n_remaining;
-                },
+                }
                 "skip" => {
                     trace!("skip n={}", n);
                     old_ix += n;
-                },
-                _ => {
-
-                },
+                }
+                _ => {}
             }
         }
         self.n_invalid_before = new_invalid_before;
@@ -287,7 +306,7 @@ mod test {
         assert_eq!(linecache.get_line(32).unwrap().text(), "32\n");
         assert_eq!(linecache.get_line(52).unwrap().text(), "52\n");
         assert!(linecache.get_line(53).is_none());
-        
+
         println!("LINE CACHE: {:?}", linecache);
     }
 }

@@ -1,15 +1,7 @@
-use gio::{
-    ActionExt,
-    ActionMapExt,
-    ApplicationFlags,
-    SimpleAction,
-    SimpleActionExt,
-};
+use edit_view::EditView;
+use gio::{ActionExt, ActionMapExt, ApplicationFlags, SimpleAction, SimpleActionExt};
 use glib::variant::{FromVariant, Variant};
 use gtk::*;
-use CoreMsg;
-use SharedQueue;
-use edit_view::EditView;
 use main_win::MainState;
 use proto::{self, ThemeSettings};
 use rpc::{Core, Handler};
@@ -21,6 +13,8 @@ use std::rc::Rc;
 use std::sync::{Arc, Mutex};
 use theme::{Color, Style, Theme};
 use xi_thread;
+use CoreMsg;
+use SharedQueue;
 
 pub struct PrefsWin {
     core: Rc<RefCell<Core>>,
@@ -31,8 +25,10 @@ pub struct PrefsWin {
 }
 
 impl PrefsWin {
-
-    pub fn new(main_state: &Rc<RefCell<MainState>>, core: &Rc<RefCell<Core>>) -> Rc<RefCell<PrefsWin>> {
+    pub fn new(
+        main_state: &Rc<RefCell<MainState>>,
+        core: &Rc<RefCell<Core>>,
+    ) -> Rc<RefCell<PrefsWin>> {
         let glade_src = include_str!("ui/prefs_win.glade");
         let builder = Builder::new_from_string(glade_src);
 
@@ -58,9 +54,7 @@ impl PrefsWin {
             }
         }));
 
-        let prefs_win = Rc::new(RefCell::new(PrefsWin{
-            core: core.clone(),
-        }));
+        let prefs_win = Rc::new(RefCell::new(PrefsWin { core: core.clone() }));
 
         window.show_all();
 

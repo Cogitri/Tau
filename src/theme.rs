@@ -10,22 +10,27 @@ pub struct Color {
 }
 
 impl Color {
-    pub const WHITE: Color = Color{r: 255, g: 255, b: 255, a: 255};
-    pub const BLACK: Color = Color{r: 0, g: 0, b: 0, a: 255};
+    pub const WHITE: Color = Color {
+        r: 255,
+        g: 255,
+        b: 255,
+        a: 255,
+    };
+    pub const BLACK: Color = Color {
+        r: 0,
+        g: 0,
+        b: 0,
+        a: 255,
+    };
 
     pub fn from_u8s(r: u8, g: u8, b: u8, a: u8) -> Color {
-        Color{r, g, b, a}
+        Color { r, g, b, a }
     }
     pub fn from_ts_proto(c: proto::Color) -> Color {
         Color::from_u8s(c.r, c.g, c.b, c.a)
     }
     pub fn from_u32_argb(c: u32) -> Color {
-        Color::from_u8s(
-            (c >> 16) as u8,
-            (c >> 8) as u8,
-            c as u8,
-            (c >> 24) as u8,
-        )
+        Color::from_u8s((c >> 16) as u8, (c >> 8) as u8, c as u8, (c >> 24) as u8)
     }
 
     pub fn r_u16(&self) -> u16 {
@@ -58,7 +63,7 @@ pub struct Style {
     /// 100..900, default 400
     pub weight: Option<u32>,
     /// default false
-    pub italic: Option<bool>, 
+    pub italic: Option<bool>,
     /// default false
     pub underline: Option<bool>,
 }
@@ -125,7 +130,7 @@ impl Default for Theme {
             inactive_selection: None,
             inactive_selection_foreground: None,
             shadow: Color::WHITE,
-        }        
+        }
     }
 }
 
@@ -146,7 +151,9 @@ impl Theme {
         if let Some(find_highlight) = theme_settings.find_highlight {
             theme.find_highlight = Color::from_ts_proto(find_highlight);
         }
-        theme.find_highlight_foreground = theme_settings.find_highlight_foreground.map(Color::from_ts_proto);
+        theme.find_highlight_foreground = theme_settings
+            .find_highlight_foreground
+            .map(Color::from_ts_proto);
         if let Some(gutter) = theme_settings.gutter {
             theme.gutter = Color::from_ts_proto(gutter);
         }
@@ -161,7 +168,9 @@ impl Theme {
         }
         theme.selection_border = theme_settings.selection_border.map(Color::from_ts_proto);
         theme.inactive_selection = theme_settings.inactive_selection.map(Color::from_ts_proto);
-        theme.inactive_selection_foreground = theme_settings.inactive_selection_foreground.map(Color::from_ts_proto);
+        theme.inactive_selection_foreground = theme_settings
+            .inactive_selection_foreground
+            .map(Color::from_ts_proto);
         if let Some(shadow) = theme_settings.shadow {
             theme.shadow = Color::from_ts_proto(shadow);
         }
