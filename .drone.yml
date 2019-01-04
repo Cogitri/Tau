@@ -53,49 +53,7 @@ steps:
     status:
     - failure
 ---
-kind: pipeline
-name: coverage
-
-depends_on:
-- rustfmt
-
-steps:
-- name: generate-coverage
-  image: xd009642/tarpaulin:develop
-  pull: always
-  privileged: true
-  environment:
-    GIT_AUTHOR_EMAIL: drone
-    GIT_AUTHOR_NAME: drone@exqa.de
-  commands:
-  - apt-get update && apt-get install -y libgtk-3-dev cmake
-  - cargo tarpaulin --verbose --out Xml --timeout 3000
-- name: upload-coverage
-  image: plugins/codecov
-  pull: always
-  environment:
-    GIT_AUTHOR_EMAIL: drone@exqa.de
-    GIT_AUTHOR_NAME: drone
-  settings:
-    token:
-      from_secret: codecov_token
-      files:
-      - cobertura.xml
-      required: true
-
-- name: matrix-notification
-  image: plugins/matrix
-  settings:
-    roomid: qOcHPTCOgAbkObQgRy:matrix.org
-    username:
-      from_secret: matrix_username
-    password:
-      from_secret: matrix_password
-  when:
-    status:
-     - failure
----
 kind: signature
-hmac: 2755dc3988a142a86313ceffd733f8973d27ae3f7b5442cc99d4ec3062c7eabf
+hmac: a1dc21215622324fd90da7bff9f28db5ba45a39dce555badce726adc639d5b3b
 
 ...
