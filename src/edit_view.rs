@@ -1,19 +1,21 @@
+use crate::linecache::{Line, LineCache};
+use crate::main_win::MainState;
+use crate::rpc::{self, Core};
+use crate::theme::set_source_color;
+use ::fontconfig::fontconfig;
 use cairo::Context;
 use gdk::enums::key;
 use gdk::*;
 use gtk::{self, *};
+use log::{debug, error, trace};
 use pango::{self, ContextExt, LayoutExt, *};
 use pangocairo::functions::*;
-use rpc::{self, Core};
 use serde_json::Value;
 use std::cell::RefCell;
 use std::cmp::{max, min};
+use std::ffi::CString;
 use std::rc::Rc;
 use std::u32;
-
-use linecache::{Line, LineCache};
-use main_win::MainState;
-use theme::set_source_color;
 
 pub struct EditView {
     core: Rc<RefCell<Core>>,
@@ -94,8 +96,6 @@ impl EditView {
         tab_hbox.add(&close_button);
         tab_hbox.show_all();
 
-        use fontconfig::fontconfig;
-        use std::ffi::CString;
         unsafe {
             let fonts_dir = CString::new("fonts").unwrap();
             let ret = fontconfig::FcConfigAppFontAddDir(
@@ -982,7 +982,7 @@ impl EditView {
         // if let Some(text) = Clipboard::get(&SELECTION_CLIPBOARD).wait_for_text() {
         //     self.core.borrow().insert(view_id, &text);
         // }
-        use clipboard::ClipboardRequest;
+        use crate::clipboard::ClipboardRequest;
         let view_id2 = view_id.to_string().clone();
         let core = self.core.clone();
         Clipboard::get(&SELECTION_CLIPBOARD).request_text(move |_, text| {
@@ -994,7 +994,7 @@ impl EditView {
         // if let Some(text) = Clipboard::get(&SELECTION_PRIMARY).wait_for_text() {
         //     self.core.borrow().insert(view_id, &text);
         // }
-        use clipboard::ClipboardRequest;
+        use crate::clipboard::ClipboardRequest;
         let view_id2 = view_id.to_string().clone();
         let core = self.core.clone();
         Clipboard::get(&SELECTION_PRIMARY).request_text(move |_, text| {

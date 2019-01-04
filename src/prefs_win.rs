@@ -1,6 +1,7 @@
+use crate::main_win::MainState;
+use crate::rpc::Core;
 use gtk::*;
-use main_win::MainState;
-use rpc::Core;
+use log::debug;
 use std::cell::RefCell;
 use std::rc::Rc;
 

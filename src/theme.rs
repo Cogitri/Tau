@@ -1,5 +1,5 @@
+use crate::proto;
 use cairo;
-use proto;
 
 #[derive(Clone, Copy, Debug)]
 pub struct Color {

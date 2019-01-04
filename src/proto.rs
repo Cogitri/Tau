@@ -1,3 +1,5 @@
+use serde_derive::*;
+
 #[derive(Clone, PartialEq, Eq, Default, Hash, Debug, Serialize, Deserialize)]
 /// A mergeable style. All values except priority are optional.
 ///

@@ -1,18 +1,19 @@
-use edit_view::EditView;
+use crate::edit_view::EditView;
+use crate::prefs_win::PrefsWin;
+use crate::proto::{self, ThemeSettings};
+use crate::rpc::Core;
+use crate::theme::{Color, Style, Theme};
+use crate::CoreMsg;
+use crate::SharedQueue;
 use gio::{ActionMapExt, SimpleAction, SimpleActionExt};
 use glib::variant::Variant;
 use gtk::*;
-use prefs_win::PrefsWin;
-use proto::{self, ThemeSettings};
-use rpc::Core;
-use serde_json::{self, Value};
+use log::{debug, error, trace};
+use serde_json::{self, json, Value};
 use std::cell::RefCell;
 use std::collections::{BTreeMap, HashMap};
 use std::rc::Rc;
 use std::sync::{Arc, Mutex};
-use theme::{Color, Style, Theme};
-use CoreMsg;
-use SharedQueue;
 
 pub struct MainState {
     pub themes: Vec<String>,

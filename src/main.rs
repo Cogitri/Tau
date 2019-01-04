@@ -2,31 +2,6 @@
 //Just for now...
 #![allow(dead_code)]
 
-extern crate cairo;
-extern crate clap;
-extern crate env_logger;
-extern crate gdk;
-extern crate gio;
-extern crate glib;
-extern crate glib_sys;
-extern crate gobject_sys;
-extern crate gtk;
-extern crate gtk_sys;
-extern crate libc;
-#[macro_use]
-extern crate log;
-extern crate mio;
-extern crate pango;
-extern crate pangocairo;
-extern crate serde;
-#[macro_use]
-extern crate serde_derive;
-#[macro_use]
-extern crate serde_json;
-extern crate fontconfig;
-extern crate xi_core_lib;
-extern crate xi_rpc;
-
 #[macro_use]
 mod macros;
 
@@ -41,16 +16,17 @@ mod source;
 mod theme;
 mod xi_thread;
 
+use crate::main_win::MainWin;
+use crate::rpc::{Core, Handler};
+use crate::source::{new_source, SourceFuncs};
 use clap::{App, Arg, SubCommand};
 use gio::{ApplicationExt, ApplicationExtManual, ApplicationFlags, FileExt};
 use glib::MainContext;
 use gtk::Application;
-use main_win::MainWin;
+use log::{debug, trace};
 use mio::unix::{pipe, PipeReader, PipeWriter};
 use mio::TryRead;
-use rpc::{Core, Handler};
-use serde_json::Value;
-use source::{new_source, SourceFuncs};
+use serde_json::{json, Value};
 use std::any::Any;
 use std::cell::RefCell;
 use std::collections::VecDeque;

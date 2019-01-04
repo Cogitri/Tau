@@ -1,11 +1,10 @@
+use crate::xi_thread::XiPeer;
+use log::debug;
+use serde_json::{json, Value};
 use std::collections::BTreeMap;
 use std::sync::mpsc::{channel, Receiver};
 use std::sync::{Arc, Mutex};
 use std::thread;
-
-use serde_json::Value;
-
-use xi_thread::XiPeer;
 
 pub const XI_SHIFT_KEY_MASK: u32 = 1 << 1;
 pub const XI_CONTROL_KEY_MASK: u32 = 1 << 2;
