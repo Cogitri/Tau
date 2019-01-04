@@ -215,9 +215,9 @@ fn main() {
         });
         unsafe {
             use glib::translate::ToGlibPtr;
-            ::glib_sys::g_source_add_unix_fd(source.to_glib_none().0, reader_raw_fd, ::glib_sys::GIOCondition::IN);
+            ::glib_sys::g_source_add_unix_fd(source.to_glib_none().0, reader_raw_fd, ::glib_sys::G_IO_IN);
         }
-        let main_context = MainContext::default().expect("no main context");
+        let main_context = MainContext::default();
         source.attach(&main_context);
     }));
 

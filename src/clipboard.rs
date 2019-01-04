@@ -1,5 +1,4 @@
 use glib::translate::*;
-use glib::CallbackGuard;
 use glib_sys::gpointer;
 use gtk::Clipboard;
 use gtk_sys as ffi;
@@ -33,7 +32,6 @@ unsafe extern "C" fn trampoline_request_text(
     text: *const c_char,
     data: gpointer,
 ) {
-    let _guard = CallbackGuard::new();
     let f: &&(Fn(&Clipboard, String) + 'static) = transmute(data);
     f(&from_glib_borrow(clipboard), from_glib_none(text));
 }
