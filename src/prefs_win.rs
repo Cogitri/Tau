@@ -1,20 +1,8 @@
-use edit_view::EditView;
-use gio::{ActionExt, ActionMapExt, ApplicationFlags, SimpleAction, SimpleActionExt};
-use glib::variant::{FromVariant, Variant};
 use gtk::*;
 use main_win::MainState;
-use proto::{self, ThemeSettings};
-use rpc::{Core, Handler};
-use serde_json::{self, Value};
+use rpc::Core;
 use std::cell::RefCell;
-use std::collections::{BTreeMap, HashMap};
-use std::env::home_dir;
 use std::rc::Rc;
-use std::sync::{Arc, Mutex};
-use theme::{Color, Style, Theme};
-use xi_thread;
-use CoreMsg;
-use SharedQueue;
 
 pub struct PrefsWin {
     core: Rc<RefCell<Core>>,
@@ -33,7 +21,7 @@ impl PrefsWin {
         let builder = Builder::new_from_string(glade_src);
 
         let window: Window = builder.get_object("prefs_win").unwrap();
-        let font_combo_box: ComboBoxText = builder.get_object("font_combo_box").unwrap();
+        //let font_combo_box: ComboBoxText = builder.get_object("font_combo_box").unwrap();
         let theme_combo_box: ComboBoxText = builder.get_object("theme_combo_box").unwrap();
 
         {

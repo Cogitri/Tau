@@ -8,7 +8,6 @@ use rpc::{self, Core};
 use serde_json::Value;
 use std::cell::RefCell;
 use std::cmp::{max, min};
-use std::ops::Range;
 use std::rc::Rc;
 use std::u32;
 
@@ -117,7 +116,7 @@ impl EditView {
                 family.is_monospace()
             );
         }
-        let mut font_desc = FontDescription::from_string("Inconsolata 16");
+        let font_desc = FontDescription::from_string("Inconsolata 16");
         // font_desc.set_size(14 * pango::SCALE);
         pango_ctx.set_font_description(&font_desc);
         let language = pango_ctx
@@ -196,11 +195,11 @@ impl EditView {
             edit_view.borrow_mut().search_changed(w.get_text());
         }));
 
-        search_entry.connect_activate(clone!(edit_view => move |w| {
+        search_entry.connect_activate(clone!(edit_view => move |_| {
             edit_view.borrow_mut().find_next();
         }));
 
-        search_entry.connect_stop_search(clone!(edit_view => move |w| {
+        search_entry.connect_stop_search(clone!(edit_view => move |_| {
             edit_view.borrow().stop_search();
         }));
 
@@ -212,11 +211,11 @@ impl EditView {
             }
         }));
 
-        replace_button.connect_clicked(clone!(edit_view => move |w| {
+        replace_button.connect_clicked(clone!(edit_view => move |_| {
             edit_view.borrow().replace();
         }));
 
-        replace_all_button.connect_clicked(clone!(edit_view => move |w| {
+        replace_all_button.connect_clicked(clone!(edit_view => move |_| {
             edit_view.borrow().replace_all();
         }));
 
@@ -338,7 +337,7 @@ impl EditView {
         // }
 
         // update scrollbars to the new text width and height
-        let (text_width, text_height) = self.get_text_size();
+        let (_, text_height) = self.get_text_size();
         let vadj = self.vscrollbar.get_adjustment();
         vadj.set_lower(0f64);
         vadj.set_upper(text_height as f64);
@@ -620,7 +619,7 @@ impl EditView {
     fn create_linecount_for_line(
         &self,
         pango_ctx: &pango::Context,
-        main_state: &MainState,
+        _main_state: &MainState,
         n: u64,
         padding: usize,
     ) -> pango::Layout {

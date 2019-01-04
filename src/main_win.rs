@@ -1,17 +1,16 @@
 use edit_view::EditView;
-use gio::{ActionExt, ActionMapExt, ApplicationFlags, SimpleAction, SimpleActionExt};
-use glib::variant::{FromVariant, Variant};
+use gio::{ActionMapExt, SimpleAction, SimpleActionExt};
+use glib::variant::Variant;
 use gtk::*;
 use prefs_win::PrefsWin;
 use proto::{self, ThemeSettings};
-use rpc::{Core, Handler};
+use rpc::Core;
 use serde_json::{self, Value};
 use std::cell::RefCell;
 use std::collections::{BTreeMap, HashMap};
 use std::rc::Rc;
 use std::sync::{Arc, Mutex};
 use theme::{Color, Style, Theme};
-use xi_thread;
 use CoreMsg;
 use SharedQueue;
 
@@ -427,8 +426,9 @@ impl MainWin {
         let main_win = main_win.borrow();
         let main_state = main_win.state.clone();
         let core = main_win.core.clone();
+        #[allow(unused_variables)]
         let prefs_win = PrefsWin::new(&main_state, &core);
-        // prefs_win.run();
+        //prefs_win.run();
     }
 
     fn find(main_win: Rc<RefCell<MainWin>>) {

@@ -33,3 +33,4 @@ serde_derive = "1.0"
 servo-fontconfig = "0.4.0"
 xi-core-lib = { git = "https://github.com/google/xi-editor", rev = "97a60f6f" }
 xi-rpc = { git = "https://github.com/google/xi-editor", rev = "97a60f6f" }
+dirs = "1.0"

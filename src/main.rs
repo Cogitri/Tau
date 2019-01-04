@@ -1,11 +1,12 @@
 #![recursion_limit = "128"]
+//Just for now...
+#![allow(dead_code)]
 
 extern crate cairo;
 extern crate clap;
 extern crate env_logger;
 extern crate gdk;
 extern crate gio;
-#[macro_use]
 extern crate glib;
 extern crate glib_sys;
 extern crate gobject_sys;
@@ -36,7 +37,6 @@ mod main_win;
 mod prefs_win;
 mod proto;
 mod rpc;
-mod scrollable_drawing_area;
 mod source;
 mod theme;
 mod xi_thread;
@@ -44,7 +44,7 @@ mod xi_thread;
 use clap::{App, Arg, SubCommand};
 use gio::{ApplicationExt, ApplicationExtManual, ApplicationFlags, FileExt};
 use glib::MainContext;
-use gtk::{Application, GtkApplicationExt};
+use gtk::Application;
 use main_win::MainWin;
 use mio::unix::{pipe, PipeReader, PipeWriter};
 use mio::TryRead;
@@ -54,7 +54,7 @@ use source::{new_source, SourceFuncs};
 use std::any::Any;
 use std::cell::RefCell;
 use std::collections::VecDeque;
-use std::env::{args, home_dir};
+use std::env::args;
 use std::io::Write;
 use std::os::unix::io::AsRawFd;
 use std::rc::Rc;
@@ -196,7 +196,7 @@ fn main() {
 
     let mut config_dir = None;
     let mut plugin_dir = None;
-    if let Some(home_dir) = home_dir() {
+    if let Some(home_dir) = dirs::home_dir() {
         let xi_config = home_dir.join(".config").join("xi");
         let xi_plugin = xi_config.join("plugins");
         config_dir = xi_config.to_str().map(|s| s.to_string());
@@ -221,7 +221,7 @@ fn main() {
         source.attach(&main_context);
     }));
 
-    application.connect_activate(clone!(shared_queue, core => move |application| {
+    application.connect_activate(clone!(shared_queue, core => move |_| {
         debug!("activate");
 
         let mut params = json!({});
@@ -239,7 +239,7 @@ fn main() {
         );
     }));
 
-    application.connect_open(clone!(shared_queue, core => move |_,files,s| {
+    application.connect_open(clone!(shared_queue, core => move |_,files,_| {
         debug!("open");
 
         for file in files {
