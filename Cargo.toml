@@ -12,7 +12,6 @@ edition = "2018"
 
 [dependencies]
 cairo-rs = "0.5"
-clap = "2"
 env_logger = "0.6"
 failure = "0.1"
 gdk = "0.9"

@@ -19,7 +19,6 @@ mod xi_thread;
 use crate::main_win::MainWin;
 use crate::rpc::{Core, Handler};
 use crate::source::{new_source, SourceFuncs};
-use clap::{App, Arg, SubCommand};
 use gio::{ApplicationExt, ApplicationExtManual, ApplicationFlags, FileExt};
 use glib::MainContext;
 use gtk::Application;
@@ -137,21 +136,6 @@ impl Handler for MyHandler {
 
 fn main() {
     env_logger::init();
-    // let matches = App::new("gxi")
-    //     .version("0.2.0")
-    //     .author("brainn <brainn@gmail.com>")
-    //     .about("Xi frontend")
-    //     .arg(Arg::with_name("FILE")
-    //         .multiple(true)
-    //         .help("file to open")
-    //     )
-    //     .get_matches();
-
-    // let mut files = vec![];
-    // if matches.is_present("FILE") {
-    //     files = matches.values_of("FILE").unwrap().collect::<Vec<_>>();
-    // }
-    // debug!("files {:?}", files);
 
     let queue: VecDeque<CoreMsg> = Default::default();
     let (reader, writer) = pipe().unwrap();
