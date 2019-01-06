@@ -1,6 +1,5 @@
 # gxi
 [![Build Status](https://drone.exqa.de/api/badges/Cogitri/gxi/status.svg)](https://drone.exqa.de/Cogitri/gxi)
-[![codecov](https://codecov.io/gh/Cogitri/gxi/branch/master/graph/badge.svg)](https://codecov.io/gh/Cogitri/gxi)
 
 GTK frontend, written in Rust for the [xi editor](https://github.com/google/xi-editor).
 
@@ -35,9 +34,15 @@ make install
 ```
 
 ### Running gxi
+Running this command will put the gxi binary in `$CARGO_HOME/bin`, which usually is
+`$HOME/.cargo/bin` and should be in your `PATH` if you've used rustup.
 
 ```sh
-git clone https://github.com/bvinc/gxi.git
-cd gxi
-cargo run
+cargo install --git https://github.com/Cogitri/gxi
+```
+
+After this you can run gxi via
+
+```sh
+gxi
 ```
