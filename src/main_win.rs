@@ -428,7 +428,7 @@ impl MainWin {
         let main_state = main_win.state.clone();
         let core = main_win.core.clone();
         #[allow(unused_variables)]
-        let prefs_win = PrefsWin::new(&main_state, &core);
+        let prefs_win = PrefsWin::new(&main_win.window, &main_state, &core);
         //prefs_win.run();
     }
 

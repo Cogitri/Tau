@@ -7,6 +7,7 @@ use std::rc::Rc;
 
 pub struct PrefsWin {
     core: Rc<RefCell<Core>>,
+    window: Window,
     // pub themes: Vec<String>,
     // pub theme_name: String,
     // pub theme: Theme,
@@ -15,6 +16,7 @@ pub struct PrefsWin {
 
 impl PrefsWin {
     pub fn new(
+        parent: &ApplicationWindow,
         main_state: &Rc<RefCell<MainState>>,
         core: &Rc<RefCell<Core>>,
     ) -> Rc<RefCell<PrefsWin>> {
@@ -30,21 +32,26 @@ impl PrefsWin {
             for (i, theme_name) in main_state.themes.iter().enumerate() {
                 theme_combo_box.append_text(theme_name);
                 if &main_state.theme_name == theme_name {
+                    debug!("settings active {}", i);
                     theme_combo_box.set_active(i as i32);
                 }
             }
         }
 
-        theme_combo_box.connect_changed(clone!(core => move |cb|{
+        theme_combo_box.connect_changed(clone!(core, main_state => move |cb|{
             if let Some(theme_name) = cb.get_active_text() {
                 debug!("theme changed to {:?}", cb.get_active_text());
                 let core = core.borrow();
                 core.set_theme(&theme_name);
+
+                let mut main_state = main_state.borrow_mut();
+                main_state.theme_name = theme_name;
             }
         }));
 
-        let prefs_win = Rc::new(RefCell::new(PrefsWin { core: core.clone() }));
+        let prefs_win = Rc::new(RefCell::new(PrefsWin { core: core.clone(), window: window.clone() }));
 
+        window.set_transient_for(parent);
         window.show_all();
 
         prefs_win
