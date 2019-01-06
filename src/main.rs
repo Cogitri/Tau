@@ -135,7 +135,9 @@ impl Handler for MyHandler {
 }
 
 fn main() {
-    env_logger::init();
+    env_logger::Builder::new()
+        .default_format_timestamp(false)
+        .init();
 
     let queue: VecDeque<CoreMsg> = Default::default();
     let (reader, writer) = pipe().unwrap();
