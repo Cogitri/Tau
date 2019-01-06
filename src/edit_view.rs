@@ -84,6 +84,7 @@ impl EditView {
         let vbox = Box::new(Orientation::Vertical, 0);
         hbox.pack_start(&vbox, true, true, 0);
         hbox.pack_start(&vscrollbar, false, false, 0);
+        vbox.pack_start(&search_bar, false, false, 0);
         vbox.pack_start(&da, true, true, 0);
         vbox.pack_start(&hscrollbar, false, false, 0);
         hbox.show_all();
