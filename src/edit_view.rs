@@ -57,8 +57,10 @@ impl EditView {
 
         da.set_events(
             EventMask::BUTTON_PRESS_MASK.bits() as i32
+                | EventMask::BUTTON_RELEASE_MASK.bits() as i32
                 | EventMask::BUTTON_MOTION_MASK.bits() as i32
-                | EventMask::SCROLL_MASK.bits() as i32,
+                | EventMask::SCROLL_MASK.bits() as i32
+                | EventMask::SMOOTH_SCROLL_MASK.bits() as i32,
         );
         debug!("events={:?}", da.get_events());
         da.set_can_focus(true);
