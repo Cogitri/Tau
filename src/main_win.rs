@@ -234,7 +234,11 @@ impl MainWin {
     }
 
     pub fn available_plugins(&mut self, params: &Value) {
-        error!("UNHANDLED available_plugins {}", params);
+        if let Some(_) = params.get("plugins") {
+            // TODO: There is one (or more!) plugins available, handle them!
+        } else {
+            error!("UNHANDLED available_plugins {}", params);
+        }
     }
 
     pub fn config_changed(&mut self, params: &Value) {
