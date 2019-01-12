@@ -149,6 +149,10 @@ impl MainWin {
         /* Put keyboard shortcuts here*/
         if let Some(app) = window.get_application() {
             app.set_accels_for_action("app.find", &["<Primary>f"]);
+            app.set_accels_for_action("app.save", &["<Primary>s"]);
+            app.set_accels_for_action("app.new", &["<Primary>n"]);
+            app.set_accels_for_action("app.open", &["<Primary>o"]);
+            app.set_accels_for_action("app.quit", &["<Primary>q"]);
         }
 
         window.show_all();

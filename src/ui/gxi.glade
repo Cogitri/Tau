@@ -250,7 +250,6 @@
             <property name="action_name">app.new</property>
             <property name="image">new_tab_image</property>
             <property name="always_show_image">True</property>
-            <accelerator key="t" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
           </object>
           <packing>
             <property name="position">1</property>
@@ -282,7 +281,6 @@
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
             <property name="action_name">app.save</property>
-            <accelerator key="s" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
           </object>
           <packing>
             <property name="pack_type">end</property>
