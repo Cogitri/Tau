@@ -146,6 +146,11 @@ impl MainWin {
             application.add_action(&auto_indent_action);
         }
 
+        /* Put keyboard shortcuts here*/
+        if let Some(app) = window.get_application() {
+            app.set_accels_for_action("app.find", &["<Primary>f"]);
+        }
+
         window.show_all();
 
         main_win
