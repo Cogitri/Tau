@@ -49,7 +49,10 @@ impl PrefsWin {
             }
         }));
 
-        let prefs_win = Rc::new(RefCell::new(PrefsWin { core: core.clone(), window: window.clone() }));
+        let prefs_win = Rc::new(RefCell::new(PrefsWin {
+            core: core.clone(),
+            window: window.clone(),
+        }));
 
         window.set_transient_for(parent);
         window.show_all();
