@@ -318,6 +318,8 @@ impl EditView {
                             }
                         }
                     }
+                    "translate_tabs_to_spaces" => (), //handled in main_win
+                    "auto_indent" => (),              // handled in main_win
                     _ => {
                         error!("unhandled config option {}", name);
                     }
