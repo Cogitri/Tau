@@ -7,8 +7,10 @@ mod macros;
 
 mod clipboard;
 mod edit_view;
+mod errors;
 mod linecache;
 mod main_win;
+mod pref_storage;
 mod prefs_win;
 mod proto;
 mod rpc;
@@ -17,12 +19,13 @@ mod theme;
 mod xi_thread;
 
 use crate::main_win::MainWin;
+use crate::pref_storage::ConfigToml;
 use crate::rpc::{Core, Handler};
 use crate::source::{new_source, SourceFuncs};
 use gio::{ApplicationExt, ApplicationExtManual, ApplicationFlags, FileExt};
 use glib::MainContext;
 use gtk::Application;
-use log::{debug, trace};
+use log::{debug, error, trace};
 use mio::unix::{pipe, PipeReader, PipeWriter};
 use mio::TryRead;
 use serde_json::{json, Value};
@@ -158,18 +161,39 @@ fn main() {
 
     let mut config_dir = None;
     let mut plugin_dir = None;
-    if let Some(home_dir) = dirs::home_dir() {
-        let xi_config = home_dir.join(".config").join("xi");
-        let xi_plugin = xi_config.join("plugins");
-        config_dir = xi_config.to_str().map(|s| s.to_string());
+    let mut config = ConfigToml::new();
+    let mut config_file_path = None;
+
+    if let Some(user_config_dir) = dirs::config_dir() {
+        let xi_config_dir = user_config_dir.join("gxi");
+        // The path to the main XI config
+        let xi_main_config = xi_config_dir.join("preferences.xiconfig");
+        config_file_path = xi_main_config.to_str().map(|s| s.to_string());
+
+        config = match config.open(&config_file_path.as_ref().unwrap()) {
+            Ok(_) => config.open(&config_file_path.as_ref().unwrap()).unwrap(),
+            Err(_) => {
+                error!("Couldn't read config, falling back to default config!");
+                let config = config;
+                config
+                    .save(&config_file_path.as_ref().unwrap())
+                    .unwrap_or_else(|e| error!("{}", e.to_string()));
+                config
+            }
+        };
+
+        let xi_plugin = xi_config_dir.join("plugins");
+        config_dir = xi_config_dir.to_str().map(|s| s.to_string());
         plugin_dir = xi_plugin.to_str().map(|s| s.to_string());
+    } else {
+        error!("Couldn't determine home dir! Settings will be temporary!")
     }
 
     application.connect_startup(clone!(shared_queue, core => move |application| {
         debug!("startup");
         core.client_started(config_dir.clone(), plugin_dir.clone());
 
-        let main_win = MainWin::new(application, shared_queue.clone(), Rc::new(RefCell::new(core.clone())));
+        let main_win = MainWin::new(application, shared_queue.clone(), Rc::new(RefCell::new(core.clone())), Arc::new(Mutex::new(config.clone())), config_file_path.clone());
 
         let source = new_source(QueueSource {
             win: main_win.clone(),

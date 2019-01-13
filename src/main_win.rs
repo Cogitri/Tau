@@ -1,4 +1,5 @@
 use crate::edit_view::EditView;
+use crate::pref_storage::ConfigToml;
 use crate::prefs_win::PrefsWin;
 use crate::proto::{self, ThemeSettings};
 use crate::rpc::Core;
@@ -41,6 +42,8 @@ impl MainWin {
         application: &Application,
         shared_queue: Arc<Mutex<SharedQueue>>,
         core: Rc<RefCell<Core>>,
+        config: Arc<Mutex<ConfigToml>>,
+        config_file_path: Option<String>,
     ) -> Rc<RefCell<MainWin>> {
         let glade_src = include_str!("ui/gxi.glade");
         let builder = Builder::new_from_string(glade_src);
@@ -137,20 +140,58 @@ impl MainWin {
             application.add_action(&quit_action);
         }
         {
-            let auto_indent_action =
-                SimpleAction::new_stateful("auto_indent", None, &false.to_variant());;
+            let config_file_path_ai = config_file_path.clone();
+            let config = config.clone();
+
+            let auto_indent_action = SimpleAction::new_stateful(
+                "auto_indent",
+                None,
+                &config
+                    .lock()
+                    .unwrap()
+                    .auto_indent
+                    .as_bool()
+                    .unwrap()
+                    .to_variant(),
+            );;
             auto_indent_action.connect_change_state(clone!(main_win => move |action, value| {
-                let mut main_win = main_win.borrow_mut();
-                main_win.set_auto_indent(action, value);
+
+                if let Some(value) = value.as_ref() {
+                    action.set_state(value);
+                    let value: bool = value.get().unwrap();
+                    debug!("auto indent {}", value);
+                    config.lock().unwrap().auto_indent = toml::Value::Boolean(value);
+                    if let Some(config_file_path) = &config_file_path_ai {
+                        debug!("Config dir: {}", &config_file_path);
+                        config.lock().unwrap().save(&config_file_path).unwrap_or_else(|e| error!("{}", e.to_string()));
+                    }
+                }
             }));
             application.add_action(&auto_indent_action);
         }
         {
-            let space_indent_action =
-                SimpleAction::new_stateful("insert_spaces", None, &false.to_variant());;
+            let space_indent_action = SimpleAction::new_stateful(
+                "insert_spaces",
+                None,
+                &config
+                    .lock()
+                    .unwrap()
+                    .translate_tabs_to_space
+                    .as_bool()
+                    .unwrap()
+                    .to_variant(),
+            );;
             space_indent_action.connect_change_state(clone!(main_win => move |action, value| {
-                let mut main_win = main_win.borrow_mut();
-                main_win.set_space_indent(action, value);
+                if let Some(value) = value.as_ref() {
+                    action.set_state(value);
+                    let value: bool = value.get().unwrap();
+                    debug!("space indent {}", value);
+                    config.lock().unwrap().translate_tabs_to_space = toml::Value::Boolean(value);
+                    if let Some(config_file_path) = &config_file_path {
+                        debug!("Config dir: {}", &config_file_path);
+                        config.lock().unwrap().save(&config_file_path).unwrap_or_else(|e| error!("{}", e.to_string()));;
+                    }
+                }
             }));
             application.add_action(&space_indent_action);
         }
@@ -284,35 +325,6 @@ impl MainWin {
 
         if let Some(ev) = self.views.get(&view_id) {
             ev.borrow_mut().find_status(&params["queries"]);
-        }
-    }
-
-    pub fn set_auto_indent(&mut self, action: &SimpleAction, value: &Option<Variant>) {
-        if value.is_none() {
-            return;
-        }
-        if let Some(value) = value.as_ref() {
-            action.set_state(value);
-            let value: bool = value.get().unwrap();
-            debug!("auto indent {}", value);
-            self.core
-                .borrow()
-                .modify_user_config(&json!("general"), &json!({ "auto_indent": value }));
-        }
-    }
-
-
-    pub fn set_space_indent(&mut self, action: &SimpleAction, value: &Option<Variant>) {
-        if value.is_none() {
-            return;
-        }
-        if let Some(value) = value.as_ref() {
-            action.set_state(value);
-            let value: bool = value.get().unwrap();
-            debug!("space indent {}", value);
-            self.core
-                .borrow()
-                .modify_user_config(&json!("general"), &json!({ "translate_tabs_to_spaces": value }));
         }
     }
 

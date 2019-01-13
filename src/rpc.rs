@@ -142,16 +142,6 @@ impl Core {
         );
     }
 
-    pub fn modify_user_config(&self, domain: &Value, changes: &Value) {
-        self.send_notification(
-            "modify_user_config",
-            &json!({
-                "domain": domain,
-                "changes": changes,
-            }),
-        );
-    }
-
     pub fn set_theme(&self, theme_name: &str) {
         self.send_notification("set_theme", &json!({ "theme_name": theme_name }));
     }
