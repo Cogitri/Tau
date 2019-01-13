@@ -145,6 +145,15 @@ impl MainWin {
             }));
             application.add_action(&auto_indent_action);
         }
+        {
+            let space_indent_action =
+                SimpleAction::new_stateful("insert_spaces", None, &false.to_variant());;
+            space_indent_action.connect_change_state(clone!(main_win => move |action, value| {
+                let mut main_win = main_win.borrow_mut();
+                main_win.set_space_indent(action, value);
+            }));
+            application.add_action(&space_indent_action);
+        }
 
         /* Put keyboard shortcuts here*/
         if let Some(app) = window.get_application() {
@@ -289,6 +298,21 @@ impl MainWin {
             self.core
                 .borrow()
                 .modify_user_config(&json!("general"), &json!({ "auto_indent": value }));
+        }
+    }
+
+
+    pub fn set_space_indent(&mut self, action: &SimpleAction, value: &Option<Variant>) {
+        if value.is_none() {
+            return;
+        }
+        if let Some(value) = value.as_ref() {
+            action.set_state(value);
+            let value: bool = value.get().unwrap();
+            debug!("space indent {}", value);
+            self.core
+                .borrow()
+                .modify_user_config(&json!("general"), &json!({ "translate_tabs_to_spaces": value }));
         }
     }
 

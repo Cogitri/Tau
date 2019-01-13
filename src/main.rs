@@ -135,7 +135,7 @@ impl Handler for MyHandler {
 }
 
 fn main() {
-    env_logger::Builder::new()
+    env_logger::Builder::from_default_env()
         .default_format_timestamp(false)
         .init();
 
