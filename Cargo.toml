@@ -2,9 +2,9 @@
 name = "gxi"
 version = "0.2.0"
 authors = ["Brian Vincent <brainn@gmail.com>", "Rasmus Thomsen <rasmus.thomsen@protonmail.com>"]
-homepage = "https://github.com/bvinc/gxi"
+homepage = "https://github.com/Cogitri/gxi"
 description = "GTK frontend, written in Rust, for the xi editor"
-repository = "https://github.com/bvinc/gxi"
+repository = "https://github.com/Cogtri/gxi"
 keywords = ["gxi", "xi"]
 categories = ["editor"]
 license = "MIT"
