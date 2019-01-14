@@ -160,7 +160,6 @@ fn main() {
         .expect("failed to create gtk application");
 
     let mut config_dir = None;
-    let mut plugin_dir = None;
     let mut config = ConfigToml::new();
     let mut config_file_path = None;
 
@@ -182,16 +181,15 @@ fn main() {
             }
         };
 
-        let xi_plugin = xi_config_dir.join("plugins");
         config_dir = xi_config_dir.to_str().map(|s| s.to_string());
-        plugin_dir = xi_plugin.to_str().map(|s| s.to_string());
     } else {
         error!("Couldn't determine home dir! Settings will be temporary!")
     }
 
     application.connect_startup(clone!(shared_queue, core => move |application| {
         debug!("startup");
-        core.client_started(config_dir.clone(), plugin_dir.clone());
+
+        core.client_started(config_dir.clone(), include_str!(concat!(env!("OUT_DIR"), "/plugin-dir.in")).to_string().clone());
 
         let main_win = MainWin::new(application, shared_queue.clone(), Rc::new(RefCell::new(core.clone())), Arc::new(Mutex::new(config.clone())), config_file_path.clone());
 
