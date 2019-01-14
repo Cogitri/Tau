@@ -176,7 +176,7 @@ impl MainWin {
                 &config
                     .lock()
                     .unwrap()
-                    .translate_tabs_to_space
+                    .translate_tabs_to_spaces
                     .as_bool()
                     .unwrap()
                     .to_variant(),
@@ -187,7 +187,7 @@ impl MainWin {
                     action.set_state(value);
                     let value: bool = value.get().unwrap();
                     debug!("space indent {}", value);
-                    config.lock().unwrap().translate_tabs_to_space = toml::Value::Boolean(value);
+                    config.lock().unwrap().translate_tabs_to_spaces = toml::Value::Boolean(value);
                     if let Some(config_file_path) = &config_file_path {
                         debug!("config file: {}", &config_file_path);
                         config.lock().unwrap().save(&config_file_path).unwrap_or_else(|e| error!("{}", e.to_string()));;

@@ -7,7 +7,7 @@ use toml::Value;
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ConfigToml {
     pub tab_size: Value,
-    pub translate_tabs_to_space: Value,
+    pub translate_tabs_to_spaces: Value,
     pub use_tab_stops: Value,
     pub plugin_search_path: Value,
     pub font_face: Value,
@@ -24,7 +24,7 @@ impl ConfigToml {
         // Default valuess as dictated by https://github.com/xi-editor/xi-editor/blob/master/rust/core-lib/assets/client_example.toml
         ConfigToml {
             tab_size: Value::Integer(4),
-            translate_tabs_to_space: Value::Boolean(false),
+            translate_tabs_to_spaces: Value::Boolean(false),
             use_tab_stops: Value::Boolean(true),
             plugin_search_path: Value::String("".to_string()),
             font_face: Value::String("Inconsolata".to_string()),
