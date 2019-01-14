@@ -162,7 +162,7 @@ impl MainWin {
                     debug!("auto indent {}", value);
                     config.lock().unwrap().auto_indent = toml::Value::Boolean(value);
                     if let Some(config_file_path) = &config_file_path_ai {
-                        debug!("Config dir: {}", &config_file_path);
+                        debug!("config file: {}", &config_file_path);
                         config.lock().unwrap().save(&config_file_path).unwrap_or_else(|e| error!("{}", e.to_string()));
                     }
                 }
@@ -188,7 +188,7 @@ impl MainWin {
                     debug!("space indent {}", value);
                     config.lock().unwrap().translate_tabs_to_space = toml::Value::Boolean(value);
                     if let Some(config_file_path) = &config_file_path {
-                        debug!("Config dir: {}", &config_file_path);
+                        debug!("config file: {}", &config_file_path);
                         config.lock().unwrap().save(&config_file_path).unwrap_or_else(|e| error!("{}", e.to_string()));;
                     }
                 }
