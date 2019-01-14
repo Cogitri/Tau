@@ -28,6 +28,10 @@ depends_on:
 - rustfmt
 
 steps:
+- name: submodules
+  image: docker:git
+  commands:
+    - git submodule update --recursive --init
 - name: test
   image: rust:latest
   pull: always
@@ -54,6 +58,6 @@ steps:
     - failure
 ---
 kind: signature
-hmac: a1dc21215622324fd90da7bff9f28db5ba45a39dce555badce726adc639d5b3b
+hmac: 39c53b91ab3962d23f8688fabf8afd762826bc68756b8710829c4f9ad01fe0c4
 
 ...
