@@ -31,7 +31,7 @@ serde = "1"
 serde_json = "1"
 serde_derive = "1"
 servo-fontconfig = "0.4"
-xi-core-lib = { git = "https://github.com/google/xi-editor", rev = "97a60f6f" }
-xi-rpc = { git = "https://github.com/google/xi-editor", rev = "97a60f6f" }
+xi-core-lib = { path="vendor/xi-editor/rust/core-lib" }
+xi-rpc = { path="vendor/xi-editor/rust/rpc" }
 dirs = "1"
 toml = "0.4"
