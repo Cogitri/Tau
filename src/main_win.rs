@@ -7,7 +7,6 @@ use crate::theme::{Color, Style, Theme};
 use crate::CoreMsg;
 use crate::SharedQueue;
 use gio::{ActionMapExt, SimpleAction, SimpleActionExt};
-use glib::variant::Variant;
 use gtk::*;
 use log::{debug, error, trace};
 use serde_json::{self, json, Value};
@@ -154,8 +153,9 @@ impl MainWin {
                     .unwrap()
                     .to_variant(),
             );;
-            auto_indent_action.connect_change_state(clone!(main_win => move |action, value| {
 
+            #[allow(unused_variables)]
+                auto_indent_action.connect_change_state(clone!(main_win => move |action, value| {
                 if let Some(value) = value.as_ref() {
                     action.set_state(value);
                     let value: bool = value.get().unwrap();
@@ -181,6 +181,7 @@ impl MainWin {
                     .unwrap()
                     .to_variant(),
             );;
+            #[allow(unused_variables)]
             space_indent_action.connect_change_state(clone!(main_win => move |action, value| {
                 if let Some(value) = value.as_ref() {
                     action.set_state(value);
