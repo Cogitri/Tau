@@ -13,19 +13,19 @@ pub struct StyleSpan {
 #[derive(Clone, Debug)]
 pub struct Line {
     text: String,
-    cursor: Vec<usize>,
+    cursor: Vec<u64>,
     pub styles: Vec<StyleSpan>,
 }
 
 impl Line {
     pub fn from_json(v: &Value) -> Line {
         let text = v["text"].as_str().unwrap().to_owned();
-        let mut cursor = Vec::new();
-        if let Some(arr) = v["cursor"].as_array() {
-            for c in arr {
-                cursor.push(c.as_u64().unwrap() as usize);
-            }
-        }
+        let cursor = if let Some(arr) = v["cursor"].as_array() {
+            arr.iter().map(|c|c.as_u64().unwrap()).collect::<Vec<_>>()
+        } else {
+            Vec::new()
+        };
+
         let mut styles = Vec::new();
         if let Some(arr) = v["styles"].as_array() {
             // Convert style triples into a `Vec` of `StyleSpan`s
@@ -63,7 +63,7 @@ impl Line {
         &self.text
     }
 
-    pub fn cursor(&self) -> &[usize] {
+    pub fn cursor(&self) -> &[u64] {
         &self.cursor
     }
 }
