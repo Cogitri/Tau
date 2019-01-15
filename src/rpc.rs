@@ -132,7 +132,7 @@ impl Core {
         self.send_notification("edit", &edit_params);
     }
 
-    pub fn client_started(&self, config_dir: &Option<String>, client_extras_dir: &str) {
+    pub fn client_started(&self, config_dir: &str, client_extras_dir: &str) {
         self.send_notification(
             "client_started",
             &json!({

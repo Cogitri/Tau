@@ -42,9 +42,9 @@ impl MainWin {
         shared_queue: &Arc<Mutex<SharedQueue>>,
         core: &Rc<RefCell<Core>>,
         config: Arc<Mutex<XiConfig>>,
-        config_file_path: Option<String>,
+        config_file_path: String,
         gxi_config: Arc<Mutex<GtkXiConfig>>,
-        gxi_config_file_path: Option<String>,
+        gxi_config_file_path: String,
     ) -> Rc<RefCell<MainWin>> {
         let glade_src = include_str!("ui/gxi.glade");
         let builder = Builder::new_from_string(glade_src);
@@ -144,8 +144,8 @@ impl MainWin {
             application.add_action(&quit_action);
         }
         {
-            let config_file_path_ai = config_file_path.clone();
             let config = config.clone();
+            let config_file_path = config_file_path.clone();
 
             let auto_indent_action = SimpleAction::new_stateful(
                 "auto_indent",
@@ -166,10 +166,8 @@ impl MainWin {
                     let value: bool = value.get().unwrap();
                     debug!("auto indent {}", value);
                     config.lock().unwrap().auto_indent = toml::Value::Boolean(value);
-                    if let Some(config_file_path) = &config_file_path_ai {
-                        debug!("config file: {}", &config_file_path);
-                        config.lock().unwrap().save(&config_file_path).unwrap_or_else(|e| error!("{}", e.to_string()));
-                    }
+                    debug!("config file: {}", &config_file_path);
+                    config.lock().unwrap().save(&config_file_path).map_err(|e| error!("{}", e.to_string())).unwrap();
                 }
             }));
             application.add_action(&auto_indent_action);
@@ -193,10 +191,8 @@ impl MainWin {
                     let value: bool = value.get().unwrap();
                     debug!("space indent {}", value);
                     config.lock().unwrap().translate_tabs_to_spaces = toml::Value::Boolean(value);
-                    if let Some(config_file_path) = &config_file_path {
-                        debug!("config file: {}", &config_file_path);
-                        config.lock().unwrap().save(&config_file_path).unwrap_or_else(|e| error!("{}", e.to_string()));;
-                    }
+                    debug!("config file: {}", &config_file_path);
+                    config.lock().unwrap().save(&config_file_path).map_err(|e| error!("{}", e.to_string())).unwrap();
                 }
             }));
             application.add_action(&space_indent_action);
@@ -491,7 +487,7 @@ impl MainWin {
     fn prefs(
         main_win: Rc<RefCell<MainWin>>,
         gxi_config: Arc<Mutex<GtkXiConfig>>,
-        gxi_config_file_path: Option<String>,
+        gxi_config_file_path: String,
     ) {
         // let (main_state, core) = {
         //     let main_win = main_win.borrow();

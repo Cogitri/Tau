@@ -159,56 +159,72 @@ fn main() {
     let application = Application::new("com.github.bvinc.gxi", ApplicationFlags::HANDLES_OPEN)
         .expect("failed to create gtk application");
 
-    let mut xi_config_dir = None;
+    let mut xi_config_dir = String::new();
     let mut xi_config = XiConfig::new();
-    let mut xi_config_file_path = None;
+    let xi_config_file_path;
     let mut gxi_config = GtkXiConfig::new();
-    let mut gxi_config_file_path = None;
+    let gxi_config_file_path;
 
+    //TODO: This part really needs better error handling...
     if let Some(user_config_dir) = dirs::config_dir() {
         let config_dir = user_config_dir.join("gxi");
         // The path to the main XI config
         let xi_main_config = config_dir.join("preferences.xiconfig");
 
-        xi_config_file_path = xi_main_config.to_str().map(|s| s.to_string());
-        xi_config = match xi_config.open(&xi_config_file_path.as_ref().unwrap()) {
-            Ok(_) => xi_config
-                .open(&xi_config_file_path.as_ref().unwrap())
-                .unwrap(),
+        xi_config_file_path = xi_main_config.to_str().map(|s| s.to_string()).unwrap();
+        xi_config = match xi_config.open(&xi_config_file_path) {
+            Ok(_) => xi_config.open(&xi_config_file_path).unwrap(),
             Err(_) => {
                 error!("Couldn't read config, falling back to default XI-Editor config!");
                 xi_config
-                    .save(&xi_config_file_path.as_ref().unwrap())
+                    .save(&xi_config_file_path)
                     .unwrap_or_else(|e| error!("{}", e.to_string()));
                 xi_config
             }
         };
-        xi_config_dir = config_dir.to_str().map(|s| s.to_string());
+        xi_config_dir = config_dir.to_str().map(|s| s.to_string()).unwrap();
 
         let gxi_main_config = config_dir.join("gxi.toml");
-        gxi_config_file_path = gxi_main_config.to_str().map(|s| s.to_string());
-        gxi_config = match gxi_config.open(&gxi_config_file_path.as_ref().unwrap()) {
-            Ok(_) => gxi_config
-                .open(&gxi_config_file_path.as_ref().unwrap())
-                .unwrap(),
+        gxi_config_file_path = gxi_main_config.to_str().map(|s| s.to_string()).unwrap();
+        gxi_config = match gxi_config.open(&gxi_config_file_path) {
+            Ok(_) => gxi_config.open(&gxi_config_file_path).unwrap(),
             Err(_) => {
                 error!("Couldn't read config, falling back to default GXI config!");
                 gxi_config
-                    .save(&gxi_config_file_path.as_ref().unwrap())
+                    .save(&gxi_config_file_path)
                     .unwrap_or_else(|e| error!("{}", e.to_string()));
                 gxi_config
             }
         };
     } else {
-        error!("Couldn't determine home dir! Settings will be temporary!")
+        error!("Couldn't determine home dir! Settings will be temporary!");
+
+        let config_dir = tempfile::Builder::new()
+            .prefix("gxi-config")
+            .tempdir()
+            .map_err(|e| error!("Failed to create temprary config dir! {}", e.to_string()))
+            .unwrap()
+            .into_path();
+
+        let xi_main_config = config_dir.join("preferences.xiconfig");
+        xi_config_file_path = xi_main_config.to_str().map(|s| s.to_string()).unwrap();
+        xi_config
+            .save(&xi_config_file_path)
+            .unwrap_or_else(|e| error!("{}", e.to_string()));
+
+        let gxi_main_config = config_dir.join("gxi.toml");
+        gxi_config_file_path = gxi_main_config.to_str().map(|s| s.to_string()).unwrap();
+        gxi_config
+            .save(&gxi_config_file_path)
+            .unwrap_or_else(|e| error!("{}", e.to_string()));
     }
 
     application.connect_startup(clone!(shared_queue, core => move |application| {
         debug!("startup");
 
-        core.client_started(&xi_config_dir.clone(), include_str!(concat!(env!("OUT_DIR"), "/plugin-dir.in")));
+        core.client_started(&xi_config_dir, include_str!(concat!(env!("OUT_DIR"), "/plugin-dir.in")));
 
-        let main_win = MainWin::new(application, &shared_queue, &Rc::new(RefCell::new(core.clone())), Arc::new(Mutex::new(xi_config.clone())), xi_config_file_path.clone(), Arc::new(Mutex::new(gxi_config.clone())), gxi_config_file_path.clone());
+        let main_win = MainWin::new(application, &shared_queue, &Rc::new(RefCell::new(core.clone())), Arc::new(Mutex::new(xi_config.clone())), xi_config_file_path.to_string(), Arc::new(Mutex::new(gxi_config.clone())), gxi_config_file_path.to_string());
 
         let source = new_source(QueueSource {
             win: main_win.clone(),

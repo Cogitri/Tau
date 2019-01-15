@@ -2,7 +2,7 @@ use crate::main_win::MainState;
 use crate::pref_storage::GtkXiConfig;
 use crate::rpc::Core;
 use gtk::*;
-use log::{debug, error, warn};
+use log::{debug, error};
 use std::cell::RefCell;
 use std::rc::Rc;
 use std::sync::{Arc, Mutex};
@@ -19,7 +19,7 @@ impl PrefsWin {
         main_state: &Rc<RefCell<MainState>>,
         core: &Rc<RefCell<Core>>,
         gxi_config: Arc<Mutex<GtkXiConfig>>,
-        gxi_config_file_path: Option<String>,
+        gxi_config_file_path: String,
     ) -> Rc<RefCell<PrefsWin>> {
         let glade_src = include_str!("ui/prefs_win.glade");
         let builder = Builder::new_from_string(glade_src);
@@ -45,13 +45,9 @@ impl PrefsWin {
                 let core = core.borrow();
                 core.set_theme(&theme_name);
 
-                if let Some(gxi_config_file_path) = gxi_config_file_path.as_ref() {
-                    let mut config = gxi_config.lock().unwrap();
-                    config.theme = Value::String(theme_name.clone());
-                    config.save(&gxi_config_file_path).map_err(|e| error!("{}", e.to_string())).unwrap();
-                } else {
-                    warn!("No config dir set, settings will be temporary!");
-                }
+                let mut config = gxi_config.lock().unwrap();
+                config.theme = Value::String(theme_name.clone());
+                config.save(&gxi_config_file_path).map_err(|e| error!("{}", e.to_string())).unwrap();
 
                 let mut main_state = main_state.borrow_mut();
                 main_state.theme_name = theme_name;

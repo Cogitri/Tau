@@ -35,3 +35,4 @@ xi-core-lib = { path="vendor/xi-editor/rust/core-lib" }
 xi-rpc = { path="vendor/xi-editor/rust/rpc" }
 dirs = "1"
 toml = "0.4"
+tempfile = "3"
