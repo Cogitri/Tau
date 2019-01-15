@@ -1,5 +1,5 @@
 use crate::edit_view::EditView;
-use crate::pref_storage::ConfigToml;
+use crate::pref_storage::{GtkXiConfig, XiConfig};
 use crate::prefs_win::PrefsWin;
 use crate::proto::{self, ThemeSettings};
 use crate::rpc::Core;
@@ -41,14 +41,19 @@ impl MainWin {
         application: &Application,
         shared_queue: Arc<Mutex<SharedQueue>>,
         core: Rc<RefCell<Core>>,
-        config: Arc<Mutex<ConfigToml>>,
+        config: Arc<Mutex<XiConfig>>,
         config_file_path: Option<String>,
+        gxi_config: Arc<Mutex<GtkXiConfig>>,
+        gxi_config_file_path: Option<String>,
     ) -> Rc<RefCell<MainWin>> {
         let glade_src = include_str!("ui/gxi.glade");
         let builder = Builder::new_from_string(glade_src);
 
         let window: ApplicationWindow = builder.get_object("appwindow").unwrap();
         let notebook: Notebook = builder.get_object("notebook").unwrap();
+
+        let theme_name = gxi_config.lock().unwrap().theme.to_string();
+        debug!("theme name: {}", &theme_name);
 
         let main_win = Rc::new(RefCell::new(MainWin {
             core: core.clone(),
@@ -61,7 +66,7 @@ impl MainWin {
             view_id_to_w: Default::default(),
             state: Rc::new(RefCell::new(MainState {
                 themes: Default::default(),
-                theme_name: "default".to_string(),
+                theme_name,
                 theme: Default::default(),
                 styles: Default::default(),
             })),
@@ -91,7 +96,7 @@ impl MainWin {
         {
             let prefs_action = SimpleAction::new("prefs", None);
             prefs_action.connect_activate(clone!(main_win => move |_,_| {
-                MainWin::prefs(main_win.clone());
+                MainWin::prefs(main_win.clone(), gxi_config.clone(), gxi_config_file_path.clone());
             }));
             application.add_action(&prefs_action);
         }
@@ -253,12 +258,26 @@ impl MainWin {
                 }
             }
         }
-        if let Some(theme_name) = state.themes.first().map(Clone::clone) {
-            state.theme_name = theme_name.clone();
-            self.core
-                .borrow()
-                .send_notification("set_theme", &json!({ "theme_name": theme_name }));
+
+        //if ! state.themes.contains(&state.theme_name) {
+        if state.themes.iter().any(|x| x == &state.theme_name) {
+            error!(
+                "Theme {} isn't available, setting to default...",
+                &state.theme_name
+            );
+
+            if let Some(theme_name) = state.themes.first().map(Clone::clone) {
+                state.theme_name = theme_name.clone();
+            } else {
+                return;
+            }
+        } else {
+            state.theme_name = state.theme_name.replace("\"", "");
         }
+
+        self.core
+            .borrow()
+            .send_notification("set_theme", &json!({ "theme_name": state.theme_name }));
     }
 
     pub fn theme_changed(&mut self, params: &Value) {
@@ -469,7 +488,11 @@ impl MainWin {
         fcd.destroy();
     }
 
-    fn prefs(main_win: Rc<RefCell<MainWin>>) {
+    fn prefs(
+        main_win: Rc<RefCell<MainWin>>,
+        gxi_config: Arc<Mutex<GtkXiConfig>>,
+        gxi_config_file_path: Option<String>,
+    ) {
         // let (main_state, core) = {
         //     let main_win = main_win.borrow();
         //     (main_win.state.clone(), main_win.core.clone())
@@ -478,7 +501,13 @@ impl MainWin {
         let main_state = main_win.state.clone();
         let core = main_win.core.clone();
         #[allow(unused_variables)]
-        let prefs_win = PrefsWin::new(&main_win.window, &main_state, &core);
+        let prefs_win = PrefsWin::new(
+            &main_win.window,
+            &main_state,
+            &core,
+            gxi_config,
+            gxi_config_file_path,
+        );
         //prefs_win.run();
     }
 
