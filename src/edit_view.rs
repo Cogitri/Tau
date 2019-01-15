@@ -318,8 +318,18 @@ impl EditView {
                             }
                         }
                     }
-                    "translate_tabs_to_spaces" => (), //handled in main_win
-                    "auto_indent" => (),              // handled in main_win
+                    // These are handled in main_win via XiConfig
+                    "auto_indent" => (),
+                    "autodetect_whitespace" => (),
+                    "plugin_search_path" => (),
+                    "scroll_past_end" => (),
+                    "tab_size" => (),
+                    "translate_tabs_to_space" => (),
+                    // Typo in xi-editor, should be fixed soon
+                    "translate_tabs_to_spaces" => (),
+                    "use_tab_stops" => (),
+                    "word_wrap" => (),
+                    "wrap_width" => (),
                     _ => {
                         error!("unhandled config option {}", name);
                     }
