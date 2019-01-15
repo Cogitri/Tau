@@ -206,9 +206,9 @@ fn main() {
     application.connect_startup(clone!(shared_queue, core => move |application| {
         debug!("startup");
 
-        core.client_started(xi_config_dir.clone(), include_str!(concat!(env!("OUT_DIR"), "/plugin-dir.in")).to_string().clone());
+        core.client_started(&xi_config_dir.clone(), include_str!(concat!(env!("OUT_DIR"), "/plugin-dir.in")));
 
-        let main_win = MainWin::new(application, shared_queue.clone(), Rc::new(RefCell::new(core.clone())), Arc::new(Mutex::new(xi_config.clone())), xi_config_file_path.clone(), Arc::new(Mutex::new(gxi_config.clone())), gxi_config_file_path.clone());
+        let main_win = MainWin::new(application, &shared_queue, &Rc::new(RefCell::new(core.clone())), Arc::new(Mutex::new(xi_config.clone())), xi_config_file_path.clone(), Arc::new(Mutex::new(gxi_config.clone())), gxi_config_file_path.clone());
 
         let source = new_source(QueueSource {
             win: main_win.clone(),

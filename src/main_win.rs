@@ -39,8 +39,8 @@ const GLADE_SRC: &str = include_str!("ui/gxi.glade");
 impl MainWin {
     pub fn new(
         application: &Application,
-        shared_queue: Arc<Mutex<SharedQueue>>,
-        core: Rc<RefCell<Core>>,
+        shared_queue: &Arc<Mutex<SharedQueue>>,
+        core: &Rc<RefCell<Core>>,
         config: Arc<Mutex<XiConfig>>,
         config_file_path: Option<String>,
         gxi_config: Arc<Mutex<GtkXiConfig>>,
@@ -82,7 +82,7 @@ impl MainWin {
         {
             let open_action = SimpleAction::new("open", None);
             open_action.connect_activate(clone!(main_win => move |_,_| {
-                MainWin::handle_open_button(main_win.clone());
+                MainWin::handle_open_button(&main_win);
             }));
             application.add_action(&open_action);
         }
@@ -103,7 +103,7 @@ impl MainWin {
         {
             let find_action = SimpleAction::new("find", None);
             find_action.connect_activate(clone!(main_win => move |_,_| {
-                MainWin::find(main_win.clone());
+                MainWin::find(&main_win);
             }));
             application.add_action(&find_action);
         }
@@ -229,7 +229,7 @@ impl MainWin {
     pub fn handle_msg(main_win: Rc<RefCell<MainWin>>, msg: CoreMsg) {
         match msg {
             CoreMsg::NewViewReply { file_name, value } => {
-                MainWin::new_view_response(main_win, file_name, &value)
+                MainWin::new_view_response(&main_win, file_name, &value)
             }
             CoreMsg::Notification { method, params } => {
                 match method.as_ref() {
@@ -431,7 +431,7 @@ impl MainWin {
     /// Display the FileChooserDialog for opening, send the result to the Xi core.
     /// This may call the GTK main loop.  There must not be any RefCell borrows out while this
     /// function runs.
-    pub fn handle_open_button(main_win: Rc<RefCell<MainWin>>) {
+    pub fn handle_open_button(main_win: &Rc<RefCell<MainWin>>) {
         let fcd = FileChooserDialog::new::<FileChooserDialog>(None, None, FileChooserAction::Open);
         fcd.set_transient_for(Some(&main_win.borrow().window.clone()));
         fcd.add_button("Open", 33);
@@ -511,7 +511,7 @@ impl MainWin {
         //prefs_win.run();
     }
 
-    fn find(main_win: Rc<RefCell<MainWin>>) {
+    fn find(main_win: &Rc<RefCell<MainWin>>) {
         let edit_view = main_win.borrow().get_current_edit_view().clone();
         edit_view.borrow().start_search();
     }
@@ -547,10 +547,14 @@ impl MainWin {
             });
     }
 
-    fn new_view_response(main_win: Rc<RefCell<MainWin>>, file_name: Option<String>, value: &Value) {
+    fn new_view_response(
+        main_win: &Rc<RefCell<MainWin>>,
+        file_name: Option<String>,
+        value: &Value,
+    ) {
         let mut win = main_win.borrow_mut();
         if let Some(view_id) = value.as_str() {
-            let edit_view = EditView::new(win.state.clone(), win.core.clone(), file_name, view_id);
+            let edit_view = EditView::new(&win.state, &win.core, file_name, view_id);
             {
                 let ev = edit_view.borrow();
                 let page_num =

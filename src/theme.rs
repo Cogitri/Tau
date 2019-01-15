@@ -33,13 +33,13 @@ impl Color {
         Color::from_u8s((c >> 16) as u8, (c >> 8) as u8, c as u8, (c >> 24) as u8)
     }
 
-    pub fn r_u16(&self) -> u16 {
+    pub fn r_u16(self) -> u16 {
         u16::from(self.r) << 8
     }
-    pub fn g_u16(&self) -> u16 {
+    pub fn g_u16(self) -> u16 {
         u16::from(self.g) << 8
     }
-    pub fn b_u16(&self) -> u16 {
+    pub fn b_u16(self) -> u16 {
         u16::from(self.b) << 8
     }
 }

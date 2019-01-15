@@ -46,8 +46,8 @@ pub struct EditView {
 
 impl EditView {
     pub fn new(
-        main_state: Rc<RefCell<MainState>>,
-        core: Rc<RefCell<Core>>,
+        main_state: &Rc<RefCell<MainState>>,
+        core: &Rc<RefCell<Core>>,
         file_name: Option<String>,
         view_id: &str,
     ) -> Rc<RefCell<EditView>> {
@@ -416,7 +416,7 @@ impl EditView {
             let padding: usize = format!("{}", self.line_cache.height().saturating_sub(1)).len();
             let linecount_layout =
                 self.create_linecount_for_line(&pango_ctx, &main_state, line_num, padding);
-            let linecount_offset = (linecount_layout.get_extents().1.width / pango::SCALE) as f64;
+            let linecount_offset = f64::from(linecount_layout.get_extents().1.width / pango::SCALE);
 
             let layout = self.create_layout_for_line(&pango_ctx, &main_state, line);
             let (_, index, trailing) =
@@ -580,7 +580,7 @@ impl EditView {
                 show_layout(cr, &linecount_layout);
 
                 let linecount_offset =
-                    (linecount_layout.get_extents().1.width / pango::SCALE) as f64;
+                    f64::from(linecount_layout.get_extents().1.width / pango::SCALE);
                 cr.move_to(
                     linecount_offset,
                     self.font_height * (i as f64) - vadj.get_value(),
@@ -604,7 +604,7 @@ impl EditView {
                 for c in line.cursor() {
                     let x = layout_line.index_to_x(*c as i32, false) / pango::SCALE;
                     cr.rectangle(
-                        (x as f64) + linecount_offset - hadj.get_value(),
+                        (f64::from(x)) + linecount_offset - hadj.get_value(),
                         (((self.font_ascent + self.font_descent) as u64) * i) as f64
                             - vadj.get_value(),
                         CURSOR_WIDTH,
@@ -1016,7 +1016,7 @@ impl EditView {
         let needle = self.search_entry.get_text().unwrap_or_default();
         self.core
             .borrow()
-            .find(&self.view_id, needle, false, Some(false));
+            .find(&self.view_id, &needle, false, Some(false));
     }
 
     pub fn stop_search(&self) {
@@ -1052,7 +1052,7 @@ impl EditView {
         let needle = s.unwrap_or_default();
         self.core
             .borrow()
-            .find(&self.view_id, needle, false, Some(false));
+            .find(&self.view_id, &needle, false, Some(false));
     }
 
     pub fn replace(&self) {

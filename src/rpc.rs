@@ -132,7 +132,7 @@ impl Core {
         self.send_notification("edit", &edit_params);
     }
 
-    pub fn client_started(&self, config_dir: Option<String>, client_extras_dir: String) {
+    pub fn client_started(&self, config_dir: &Option<String>, client_extras_dir: &str) {
         self.send_notification(
             "client_started",
             &json!({
@@ -428,7 +428,7 @@ impl Core {
     ///
     /// If `chars` is `None` and there is an active selection, returns
     /// the string value used for the search, else returns `Null`.
-    pub fn find(&self, view_id: &str, chars: String, case_sensitive: bool, regex: Option<bool>) {
+    pub fn find(&self, view_id: &str, chars: &str, case_sensitive: bool, regex: Option<bool>) {
         self.send_edit_cmd(
             view_id,
             "find",
