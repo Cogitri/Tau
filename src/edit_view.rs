@@ -825,11 +825,33 @@ impl EditView {
 
     pub fn handle_scroll(&mut self, es: &EventScroll) -> Inhibit {
         self.da.grab_focus();
+        // TODO: Make this user configurable!
         let amt = self.font_height * 3.0;
 
         let vadj = self.vscrollbar.get_adjustment();
         let hadj = self.hscrollbar.get_adjustment();
         match es.get_direction() {
+            ScrollDirection::Smooth => {
+                let (scroll_change_hori, scroll_change_vert) = match es.get_scroll_deltas() {
+                    Some(v) => v,
+                    None => {
+                        error!("Smooth scrolling failed!");
+                        (0.0, 0.0)
+                    }
+                };
+
+                if scroll_change_vert > 0.0 {
+                    vadj.set_value(vadj.get_value() + scroll_change_vert + amt);
+                } else {
+                    vadj.set_value(vadj.get_value() + scroll_change_vert - amt);
+                }
+
+                if scroll_change_hori > 0.0 {
+                    hadj.set_value(hadj.get_value() + scroll_change_hori + amt);
+                } else {
+                    hadj.set_value(hadj.get_value() + scroll_change_hori - amt);
+                }
+            }
             ScrollDirection::Up => vadj.set_value(vadj.get_value() - amt),
             ScrollDirection::Down => vadj.set_value(vadj.get_value() + amt),
             ScrollDirection::Left => hadj.set_value(hadj.get_value() - amt),
