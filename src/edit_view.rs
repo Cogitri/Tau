@@ -464,6 +464,15 @@ impl EditView {
         let last_line = last_line + 1;
 
         debug!("update visible scroll region {} {}", first_line, last_line);
+        //TODO: This is _really_ not so nice. Instead of requesting more lines than we actually have to it'd be nicer to request them JIT
+        let first_req_line = first_line as f64 * (0.1 * self.line_cache.height() as f64);
+        let last_req_line = last_line as f64 * (0.1 * self.line_cache.height() as f64);
+        debug!("Requesting new lines...");
+        self.core
+            .borrow()
+            .request_lines(&self.view_id, first_req_line as u64, last_req_line as u64);
+
+        debug!("...and scrolling to them!");
         self.core
             .borrow()
             .scroll(&self.view_id, first_line, last_line);
@@ -513,30 +522,6 @@ impl EditView {
         let first_line = (vadj.get_value() / self.font_height) as u64;
         let last_line = ((vadj.get_value() + f64::from(da_height)) / self.font_height) as u64 + 1;
         let last_line = min(last_line, num_lines);
-
-        // debug!("line_cache {} {} {}", self.line_cache.n_invalid_before, self.line_cache.lines.len(), self.line_cache.n_invalid_after);
-        // let missing = self.line_cache.get_missing(first_line, last_line);
-
-        // Find missing lines
-        let mut found_missing = false;
-        for i in first_line..last_line {
-            if self.line_cache.get_line(i).is_none() {
-                error!("missing line {}", i);
-                found_missing = true;
-            }
-        }
-
-        // We've already missed our chance to draw these lines, but we need to request them for the
-        // next frame.  This needs to be improved to prevent flashing.
-        if found_missing {
-            error!(
-                "didn't have some lines, requesting, lines {}-{}",
-                first_line, last_line
-            );
-            self.core
-                .borrow()
-                .request_lines(&self.view_id, first_line as u64, last_line as u64);
-        }
 
         let pango_ctx = self.da.get_pango_context().unwrap();
         pango_ctx.set_font_description(&self.font_desc);
