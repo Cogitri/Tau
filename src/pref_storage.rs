@@ -18,10 +18,16 @@ pub struct XiConfig {
     pub wrap_width: Value,
     pub word_wrap: Value,
     pub autodetect_whitespace: Value,
+    pub line_ending: Value,
 }
 
 impl XiConfig {
     pub fn new() -> XiConfig {
+        #[cfg(windows)]
+        const LINE_ENDING: &str = "\r\n";
+        #[cfg(not(windows))]
+        const LINE_ENDING: &str = "\n";
+
         // Default valuess as dictated by https://github.com/xi-editor/xi-editor/blob/master/rust/core-lib/assets/client_example.toml
         XiConfig {
             tab_size: Value::Integer(4),
@@ -35,6 +41,7 @@ impl XiConfig {
             wrap_width: Value::Integer(0),
             word_wrap: Value::Boolean(false),
             autodetect_whitespace: Value::Boolean(true),
+            line_ending: Value::String(LINE_ENDING.to_string()),
         }
     }
 

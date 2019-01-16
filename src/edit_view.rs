@@ -330,6 +330,7 @@ impl EditView {
                     "use_tab_stops" => (),
                     "word_wrap" => (),
                     "wrap_width" => (),
+                    "line_ending" => (),
                     _ => {
                         error!("unhandled config option {}", name);
                     }
