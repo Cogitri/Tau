@@ -468,9 +468,11 @@ impl EditView {
         let first_req_line = first_line as f64 * (0.1 * self.line_cache.height() as f64);
         let last_req_line = last_line as f64 * (0.1 * self.line_cache.height() as f64);
         debug!("Requesting new lines...");
-        self.core
-            .borrow()
-            .request_lines(&self.view_id, first_req_line as u64, last_req_line as u64);
+        self.core.borrow().request_lines(
+            &self.view_id,
+            first_req_line as u64,
+            last_req_line as u64,
+        );
 
         debug!("...and scrolling to them!");
         self.core

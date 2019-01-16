@@ -21,7 +21,7 @@ impl Line {
     pub fn from_json(v: &Value) -> Line {
         let text = v["text"].as_str().unwrap().to_owned();
         let cursor = if let Some(arr) = v["cursor"].as_array() {
-            arr.iter().map(|c|c.as_u64().unwrap()).collect::<Vec<_>>()
+            arr.iter().map(|c| c.as_u64().unwrap()).collect::<Vec<_>>()
         } else {
             Vec::new()
         };
