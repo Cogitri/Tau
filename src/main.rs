@@ -184,7 +184,7 @@ fn main() {
                     .unwrap_or_else(|e| error!("{}", e.to_string()));
 
                 xi_config
-            },
+            }
             Err(_) => {
                 error!("Couldn't read config, falling back to default XI-Editor config!");
                 xi_config
@@ -210,7 +210,7 @@ fn main() {
                     .unwrap_or_else(|e| error!("{}", e.to_string()));
 
                 gxi_config
-            },
+            }
             Err(_) => {
                 error!("Couldn't read config, falling back to default GXI config!");
                 gxi_config

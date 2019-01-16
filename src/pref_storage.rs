@@ -58,7 +58,7 @@ impl XiConfig {
         config_file.read_to_string(&mut config_string)?;
 
         let config_toml: XiConfig = toml::from_str(&config_string)?;
-        debug!("XI-Config: {:?}", config_toml );
+        debug!("XI-Config: {:?}", config_toml);
 
         Ok(config_toml)
     }
@@ -97,7 +97,7 @@ impl GtkXiConfig {
         config_file.read_to_string(&mut config_string)?;
 
         let config_toml: GtkXiConfig = toml::from_str(&config_string)?;
-        debug!("GXI-Config: {:?}", config_toml );
+        debug!("GXI-Config: {:?}", config_toml);
 
         Ok(config_toml)
     }
