@@ -160,9 +160,9 @@ fn main() {
         .expect("failed to create gtk application");
 
     let mut xi_config_dir = String::new();
-    let mut xi_config = XiConfig::new();
+    let mut xi_config = XiConfig::default();
     let xi_config_file_path;
-    let mut gxi_config = GtkXiConfig::new();
+    let mut gxi_config = GtkXiConfig::default();
     let gxi_config_file_path;
 
     //TODO: This part really needs better error handling...
@@ -172,6 +172,7 @@ fn main() {
         let xi_main_config = config_dir.join("preferences.xiconfig");
 
         xi_config_file_path = xi_main_config.to_str().map(|s| s.to_string()).unwrap();
+        xi_config.open(&xi_config_file_path).unwrap();
         xi_config = match xi_config.open(&xi_config_file_path) {
             Ok(_) => xi_config.open(&xi_config_file_path).unwrap(),
             Err(_) => {

@@ -21,8 +21,8 @@ pub struct XiConfig {
     pub line_ending: Value,
 }
 
-impl XiConfig {
-    pub fn new() -> XiConfig {
+impl Default for XiConfig {
+    fn default() -> XiConfig {
         #[cfg(windows)]
         const LINE_ENDING: &str = "\r\n";
         #[cfg(not(windows))]
@@ -44,7 +44,9 @@ impl XiConfig {
             line_ending: Value::String(LINE_ENDING.to_string()),
         }
     }
+}
 
+impl XiConfig {
     pub fn open(&mut self, path: &str) -> Result<XiConfig, Error> {
         let mut config_file = OpenOptions::new().read(true).open(path)?;
         let mut config_string = String::new();
@@ -71,13 +73,15 @@ pub struct GtkXiConfig {
     pub theme: Value,
 }
 
-impl GtkXiConfig {
-    pub fn new() -> GtkXiConfig {
+impl Default for GtkXiConfig {
+    fn default() -> GtkXiConfig {
         GtkXiConfig {
             theme: Value::String("InspiredGitHub".to_string()),
         }
     }
+}
 
+impl GtkXiConfig {
     pub fn open(&mut self, path: &str) -> Result<GtkXiConfig, Error> {
         let mut config_file = OpenOptions::new().read(true).open(path)?;
         let mut config_string = String::new();
