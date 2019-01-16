@@ -576,10 +576,7 @@ impl EditView {
 
                 let linecount_offset =
                     f64::from(linecount_layout.get_extents().1.width / pango::SCALE);
-                cr.move_to(
-                    linecount_offset,
-                    self.font_height * (i as f64) - vadj.get_value(),
-                );
+                cr.rel_move_to(linecount_offset, 0.0);
 
                 let layout = self.create_layout_for_line(&pango_ctx, &main_state, line);
                 max_width = max(max_width, layout.get_extents().1.width);
