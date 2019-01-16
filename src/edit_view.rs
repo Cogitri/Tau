@@ -743,7 +743,7 @@ impl EditView {
             } else if cur_right > hadj.get_value() + hadj.get_page_size()
                 && hadj.get_page_size() != 0.0
             {
-                let new_value = cur_right - hadj.get_page_size();
+                let new_value = hadj.get_page_size() - cur_right;
                 if new_value + hadj.get_page_size() > hadj.get_upper() {
                     hadj.set_upper(new_value + hadj.get_page_size());
                 }
