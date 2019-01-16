@@ -172,9 +172,19 @@ fn main() {
         let xi_main_config = config_dir.join("preferences.xiconfig");
 
         xi_config_file_path = xi_main_config.to_str().map(|s| s.to_string()).unwrap();
-        xi_config.open(&xi_config_file_path).unwrap();
         xi_config = match xi_config.open(&xi_config_file_path) {
-            Ok(_) => xi_config.open(&xi_config_file_path).unwrap(),
+            Ok(_) => {
+                let xi_config = xi_config.open(&xi_config_file_path).unwrap();
+                /*
+                We have to immediately save the config file here to "upgrade" it (as in add missing
+                entries which have been added by us during a version upgrade
+                */
+                xi_config
+                    .save(&xi_config_file_path)
+                    .unwrap_or_else(|e| error!("{}", e.to_string()));
+
+                xi_config
+            },
             Err(_) => {
                 error!("Couldn't read config, falling back to default XI-Editor config!");
                 xi_config
@@ -188,7 +198,19 @@ fn main() {
         let gxi_main_config = config_dir.join("gxi.toml");
         gxi_config_file_path = gxi_main_config.to_str().map(|s| s.to_string()).unwrap();
         gxi_config = match gxi_config.open(&gxi_config_file_path) {
-            Ok(_) => gxi_config.open(&gxi_config_file_path).unwrap(),
+            Ok(_) => {
+                let gxi_config = gxi_config.open(&gxi_config_file_path).unwrap();
+
+                /*
+                We have to immediately save the config file here to "upgrade" it (as in add missing
+                entries which have been added by us during a version upgrade
+                */
+                gxi_config
+                    .save(&gxi_config_file_path)
+                    .unwrap_or_else(|e| error!("{}", e.to_string()));
+
+                gxi_config
+            },
             Err(_) => {
                 error!("Couldn't read config, falling back to default GXI config!");
                 gxi_config

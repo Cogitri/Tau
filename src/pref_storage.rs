@@ -1,4 +1,5 @@
 use crate::errors::Error;
+use log::{debug, trace};
 use serde_derive::*;
 use std::fs::OpenOptions;
 use std::io::prelude::*;
@@ -6,6 +7,7 @@ use toml::Value;
 
 // For stuff that goes into preferences.xiconfig
 #[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(default)]
 pub struct XiConfig {
     pub tab_size: Value,
     pub translate_tabs_to_spaces: Value,
@@ -47,13 +49,16 @@ impl Default for XiConfig {
 }
 
 impl XiConfig {
-    pub fn open(&mut self, path: &str) -> Result<XiConfig, Error> {
+    pub fn open(&self, path: &str) -> Result<XiConfig, Error> {
+        trace!("Opening XI-config file!");
         let mut config_file = OpenOptions::new().read(true).open(path)?;
         let mut config_string = String::new();
 
+        trace!("Reading XI-config file!");
         config_file.read_to_string(&mut config_string)?;
 
         let config_toml: XiConfig = toml::from_str(&config_string)?;
+        debug!("XI-Config: {:?}", config_toml );
 
         Ok(config_toml)
     }
@@ -69,6 +74,7 @@ impl XiConfig {
 
 // For stuff that _doesn't_ go into preferences.xiconfig and has to be set by us
 #[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(default)]
 pub struct GtkXiConfig {
     pub theme: Value,
 }
@@ -83,12 +89,15 @@ impl Default for GtkXiConfig {
 
 impl GtkXiConfig {
     pub fn open(&mut self, path: &str) -> Result<GtkXiConfig, Error> {
+        trace!("Opening GXI-config file!");
         let mut config_file = OpenOptions::new().read(true).open(path)?;
         let mut config_string = String::new();
 
+        trace!("Reading GXI-config file!");
         config_file.read_to_string(&mut config_string)?;
 
         let config_toml: GtkXiConfig = toml::from_str(&config_string)?;
+        debug!("GXI-Config: {:?}", config_toml );
 
         Ok(config_toml)
     }
