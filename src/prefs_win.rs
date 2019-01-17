@@ -1,5 +1,5 @@
 use crate::main_win::MainState;
-use crate::pref_storage::GtkXiConfig;
+use crate::pref_storage::{Config, GtkXiConfig};
 use crate::rpc::Core;
 use gtk::*;
 use log::{debug, error};
@@ -18,8 +18,7 @@ impl PrefsWin {
         parent: &ApplicationWindow,
         main_state: &Rc<RefCell<MainState>>,
         core: &Rc<RefCell<Core>>,
-        gxi_config: Arc<Mutex<GtkXiConfig>>,
-        gxi_config_file_path: String,
+        gxi_config: Arc<Mutex<Config<GtkXiConfig>>>,
     ) -> Rc<RefCell<PrefsWin>> {
         let glade_src = include_str!("ui/prefs_win.glade");
         let builder = Builder::new_from_string(glade_src);
@@ -45,9 +44,9 @@ impl PrefsWin {
 				let core = core.borrow();
 				core.set_theme(&theme_name);
 
-				let mut config = gxi_config.lock().unwrap();
-				config.theme = Value::String(theme_name.clone());
-				config.save(&gxi_config_file_path).map_err(|e| error!("{}", e.to_string())).unwrap();
+				let mut conf = gxi_config.lock().unwrap();
+				conf.config.theme = Value::String(theme_name.clone());
+				conf.config.save(&conf.path).map_err(|e| error!("{}", e.to_string())).unwrap();
 
 				let mut main_state = main_state.borrow_mut();
 				main_state.theme_name = theme_name;

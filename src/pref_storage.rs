@@ -5,6 +5,11 @@ use std::fs::OpenOptions;
 use std::io::prelude::*;
 use toml::Value;
 
+pub struct Config<T> {
+    pub path: String,
+    pub config: T,
+}
+
 // For stuff that goes into preferences.xiconfig
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(default)]

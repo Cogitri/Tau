@@ -19,7 +19,7 @@ mod theme;
 mod xi_thread;
 
 use crate::main_win::MainWin;
-use crate::pref_storage::{GtkXiConfig, XiConfig};
+use crate::pref_storage::{Config, GtkXiConfig, XiConfig};
 use crate::rpc::{Core, Handler};
 use crate::source::{new_source, SourceFuncs};
 use gio::{ApplicationExt, ApplicationExtManual, ApplicationFlags, FileExt};
@@ -251,7 +251,22 @@ fn main() {
 
         core.client_started(&xi_config_dir, include_str!(concat!(env!("OUT_DIR"), "/plugin-dir.in")));
 
-        let main_win = MainWin::new(application, &shared_queue, &Rc::new(RefCell::new(core.clone())), Arc::new(Mutex::new(xi_config.clone())), xi_config_file_path.to_string(), Arc::new(Mutex::new(gxi_config.clone())), gxi_config_file_path.to_string());
+        let main_win = MainWin::new(
+            application,
+            &shared_queue,
+            &Rc::new(RefCell::new(core.clone())),
+            Arc::new(Mutex::new(
+                Config {
+                    config: xi_config.clone(),
+                    path: xi_config_file_path.to_string(),
+                }
+            )),
+            Arc::new(Mutex::new(
+                Config {
+                    config: gxi_config.clone(),
+                    path: gxi_config_file_path.to_string(),
+                }
+            )));
 
         let source = new_source(QueueSource {
             win: main_win.clone(),

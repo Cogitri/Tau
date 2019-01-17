@@ -1,5 +1,5 @@
 use crate::edit_view::EditView;
-use crate::pref_storage::{GtkXiConfig, XiConfig};
+use crate::pref_storage::{Config, GtkXiConfig, XiConfig};
 use crate::prefs_win::PrefsWin;
 use crate::proto::{self, ThemeSettings};
 use crate::rpc::Core;
@@ -41,10 +41,8 @@ impl MainWin {
         application: &Application,
         shared_queue: &Arc<Mutex<SharedQueue>>,
         core: &Rc<RefCell<Core>>,
-        config: Arc<Mutex<XiConfig>>,
-        config_file_path: String,
-        gxi_config: Arc<Mutex<GtkXiConfig>>,
-        gxi_config_file_path: String,
+        config: Arc<Mutex<Config<XiConfig>>>,
+        gxi_config: Arc<Mutex<Config<GtkXiConfig>>>,
     ) -> Rc<RefCell<MainWin>> {
         let glade_src = include_str!("ui/gxi.glade");
         let builder = Builder::new_from_string(glade_src);
@@ -52,7 +50,7 @@ impl MainWin {
         let window: ApplicationWindow = builder.get_object("appwindow").unwrap();
         let notebook: Notebook = builder.get_object("notebook").unwrap();
 
-        let theme_name = gxi_config.lock().unwrap().theme.to_string();
+        let theme_name = gxi_config.lock().unwrap().config.theme.to_string();
         debug!("theme name: {}", &theme_name);
 
         let main_win = Rc::new(RefCell::new(MainWin {
@@ -96,7 +94,7 @@ impl MainWin {
         {
             let prefs_action = SimpleAction::new("prefs", None);
             prefs_action.connect_activate(clone!(main_win => move |_,_| {
-                MainWin::prefs(main_win.clone(), gxi_config.clone(), gxi_config_file_path.clone());
+                MainWin::prefs(main_win.clone(), gxi_config.clone());
             }));
             application.add_action(&prefs_action);
         }
@@ -145,7 +143,6 @@ impl MainWin {
         }
         {
             let config = config.clone();
-            let config_file_path = config_file_path.clone();
 
             let auto_indent_action = SimpleAction::new_stateful(
                 "auto_indent",
@@ -153,6 +150,7 @@ impl MainWin {
                 &config
                     .lock()
                     .unwrap()
+                    .config
                     .auto_indent
                     .as_bool()
                     .unwrap()
@@ -165,9 +163,10 @@ impl MainWin {
                     action.set_state(value);
                     let value: bool = value.get().unwrap();
                     debug!("auto indent {}", value);
-                    config.lock().unwrap().auto_indent = toml::Value::Boolean(value);
-                    debug!("config file: {}", &config_file_path);
-                    config.lock().unwrap().save(&config_file_path).map_err(|e| error!("{}", e.to_string())).unwrap();
+                    let mut conf = config.lock().unwrap();
+                    conf.config.auto_indent = toml::Value::Boolean(value);
+                    debug!("config file: {}", &conf.path);
+                    conf.config.save(&conf.path).map_err(|e| error!("{}", e.to_string())).unwrap();
                 }
             }));
             application.add_action(&auto_indent_action);
@@ -179,6 +178,7 @@ impl MainWin {
                 &config
                     .lock()
                     .unwrap()
+                    .config
                     .translate_tabs_to_spaces
                     .as_bool()
                     .unwrap()
@@ -190,9 +190,10 @@ impl MainWin {
                     action.set_state(value);
                     let value: bool = value.get().unwrap();
                     debug!("space indent {}", value);
-                    config.lock().unwrap().translate_tabs_to_spaces = toml::Value::Boolean(value);
-                    debug!("config file: {}", &config_file_path);
-                    config.lock().unwrap().save(&config_file_path).map_err(|e| error!("{}", e.to_string())).unwrap();
+                    let mut conf = config.lock().unwrap();
+                    conf.config.translate_tabs_to_spaces = toml::Value::Boolean(value);
+                    debug!("config file: {}", &conf.path);
+                    conf.config.save(&conf.path).map_err(|e| error!("{}", e.to_string())).unwrap();
                 }
             }));
             application.add_action(&space_indent_action);
@@ -486,8 +487,7 @@ impl MainWin {
 
     fn prefs(
         main_win: Rc<RefCell<MainWin>>,
-        gxi_config: Arc<Mutex<GtkXiConfig>>,
-        gxi_config_file_path: String,
+        gxi_config: Arc<Mutex<Config<GtkXiConfig>>>,
     ) {
         // let (main_state, core) = {
         //     let main_win = main_win.borrow();
@@ -502,7 +502,6 @@ impl MainWin {
             &main_state,
             &core,
             gxi_config,
-            gxi_config_file_path,
         );
         //prefs_win.run();
     }
