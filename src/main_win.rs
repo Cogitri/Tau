@@ -169,7 +169,7 @@ impl MainWin {
                     let mut conf = config.lock().unwrap();
                     conf.config.auto_indent = toml::Value::Boolean(value);
                     debug!("config file: {}", &conf.path);
-                    conf.config.save(&conf.path).map_err(|e| error!("{}", e.to_string())).unwrap();
+                    conf.save().map_err(|e| error!("{}", e.to_string())).unwrap();
                 }
             }));
             application.add_action(&auto_indent_action);
@@ -196,7 +196,7 @@ impl MainWin {
                     let mut conf = config.lock().unwrap();
                     conf.config.translate_tabs_to_spaces = toml::Value::Boolean(value);
                     debug!("config file: {}", &conf.path);
-                    conf.config.save(&conf.path).map_err(|e| error!("{}", e.to_string())).unwrap();
+                    conf.save().map_err(|e| error!("{}", e.to_string())).unwrap();
                 }
             }));
             application.add_action(&space_indent_action);

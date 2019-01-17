@@ -159,70 +159,63 @@ fn main() {
     let application = Application::new("com.github.bvinc.gxi", ApplicationFlags::HANDLES_OPEN)
         .expect("failed to create gtk application");
 
-    let mut xi_config_dir = String::new();
-    let mut xi_config = XiConfig::default();
-    let xi_config_file_path;
-    let mut gxi_config = GtkXiConfig::default();
-    let gxi_config_file_path;
-
     //TODO: This part really needs better error handling...
-    if let Some(user_config_dir) = dirs::config_dir() {
+    let (xi_config_dir, xi_config, gxi_config) = if let Some(user_config_dir) = dirs::config_dir() {
         let config_dir = user_config_dir.join("gxi");
         std::fs::create_dir_all(&config_dir)
             .map_err(|e| error!("Failed to create config dir: {}", e.to_string()))
             .unwrap();
 
-        // The path to the main XI config
-        let xi_main_config = config_dir.join("preferences.xiconfig");
+        let mut xi_config = Config::<XiConfig>::new(config_dir.join("preferences.xiconfig").to_str().map(|s| s.to_string()).unwrap());
 
-        xi_config_file_path = xi_main_config.to_str().map(|s| s.to_string()).unwrap();
-        xi_config = match xi_config.open(&xi_config_file_path) {
+        xi_config = match xi_config.open() {
             Ok(_) => {
-                let xi_config = xi_config.open(&xi_config_file_path).unwrap();
+                let xi_config = xi_config.open().unwrap();
                 /*
                 We have to immediately save the config file here to "upgrade" it (as in add missing
                 entries which have been added by us during a version upgrade
                 */
                 xi_config
-                    .save(&xi_config_file_path)
+                    .save()
                     .unwrap_or_else(|e| error!("{}", e.to_string()));
 
-                xi_config
+                xi_config.clone()
             }
             Err(_) => {
                 error!("Couldn't read config, falling back to default XI-Editor config!");
                 xi_config
-                    .save(&xi_config_file_path)
+                    .save()
                     .unwrap_or_else(|e| error!("{}", e.to_string()));
                 xi_config
             }
         };
-        xi_config_dir = config_dir.to_str().map(|s| s.to_string()).unwrap();
 
-        let gxi_main_config = config_dir.join("gxi.toml");
-        gxi_config_file_path = gxi_main_config.to_str().map(|s| s.to_string()).unwrap();
-        gxi_config = match gxi_config.open(&gxi_config_file_path) {
+        let mut gxi_config = Config::<GtkXiConfig>::new(config_dir.join("gxi.toml").to_str().map(|s| s.to_string()).unwrap());
+
+        gxi_config = match gxi_config.open() {
             Ok(_) => {
-                let gxi_config = gxi_config.open(&gxi_config_file_path).unwrap();
+                let gxi_config = gxi_config.open().unwrap();
 
                 /*
                 We have to immediately save the config file here to "upgrade" it (as in add missing
                 entries which have been added by us during a version upgrade
                 */
                 gxi_config
-                    .save(&gxi_config_file_path)
+                    .save()
                     .unwrap_or_else(|e| error!("{}", e.to_string()));
 
-                gxi_config
+                gxi_config.clone()
             }
             Err(_) => {
                 error!("Couldn't read config, falling back to default GXI config!");
                 gxi_config
-                    .save(&gxi_config_file_path)
+                    .save()
                     .unwrap_or_else(|e| error!("{}", e.to_string()));
                 gxi_config
             }
         };
+
+        (config_dir.to_str().map(|s| s.to_string()).unwrap(), xi_config, gxi_config)
     } else {
         error!("Couldn't determine home dir! Settings will be temporary!");
 
@@ -233,18 +226,18 @@ fn main() {
             .unwrap()
             .into_path();
 
-        let xi_main_config = config_dir.join("preferences.xiconfig");
-        xi_config_file_path = xi_main_config.to_str().map(|s| s.to_string()).unwrap();
+        let xi_config = Config::<XiConfig>::new(config_dir.join("preferences.xiconfig").to_str().map(|s| s.to_string()).unwrap());
         xi_config
-            .save(&xi_config_file_path)
+            .save()
             .unwrap_or_else(|e| error!("{}", e.to_string()));
 
-        let gxi_main_config = config_dir.join("gxi.toml");
-        gxi_config_file_path = gxi_main_config.to_str().map(|s| s.to_string()).unwrap();
+        let gxi_config = Config::<GtkXiConfig>::new(config_dir.join("gxi.toml").to_str().map(|s| s.to_string()).unwrap());
         gxi_config
-            .save(&gxi_config_file_path)
+            .save()
             .unwrap_or_else(|e| error!("{}", e.to_string()));
-    }
+
+        (config_dir.to_str().map(|s| s.to_string()).unwrap(), xi_config, gxi_config)
+    };
 
     application.connect_startup(clone!(shared_queue, core => move |application| {
         debug!("startup");
@@ -255,18 +248,8 @@ fn main() {
             application,
             &shared_queue,
             &Rc::new(RefCell::new(core.clone())),
-            Arc::new(Mutex::new(
-                Config {
-                    config: xi_config.clone(),
-                    path: xi_config_file_path.to_string(),
-                }
-            )),
-            Arc::new(Mutex::new(
-                Config {
-                    config: gxi_config.clone(),
-                    path: gxi_config_file_path.to_string(),
-                }
-            )));
+            Arc::new(Mutex::new(xi_config.clone())),
+            Arc::new(Mutex::new(gxi_config.clone())));
 
         let source = new_source(QueueSource {
             win: main_win.clone(),

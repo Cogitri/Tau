@@ -1,16 +1,35 @@
 use crate::errors::Error;
 use log::{debug, trace};
+use serde::{Serialize, de::DeserializeOwned};
 use serde_derive::*;
+use std::fmt::Debug;
 use std::fs::OpenOptions;
 use std::io::prelude::*;
 use toml::Value;
 
+/// Generic wrapper struct around GtkXiConfig and XiConfig
+#[derive(Clone, Debug)]
 pub struct Config<T> {
     pub path: String,
     pub config: T,
 }
 
-// For stuff that goes into preferences.xiconfig
+/// For stuff that _doesn't_ go into preferences.xiconfig and has to be set by us
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(default)]
+pub struct GtkXiConfig {
+    pub theme: Value,
+}
+
+impl Default for GtkXiConfig {
+    fn default() -> GtkXiConfig {
+        GtkXiConfig {
+            theme: Value::String("InspiredGitHub".to_string()),
+        }
+    }
+}
+
+/// For stuff that goes into preferences.xiconfig
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(default)]
 pub struct XiConfig {
@@ -53,64 +72,43 @@ impl Default for XiConfig {
     }
 }
 
-impl XiConfig {
-    pub fn open(&self, path: &str) -> Result<XiConfig, Error> {
-        trace!("Opening XI-config file!");
-        let mut config_file = OpenOptions::new().read(true).open(path)?;
-        let mut config_string = String::new();
-
-        trace!("Reading XI-config file!");
-        config_file.read_to_string(&mut config_string)?;
-
-        let config_toml: XiConfig = toml::from_str(&config_string)?;
-        debug!("XI-Config: {:?}", config_toml);
-
-        Ok(config_toml)
-    }
-
-    pub fn save(&self, path: &str) -> Result<(), Error> {
-        let mut config_file = OpenOptions::new().write(true).create(true).open(path)?;
-
-        config_file.write_all(toml::to_string(self)?.as_bytes())?;
-
-        Ok(())
-    }
-}
-
-// For stuff that _doesn't_ go into preferences.xiconfig and has to be set by us
-#[derive(Clone, Debug, Deserialize, Serialize)]
-#[serde(default)]
-pub struct GtkXiConfig {
-    pub theme: Value,
-}
-
-impl Default for GtkXiConfig {
-    fn default() -> GtkXiConfig {
-        GtkXiConfig {
-            theme: Value::String("InspiredGitHub".to_string()),
+impl <T> Config<T> {
+    pub fn new(path: String) -> Config<T>
+    where
+        T: Default,
+    {
+        Config {
+            config: T::default(),
+            path,
         }
     }
-}
 
-impl GtkXiConfig {
-    pub fn open(&mut self, path: &str) -> Result<GtkXiConfig, Error> {
-        trace!("Opening GXI-config file!");
-        let mut config_file = OpenOptions::new().read(true).open(path)?;
+    pub fn open(&mut self) -> Result<&mut Config<T>, Error>
+        where
+            T: Clone + Debug + DeserializeOwned,
+    {
+        trace!("Opening config file!");
+        let mut config_file = OpenOptions::new().read(true).open(&self.path)?;
         let mut config_string = String::new();
 
-        trace!("Reading GXI-config file!");
+        trace!("Reading config file!");
         config_file.read_to_string(&mut config_string)?;
 
-        let config_toml: GtkXiConfig = toml::from_str(&config_string)?;
-        debug!("GXI-Config: {:?}", config_toml);
+        let config_toml: T = toml::from_str(&config_string)?;
+        debug!("XI-Config: {:?}", config_toml);
 
-        Ok(config_toml)
+        self.config = config_toml.clone();
+
+        Ok(self)
     }
 
-    pub fn save(&self, path: &str) -> Result<(), Error> {
-        let mut config_file = OpenOptions::new().write(true).create(true).open(path)?;
+    pub fn save(&self) -> Result<(), Error>
+        where T:
+            Serialize,
+    {
+        let mut config_file = OpenOptions::new().write(true).create(true).open(&self.path)?;
 
-        config_file.write_all(toml::to_string(self)?.as_bytes())?;
+        config_file.write_all(toml::to_string(&self.config)?.as_bytes())?;
 
         Ok(())
     }

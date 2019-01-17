@@ -57,7 +57,7 @@ impl PrefsWin {
 
 				let mut conf = xi_config.lock().unwrap();
 				conf.config.font_face = Value::String(font_name);
-				conf.config.save(&conf.path).map_err(|e| error!("{}", e.to_string())).unwrap();
+				conf.save().map_err(|e| error!("{}", e.to_string())).unwrap();
 			}
 		}));
 
@@ -69,7 +69,7 @@ impl PrefsWin {
 
 				let mut conf = gxi_config.lock().unwrap();
 				conf.config.theme = Value::String(theme_name.clone());
-				conf.config.save(&conf.path).map_err(|e| error!("{}", e.to_string())).unwrap();
+				conf.save().map_err(|e| error!("{}", e.to_string())).unwrap();
 
 				let mut main_state = main_state.borrow_mut();
 				main_state.theme_name = theme_name;
