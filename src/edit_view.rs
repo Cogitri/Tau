@@ -17,6 +17,20 @@ use std::ffi::CString;
 use std::rc::Rc;
 use std::u32;
 
+pub struct EVReplace {
+    replace_expander: Expander,
+    replace_revealer: Revealer,
+    replace_entry: Entry,
+}
+
+pub struct EVFont {
+    font_height: f64,
+    font_width: f64,
+    font_ascent: f64,
+    font_descent: f64,
+    font_desc: FontDescription,
+}
+
 pub struct EditView {
     core: Rc<RefCell<Core>>,
     main_state: Rc<RefCell<MainState>>,
@@ -28,20 +42,14 @@ pub struct EditView {
     pub tab_widget: gtk::Box,
     search_bar: SearchBar,
     search_entry: SearchEntry,
-    replace_expander: Expander,
-    replace_revealer: Revealer,
-    replace_entry: Entry,
     find_status_label: Label,
     pub label: Label,
     pub close_button: Button,
     hscrollbar: Scrollbar,
     vscrollbar: Scrollbar,
     line_cache: LineCache,
-    font_height: f64,
-    font_width: f64,
-    font_ascent: f64,
-    font_descent: f64,
-    font_desc: FontDescription,
+    replace: EVReplace,
+    font: EVFont,
 }
 
 impl EditView {
@@ -149,6 +157,20 @@ impl EditView {
             font_width, font_height, font_ascent, font_descent
         );
 
+        let replace = EVReplace {
+            replace_expander: replace_expander.clone(),
+            replace_revealer: replace_revealer.clone(),
+            replace_entry: replace_entry.clone(),
+        };
+
+        let font = EVFont {
+            font_height,
+            font_width,
+            font_ascent,
+            font_descent,
+            font_desc,
+        };
+
         let edit_view = Rc::new(RefCell::new(EditView {
             core: core.clone(),
             main_state: main_state.clone(),
@@ -165,15 +187,9 @@ impl EditView {
             line_cache: LineCache::new(),
             search_bar: search_bar.clone(),
             search_entry: search_entry.clone(),
-            replace_expander: replace_expander.clone(),
-            replace_revealer: replace_revealer.clone(),
-            replace_entry: replace_entry.clone(),
             find_status_label: find_status_label.clone(),
-            font_height,
-            font_width,
-            font_ascent,
-            font_descent,
-            font_desc,
+            font,
+            replace,
         }));
 
         edit_view.borrow_mut().update_title();
@@ -304,7 +320,9 @@ impl EditView {
                 match name.as_ref() {
                     "font_size" => {
                         if let Some(font_size) = value.as_u64() {
-                            self.font_desc.set_size(font_size as i32 * pango::SCALE);
+                            self.font
+                                .font_desc
+                                .set_size(font_size as i32 * pango::SCALE);
                         }
                     }
                     "font_face" => {
@@ -312,9 +330,9 @@ impl EditView {
                             if font_face == "InconsolataGo" {
                                 // TODO This shouldn't be necessary, but the only font I've found
                                 // to bundle is "Inconsolata"
-                                self.font_desc.set_family("Inconsolata");
+                                self.font.font_desc.set_family("Inconsolata");
                             } else {
-                                self.font_desc.set_family(font_face);
+                                self.font.font_desc.set_family(font_face);
                             }
                         }
                     }
@@ -413,11 +431,11 @@ impl EditView {
         let x = x + self.hscrollbar.get_adjustment().get_value();
         let y = y + self.vscrollbar.get_adjustment().get_value();
 
-        let mut y = y - self.font_descent;
+        let mut y = y - self.font.font_descent;
         if y < 0.0 {
             y = 0.0;
         }
-        let line_num = (y / self.font_height) as u64;
+        let line_num = (y / self.font.font_height) as u64;
         let index = if let Some(line) = self.line_cache.get_line(line_num) {
             let pango_ctx = self
                 .da
@@ -436,7 +454,7 @@ impl EditView {
         } else {
             0
         };
-        (index as u64, (y / self.font_height) as u64)
+        (index as u64, (y / self.font.font_height) as u64)
     }
 
     fn da_size_allocate(&mut self, da_width: i32, da_height: i32) {
@@ -486,14 +504,14 @@ impl EditView {
         let da_height = f64::from(self.da.get_allocated_height());
         let num_lines = self.line_cache.height();
 
-        let all_text_height = num_lines as f64 * self.font_height + self.font_descent;
+        let all_text_height = num_lines as f64 * self.font.font_height + self.font.font_descent;
         let height = if da_height > all_text_height {
             da_height
         } else {
             all_text_height
         };
 
-        let all_text_width = self.line_cache.width() as f64 * self.font_width;
+        let all_text_width = self.line_cache.width() as f64 * self.font.font_width;
         let width = if da_width > all_text_width {
             da_width
         } else {
@@ -522,12 +540,13 @@ impl EditView {
         let hadj = self.hscrollbar.get_adjustment();
         trace!("drawing.  vadj={}, {}", vadj.get_value(), vadj.get_upper());
 
-        let first_line = (vadj.get_value() / self.font_height) as u64;
-        let last_line = ((vadj.get_value() + f64::from(da_height)) / self.font_height) as u64 + 1;
+        let first_line = (vadj.get_value() / self.font.font_height) as u64;
+        let last_line =
+            ((vadj.get_value() + f64::from(da_height)) / self.font.font_height) as u64 + 1;
         let last_line = min(last_line, num_lines);
 
         let pango_ctx = self.da.get_pango_context().unwrap();
-        pango_ctx.set_font_description(&self.font_desc);
+        pango_ctx.set_font_description(&self.font.font_desc);
 
         // Draw background
         set_source_color(cr, theme.background);
@@ -565,7 +584,7 @@ impl EditView {
             if let Some(line) = self.line_cache.get_line(i) {
                 cr.move_to(
                     -hadj.get_value(),
-                    self.font_height * (i as f64) - vadj.get_value(),
+                    self.font.font_height * (i as f64) - vadj.get_value(),
                 );
 
                 let pango_ctx = self
@@ -600,10 +619,10 @@ impl EditView {
                     let x = layout_line.index_to_x(*c as i32, false) / pango::SCALE;
                     cr.rectangle(
                         (f64::from(x)) + linecount_offset - hadj.get_value(),
-                        (((self.font_ascent + self.font_descent) as u64) * i) as f64
+                        (((self.font.font_ascent + self.font.font_descent) as u64) * i) as f64
                             - vadj.get_value(),
                         CURSOR_WIDTH,
-                        self.font_ascent + self.font_descent,
+                        self.font.font_ascent + self.font.font_descent,
                     );
                     cr.fill();
                 }
@@ -625,7 +644,7 @@ impl EditView {
     ) -> pango::Layout {
         let line_view = format!("{:>offset$} ", n, offset = padding);
         let layout = pango::Layout::new(&pango_ctx);
-        layout.set_font_description(&self.font_desc);
+        layout.set_font_description(&self.font.font_desc);
         layout.set_text(line_view.as_str());
         layout
     }
@@ -645,7 +664,7 @@ impl EditView {
 
         // let layout = create_layout(cr).unwrap();
         let layout = pango::Layout::new(&pango_ctx);
-        layout.set_font_description(&self.font_desc);
+        layout.set_font_description(&self.font.font_desc);
         layout.set_text(line_view);
 
         let mut ix = 0;
@@ -722,8 +741,8 @@ impl EditView {
 
     pub fn scroll_to(&mut self, line: u64, col: u64) {
         {
-            let cur_top = self.font_height * ((line + 1) as f64) - self.font_ascent;
-            let cur_bottom = cur_top + self.font_ascent + self.font_descent;
+            let cur_top = self.font.font_height * ((line + 1) as f64) - self.font.font_ascent;
+            let cur_bottom = cur_top + self.font.font_ascent + self.font.font_descent;
             let vadj = self.vscrollbar.get_adjustment();
             if cur_top < vadj.get_value() {
                 vadj.set_value(cur_top);
@@ -735,8 +754,8 @@ impl EditView {
         }
 
         {
-            let cur_left = self.font_width * (col as f64) - self.font_ascent;
-            let cur_right = cur_left + self.font_width * 2.0;
+            let cur_left = self.font.font_width * (col as f64) - self.font.font_ascent;
+            let cur_right = cur_left + self.font.font_width * 2.0;
             let hadj = self.hscrollbar.get_adjustment();
             if cur_left < hadj.get_value() {
                 hadj.set_value(cur_left);
@@ -811,7 +830,7 @@ impl EditView {
     pub fn handle_scroll(&mut self, es: &EventScroll) -> Inhibit {
         self.da.grab_focus();
         // TODO: Make this user configurable!
-        let amt = self.font_height * 3.0;
+        let amt = self.font.font_height * 3.0;
 
         let vadj = self.vscrollbar.get_adjustment();
         let hadj = self.hscrollbar.get_adjustment();
@@ -1027,8 +1046,8 @@ impl EditView {
 
     pub fn start_search(&self) {
         self.search_bar.set_search_mode(true);
-        self.replace_expander.set_expanded(false);
-        self.replace_revealer.set_reveal_child(false);
+        self.replace.replace_expander.set_expanded(false);
+        self.replace.replace_revealer.set_reveal_child(false);
         self.search_entry.grab_focus();
         let needle = self.search_entry.get_text().unwrap_or_default();
         self.core
@@ -1073,7 +1092,7 @@ impl EditView {
     }
 
     pub fn replace(&self) {
-        let replace_chars = self.replace_entry.get_text().unwrap_or_default();
+        let replace_chars = self.replace.replace_entry.get_text().unwrap_or_default();
         self.core
             .borrow()
             .replace(&self.view_id, &replace_chars, false);
@@ -1081,7 +1100,7 @@ impl EditView {
     }
 
     pub fn replace_all(&self) {
-        let replace_chars = self.replace_entry.get_text().unwrap_or_default();
+        let replace_chars = self.replace.replace_entry.get_text().unwrap_or_default();
         self.core
             .borrow()
             .replace(&self.view_id, &replace_chars, false);
