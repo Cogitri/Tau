@@ -168,7 +168,9 @@ fn main() {
     //TODO: This part really needs better error handling...
     if let Some(user_config_dir) = dirs::config_dir() {
         let config_dir = user_config_dir.join("gxi");
-        std::fs::create_dir_all(&config_dir).map_err(|e| error!("Failed to create config dir: {}", e.to_string())).unwrap();
+        std::fs::create_dir_all(&config_dir)
+            .map_err(|e| error!("Failed to create config dir: {}", e.to_string()))
+            .unwrap();
 
         // The path to the main XI config
         let xi_main_config = config_dir.join("preferences.xiconfig");
