@@ -1,6 +1,6 @@
 use crate::errors::Error;
 use log::{debug, trace};
-use serde::{Serialize, de::DeserializeOwned};
+use serde::{de::DeserializeOwned, Serialize};
 use serde_derive::*;
 use std::fmt::Debug;
 use std::fs::OpenOptions;
@@ -72,7 +72,7 @@ impl Default for XiConfig {
     }
 }
 
-impl <T> Config<T> {
+impl<T> Config<T> {
     pub fn new(path: String) -> Config<T>
     where
         T: Default,
@@ -84,8 +84,8 @@ impl <T> Config<T> {
     }
 
     pub fn open(&mut self) -> Result<&mut Config<T>, Error>
-        where
-            T: Clone + Debug + DeserializeOwned,
+    where
+        T: Clone + Debug + DeserializeOwned,
     {
         trace!("Opening config file!");
         let mut config_file = OpenOptions::new().read(true).open(&self.path)?;
@@ -103,10 +103,13 @@ impl <T> Config<T> {
     }
 
     pub fn save(&self) -> Result<(), Error>
-        where T:
-            Serialize,
+    where
+        T: Serialize,
     {
-        let mut config_file = OpenOptions::new().write(true).create(true).open(&self.path)?;
+        let mut config_file = OpenOptions::new()
+            .write(true)
+            .create(true)
+            .open(&self.path)?;
 
         config_file.write_all(toml::to_string(&self.config)?.as_bytes())?;
 

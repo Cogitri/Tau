@@ -161,7 +161,7 @@ impl MainWin {
             );;
 
             #[allow(unused_variables)]
-                auto_indent_action.connect_change_state(clone!(main_win => move |action, value| {
+            auto_indent_action.connect_change_state(clone!(main_win => move |action, value| {
                 if let Some(value) = value.as_ref() {
                     action.set_state(value);
                     let value: bool = value.get().unwrap();
@@ -501,13 +501,7 @@ impl MainWin {
         let main_state = main_win.state.clone();
         let core = main_win.core.clone();
         #[allow(unused_variables)]
-        let prefs_win = PrefsWin::new(
-            &main_win.window,
-            &main_state,
-            &core,
-            xi_config,
-            gxi_config,
-        );
+        let prefs_win = PrefsWin::new(&main_win.window, &main_state, &core, xi_config, gxi_config);
         //prefs_win.run();
     }
 

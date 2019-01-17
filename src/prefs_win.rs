@@ -52,29 +52,29 @@ impl PrefsWin {
         }
         #[allow(unused_variables)]
         font_combo_box.connect_changed(clone!(core => move |cb|{
-			if let Some(font_name) = cb.get_active_text() {
-				debug!("font changed to {:?}", &font_name);
+            if let Some(font_name) = cb.get_active_text() {
+                debug!("font changed to {:?}", &font_name);
 
-				let mut conf = xi_config.lock().unwrap();
-				conf.config.font_face = Value::String(font_name);
-				conf.save().map_err(|e| error!("{}", e.to_string())).unwrap();
-			}
-		}));
+                let mut conf = xi_config.lock().unwrap();
+                conf.config.font_face = Value::String(font_name);
+                conf.save().map_err(|e| error!("{}", e.to_string())).unwrap();
+            }
+        }));
 
         theme_combo_box.connect_changed(clone!(core, main_state => move |cb|{
-			if let Some(theme_name) = cb.get_active_text() {
-				debug!("theme changed to {:?}", cb.get_active_text());
-				let core = core.borrow();
-				core.set_theme(&theme_name);
+            if let Some(theme_name) = cb.get_active_text() {
+                debug!("theme changed to {:?}", cb.get_active_text());
+                let core = core.borrow();
+                core.set_theme(&theme_name);
 
-				let mut conf = gxi_config.lock().unwrap();
-				conf.config.theme = Value::String(theme_name.clone());
-				conf.save().map_err(|e| error!("{}", e.to_string())).unwrap();
+                let mut conf = gxi_config.lock().unwrap();
+                conf.config.theme = Value::String(theme_name.clone());
+                conf.save().map_err(|e| error!("{}", e.to_string())).unwrap();
 
-				let mut main_state = main_state.borrow_mut();
-				main_state.theme_name = theme_name;
-			}
-		}));
+                let mut main_state = main_state.borrow_mut();
+                main_state.theme_name = theme_name;
+            }
+        }));
 
         let prefs_win = Rc::new(RefCell::new(PrefsWin {
             core: core.clone(),

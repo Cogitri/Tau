@@ -117,7 +117,12 @@ impl EditView {
         }
 
         let pango_ctx = da.get_pango_context().expect("failed to get pango ctx");
-        let font_list: Vec<String> = pango_ctx.list_families().iter().filter(|f| f.is_monospace()).filter_map(|f| f.get_name()).collect();
+        let font_list: Vec<String> = pango_ctx
+            .list_families()
+            .iter()
+            .filter(|f| f.is_monospace())
+            .filter_map(|f| f.get_name())
+            .collect();
         main_state.borrow_mut().fonts = font_list;
 
         let font_desc = FontDescription::from_string("Inconsolata 16");

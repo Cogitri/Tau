@@ -166,7 +166,13 @@ fn main() {
             .map_err(|e| error!("Failed to create config dir: {}", e.to_string()))
             .unwrap();
 
-        let mut xi_config = Config::<XiConfig>::new(config_dir.join("preferences.xiconfig").to_str().map(|s| s.to_string()).unwrap());
+        let mut xi_config = Config::<XiConfig>::new(
+            config_dir
+                .join("preferences.xiconfig")
+                .to_str()
+                .map(|s| s.to_string())
+                .unwrap(),
+        );
 
         xi_config = match xi_config.open() {
             Ok(_) => {
@@ -190,7 +196,13 @@ fn main() {
             }
         };
 
-        let mut gxi_config = Config::<GtkXiConfig>::new(config_dir.join("gxi.toml").to_str().map(|s| s.to_string()).unwrap());
+        let mut gxi_config = Config::<GtkXiConfig>::new(
+            config_dir
+                .join("gxi.toml")
+                .to_str()
+                .map(|s| s.to_string())
+                .unwrap(),
+        );
 
         gxi_config = match gxi_config.open() {
             Ok(_) => {
@@ -215,7 +227,11 @@ fn main() {
             }
         };
 
-        (config_dir.to_str().map(|s| s.to_string()).unwrap(), xi_config, gxi_config)
+        (
+            config_dir.to_str().map(|s| s.to_string()).unwrap(),
+            xi_config,
+            gxi_config,
+        )
     } else {
         error!("Couldn't determine home dir! Settings will be temporary!");
 
@@ -226,17 +242,33 @@ fn main() {
             .unwrap()
             .into_path();
 
-        let xi_config = Config::<XiConfig>::new(config_dir.join("preferences.xiconfig").to_str().map(|s| s.to_string()).unwrap());
+        let xi_config = Config::<XiConfig>::new(
+            config_dir
+                .join("preferences.xiconfig")
+                .to_str()
+                .map(|s| s.to_string())
+                .unwrap(),
+        );
         xi_config
             .save()
             .unwrap_or_else(|e| error!("{}", e.to_string()));
 
-        let gxi_config = Config::<GtkXiConfig>::new(config_dir.join("gxi.toml").to_str().map(|s| s.to_string()).unwrap());
+        let gxi_config = Config::<GtkXiConfig>::new(
+            config_dir
+                .join("gxi.toml")
+                .to_str()
+                .map(|s| s.to_string())
+                .unwrap(),
+        );
         gxi_config
             .save()
             .unwrap_or_else(|e| error!("{}", e.to_string()));
 
-        (config_dir.to_str().map(|s| s.to_string()).unwrap(), xi_config, gxi_config)
+        (
+            config_dir.to_str().map(|s| s.to_string()).unwrap(),
+            xi_config,
+            gxi_config,
+        )
     };
 
     application.connect_startup(clone!(shared_queue, core => move |application| {
