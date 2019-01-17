@@ -117,16 +117,9 @@ impl EditView {
         }
 
         let pango_ctx = da.get_pango_context().expect("failed to get pango ctx");
-        for family in pango_ctx.list_families() {
-            if !family.is_monospace() {
-                continue;
-            }
-            debug!(
-                "font family {:?} monospace: {}",
-                family.get_name(),
-                family.is_monospace()
-            );
-        }
+        let font_list: Vec<String> = pango_ctx.list_families().iter().filter(|f| f.is_monospace()).filter_map(|f| f.get_name()).collect();
+        main_state.borrow_mut().fonts = font_list;
+
         let font_desc = FontDescription::from_string("Inconsolata 16");
         // font_desc.set_size(14 * pango::SCALE);
         pango_ctx.set_font_description(&font_desc);
@@ -327,6 +320,7 @@ impl EditView {
                     }
                     "font_face" => {
                         if let Some(font_face) = value.as_str() {
+                            debug!("Setting font to {}", font_face);
                             if font_face == "InconsolataGo" {
                                 // TODO This shouldn't be necessary, but the only font I've found
                                 // to bundle is "Inconsolata"

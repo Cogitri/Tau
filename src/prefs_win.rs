@@ -1,5 +1,5 @@
 use crate::main_win::MainState;
-use crate::pref_storage::{Config, GtkXiConfig};
+use crate::pref_storage::{Config, GtkXiConfig, XiConfig};
 use crate::rpc::Core;
 use gtk::*;
 use log::{debug, error};
@@ -18,13 +18,14 @@ impl PrefsWin {
         parent: &ApplicationWindow,
         main_state: &Rc<RefCell<MainState>>,
         core: &Rc<RefCell<Core>>,
+        xi_config: Arc<Mutex<Config<XiConfig>>>,
         gxi_config: Arc<Mutex<Config<GtkXiConfig>>>,
     ) -> Rc<RefCell<PrefsWin>> {
         let glade_src = include_str!("ui/prefs_win.glade");
         let builder = Builder::new_from_string(glade_src);
 
         let window: Window = builder.get_object("prefs_win").unwrap();
-        //let font_combo_box: ComboBoxText = builder.get_object("font_combo_box").unwrap();
+        let font_combo_box: ComboBoxText = builder.get_object("font_combo_box").unwrap();
         let theme_combo_box: ComboBoxText = builder.get_object("theme_combo_box").unwrap();
 
         {
@@ -37,6 +38,28 @@ impl PrefsWin {
                 }
             }
         }
+
+        {
+            let main_state = main_state.borrow();
+            let conf = xi_config.lock().unwrap();
+            for (i, font_name) in main_state.fonts.iter().enumerate() {
+                font_combo_box.append_text(font_name);
+                if conf.config.font_face == Value::String(font_name.to_string()) {
+                    debug!("Setting active font {}, num {}", &font_name, i);
+                    font_combo_box.set_active(i as i32);
+                }
+            }
+        }
+        #[allow(unused_variables)]
+        font_combo_box.connect_changed(clone!(core => move |cb|{
+			if let Some(font_name) = cb.get_active_text() {
+				debug!("font changed to {:?}", &font_name);
+
+				let mut conf = xi_config.lock().unwrap();
+				conf.config.font_face = Value::String(font_name);
+				conf.config.save(&conf.path).map_err(|e| error!("{}", e.to_string())).unwrap();
+			}
+		}));
 
         theme_combo_box.connect_changed(clone!(core, main_state => move |cb|{
 			if let Some(theme_name) = cb.get_active_text() {

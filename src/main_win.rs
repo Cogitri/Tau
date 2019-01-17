@@ -20,6 +20,7 @@ pub struct MainState {
     pub theme_name: String,
     pub theme: Theme,
     pub styles: Vec<Style>,
+    pub fonts: Vec<String>,
 }
 
 pub struct MainWin {
@@ -67,6 +68,7 @@ impl MainWin {
                 theme_name,
                 theme: Default::default(),
                 styles: Default::default(),
+                fonts: Default::default(),
             })),
         }));
 
@@ -93,8 +95,9 @@ impl MainWin {
         }
         {
             let prefs_action = SimpleAction::new("prefs", None);
+            let xi_config = config.clone();
             prefs_action.connect_activate(clone!(main_win => move |_,_| {
-                MainWin::prefs(main_win.clone(), gxi_config.clone());
+                MainWin::prefs(main_win.clone(), xi_config.clone(), gxi_config.clone())
             }));
             application.add_action(&prefs_action);
         }
@@ -487,6 +490,7 @@ impl MainWin {
 
     fn prefs(
         main_win: Rc<RefCell<MainWin>>,
+        xi_config: Arc<Mutex<Config<XiConfig>>>,
         gxi_config: Arc<Mutex<Config<GtkXiConfig>>>,
     ) {
         // let (main_state, core) = {
@@ -501,6 +505,7 @@ impl MainWin {
             &main_win.window,
             &main_state,
             &core,
+            xi_config,
             gxi_config,
         );
         //prefs_win.run();
