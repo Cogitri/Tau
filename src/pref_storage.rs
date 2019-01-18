@@ -5,7 +5,6 @@ use serde_derive::*;
 use std::fmt::Debug;
 use std::fs::OpenOptions;
 use std::io::prelude::*;
-use toml::Value;
 
 /// Generic wrapper struct around GtkXiConfig and XiConfig
 #[derive(Clone, Debug)]
@@ -18,13 +17,13 @@ pub struct Config<T> {
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(default)]
 pub struct GtkXiConfig {
-    pub theme: Value,
+    pub theme: String,
 }
 
 impl Default for GtkXiConfig {
     fn default() -> GtkXiConfig {
         GtkXiConfig {
-            theme: Value::String("InspiredGitHub".to_string()),
+            theme: "InspiredGitHub".to_string(),
         }
     }
 }
@@ -33,18 +32,18 @@ impl Default for GtkXiConfig {
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(default)]
 pub struct XiConfig {
-    pub tab_size: Value,
-    pub translate_tabs_to_spaces: Value,
-    pub use_tab_stops: Value,
-    pub plugin_search_path: Value,
-    pub font_face: Value,
-    pub font_size: Value,
-    pub auto_indent: Value,
-    pub scroll_past_end: Value,
-    pub wrap_width: Value,
-    pub word_wrap: Value,
-    pub autodetect_whitespace: Value,
-    pub line_ending: Value,
+    pub tab_size: u32,
+    pub translate_tabs_to_spaces: bool,
+    pub use_tab_stops: bool,
+    pub plugin_search_path: Vec<String>,
+    pub font_face: String,
+    pub font_size: u32,
+    pub auto_indent: bool,
+    pub scroll_past_end: bool,
+    pub wrap_width: u32,
+    pub word_wrap: bool,
+    pub autodetect_whitespace: bool,
+    pub line_ending: String,
 }
 
 impl Default for XiConfig {
@@ -56,18 +55,18 @@ impl Default for XiConfig {
 
         // Default valuess as dictated by https://github.com/xi-editor/xi-editor/blob/master/rust/core-lib/assets/client_example.toml
         XiConfig {
-            tab_size: Value::Integer(4),
-            translate_tabs_to_spaces: Value::Boolean(false),
-            use_tab_stops: Value::Boolean(true),
-            plugin_search_path: Value::String("".to_string()),
-            font_face: Value::String("Inconsolata".to_string()),
-            font_size: Value::Integer(12),
-            auto_indent: Value::Boolean(true),
-            scroll_past_end: Value::Boolean(false),
-            wrap_width: Value::Integer(0),
-            word_wrap: Value::Boolean(false),
-            autodetect_whitespace: Value::Boolean(true),
-            line_ending: Value::String(LINE_ENDING.to_string()),
+            tab_size: 4,
+            translate_tabs_to_spaces: false,
+            use_tab_stops: true,
+            plugin_search_path: vec![String::new()],
+            font_face: "Inconsolata".to_string(),
+            font_size: 12,
+            auto_indent: true,
+            scroll_past_end: false,
+            wrap_width: 0,
+            word_wrap: false,
+            autodetect_whitespace: true,
+            line_ending: LINE_ENDING.to_string(),
         }
     }
 }

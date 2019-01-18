@@ -7,7 +7,6 @@ use pango::*;
 use std::cell::RefCell;
 use std::rc::Rc;
 use std::sync::{Arc, Mutex};
-use toml::Value;
 
 pub struct PrefsWin {
     core: Rc<RefCell<Core>>,
@@ -34,20 +33,10 @@ impl PrefsWin {
             let conf = xi_config.lock().unwrap();
 
             let mut font_desc = FontDescription::new();
-            font_desc.set_size(
-                toml::to_string(&conf.config.font_size)
-                    .unwrap()
-                    .parse::<i32>()
-                    .unwrap(),
-            );
-            font_desc.set_family(&toml::to_string(&conf.config.font_face).unwrap());
+            font_desc.set_size(conf.config.font_size as i32);
+            font_desc.set_family(&conf.config.font_face);
 
-            error!(
-                "Setting font desc: {}",
-                &toml::to_string_pretty(&conf.config.font_face)
-                    .unwrap()
-                    .replace("'", "")
-            );
+            debug!("Setting font desc: {}", &conf.config.font_face);
 
             font_chooser_widget.set_font_desc(&font_desc);
         }
@@ -59,9 +48,9 @@ impl PrefsWin {
             if let Some(font_desc) = font_widget.get_font_desc() {
                 debug!("Setting font to {}", &font_desc.get_family().unwrap());
 
-                conf.config.font_face = Value::String(font_desc.get_family().unwrap());
+                conf.config.font_face = font_desc.get_family().unwrap();
                 debug!("Setting font size to {}", font_desc.get_size() / 1000);
-                conf.config.font_size = Value::Integer(i64::from(font_desc.get_size()) / 1000);
+                conf.config.font_size = font_desc.get_size() as u32 / 1000;
                 conf.save().map_err(|e| error!("{}", e.to_string())).unwrap();
             }
         }));
@@ -84,7 +73,7 @@ impl PrefsWin {
                 core.set_theme(&theme_name);
 
                 let mut conf = gxi_config.lock().unwrap();
-                conf.config.theme = Value::String(theme_name.clone());
+                conf.config.theme = theme_name.clone();
                 conf.save().map_err(|e| error!("{}", e.to_string())).unwrap();
 
                 let mut main_state = main_state.borrow_mut();

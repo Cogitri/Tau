@@ -150,14 +150,7 @@ impl MainWin {
             let auto_indent_action = SimpleAction::new_stateful(
                 "auto_indent",
                 None,
-                &config
-                    .lock()
-                    .unwrap()
-                    .config
-                    .auto_indent
-                    .as_bool()
-                    .unwrap()
-                    .to_variant(),
+                &config.lock().unwrap().config.auto_indent.to_variant(),
             );;
 
             #[allow(unused_variables)]
@@ -167,7 +160,7 @@ impl MainWin {
                     let value: bool = value.get().unwrap();
                     debug!("auto indent {}", value);
                     let mut conf = config.lock().unwrap();
-                    conf.config.auto_indent = toml::Value::Boolean(value);
+                    conf.config.auto_indent = value;
                     debug!("config file: {}", &conf.path);
                     conf.save().map_err(|e| error!("{}", e.to_string())).unwrap();
                 }
@@ -183,8 +176,6 @@ impl MainWin {
                     .unwrap()
                     .config
                     .translate_tabs_to_spaces
-                    .as_bool()
-                    .unwrap()
                     .to_variant(),
             );;
             #[allow(unused_variables)]
@@ -194,7 +185,7 @@ impl MainWin {
                     let value: bool = value.get().unwrap();
                     debug!("space indent {}", value);
                     let mut conf = config.lock().unwrap();
-                    conf.config.translate_tabs_to_spaces = toml::Value::Boolean(value);
+                    conf.config.translate_tabs_to_spaces = value;
                     debug!("config file: {}", &conf.path);
                     conf.save().map_err(|e| error!("{}", e.to_string())).unwrap();
                 }
@@ -259,8 +250,7 @@ impl MainWin {
             }
         }
 
-        //if ! state.themes.contains(&state.theme_name) {
-        if state.themes.iter().any(|x| x == &state.theme_name) {
+        if !state.themes.contains(&state.theme_name) {
             error!(
                 "Theme {} isn't available, setting to default...",
                 &state.theme_name
