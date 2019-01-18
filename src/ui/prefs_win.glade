@@ -17,25 +17,12 @@
           <object class="GtkGrid">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="margin_left">18</property>
-            <property name="margin_right">18</property>
-            <property name="margin_top">18</property>
-            <property name="margin_bottom">18</property>
+            <property name="margin_left">10</property>
+            <property name="margin_right">10</property>
+            <property name="margin_top">10</property>
+            <property name="margin_bottom">10</property>
             <property name="row_spacing">6</property>
             <property name="column_spacing">12</property>
-            <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="halign">end</property>
-                <property name="label" translatable="yes">Font</property>
-                <property name="justify">right</property>
-              </object>
-              <packing>
-                <property name="left_attach">0</property>
-                <property name="top_attach">0</property>
-              </packing>
-            </child>
             <child>
               <object class="GtkLabel">
                 <property name="visible">True</property>
@@ -45,11 +32,11 @@
               </object>
               <packing>
                 <property name="left_attach">0</property>
-                <property name="top_attach">1</property>
+                <property name="top_attach">0</property>
               </packing>
             </child>
             <child>
-              <object class="GtkComboBoxText" id="font_combo_box">
+              <object class="GtkComboBoxText" id="theme_combo_box">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="hexpand">True</property>
@@ -60,10 +47,23 @@
               </packing>
             </child>
             <child>
-              <object class="GtkComboBoxText" id="theme_combo_box">
+              <object class="GtkLabel">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="hexpand">True</property>
+                <property name="label" translatable="yes">Font</property>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkFontChooserWidget" id="font_chooser_widget">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="font"/>
+                <property name="language">en-gb</property>
+                <property name="level">GTK_FONT_CHOOSER_LEVEL_SIZE | GTK_FONT_CHOOSER_LEVEL_FAMILY</property>
               </object>
               <packing>
                 <property name="left_attach">1</property>

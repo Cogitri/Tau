@@ -3,6 +3,7 @@ use crate::pref_storage::{Config, GtkXiConfig, XiConfig};
 use crate::rpc::Core;
 use gtk::*;
 use log::{debug, error};
+use pango::*;
 use std::cell::RefCell;
 use std::rc::Rc;
 use std::sync::{Arc, Mutex};
@@ -25,8 +26,45 @@ impl PrefsWin {
         let builder = Builder::new_from_string(glade_src);
 
         let window: Window = builder.get_object("prefs_win").unwrap();
-        let font_combo_box: ComboBoxText = builder.get_object("font_combo_box").unwrap();
+        let font_chooser_widget: FontChooserWidget =
+            builder.get_object("font_chooser_widget").unwrap();
         let theme_combo_box: ComboBoxText = builder.get_object("theme_combo_box").unwrap();
+
+        {
+            let conf = xi_config.lock().unwrap();
+
+            let mut font_desc = FontDescription::new();
+            font_desc.set_size(
+                toml::to_string(&conf.config.font_size)
+                    .unwrap()
+                    .parse::<i32>()
+                    .unwrap(),
+            );
+            font_desc.set_family(&toml::to_string(&conf.config.font_face).unwrap());
+
+            error!(
+                "Setting font desc: {}",
+                &toml::to_string_pretty(&conf.config.font_face)
+                    .unwrap()
+                    .replace("'", "")
+            );
+
+            font_chooser_widget.set_font_desc(&font_desc);
+        }
+
+        #[allow(unused_variables)]
+        font_chooser_widget.connect_property_font_notify(clone!(core => move |font_widget|{
+            let mut conf = xi_config.lock().unwrap();
+
+            if let Some(font_desc) = font_widget.get_font_desc() {
+                debug!("Setting font to {}", &font_desc.get_family().unwrap());
+
+                conf.config.font_face = Value::String(font_desc.get_family().unwrap());
+                debug!("Setting font size to {}", font_desc.get_size() / 1000);
+                conf.config.font_size = Value::Integer(i64::from(font_desc.get_size()) / 1000);
+                conf.save().map_err(|e| error!("{}", e.to_string())).unwrap();
+            }
+        }));
 
         {
             let main_state = main_state.borrow();
@@ -38,28 +76,6 @@ impl PrefsWin {
                 }
             }
         }
-
-        {
-            let main_state = main_state.borrow();
-            let conf = xi_config.lock().unwrap();
-            for (i, font_name) in main_state.fonts.iter().enumerate() {
-                font_combo_box.append_text(font_name);
-                if conf.config.font_face == Value::String(font_name.to_string()) {
-                    debug!("Setting active font {}, num {}", &font_name, i);
-                    font_combo_box.set_active(i as i32);
-                }
-            }
-        }
-        #[allow(unused_variables)]
-        font_combo_box.connect_changed(clone!(core => move |cb|{
-            if let Some(font_name) = cb.get_active_text() {
-                debug!("font changed to {:?}", &font_name);
-
-                let mut conf = xi_config.lock().unwrap();
-                conf.config.font_face = Value::String(font_name);
-                conf.save().map_err(|e| error!("{}", e.to_string())).unwrap();
-            }
-        }));
 
         theme_combo_box.connect_changed(clone!(core, main_state => move |cb|{
             if let Some(theme_name) = cb.get_active_text() {
