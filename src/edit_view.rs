@@ -829,7 +829,7 @@ impl EditView {
     pub fn handle_scroll(&mut self, es: &EventScroll) -> Inhibit {
         self.da.grab_focus();
         // TODO: Make this user configurable!
-        let amt = self.font.font_height * 3.0;
+        let amt = self.font.font_height;
 
         let vadj = self.vscrollbar.get_adjustment();
         let hadj = self.hscrollbar.get_adjustment();
@@ -843,22 +843,13 @@ impl EditView {
                     }
                 };
 
-                if scroll_change_vert > 0.0 {
-                    vadj.set_value(vadj.get_value() + scroll_change_vert + amt);
-                } else {
-                    vadj.set_value(vadj.get_value() + scroll_change_vert - amt);
-                }
-
-                if scroll_change_hori > 0.0 {
-                    hadj.set_value(hadj.get_value() + scroll_change_hori + amt);
-                } else {
-                    hadj.set_value(hadj.get_value() + scroll_change_hori - amt);
-                }
+                vadj.set_value(vadj.get_value() + (scroll_change_vert * amt));
+                hadj.set_value(hadj.get_value() + (scroll_change_hori * amt));
             }
-            ScrollDirection::Up => vadj.set_value(vadj.get_value() - amt),
-            ScrollDirection::Down => vadj.set_value(vadj.get_value() + amt),
-            ScrollDirection::Left => hadj.set_value(hadj.get_value() - amt),
-            ScrollDirection::Right => hadj.set_value(hadj.get_value() + amt),
+            ScrollDirection::Up => vadj.set_value(vadj.get_value() - (hadj.get_value() * amt)),
+            ScrollDirection::Down => vadj.set_value(vadj.get_value() + (hadj.get_value() * amt)),
+            ScrollDirection::Left => hadj.set_value(hadj.get_value() - (hadj.get_value() * amt)),
+            ScrollDirection::Right => hadj.set_value(hadj.get_value() + (hadj.get_value() * amt)),
             _ => {}
         }
 
