@@ -99,6 +99,8 @@ impl<T> Config<T> {
 
         self.config = config_toml.clone();
 
+        config_file.sync_all()?;
+
         Ok(self)
     }
 
@@ -112,6 +114,8 @@ impl<T> Config<T> {
             .open(&self.path)?;
 
         config_file.write_all(toml::to_string(&self.config)?.as_bytes())?;
+
+        config_file.sync_all()?;
 
         Ok(())
     }
