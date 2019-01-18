@@ -33,7 +33,7 @@ impl PrefsWin {
             let conf = xi_config.lock().unwrap();
 
             let mut font_desc = FontDescription::new();
-            font_desc.set_size(conf.config.font_size as i32);
+            font_desc.set_size(conf.config.font_size as i32 * 1024);
             font_desc.set_family(&conf.config.font_face);
 
             debug!("Setting font desc: {}", &conf.config.font_face);
@@ -46,11 +46,13 @@ impl PrefsWin {
             let mut conf = xi_config.lock().unwrap();
 
             if let Some(font_desc) = font_widget.get_font_desc() {
-                debug!("Setting font to {}", &font_desc.get_family().unwrap());
+                let font_family = font_desc.get_family().unwrap();
+                let font_size = font_desc.get_size() / 1024;
+                debug!("Setting font to {}", &font_family);
+                debug!("Setting font size to {}", &font_size);
 
-                conf.config.font_face = font_desc.get_family().unwrap();
-                debug!("Setting font size to {}", font_desc.get_size() / 1000);
-                conf.config.font_size = font_desc.get_size() as u32 / 1000;
+                conf.config.font_size = font_size as u32;
+                conf.config.font_face = font_family;
                 conf.save().map_err(|e| error!("{}", e.to_string())).unwrap();
             }
         }));
