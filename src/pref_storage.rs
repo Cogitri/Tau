@@ -5,6 +5,7 @@ use serde_derive::*;
 use std::fmt::Debug;
 use std::fs::OpenOptions;
 use std::io::prelude::*;
+use tempfile::tempdir;
 
 /// Generic wrapper struct around GtkXiConfig and XiConfig
 #[derive(Clone, Debug)]
@@ -98,23 +99,25 @@ impl<T> Config<T> {
 
         self.config = config_toml.clone();
 
-        config_file.sync_all()?;
-
         Ok(self)
     }
 
+    /// Atomically write the config. First writes the config to a tmp_file (non-atomic) and then
+    /// copies that (atomically). This ensures that the config files stay valid
     pub fn save(&self) -> Result<(), Error>
     where
         T: Serialize,
     {
-        let mut config_file = OpenOptions::new()
+        let tmp_dir = tempdir()?;
+        let tmp_file_path = tmp_dir.path().join(".gxi-atomic");
+        let mut tmp_file = OpenOptions::new()
             .write(true)
             .create(true)
-            .open(&self.path)?;
+            .open(&tmp_file_path)?;
 
-        config_file.write_all(toml::to_string(&self.config)?.as_bytes())?;
-
-        config_file.sync_all()?;
+        tmp_file.write_all(toml::to_string(&self.config).unwrap().as_bytes())?;
+        std::fs::copy(&tmp_file_path, &self.path)?;
+        OpenOptions::new().read(true).open(&self.path)?.sync_all()?;
 
         Ok(())
     }
