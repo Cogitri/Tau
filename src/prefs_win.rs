@@ -28,6 +28,12 @@ impl PrefsWin {
         let font_chooser_widget: FontChooserWidget =
             builder.get_object("font_chooser_widget").unwrap();
         let theme_combo_box: ComboBoxText = builder.get_object("theme_combo_box").unwrap();
+        let tab_stops_checkbutton: ToggleButton =
+            builder.get_object("tab_stops_checkbutton").unwrap();
+        let scroll_past_end_checkbutton: ToggleButton =
+            builder.get_object("scroll_past_end_checkbutton").unwrap();
+        let word_wrap_checkbutton: ToggleButton =
+            builder.get_object("word_wrap_checkbutton").unwrap();
 
         {
             let conf = xi_config.lock().unwrap();
@@ -41,21 +47,25 @@ impl PrefsWin {
             font_chooser_widget.set_font_desc(&font_desc);
         }
 
-        #[allow(unused_variables)]
-        font_chooser_widget.connect_property_font_notify(clone!(core => move |font_widget|{
-            let mut conf = xi_config.lock().unwrap();
+        {
+            let conf = xi_config.lock().unwrap().clone();
 
-            if let Some(font_desc) = font_widget.get_font_desc() {
-                let font_family = font_desc.get_family().unwrap();
-                let font_size = font_desc.get_size() / 1024;
-                debug!("Setting font to {}", &font_family);
-                debug!("Setting font size to {}", &font_size);
+            #[allow(unused_variables)]
+            font_chooser_widget.connect_property_font_notify(clone!(core => move |font_widget|{
+                if let Some(font_desc) = font_widget.get_font_desc() {
+                    let mut font_conf = conf.clone();
 
-                conf.config.font_size = font_size as u32;
-                conf.config.font_face = font_family;
-                conf.save().map_err(|e| error!("{}", e.to_string())).unwrap();
-            }
-        }));
+                    let font_family = font_desc.get_family().unwrap();
+                    let font_size = font_desc.get_size() / 1024;
+                    debug!("Setting font to {}", &font_family);
+                    debug!("Setting font size to {}", &font_size);
+
+                    font_conf.config.font_size = font_size as u32;
+                    font_conf.config.font_face = font_family;
+                    font_conf.save().map_err(|e| error!("{}", e.to_string())).unwrap();
+                }
+            }));
+        }
 
         {
             let main_state = main_state.borrow();
@@ -82,6 +92,54 @@ impl PrefsWin {
                 main_state.theme_name = theme_name;
             }
         }));
+
+        {
+            let conf = xi_config.lock().unwrap().clone();
+
+            scroll_past_end_checkbutton.set_active(conf.config.scroll_past_end);
+
+            #[allow(unused_variables)]
+            scroll_past_end_checkbutton.connect_toggled(clone!(core => move |toggle_btn| {
+                let value = toggle_btn.get_active();
+                    let mut conf = conf.clone();
+                    debug!("scroll past end {}", value);
+                    conf.config.scroll_past_end = value;
+                    debug!("config file: {}", &conf.path);
+                    conf.save().map_err(|e| error!("{}", e.to_string())).unwrap();
+            }));
+        }
+
+        {
+            let conf = xi_config.lock().unwrap().clone();
+
+            word_wrap_checkbutton.set_active(conf.config.word_wrap);
+
+            #[allow(unused_variables)]
+            word_wrap_checkbutton.connect_toggled(clone!(core => move |toggle_btn| {
+                let value = toggle_btn.get_active();
+                    let mut conf = conf.clone();
+                    debug!("word_wrap {}", value);
+                    conf.config.word_wrap = value;
+                    debug!("config file: {}", &conf.path);
+                    conf.save().map_err(|e| error!("{}", e.to_string())).unwrap();
+            }));
+        }
+
+        {
+            let conf = xi_config.lock().unwrap().clone();
+
+            tab_stops_checkbutton.set_active(conf.config.use_tab_stops);
+
+            #[allow(unused_variables)]
+            tab_stops_checkbutton.connect_toggled(clone!(core => move |toggle_btn| {
+                let value = toggle_btn.get_active();
+                    let mut conf = conf.clone();
+                    debug!("tab stops {}", value);
+                    conf.config.use_tab_stops = value;
+                    debug!("config file: {}", &conf.path);
+                    conf.save().map_err(|e| error!("{}", e.to_string())).unwrap();
+            }));
+        }
 
         let prefs_win = Rc::new(RefCell::new(PrefsWin {
             core: core.clone(),

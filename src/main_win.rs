@@ -490,8 +490,7 @@ impl MainWin {
         let main_win = main_win.borrow();
         let main_state = main_win.state.clone();
         let core = main_win.core.clone();
-        #[allow(unused_variables)]
-        let prefs_win = PrefsWin::new(&main_win.window, &main_state, &core, xi_config, gxi_config);
+        PrefsWin::new(&main_win.window, &main_state, &core, xi_config, gxi_config);
         //prefs_win.run();
     }
 
