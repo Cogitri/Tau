@@ -341,13 +341,12 @@ impl EditView {
                     "plugin_search_path" => (),
                     "scroll_past_end" => (),
                     "tab_size" => (),
-                    "translate_tabs_to_space" => (),
-                    // Typo in xi-editor, should be fixed soon
                     "translate_tabs_to_spaces" => (),
                     "use_tab_stops" => (),
                     "word_wrap" => (),
                     "wrap_width" => (),
                     "line_ending" => (),
+                    "surrounding_pairs" => (),
                     _ => {
                         error!("unhandled config option {}", name);
                     }

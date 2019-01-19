@@ -45,6 +45,7 @@ pub struct XiConfig {
     pub word_wrap: bool,
     pub autodetect_whitespace: bool,
     pub line_ending: String,
+    pub surrounding_pairs: Vec<Vec<String>>,
 }
 
 impl Default for XiConfig {
@@ -53,6 +54,13 @@ impl Default for XiConfig {
         const LINE_ENDING: &str = "\r\n";
         #[cfg(not(windows))]
         const LINE_ENDING: &str = "\n";
+
+        let surrounding_pairs = vec![
+            vec!["\"".to_string(), "\"".to_string()],
+            vec!["'".to_string(), "'".to_string()],
+            vec!["{".to_string(), "}".to_string()],
+            vec!["[".to_string(), "]".to_string()],
+        ];
 
         // Default valuess as dictated by https://github.com/xi-editor/xi-editor/blob/master/rust/core-lib/assets/client_example.toml
         XiConfig {
@@ -68,6 +76,7 @@ impl Default for XiConfig {
             word_wrap: false,
             autodetect_whitespace: true,
             line_ending: LINE_ENDING.to_string(),
+            surrounding_pairs,
         }
     }
 }
