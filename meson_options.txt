@@ -1,0 +1,1 @@
+option('rust-target', type : 'string', value : '', description : 'Has to be set to RUST_TARGET for cross compilation')
