@@ -9,11 +9,18 @@ use crate::SharedQueue;
 use gio::{ActionMapExt, SimpleAction, SimpleActionExt};
 use gtk::*;
 use log::{debug, error, trace};
+use serde_derive::*;
 use serde_json::{self, json, Value};
 use std::cell::RefCell;
 use std::collections::{BTreeMap, HashMap};
 use std::rc::Rc;
 use std::sync::{Arc, Mutex};
+
+#[derive(Deserialize)]
+pub struct MeasureWidth {
+    pub id: u64,
+    pub strings: Vec<String>,
+}
 
 pub struct MainState {
     pub themes: Vec<String>,
@@ -232,6 +239,7 @@ impl MainWin {
                     "update" => main_win.borrow_mut().update(&params),
                     "scroll_to" => main_win.borrow_mut().scroll_to(&params),
                     "theme_changed" => main_win.borrow_mut().theme_changed(&params),
+                    "measure_width" => main_win.borrow().measure_width(params),
                     _ => {
                         error!("!!! UNHANDLED NOTIFICATION: {}", method);
                     }
@@ -416,6 +424,25 @@ impl MainWin {
                 edit_view.borrow_mut().scroll_to(line, col)
             }
         }
+    }
+
+    pub fn measure_width(&self, line_string: Value) {
+        debug!("Receive measure_width: {:?}", line_string);
+        let request: Vec<MeasureWidth> = serde_json::from_value(line_string).unwrap();
+        let edit_view = self.get_current_edit_view();
+
+        let mut widths = Vec::new();
+
+        for mes_width in &request {
+            for string in &mes_width.strings {
+                widths.push(edit_view.borrow().line_width(string))
+            }
+        }
+        //let widths: Vec<f64> = request.iter().map(|x| x.strings.iter().map(|v| edit_view.borrow().line_width(&v)).collect::<Vec<f64>>()).collect();
+
+        self.core
+            .borrow()
+            .send_result(request[0].id, &serde_json::to_value(widths).unwrap());
     }
 
     /// Display the FileChooserDialog for opening, send the result to the Xi core.

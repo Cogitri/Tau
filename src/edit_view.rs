@@ -648,6 +648,17 @@ impl EditView {
         layout
     }
 
+    pub fn line_width(&self, line_string: &str) -> f64 {
+        let line = Line::from_json(&serde_json::json!({
+            "text": line_string,
+        }));
+        let main_state = self.main_state.borrow();
+        let pango_ctx = self.da.get_pango_context().unwrap();
+        let linecount_layout = self.create_layout_for_line(&pango_ctx, &main_state, &line);
+
+        f64::from(linecount_layout.get_extents().1.width / pango::SCALE)
+    }
+
     // Creates a pango layout for a particular line in the linecache
     fn create_layout_for_line(
         &self,
