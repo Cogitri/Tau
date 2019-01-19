@@ -28,6 +28,8 @@ pub struct MainState {
     pub theme: Theme,
     pub styles: Vec<Style>,
     pub fonts: Vec<String>,
+    pub avail_languages: Vec<String>,
+    pub selected_language: String,
 }
 
 pub struct MainWin {
@@ -57,6 +59,7 @@ impl MainWin {
 
         let window: ApplicationWindow = builder.get_object("appwindow").unwrap();
         let notebook: Notebook = builder.get_object("notebook").unwrap();
+        let syntax_combo_box: ComboBoxText = builder.get_object("syntax_combo_box").unwrap();
 
         let theme_name = gxi_config.lock().unwrap().config.theme.to_string();
         debug!("theme name: {}", &theme_name);
@@ -76,6 +79,8 @@ impl MainWin {
                 theme: Default::default(),
                 styles: Default::default(),
                 fonts: Default::default(),
+                avail_languages: Default::default(),
+                selected_language: Default::default(),
             })),
         }));
 
@@ -86,6 +91,18 @@ impl MainWin {
             Inhibit(false)
         }));
 
+        {
+            let main_win = main_win.clone();
+
+            syntax_combo_box.append_text("None");
+            syntax_combo_box.set_active(0);
+
+            syntax_combo_box.connect_changed(clone!(core => move |cb|{
+                if let Some(lang) = cb.get_active_text() {
+                    main_win.borrow().set_language(&lang);
+                }
+            }));
+        }
         {
             let open_action = SimpleAction::new("open", None);
             open_action.connect_activate(clone!(main_win => move |_,_| {
@@ -240,6 +257,8 @@ impl MainWin {
                     "scroll_to" => main_win.borrow_mut().scroll_to(&params),
                     "theme_changed" => main_win.borrow_mut().theme_changed(&params),
                     "measure_width" => main_win.borrow().measure_width(params),
+                    "available_languages" => main_win.borrow_mut().available_languages(&params),
+                    "language_changed" => main_win.borrow_mut().language_changed(&params),
                     _ => {
                         error!("!!! UNHANDLED NOTIFICATION: {}", method);
                     }
@@ -445,6 +464,33 @@ impl MainWin {
             .send_result(request[0].id, &serde_json::to_value(widths).unwrap());
     }
 
+    pub fn available_languages(&mut self, params: &Value) {
+        let mut main_state = self.state.borrow_mut();
+        main_state.avail_languages.clear();
+        if let Some(languages) = params["languages"].as_array() {
+            for lang in languages {
+                if let Some(lang) = lang.as_str() {
+                    main_state.avail_languages.push(lang.to_string());
+                }
+            }
+        }
+    }
+
+    pub fn language_changed(&mut self, params: &Value) {
+        let lang_val = params["language_id"].clone();
+        if let Some(lang) = lang_val.as_str() {
+            let mut state = self.state.borrow_mut();
+            state.selected_language = lang.to_string();
+        }
+    }
+
+    pub fn set_language(&self, lang: &str) {
+        debug!("lang changed to {:?}", lang);
+        let core = self.core.borrow();
+        let edit_view = self.get_current_edit_view().clone();
+        core.set_language(&edit_view.borrow().view_id, &lang);
+    }
+
     /// Display the FileChooserDialog for opening, send the result to the Xi core.
     /// This may call the GTK main loop.  There must not be any RefCell borrows out while this
     /// function runs.
@@ -518,6 +564,7 @@ impl MainWin {
         let main_state = main_win.state.clone();
         let core = main_win.core.clone();
         PrefsWin::new(&main_win.window, &main_state, &core, xi_config, gxi_config);
+
         //prefs_win.run();
     }
 
@@ -563,6 +610,17 @@ impl MainWin {
         value: &Value,
     ) {
         let mut win = main_win.borrow_mut();
+
+        // Add all available langs to the syntax_combo_box for the user to select it. We're doing
+        // it here because we can be sure that xi-editor has sent available_languages by now.
+        let syntax_combo_box: ComboBoxText = win.builder.get_object("syntax_combo_box").unwrap();
+
+        win.state
+            .borrow()
+            .avail_languages
+            .iter()
+            .for_each(|lang| syntax_combo_box.append_text(lang));
+
         if let Some(view_id) = value.as_str() {
             let edit_view = EditView::new(&win.state, &win.core, file_name, view_id);
             {

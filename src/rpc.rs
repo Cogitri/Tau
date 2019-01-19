@@ -497,4 +497,11 @@ impl Core {
     pub fn replace_all(&self, view_id: &str) {
         self.send_edit_cmd(view_id, "replace_all", &json!({}))
     }
+
+    pub fn set_language(&self, view_id: &str, lang_name: &str) {
+        self.send_notification(
+            "set_language",
+            &json!({ "view_id": view_id, "language_id": lang_name }),
+        );
+    }
 }
