@@ -9,6 +9,7 @@ keywords = ["gxi", "xi"]
 categories = ["editor"]
 license = "MIT"
 edition = "2018"
+publish = false
 
 [dependencies]
 cairo-rs = "0.5"
