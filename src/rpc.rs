@@ -83,6 +83,16 @@ impl Core {
         state.xi_peer.send_json(&cmd);
     }
 
+    pub fn send_result(&self, id: u64, result: &Value) {
+        let state = self.state.lock().unwrap();
+        let cmd = json!({
+            "id": id,
+            "result": result,
+        });
+        debug!("CORE <-- result: {}", cmd);
+        state.xi_peer.send_json(&cmd);
+    }
+
     /// Calls the callback with the result (from a different thread).
     pub fn send_request<F>(&self, method: &str, params: &Value, callback: F)
     where
