@@ -37,7 +37,7 @@ custom_target('cargo-build-gxi',
                         command: [cargo_script,
                                   '@CURRENT_SOURCE_DIR@',
                                   '@OUTPUT@',
-                                  '@CURRENT_SOURCE_DIR@',
+                                  meson.current_build_dir(),
                                   'gxi',
                                   gxi_plugin_dir,
                                  ])
@@ -45,7 +45,7 @@ custom_target('cargo-build-gxi',
 syntect_build_path = join_paths(meson.current_source_dir(), 'vendor', 'xi-editor', 'rust', 'syntect-plugin')
 syntect_dir = join_paths(gxi_plugin_dir, 'syntect')
 syntect_bindir = join_paths(syntect_dir, 'bin')
-syntect_releasebin_path = join_paths(meson.current_source_dir(), 'vendor', 'xi-editor', 'rust')
+syntect_releasebin_path = join_paths(meson.current_build_dir(), 'vendor', 'xi-editor', 'rust')
 
 custom_target('cargo-build-syntect',
                         input: sources,
