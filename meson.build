@@ -11,13 +11,12 @@ dependency('gtk+-3.0', version: '>= 3.20')
 # required for syntect-plugin: onig_sys
 find_program('cmake', required: true)
 
-cargo = find_program('cargo', required: true)
-cargo_vendor = find_program('cargo-vendor', required: false)
-
 gxi_prefix = get_option('prefix')
 gxi_bindir = join_paths(gxi_prefix, get_option('bindir'))
 gxi_datadir = get_option('datadir')
 gxi_plugin_dir = join_paths(gxi_prefix, get_option('libdir'), 'gxi', 'plugins')
+
+subdir('data')
 
 cargo = find_program('cargo', required: false)
 gresource = find_program('glib-compile-resources', required: false)

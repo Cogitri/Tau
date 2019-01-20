@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=gxi
+Exec=gxi %U
+Comment=The gxi text editor
+Encoding=UTF-8
+Icon=foocorp-painter-pro
+Type=Application
+Categories=GTK;GNOME;Utility;TextEditor;
+Terminal=false
+MimeType=text/plain;
