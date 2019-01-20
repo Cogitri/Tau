@@ -63,7 +63,7 @@ impl SharedQueue {
         if self.queue.is_empty() {
             self.pipe_writer
                 .write_all(&[0u8])
-                .expect(&gettext("Failed to write to the signalling pipe!"));
+                .expect(&gettext("Failed to write to the signalling pipe"));
         }
         trace!("{}", gettext("Pushing to queue"));
         self.queue.push_back(msg);
@@ -201,7 +201,7 @@ fn main() {
             Err(_) => {
                 error!(
                     "{}",
-                    gettext("Couldn't read config, falling back to the default XI-Editor config!")
+                    gettext("Couldn't read config, falling back to the default XI-Editor config")
                 );
                 xi_config
                     .save()
@@ -235,7 +235,7 @@ fn main() {
             Err(_) => {
                 error!(
                     "{}",
-                    gettext("Couldn't read config, falling back to the default GXI config!")
+                    gettext("Couldn't read config, falling back to the default GXI config")
                 );
                 gxi_config
                     .save()
@@ -252,7 +252,7 @@ fn main() {
     } else {
         error!(
             "{}",
-            gettext("Couldn't determine home dir! Settings will be temporary!")
+            gettext("Couldn't determine home dir! Settings will be temporary")
         );
 
         let config_dir = tempfile::Builder::new()
@@ -261,7 +261,7 @@ fn main() {
             .map_err(|e| {
                 error!(
                     "{} {}",
-                    gettext("Failed to create temprary config dir!"),
+                    gettext("Failed to create temporary config dir"),
                     e.to_string()
                 )
             })

@@ -115,15 +115,15 @@ impl EditView {
                 fonts_dir.as_ptr() as *const u8,
             );
             if ret == 1 {
-                debug!("{}", gettext("Sucessfully set fontdir!"));
+                debug!("{}", gettext("Sucessfully set fontdir"));
             } else {
-                error!("{}", gettext("Failed to set fontdir!"));
+                error!("{}", gettext("Failed to set fontdir"));
             }
         }
 
         let pango_ctx = da
             .get_pango_context()
-            .expect(&gettext("Failed to get Pango context!"));
+            .expect(&gettext("Failed to get Pango context"));
         let font_list: Vec<String> = pango_ctx
             .list_families()
             .iter()
@@ -451,7 +451,7 @@ impl EditView {
             let pango_ctx = self
                 .da
                 .get_pango_context()
-                .expect(&gettext("Failed to get Pango context!"));
+                .expect(&gettext("Failed to get Pango context"));
 
             let padding: usize = format!("{}", self.line_cache.height().saturating_sub(1)).len();
             let linecount_layout =
@@ -469,7 +469,7 @@ impl EditView {
     }
 
     fn da_size_allocate(&mut self, da_width: i32, da_height: i32) {
-        debug!("{}", gettext("Allocating drawing area size"));
+        debug!("{}", gettext("Allocating DrawingArea size"));
         let vadj = self.vscrollbar.get_adjustment();
         vadj.set_page_size(f64::from(da_height));
         let hadj = self.hscrollbar.get_adjustment();
@@ -509,7 +509,7 @@ impl EditView {
             last_req_line as u64,
         );
 
-        debug!("{}", gettext("...and scrolling to them!"));
+        debug!("{}", gettext("...and scrolling to them"));
         self.core
             .borrow()
             .scroll(&self.view_id, first_line, last_line);
@@ -615,7 +615,7 @@ impl EditView {
                 let pango_ctx = self
                     .da
                     .get_pango_context()
-                    .expect(&gettext("Failed to get Pango context!"));
+                    .expect(&gettext("Failed to get Pango context"));
                 let linecount_layout =
                     self.create_linecount_for_line(&pango_ctx, &main_state, i, padding);
                 update_layout(cr, &linecount_layout);
@@ -875,7 +875,7 @@ impl EditView {
                 let (scroll_change_hori, scroll_change_vert) = match es.get_scroll_deltas() {
                     Some(v) => v,
                     None => {
-                        error!("{}", gettext("Smooth scrolling failed!"));
+                        error!("{}", gettext("Smooth scrolling failed"));
                         (0.0, 0.0)
                     }
                 };

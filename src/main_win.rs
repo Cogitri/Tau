@@ -444,7 +444,7 @@ impl MainWin {
         };
 
         match self.views.get(&view_id) {
-            None => debug!("{} '{}'", gettext("Failed to find view"), view_id),
+            None => debug!("{} '{}'", gettext("Failed to find View"), view_id),
             Some(edit_view) => {
                 let idx = self.notebook.page_num(&edit_view.borrow().root_widget);
                 self.notebook.set_current_page(idx);
@@ -495,7 +495,7 @@ impl MainWin {
     }
 
     pub fn set_language(&self, lang: &str) {
-        debug!("{} '{:?}'", gettext("Chainging language to"), lang);
+        debug!("{} '{:?}'", gettext("Changing language to"), lang);
         let core = self.core.borrow();
         let edit_view = self.get_current_edit_view().clone();
         core.set_language(&edit_view.borrow().view_id, &lang);
@@ -599,7 +599,7 @@ impl MainWin {
                 }
             }
         }
-        unreachable!(gettext("Failed to get the current editview!"));
+        unreachable!(gettext("Failed to get the current EditView"));
     }
 
     fn req_new_view(&self, file_name: Option<&str>) {

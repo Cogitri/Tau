@@ -14,9 +14,11 @@ find_program('cmake', required: true)
 gxi_prefix = get_option('prefix')
 gxi_bindir = join_paths(gxi_prefix, get_option('bindir'))
 gxi_datadir = get_option('datadir')
+gxi_localedir = join_paths(gxi_prefix, get_option('localedir'))
 gxi_plugin_dir = join_paths(gxi_prefix, get_option('libdir'), 'gxi', 'plugins')
 
 subdir('data')
+subdir('po')
 
 cargo = find_program('cargo', required: false)
 gresource = find_program('glib-compile-resources', required: false)
@@ -43,6 +45,8 @@ custom_target('cargo-build-gxi',
                                   'gxi',
                                   rust_target,
                                   gxi_plugin_dir,
+                                  gxi_localedir,
+                                  meson.project_version(),
                                  ])
 
 syntect_build_path = join_paths(meson.current_source_dir(), 'vendor', 'xi-editor', 'rust', 'syntect-plugin')
