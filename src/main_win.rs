@@ -6,6 +6,7 @@ use crate::rpc::Core;
 use crate::theme::{Color, Style, Theme};
 use crate::CoreMsg;
 use crate::SharedQueue;
+use gettextrs::gettext;
 use gio::{ActionMapExt, SimpleAction, SimpleActionExt};
 use gtk::*;
 use log::{debug, error, trace};
@@ -62,7 +63,7 @@ impl MainWin {
         let syntax_combo_box: ComboBoxText = builder.get_object("syntax_combo_box").unwrap();
 
         let theme_name = gxi_config.lock().unwrap().config.theme.to_string();
-        debug!("theme name: {}", &theme_name);
+        debug!("{}: {}", gettext("Theme name"), &theme_name);
 
         let main_win = Rc::new(RefCell::new(MainWin {
             core: core.clone(),
@@ -183,10 +184,9 @@ impl MainWin {
                 if let Some(value) = value.as_ref() {
                     action.set_state(value);
                     let value: bool = value.get().unwrap();
-                    debug!("auto indent {}", value);
+                    debug!("{}: {}", gettext("Auto indent"), value);
                     let mut conf = config.lock().unwrap();
                     conf.config.auto_indent = value;
-                    debug!("config file: {}", &conf.path);
                     conf.save().map_err(|e| error!("{}", e.to_string())).unwrap();
                 }
             }));
@@ -208,10 +208,9 @@ impl MainWin {
                 if let Some(value) = value.as_ref() {
                     action.set_state(value);
                     let value: bool = value.get().unwrap();
-                    debug!("space indent {}", value);
+                    debug!("{}: {}", gettext("Space indent"), value);
                     let mut conf = config.lock().unwrap();
                     conf.config.translate_tabs_to_spaces = value;
-                    debug!("config file: {}", &conf.path);
                     conf.save().map_err(|e| error!("{}", e.to_string())).unwrap();
                 }
             }));
@@ -261,7 +260,11 @@ impl MainWin {
                     "available_languages" => main_win.borrow_mut().available_languages(&params),
                     "language_changed" => main_win.borrow_mut().language_changed(&params),
                     _ => {
-                        error!("!!! UNHANDLED NOTIFICATION: {}", method);
+                        error!(
+                            "{}: {}",
+                            gettext("!!! UNHANDLED NOTIFICATION, PLEASE OPEN A BUGREPORT!"),
+                            method
+                        );
                     }
                 };
             }
@@ -280,8 +283,10 @@ impl MainWin {
 
         if !state.themes.contains(&state.theme_name) {
             error!(
-                "Theme {} isn't available, setting to default...",
-                &state.theme_name
+                "{} {} {}",
+                gettext("Theme"),
+                &state.theme_name,
+                gettext("isn't available, setting to default..."),
             );
 
             if let Some(theme_name) = state.themes.first().map(Clone::clone) {
@@ -289,8 +294,6 @@ impl MainWin {
             } else {
                 return;
             }
-        } else {
-            state.theme_name = state.theme_name.replace("\"", "");
         }
 
         self.core
@@ -302,7 +305,7 @@ impl MainWin {
         let theme_settings = params["theme"].clone();
         let theme_settings: ThemeSettings = match serde_json::from_value(theme_settings) {
             Err(e) => {
-                error!("failed to convert theme settings: {}", e);
+                error!("{}: {}", gettext("Failed to convert theme settings"), e);
                 return;
             }
             Ok(ts) => ts,
@@ -334,7 +337,11 @@ impl MainWin {
         if let Some(_) = params.get("plugins") {
             // TODO: There is one (or more!) plugins available, handle them!
         } else {
-            error!("UNHANDLED available_plugins {}", params);
+            error!(
+                "{} {}",
+                gettext("!!! UNHANDLED available_plugins, PLEASE OPEN A BUGRPEORT"),
+                params
+            );
         }
     }
 
@@ -397,7 +404,7 @@ impl MainWin {
     }
 
     pub fn update(&mut self, params: &Value) {
-        trace!("handling update {:?}", params);
+        trace!("{} 'update': {:?}", gettext("Handling"), params);
 
         let view_id = {
             let view_id = params["view_id"].as_str();
@@ -413,7 +420,7 @@ impl MainWin {
     }
 
     pub fn scroll_to(&mut self, params: &Value) {
-        trace!("handling scroll_to {:?}", params);
+        trace!("{} 'scroll_to' {:?}", gettext("Handling"), params);
         let view_id = {
             let view_id = params["view_id"].as_str();
             if view_id.is_none() {
@@ -437,7 +444,7 @@ impl MainWin {
         };
 
         match self.views.get(&view_id) {
-            None => debug!("failed to find view {}", view_id),
+            None => debug!("{} '{}'", gettext("Failed to find view"), view_id),
             Some(edit_view) => {
                 let idx = self.notebook.page_num(&edit_view.borrow().root_widget);
                 self.notebook.set_current_page(idx);
@@ -447,7 +454,7 @@ impl MainWin {
     }
 
     pub fn measure_width(&self, line_string: Value) {
-        debug!("Receive measure_width: {:?}", line_string);
+        debug!("{} 'measure_width' {:?}", gettext("Handling"), line_string);
         let request: Vec<MeasureWidth> = serde_json::from_value(line_string).unwrap();
         let edit_view = self.get_current_edit_view();
 
@@ -466,6 +473,7 @@ impl MainWin {
     }
 
     pub fn available_languages(&mut self, params: &Value) {
+        debug!("{} 'available_languages' {:?}", gettext("Handling"), params);
         let mut main_state = self.state.borrow_mut();
         main_state.avail_languages.clear();
         if let Some(languages) = params["languages"].as_array() {
@@ -478,6 +486,7 @@ impl MainWin {
     }
 
     pub fn language_changed(&mut self, params: &Value) {
+        debug!("{} 'language_changed' {:?}", gettext("Handling"), params);
         let lang_val = params["language_id"].clone();
         if let Some(lang) = lang_val.as_str() {
             let mut state = self.state.borrow_mut();
@@ -486,7 +495,7 @@ impl MainWin {
     }
 
     pub fn set_language(&self, lang: &str) {
-        debug!("lang changed to {:?}", lang);
+        debug!("{} '{:?}'", gettext("Chainging language to"), lang);
         let core = self.core.borrow();
         let edit_view = self.get_current_edit_view().clone();
         core.set_language(&edit_view.borrow().view_id, &lang);
@@ -502,7 +511,11 @@ impl MainWin {
         fcd.set_default_response(33);
         fcd.set_select_multiple(true);
         let response = fcd.run(); // Can call main loop, can't have any borrows out
-        debug!("open response = {}", response);
+        debug!(
+            "{}: {}",
+            gettext("FileChooserDialog open response"),
+            response
+        );
         if response == 33 {
             let win = main_win.borrow();
             for file in fcd.get_filenames() {
@@ -538,7 +551,11 @@ impl MainWin {
         fcd.add_button("Save", 33);
         fcd.set_default_response(33);
         let response = fcd.run(); // Can call main loop, can't have any borrows out
-        debug!("save response = {}", response);
+        debug!(
+            "{}: {}",
+            gettext("FileChooserDialog open response"),
+            response
+        );
         if response == 33 {
             let win = main_win.borrow();
             if let Some(file) = fcd.get_filename() {
@@ -582,7 +599,7 @@ impl MainWin {
                 }
             }
         }
-        unreachable!("failed to get the current editview");
+        unreachable!(gettext("Failed to get the current editview!"));
     }
 
     fn req_new_view(&self, file_name: Option<&str>) {
@@ -661,7 +678,7 @@ impl MainWin {
             let ask_save_dialog: Dialog = builder.get_object("ask_save_dialog").unwrap();
             let ret = ask_save_dialog.run();
             ask_save_dialog.destroy();
-            debug!("ask_save_dialog = {}", ret);
+            debug!("{}: {}", gettext("AskSaveDialog response (1=save)"), ret);
             match ret {
                 1 => MainWin::save_as(main_win, edit_view),
                 2 => return,

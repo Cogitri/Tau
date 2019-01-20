@@ -22,6 +22,7 @@ use crate::main_win::MainWin;
 use crate::pref_storage::{Config, GtkXiConfig, XiConfig};
 use crate::rpc::{Core, Handler};
 use crate::source::{new_source, SourceFuncs};
+use gettextrs::gettext;
 use gio::{ApplicationExt, ApplicationExtManual, ApplicationFlags, FileExt};
 use glib::MainContext;
 use gtk::Application;
@@ -61,9 +62,9 @@ impl SharedQueue {
         if self.queue.is_empty() {
             self.pipe_writer
                 .write_all(&[0u8])
-                .expect("failed to write to signalling pipe");
+                .expect(&gettext("Failed to write to the signalling pipe!"));
         }
-        trace!("pushing to queue");
+        trace!("{}", gettext("Pushing to queue"));
         self.queue.push_back(msg);
     }
 }
@@ -93,17 +94,17 @@ impl SourceFuncs for QueueSource {
     }
 
     fn dispatch(&self) -> bool {
-        trace!("dispatch");
+        trace!("{}", gettext("Dispatching messages to xi"));
         let mut shared_queue = self.queue.lock().unwrap();
         while let Some(msg) = shared_queue.queue.pop_front() {
-            trace!("found a msg");
+            trace!("{}", gettext("Found a message for xi"));
             MainWin::handle_msg(self.win.clone(), msg);
         }
         let mut buf = [0u8; 64];
         shared_queue
             .pipe_reader
             .try_read(&mut buf)
-            .expect("failed to read signalling pipe");
+            .expect(&gettext("Failed to read the signalling pipe!"));
         true
     }
 }
@@ -122,7 +123,7 @@ impl MyHandler {
 impl Handler for MyHandler {
     fn notification(&self, method: &str, params: &Value) {
         debug!(
-            "CORE --> {{\"method\": \"{}\", \"params\":{}}}",
+            "Xi-CORE --> {{\"method\": \"{}\", \"params\":{}}}",
             method, params
         );
         let method2 = method.to_string();
@@ -157,13 +158,19 @@ fn main() {
     let core = Core::new(xi_peer, rx, handler.clone());
 
     let application = Application::new("com.github.bvinc.gxi", ApplicationFlags::HANDLES_OPEN)
-        .expect("failed to create gtk application");
+        .expect(&gettext("Failed to create the GTK+ application"));
 
     //TODO: This part really needs better error handling...
     let (xi_config_dir, xi_config, gxi_config) = if let Some(user_config_dir) = dirs::config_dir() {
         let config_dir = user_config_dir.join("gxi");
         std::fs::create_dir_all(&config_dir)
-            .map_err(|e| error!("Failed to create config dir: {}", e.to_string()))
+            .map_err(|e| {
+                error!(
+                    "{}: {}",
+                    gettext("Failed to create the config dir"),
+                    e.to_string()
+                )
+            })
             .unwrap();
 
         let mut xi_config = Config::<XiConfig>::new(
@@ -188,7 +195,10 @@ fn main() {
                 xi_config.clone()
             }
             Err(_) => {
-                error!("Couldn't read config, falling back to default XI-Editor config!");
+                error!(
+                    "{}",
+                    gettext("Couldn't read config, falling back to the default XI-Editor config!")
+                );
                 xi_config
                     .save()
                     .unwrap_or_else(|e| error!("{}", e.to_string()));
@@ -219,7 +229,10 @@ fn main() {
                 gxi_config.clone()
             }
             Err(_) => {
-                error!("Couldn't read config, falling back to default GXI config!");
+                error!(
+                    "{}",
+                    gettext("Couldn't read config, falling back to the default GXI config!")
+                );
                 gxi_config
                     .save()
                     .unwrap_or_else(|e| error!("{}", e.to_string()));
@@ -233,12 +246,21 @@ fn main() {
             gxi_config,
         )
     } else {
-        error!("Couldn't determine home dir! Settings will be temporary!");
+        error!(
+            "{}",
+            gettext("Couldn't determine home dir! Settings will be temporary!")
+        );
 
         let config_dir = tempfile::Builder::new()
             .prefix("gxi-config")
             .tempdir()
-            .map_err(|e| error!("Failed to create temprary config dir! {}", e.to_string()))
+            .map_err(|e| {
+                error!(
+                    "{} {}",
+                    gettext("Failed to create temprary config dir!"),
+                    e.to_string()
+                )
+            })
             .unwrap()
             .into_path();
 
@@ -272,7 +294,7 @@ fn main() {
     };
 
     application.connect_startup(clone!(shared_queue, core => move |application| {
-        debug!("startup");
+        debug!("{}", gettext("Starting gxi"));
 
         core.client_started(&xi_config_dir, include_str!(concat!(env!("OUT_DIR"), "/plugin-dir.in")));
 
@@ -296,7 +318,7 @@ fn main() {
     }));
 
     application.connect_activate(clone!(shared_queue, core => move |_| {
-        debug!("activate");
+        debug!("{}", gettext("Activating new view"));
 
         let mut params = json!({});
         params["file_path"] = Value::Null;
@@ -314,7 +336,7 @@ fn main() {
     }));
 
     application.connect_open(clone!(shared_queue, core => move |_,files,_| {
-        debug!("open");
+        debug!("{}", gettext("Opening new file"));
 
         for file in files {
             let path = file.get_path();
@@ -338,7 +360,7 @@ fn main() {
         }
     }));
     application.connect_shutdown(move |_| {
-        debug!("shutdown");
+        debug!("{}", gettext("Shutting down..."));
     });
 
     application.run(&args().collect::<Vec<_>>());

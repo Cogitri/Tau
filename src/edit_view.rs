@@ -6,6 +6,7 @@ use ::fontconfig::fontconfig;
 use cairo::Context;
 use gdk::enums::key;
 use gdk::*;
+use gettextrs::gettext;
 use gtk::{self, *};
 use log::{debug, error, trace};
 use pango::{self, ContextExt, LayoutExt, *};
@@ -70,7 +71,7 @@ impl EditView {
                 | EventMask::SCROLL_MASK.bits() as i32
                 | EventMask::SMOOTH_SCROLL_MASK.bits() as i32,
         );
-        debug!("events={:?}", da.get_events());
+        debug!("{}: {:?}", gettext("Events"), da.get_events());
         da.set_can_focus(true);
 
         let find_rep_src = include_str!("ui/find_replace.glade");
@@ -113,10 +114,16 @@ impl EditView {
                 fontconfig::FcConfigGetCurrent(),
                 fonts_dir.as_ptr() as *const u8,
             );
-            debug!("fc ret = {}", ret);
+            if ret == 1 {
+                debug!("{}", gettext("Sucessfully set fontdir!"));
+            } else {
+                error!("{}", gettext("Failed to set fontdir!"));
+            }
         }
 
-        let pango_ctx = da.get_pango_context().expect("failed to get pango ctx");
+        let pango_ctx = da
+            .get_pango_context()
+            .expect(&gettext("Failed to get Pango context!"));
         let font_list: Vec<String> = pango_ctx
             .list_families()
             .iter()
@@ -130,11 +137,13 @@ impl EditView {
         pango_ctx.set_font_description(&font_desc);
         let language = pango_ctx
             .get_language()
-            .expect("failed to get pango language");
+            .expect(&gettext("Failed to get Pango language"));
         let fontset = pango_ctx
             .load_fontset(&font_desc, &language)
-            .expect("failed to load font set");
-        let metrics = fontset.get_metrics().expect("failed to load font metrics");
+            .expect(&gettext("Failed to load Pango font set"));
+        let metrics = fontset
+            .get_metrics()
+            .expect(&gettext("Failed to load Pango font metrics"));
 
         // cr.select_font_face("Inconsolata", ::cairo::enums::FontSlant::Normal, ::cairo::enums::FontWeight::Normal);
         // cr.set_font_size(16.0);
@@ -143,7 +152,7 @@ impl EditView {
         let layout = pango::Layout::new(&pango_ctx);
         layout.set_text("a");
         let (_, log_extents) = layout.get_extents();
-        debug!("size: {:?}", log_extents);
+        debug!("{}: {:?}", gettext("Pango size"), log_extents);
 
         let font_height = f64::from(log_extents.height) / f64::from(pango::SCALE);
         let font_width = f64::from(log_extents.width) / f64::from(pango::SCALE);
@@ -151,8 +160,12 @@ impl EditView {
         let font_descent = f64::from(metrics.get_descent()) / f64::from(pango::SCALE);
 
         debug!(
-            "font metrics: {} {} {} {}",
-            font_width, font_height, font_ascent, font_descent
+            "{}: {} {} {} {}",
+            gettext("Font metrics"),
+            font_width,
+            font_height,
+            font_ascent,
+            font_descent
         );
 
         let replace = EVReplace {
@@ -260,7 +273,7 @@ impl EditView {
         }));
 
         da.connect_size_allocate(clone!(edit_view => move |_,alloc| {
-            debug!("Size changed to w={} h={}", alloc.width, alloc.height);
+            debug!("{}: {}={} {}={}", gettext("Size changed to"), gettext("width"), alloc.width, gettext("height"), alloc.height);
             edit_view.borrow_mut().da_size_allocate(alloc.width, alloc.height);
         }));
 
@@ -297,9 +310,9 @@ impl EditView {
             Some(ref f) => f
                 .split(::std::path::MAIN_SEPARATOR)
                 .last()
-                .unwrap_or("Untitled")
+                .unwrap_or(&format!("{}", gettext("Untitled")))
                 .to_string(),
-            None => "Untitled".to_string(),
+            None => format!("{}", gettext("Untitled")),
         };
 
         let mut full_title = String::new();
@@ -308,7 +321,7 @@ impl EditView {
         }
         full_title.push_str(&title);
 
-        trace!("setting title to {}", full_title);
+        trace!("{} {}", gettext("Setting title to"), full_title);
         self.label.set_text(&full_title);
     }
 
@@ -325,7 +338,7 @@ impl EditView {
                     }
                     "font_face" => {
                         if let Some(font_face) = value.as_str() {
-                            debug!("Setting font to {}", font_face);
+                            debug!("{}: {}", gettext("Setting font to"), font_face);
                             if font_face == "InconsolataGo" {
                                 // TODO This shouldn't be necessary, but the only font I've found
                                 // to bundle is "Inconsolata"
@@ -348,7 +361,7 @@ impl EditView {
                     "line_ending" => (),
                     "surrounding_pairs" => (),
                     _ => {
-                        error!("unhandled config option {}", name);
+                        error!("{}: {}", gettext("Unhandled config option"), name);
                     }
                 }
             }
@@ -438,7 +451,7 @@ impl EditView {
             let pango_ctx = self
                 .da
                 .get_pango_context()
-                .expect("failed to get pango ctx");
+                .expect(&gettext("Failed to get Pango context!"));
 
             let padding: usize = format!("{}", self.line_cache.height().saturating_sub(1)).len();
             let linecount_layout =
@@ -456,7 +469,7 @@ impl EditView {
     }
 
     fn da_size_allocate(&mut self, da_width: i32, da_height: i32) {
-        debug!("DA SIZE ALLOCATE");
+        debug!("{}", gettext("Allocating drawing area size"));
         let vadj = self.vscrollbar.get_adjustment();
         vadj.set_page_size(f64::from(da_height));
         let hadj = self.hscrollbar.get_adjustment();
@@ -466,7 +479,7 @@ impl EditView {
     }
 
     fn vscrollbar_change_value(&mut self, value: f64) -> Inhibit {
-        debug!("scroll changed value {}", value);
+        debug!("{} {}", gettext("Vertical scrollbar changed value"), value);
 
         self.update_visible_scroll_region();
 
@@ -480,18 +493,23 @@ impl EditView {
         let (_, last_line) = self.da_px_to_cell(&main_state, 0.0, f64::from(da_height));
         let last_line = last_line + 1;
 
-        debug!("update visible scroll region {} {}", first_line, last_line);
+        debug!(
+            "{} {} {}",
+            gettext("Updating visible scroll region"),
+            first_line,
+            last_line
+        );
         //TODO: This is _really_ not so nice. Instead of requesting more lines than we actually have to it'd be nicer to request them JIT
         let first_req_line = first_line as f64 * (0.1 * self.line_cache.height() as f64);
         let last_req_line = last_line as f64 * (0.1 * self.line_cache.height() as f64);
-        debug!("Requesting new lines...");
+        debug!("{}", gettext("Requesting new lines..."));
         self.core.borrow().request_lines(
             &self.view_id,
             first_req_line as u64,
             last_req_line as u64,
         );
 
-        debug!("...and scrolling to them!");
+        debug!("{}", gettext("...and scrolling to them!"));
         self.core
             .borrow()
             .scroll(&self.view_id, first_line, last_line);
@@ -536,7 +554,16 @@ impl EditView {
 
         let vadj = self.vscrollbar.get_adjustment();
         let hadj = self.hscrollbar.get_adjustment();
-        trace!("drawing.  vadj={}, {}", vadj.get_value(), vadj.get_upper());
+        trace!(
+            "{}  {}: {}/{}; {}: {}/{}",
+            gettext("Drawing EditView"),
+            gettext("vertical adjustment"),
+            vadj.get_value(),
+            vadj.get_upper(),
+            gettext("horizontal adjustment"),
+            hadj.get_value(),
+            hadj.get_upper()
+        );
 
         let first_line = (vadj.get_value() / self.font.font_height) as u64;
         let last_line =
@@ -588,7 +615,7 @@ impl EditView {
                 let pango_ctx = self
                     .da
                     .get_pango_context()
-                    .expect("failed to get pango ctx");
+                    .expect(&gettext("Failed to get Pango context!"));
                 let linecount_layout =
                     self.create_linecount_for_line(&pango_ctx, &main_state, i, padding);
                 update_layout(cr, &linecount_layout);
@@ -848,7 +875,7 @@ impl EditView {
                 let (scroll_change_hori, scroll_change_vert) = match es.get_scroll_deltas() {
                     Some(v) => v,
                     None => {
-                        error!("Smooth scrolling failed!");
+                        error!("{}", gettext("Smooth scrolling failed!"));
                         (0.0, 0.0)
                     }
                 };
@@ -870,11 +897,17 @@ impl EditView {
 
     fn handle_key_press_event(&mut self, ek: &EventKey) -> Inhibit {
         debug!(
-            "key press keyval={:?}, state={:?}, length={:?} group={:?} uc={:?}",
+            "{} {}={:?}, {}={:?}, {}={:?} {}={:?} {}={:?}",
+            gettext("Processing key press:"),
+            gettext("value"),
             ek.get_keyval(),
+            gettext("state"),
             ek.get_state(),
+            gettext("length"),
             ek.get_length(),
+            gettext("group"),
             ek.get_group(),
+            gettext("unicode"),
             ::gdk::keyval_to_unicode(ek.get_keyval())
         );
         let view_id = &self.view_id;

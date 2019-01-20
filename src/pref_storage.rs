@@ -1,4 +1,5 @@
 use crate::errors::Error;
+use gettextrs::gettext;
 use log::{debug, trace};
 use serde::{de::DeserializeOwned, Serialize};
 use serde_derive::*;
@@ -96,15 +97,15 @@ impl<T> Config<T> {
     where
         T: Clone + Debug + DeserializeOwned,
     {
-        trace!("Opening config file!");
+        trace!("{}", gettext("Opening config file!"));
         let mut config_file = OpenOptions::new().read(true).open(&self.path)?;
         let mut config_string = String::new();
 
-        trace!("Reading config file!");
+        trace!("{}", gettext("Reading config file!"));
         config_file.read_to_string(&mut config_string)?;
 
         let config_toml: T = toml::from_str(&config_string)?;
-        debug!("XI-Config: {:?}", config_toml);
+        debug!("{}: {:?}", gettext("Xi-Config"), config_toml);
 
         self.config = config_toml.clone();
 

@@ -1,3 +1,4 @@
+use gettextrs::gettext;
 use std::io::{self, BufRead, ErrorKind, Read, Write};
 use std::sync::mpsc::{channel, Receiver, Sender};
 use std::thread;
@@ -41,7 +42,7 @@ struct ChanReader(Receiver<String>);
 
 impl Read for ChanReader {
     fn read(&mut self, _buf: &mut [u8]) -> io::Result<usize> {
-        unreachable!("didn't expect xi-rpc to call read");
+        unreachable!(gettext("Didn't expect xi-rpc to call read()"));
     }
 }
 
@@ -49,11 +50,11 @@ impl Read for ChanReader {
 // used by xi-rpc.
 impl BufRead for ChanReader {
     fn fill_buf(&mut self) -> io::Result<&[u8]> {
-        unreachable!("didn't expect xi-rpc to call fill_buf");
+        unreachable!(gettext("Didn't expect xi-rpc to call fill_buf()"));
     }
 
     fn consume(&mut self, _amt: usize) {
-        unreachable!("didn't expect xi-rpc to call consume");
+        unreachable!(gettext("Didn't expect xi-rpc to call consume()"));
     }
 
     fn read_line(&mut self, buf: &mut String) -> io::Result<usize> {
@@ -73,17 +74,17 @@ struct ChanWriter {
 
 impl Write for ChanWriter {
     fn write(&mut self, _buf: &[u8]) -> io::Result<usize> {
-        unreachable!("didn't expect xi-rpc to call write");
+        unreachable!(gettext("Didn't expect xi-rpc to call write()"));
     }
 
     fn flush(&mut self) -> io::Result<()> {
-        unreachable!("didn't expect xi-rpc to call flush");
+        unreachable!(gettext("Didn't expect xi-rpc to call flush()"));
     }
 
     fn write_all(&mut self, buf: &[u8]) -> io::Result<()> {
         let json = serde_json::from_slice::<Value>(buf).unwrap();
         self.sender
             .send(json)
-            .map_err(|_| io::Error::new(ErrorKind::BrokenPipe, "rpc rx thread lost"))
+            .map_err(|_| io::Error::new(ErrorKind::BrokenPipe, gettext("RPC rx thread lost")))
     }
 }

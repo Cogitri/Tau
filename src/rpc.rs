@@ -1,4 +1,5 @@
 use crate::xi_thread::XiPeer;
+use gettextrs::gettext;
 use log::debug;
 use serde_json::{json, Value};
 use std::collections::BTreeMap;
@@ -63,10 +64,10 @@ impl Core {
                     if let Some(callback) = state.pending.remove(&id) {
                         callback.call(&msg["result"]);
                     } else {
-                        println!("unexpected result")
+                        println!("{}", gettext("unexpected result"));
                     }
                 } else {
-                    println!("got {:?} at rpc level", msg);
+                    println!("{} {:?} {}", gettext("Got"), msg, gettext("at RPC level"));
                 }
             }
         });
@@ -79,7 +80,7 @@ impl Core {
             "params": params,
         });
         let state = self.state.lock().unwrap();
-        debug!("CORE <-- {}", cmd);
+        debug!("Xi-CORE <-- {}", cmd);
         state.xi_peer.send_json(&cmd);
     }
 
@@ -89,7 +90,7 @@ impl Core {
             "id": state.id,
             "result": result,
         });
-        debug!("CORE <-- result: {}", cmd);
+        debug!("Xi-CORE <-- result: {}", cmd);
         state.xi_peer.send_json(&cmd);
     }
 
@@ -106,7 +107,7 @@ impl Core {
             "id": id,
         });
         debug!(
-            "CORE <-- {{\"id\"={}, \"method\": {}, \"params\":{}}}",
+            "Xi-CORE <-- {{\"id\"={}, \"method\": {}, \"params\":{}}}",
             id, method, params
         );
         state.xi_peer.send_json(&cmd);

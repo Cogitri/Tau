@@ -1,6 +1,7 @@
 use crate::main_win::MainState;
 use crate::pref_storage::{Config, GtkXiConfig, XiConfig};
 use crate::rpc::Core;
+use gettextrs::gettext;
 use gtk::*;
 use log::{debug, error};
 use pango::*;
@@ -42,7 +43,11 @@ impl PrefsWin {
             font_desc.set_size(conf.config.font_size as i32 * 1024);
             font_desc.set_family(&conf.config.font_face);
 
-            debug!("Setting font desc: {}", &conf.config.font_face);
+            debug!(
+                "{}: {}",
+                gettext("Setting font description"),
+                &conf.config.font_face
+            );
 
             font_chooser_widget.set_font_desc(&font_desc);
         }
@@ -57,8 +62,8 @@ impl PrefsWin {
 
                     let font_family = font_desc.get_family().unwrap();
                     let font_size = font_desc.get_size() / 1024;
-                    debug!("Setting font to {}", &font_family);
-                    debug!("Setting font size to {}", &font_size);
+                    debug!("{} {}", gettext("Setting font to"), &font_family);
+                    debug!("{} {}", gettext("Setting font size to"), &font_size);
 
                     font_conf.config.font_size = font_size as u32;
                     font_conf.config.font_face = font_family;
@@ -72,7 +77,7 @@ impl PrefsWin {
             for (i, theme_name) in main_state.themes.iter().enumerate() {
                 theme_combo_box.append_text(theme_name);
                 if &main_state.theme_name == theme_name {
-                    debug!("settings active {}", i);
+                    debug!("{} {}", gettext("Settings window active"), i);
                     theme_combo_box.set_active(i as i32);
                 }
             }
@@ -80,7 +85,7 @@ impl PrefsWin {
 
         theme_combo_box.connect_changed(clone!(core, main_state => move |cb|{
             if let Some(theme_name) = cb.get_active_text() {
-                debug!("theme changed to {:?}", cb.get_active_text());
+                debug!("{} {:?}", gettext("Theme changed to"), cb.get_active_text());
                 let core = core.borrow();
                 core.set_theme(&theme_name);
 
@@ -102,9 +107,8 @@ impl PrefsWin {
             scroll_past_end_checkbutton.connect_toggled(clone!(core => move |toggle_btn| {
                 let value = toggle_btn.get_active();
                     let mut conf = conf.clone();
-                    debug!("scroll past end {}", value);
+                    debug!("{}: {}", gettext("Scrolling past end"), value);
                     conf.config.scroll_past_end = value;
-                    debug!("config file: {}", &conf.path);
                     conf.save().map_err(|e| error!("{}", e.to_string())).unwrap();
             }));
         }
@@ -118,9 +122,8 @@ impl PrefsWin {
             word_wrap_checkbutton.connect_toggled(clone!(core => move |toggle_btn| {
                 let value = toggle_btn.get_active();
                     let mut conf = conf.clone();
-                    debug!("word_wrap {}", value);
+                    debug!("{}: {}", gettext("Word wrapping"), value);
                     conf.config.word_wrap = value;
-                    debug!("config file: {}", &conf.path);
                     conf.save().map_err(|e| error!("{}", e.to_string())).unwrap();
             }));
         }
@@ -134,9 +137,8 @@ impl PrefsWin {
             tab_stops_checkbutton.connect_toggled(clone!(core => move |toggle_btn| {
                 let value = toggle_btn.get_active();
                     let mut conf = conf.clone();
-                    debug!("tab stops {}", value);
+                    debug!("{}: {}", gettext("Tab stops"), value);
                     conf.config.use_tab_stops = value;
-                    debug!("config file: {}", &conf.path);
                     conf.save().map_err(|e| error!("{}", e.to_string())).unwrap();
             }));
         }

@@ -37,6 +37,7 @@ xi-rpc = { path="vendor/xi-editor/rust/rpc" }
 dirs = "1"
 toml = "0.4"
 tempfile = "3"
+gettext-rs = "0.4"
 
 [profile.release]
 lto = true
