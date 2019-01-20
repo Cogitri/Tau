@@ -83,10 +83,10 @@ impl Core {
         state.xi_peer.send_json(&cmd);
     }
 
-    pub fn send_result(&self, id: u64, result: &Value) {
+    pub fn send_result(&self, result: &Value) {
         let state = self.state.lock().unwrap();
         let cmd = json!({
-            "id": id,
+            "id": state.id,
             "result": result,
         });
         debug!("CORE <-- result: {}", cmd);

@@ -97,6 +97,7 @@ impl MainWin {
             syntax_combo_box.append_text("None");
             syntax_combo_box.set_active(0);
 
+            #[allow(unused_variables)]
             syntax_combo_box.connect_changed(clone!(core => move |cb|{
                 if let Some(lang) = cb.get_active_text() {
                     main_win.borrow().set_language(&lang);
@@ -461,7 +462,7 @@ impl MainWin {
 
         self.core
             .borrow()
-            .send_result(request[0].id, &serde_json::to_value(widths).unwrap());
+            .send_result(&serde_json::to_value(vec![widths]).unwrap());
     }
 
     pub fn available_languages(&mut self, params: &Value) {
