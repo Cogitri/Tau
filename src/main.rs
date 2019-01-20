@@ -8,6 +8,7 @@ mod macros;
 mod clipboard;
 mod edit_view;
 mod errors;
+mod globals;
 mod linecache;
 mod main_win;
 mod pref_storage;
@@ -157,8 +158,11 @@ fn main() {
     let handler = MyHandler::new(shared_queue.clone());
     let core = Core::new(xi_peer, rx, handler.clone());
 
-    let application = Application::new("com.github.bvinc.gxi", ApplicationFlags::HANDLES_OPEN)
-        .expect(&gettext("Failed to create the GTK+ application"));
+    let application = Application::new(
+        crate::globals::LOCALEDIR.unwrap_or("com.github.Cogitri.gxi"),
+        ApplicationFlags::HANDLES_OPEN,
+    )
+    .expect(&gettext("Failed to create the GTK+ application"));
 
     //TODO: This part really needs better error handling...
     let (xi_config_dir, xi_config, gxi_config) = if let Some(user_config_dir) = dirs::config_dir() {

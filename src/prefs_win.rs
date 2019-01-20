@@ -1,7 +1,7 @@
 use crate::main_win::MainState;
 use crate::pref_storage::{Config, GtkXiConfig, XiConfig};
 use crate::rpc::Core;
-use gettextrs::gettext;
+use gettextrs::{bindtextdomain, gettext, setlocale, textdomain, LocaleCategory};
 use gtk::*;
 use log::{debug, error};
 use pango::*;
@@ -35,6 +35,11 @@ impl PrefsWin {
             builder.get_object("scroll_past_end_checkbutton").unwrap();
         let word_wrap_checkbutton: ToggleButton =
             builder.get_object("word_wrap_checkbutton").unwrap();
+
+        // Set up the textdomain for gettext
+        setlocale(LocaleCategory::LcAll, "");
+        bindtextdomain("gxi", crate::globals::LOCALEDIR.unwrap_or("./po"));
+        textdomain("gxi");
 
         {
             let conf = xi_config.lock().unwrap();
