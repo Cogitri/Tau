@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gxi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-01-21 11:54-0200\n"
+"POT-Creation-Date: 2019-01-21 23:41+0100\n"
 "PO-Revision-Date: 2019-01-21 12:14-0200\n"
+"Last-Translator: \n"
 "Language-Team: \n"
+"Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.2.1\n"
-"Last-Translator: \n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"Language: pt_BR\n"
 
 #: src/main.rs:66
 msgid "Failed to write to the signalling pipe"
@@ -38,43 +38,44 @@ msgstr ""
 msgid "Failed to read the signalling pipe!"
 msgstr ""
 
-#: src/main.rs:170
+#: src/main.rs:177
 msgid "Failed to create the GTK+ application"
 msgstr ""
 
-#: src/main.rs:179
+#: src/main.rs:186
 msgid "Failed to create the config dir"
 msgstr ""
 
-#: src/main.rs:209
+#: src/main.rs:216
 msgid "Couldn't read config, falling back to the default XI-Editor config"
-msgstr "Leitura da configuração impossível. Usando configuração padrão do Editor XI"
+msgstr ""
+"Leitura da configuração impossível. Usando configuração padrão do Editor XI"
 
-#: src/main.rs:243
+#: src/main.rs:250
 msgid "Couldn't read config, falling back to the default GXI config"
 msgstr "Leitura da configuração impossível. Usando configuração padrão do GXI"
 
-#: src/main.rs:260
+#: src/main.rs:267
 msgid "Couldn't determine home dir! Settings will be temporary"
 msgstr ""
 
-#: src/main.rs:269
+#: src/main.rs:276
 msgid "Failed to create temporary config dir"
 msgstr "Falha ao criar diretório temporário de configuração"
 
-#: src/main.rs:306
+#: src/main.rs:313
 msgid "Starting gxi"
 msgstr "Iniciando gxi"
 
-#: src/main.rs:330
+#: src/main.rs:337
 msgid "Activating new view"
 msgstr ""
 
-#: src/main.rs:348
+#: src/main.rs:355
 msgid "Opening new file"
 msgstr "Abrindo novo arquivo"
 
-#: src/main.rs:372
+#: src/main.rs:379
 msgid "Shutting down..."
 msgstr "Desligando"
 
@@ -82,56 +83,61 @@ msgstr "Desligando"
 msgid "Theme name"
 msgstr "Nome do Tema"
 
-#: src/main_win.rs:187
+#. xi-editor doesn't know about the translations
+#: src/main_win.rs:98 src/main_win.rs:105
+msgid "Plain Text"
+msgstr ""
+
+#: src/main_win.rs:195
 msgid "Auto indent"
 msgstr "Indentar Automaticamente"
 
-#: src/main_win.rs:211
+#: src/main_win.rs:219
 msgid "Space indent"
 msgstr "Indentar com espaços"
 
-#: src/main_win.rs:265
+#: src/main_win.rs:273
 msgid "!!! UNHANDLED NOTIFICATION, PLEASE OPEN A BUGREPORT!"
 msgstr ""
 
-#: src/main_win.rs:287 src/ui/prefs_win.glade:32
+#: src/main_win.rs:295 src/ui/prefs_win.glade:32
 msgid "Theme"
 msgstr "Tema"
 
-#: src/main_win.rs:289
+#: src/main_win.rs:297
 msgid "isn't available, setting to default"
 msgstr "indisponivel, configurando como padrão"
 
-#: src/main_win.rs:308
+#: src/main_win.rs:316
 msgid "Failed to convert theme settings"
 msgstr ""
 
-#: src/main_win.rs:342
+#: src/main_win.rs:350
 msgid "!!! UNHANDLED available_plugins, PLEASE OPEN A BUGRPEORT"
 msgstr ""
 
-#: src/main_win.rs:407 src/main_win.rs:423 src/main_win.rs:457
-#: src/main_win.rs:476 src/main_win.rs:489
+#: src/main_win.rs:415 src/main_win.rs:431 src/main_win.rs:465
+#: src/main_win.rs:484 src/main_win.rs:497
 msgid "Handling"
 msgstr ""
 
-#: src/main_win.rs:447
+#: src/main_win.rs:455
 msgid "Failed to find View"
 msgstr ""
 
-#: src/main_win.rs:498
+#: src/main_win.rs:506
 msgid "Changing language to"
 msgstr "Mudando Língua para"
 
-#: src/main_win.rs:516 src/main_win.rs:556
+#: src/main_win.rs:522 src/main_win.rs:562
 msgid "FileChooserDialog open response"
 msgstr ""
 
-#: src/main_win.rs:602
+#: src/main_win.rs:608
 msgid "Failed to get the current EditView"
 msgstr ""
 
-#: src/main_win.rs:681
+#: src/main_win.rs:688
 msgid "AskSaveDialog response (1=save)"
 msgstr ""
 
@@ -272,7 +278,7 @@ msgstr "Diretório de fontes configurado com sucesso"
 msgid "Failed to set fontdir"
 msgstr "Falha em configurar diretório de fontes"
 
-#: src/edit_view.rs:126 src/edit_view.rs:454 src/edit_view.rs:618
+#: src/edit_view.rs:126 src/edit_view.rs:456 src/edit_view.rs:620
 msgid "Failed to get Pango context"
 msgstr ""
 
@@ -308,79 +314,79 @@ msgstr "largura"
 msgid "height"
 msgstr "altura"
 
-#: src/edit_view.rs:313 src/edit_view.rs:315
+#: src/edit_view.rs:315 src/edit_view.rs:317
 msgid "Untitled"
 msgstr "Sem Titulo"
 
-#: src/edit_view.rs:324
+#: src/edit_view.rs:326
 msgid "Setting title to"
 msgstr "Configurando titulo para"
 
-#: src/edit_view.rs:341 src/prefs_win.rs:65
+#: src/edit_view.rs:343 src/prefs_win.rs:65
 msgid "Setting font to"
 msgstr "Configurando fonte para"
 
-#: src/edit_view.rs:364
+#: src/edit_view.rs:366
 msgid "Unhandled config option"
 msgstr ""
 
-#: src/edit_view.rs:472
+#: src/edit_view.rs:474
 msgid "Allocating DrawingArea size"
 msgstr ""
 
-#: src/edit_view.rs:482
+#: src/edit_view.rs:484
 msgid "Vertical scrollbar changed value"
 msgstr ""
 
-#: src/edit_view.rs:498
+#: src/edit_view.rs:500
 msgid "Updating visible scroll region"
 msgstr ""
 
-#: src/edit_view.rs:505
+#: src/edit_view.rs:507
 msgid "Requesting new lines..."
 msgstr ""
 
-#: src/edit_view.rs:512
+#: src/edit_view.rs:514
 msgid "...and scrolling to them"
 msgstr ""
 
-#: src/edit_view.rs:559
+#: src/edit_view.rs:561
 msgid "Drawing EditView"
 msgstr ""
 
-#: src/edit_view.rs:560
+#: src/edit_view.rs:562
 msgid "vertical adjustment"
 msgstr ""
 
-#: src/edit_view.rs:563
+#: src/edit_view.rs:565
 msgid "horizontal adjustment"
 msgstr ""
 
-#: src/edit_view.rs:878
+#: src/edit_view.rs:880
 msgid "Smooth scrolling failed"
 msgstr ""
 
-#: src/edit_view.rs:901
+#: src/edit_view.rs:903
 msgid "Processing key press"
 msgstr "Processando pressionamento da tecla"
 
-#: src/edit_view.rs:902
+#: src/edit_view.rs:904
 msgid "value"
 msgstr "valor"
 
-#: src/edit_view.rs:904
+#: src/edit_view.rs:906
 msgid "state"
 msgstr "estado"
 
-#: src/edit_view.rs:906
+#: src/edit_view.rs:908
 msgid "length"
 msgstr "lagura"
 
-#: src/edit_view.rs:908
+#: src/edit_view.rs:910
 msgid "group"
 msgstr "grupo"
 
-#: src/edit_view.rs:910
+#: src/edit_view.rs:912
 msgid "unicode"
 msgstr ""
 

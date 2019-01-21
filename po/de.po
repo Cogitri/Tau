@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gxi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-01-21 14:33+0100\n"
-"PO-Revision-Date: 2019-01-21 14:33+0100\n"
+"POT-Creation-Date: 2019-01-21 23:41+0100\n"
+"PO-Revision-Date: 2019-01-21 23:34+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -38,50 +38,50 @@ msgstr "Habe eine Nachricht für Xi gefunden"
 msgid "Failed to read the signalling pipe!"
 msgstr "Das Lesen der Signal-Pipe ist fehlgeschlagen!"
 
-#: src/main.rs:170
+#: src/main.rs:177
 msgid "Failed to create the GTK+ application"
 msgstr "Das Erstellen der GTK+ Applikation ist fehlgeschlagen"
 
-#: src/main.rs:179
+#: src/main.rs:186
 msgid "Failed to create the config dir"
 msgstr "Das Erstellen des Konfigurationsverzeichnis ist fehlgeschagen"
 
-#: src/main.rs:209
+#: src/main.rs:216
 msgid "Couldn't read config, falling back to the default XI-Editor config"
 msgstr ""
 "Konnte die Konfiguration nicht lesen, falle zurück zur Xi-Editor "
 "Standardkonfiguration"
 
-#: src/main.rs:243
+#: src/main.rs:250
 msgid "Couldn't read config, falling back to the default GXI config"
 msgstr ""
 "Konnte die Konfiguration nicht lesen, falle zurück zur GXI "
 "Standardkonfiguration"
 
-#: src/main.rs:260
+#: src/main.rs:267
 msgid "Couldn't determine home dir! Settings will be temporary"
 msgstr ""
 "Konnte das home Verzeichnis nicht bestimmen! Vorgenommene Einstellungen "
 "werden nur temporär sein"
 
-#: src/main.rs:269
+#: src/main.rs:276
 msgid "Failed to create temporary config dir"
 msgstr ""
 "Das Erstellen des temporären Konfigurationsverzeichnisses ist fehlgeschlagen"
 
-#: src/main.rs:306
+#: src/main.rs:313
 msgid "Starting gxi"
 msgstr "Starte gxi"
 
-#: src/main.rs:330
+#: src/main.rs:337
 msgid "Activating new view"
 msgstr "Aktiviere eine neue EditView"
 
-#: src/main.rs:348
+#: src/main.rs:355
 msgid "Opening new file"
 msgstr "Öffne eine neue Datei"
 
-#: src/main.rs:372
+#: src/main.rs:379
 msgid "Shutting down..."
 msgstr "Schließe die Applikation..."
 
@@ -89,57 +89,62 @@ msgstr "Schließe die Applikation..."
 msgid "Theme name"
 msgstr "Das konvertieren der Thema-Einstellungen ist fehlgeschöagen"
 
-#: src/main_win.rs:187
+#. xi-editor doesn't know about the translations
+#: src/main_win.rs:98 src/main_win.rs:105
+msgid "Plain Text"
+msgstr "Klartext"
+
+#: src/main_win.rs:195
 msgid "Auto indent"
 msgstr "Thema-Name"
 
-#: src/main_win.rs:211
+#: src/main_win.rs:219
 msgid "Space indent"
 msgstr "Einrücken mit Leerzeichen"
 
-#: src/main_win.rs:265
+#: src/main_win.rs:273
 msgid "!!! UNHANDLED NOTIFICATION, PLEASE OPEN A BUGREPORT!"
 msgstr "!!! NICHT BEHANDELTE BENACHRICHTIGUNG, BITTE ÖFFNE EINEN BUG-REPORT!"
 
-#: src/main_win.rs:287 src/ui/prefs_win.glade:32
+#: src/main_win.rs:295 src/ui/prefs_win.glade:32
 msgid "Theme"
 msgstr "Thema"
 
-#: src/main_win.rs:289
+#: src/main_win.rs:297
 msgid "isn't available, setting to default"
 msgstr "ist nicht verfügbar, setze zurück zum Standard"
 
-#: src/main_win.rs:308
+#: src/main_win.rs:316
 msgid "Failed to convert theme settings"
 msgstr "Das konvertieren der Thema-Einstellungen ist fehgelschlagen"
 
-#: src/main_win.rs:342
+#: src/main_win.rs:350
 msgid "!!! UNHANDLED available_plugins, PLEASE OPEN A BUGRPEORT"
 msgstr ""
 "!!! NICHT BEHANDELTES 'available_plugins' , BITTE ÖFFNE EINEN BUG-REPORT"
 
-#: src/main_win.rs:407 src/main_win.rs:423 src/main_win.rs:457
-#: src/main_win.rs:476 src/main_win.rs:489
+#: src/main_win.rs:415 src/main_win.rs:431 src/main_win.rs:465
+#: src/main_win.rs:484 src/main_win.rs:497
 msgid "Handling"
 msgstr "Behandlung"
 
-#: src/main_win.rs:447
+#: src/main_win.rs:455
 msgid "Failed to find View"
 msgstr "Das Finden der View ist fehlgeschlagen"
 
-#: src/main_win.rs:498
+#: src/main_win.rs:506
 msgid "Changing language to"
 msgstr "Wechsle die Sprache zu"
 
-#: src/main_win.rs:516 src/main_win.rs:556
+#: src/main_win.rs:522 src/main_win.rs:562
 msgid "FileChooserDialog open response"
 msgstr "FileChooserDialog Öffnungs-Antwort"
 
-#: src/main_win.rs:602
+#: src/main_win.rs:608
 msgid "Failed to get the current EditView"
 msgstr "Das Erhalten der momentanen EditView ist fehlgeschlagen"
 
-#: src/main_win.rs:681
+#: src/main_win.rs:688
 msgid "AskSaveDialog response (1=save)"
 msgstr "AskSaveDialog Antwort (1=speichern)"
 
@@ -281,7 +286,7 @@ msgstr "Habe erfolgreich das Schriftarten-Verzeichnis gesetzt"
 msgid "Failed to set fontdir"
 msgstr "Das Setzen des Schriftarten-Verzeichnisses ist fehlgeschlagen"
 
-#: src/edit_view.rs:126 src/edit_view.rs:454 src/edit_view.rs:618
+#: src/edit_view.rs:126 src/edit_view.rs:456 src/edit_view.rs:620
 msgid "Failed to get Pango context"
 msgstr "Das Holen des Pango Kontexts ist fehlgeschlage"
 
@@ -317,79 +322,79 @@ msgstr "Breite"
 msgid "height"
 msgstr "Höhe"
 
-#: src/edit_view.rs:313 src/edit_view.rs:315
+#: src/edit_view.rs:315 src/edit_view.rs:317
 msgid "Untitled"
 msgstr "Unbenannt"
 
-#: src/edit_view.rs:324
+#: src/edit_view.rs:326
 msgid "Setting title to"
 msgstr "Setze Titel zu"
 
-#: src/edit_view.rs:341 src/prefs_win.rs:65
+#: src/edit_view.rs:343 src/prefs_win.rs:65
 msgid "Setting font to"
 msgstr "Setze Schriftart zu"
 
-#: src/edit_view.rs:364
+#: src/edit_view.rs:366
 msgid "Unhandled config option"
 msgstr "Unbehandelte Konfigurationsoption"
 
-#: src/edit_view.rs:472
+#: src/edit_view.rs:474
 msgid "Allocating DrawingArea size"
 msgstr "Belege DrawingArea Größe"
 
-#: src/edit_view.rs:482
+#: src/edit_view.rs:484
 msgid "Vertical scrollbar changed value"
 msgstr "Der Wert der vertikalen Scrollbar hat sich geändert"
 
-#: src/edit_view.rs:498
+#: src/edit_view.rs:500
 msgid "Updating visible scroll region"
 msgstr "Update den sichtbaren Scroll-Bereich"
 
-#: src/edit_view.rs:505
+#: src/edit_view.rs:507
 msgid "Requesting new lines..."
 msgstr "Frage neue Linien an..."
 
-#: src/edit_view.rs:512
+#: src/edit_view.rs:514
 msgid "...and scrolling to them"
 msgstr "...und scrolle zu ihnen"
 
-#: src/edit_view.rs:559
+#: src/edit_view.rs:561
 msgid "Drawing EditView"
 msgstr "Zeichne EditView"
 
-#: src/edit_view.rs:560
+#: src/edit_view.rs:562
 msgid "vertical adjustment"
 msgstr "vertikale Einstellung"
 
-#: src/edit_view.rs:563
+#: src/edit_view.rs:565
 msgid "horizontal adjustment"
 msgstr "horizontale Einstellung"
 
-#: src/edit_view.rs:878
+#: src/edit_view.rs:880
 msgid "Smooth scrolling failed"
 msgstr "Smooth-Scrolling fehlgeschlagen"
 
-#: src/edit_view.rs:901
+#: src/edit_view.rs:903
 msgid "Processing key press"
 msgstr "Verarbeite Knopfdruck"
 
-#: src/edit_view.rs:902
+#: src/edit_view.rs:904
 msgid "value"
 msgstr "Wert"
 
-#: src/edit_view.rs:904
+#: src/edit_view.rs:906
 msgid "state"
 msgstr "Status"
 
-#: src/edit_view.rs:906
+#: src/edit_view.rs:908
 msgid "length"
 msgstr "Länge"
 
-#: src/edit_view.rs:908
+#: src/edit_view.rs:910
 msgid "group"
 msgstr "Gruppe"
 
-#: src/edit_view.rs:910
+#: src/edit_view.rs:912
 msgid "unicode"
 msgstr "Unicode"
 

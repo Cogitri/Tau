@@ -95,12 +95,18 @@ impl MainWin {
         {
             let main_win = main_win.clone();
 
-            syntax_combo_box.append_text("Plain Text");
+            syntax_combo_box.append_text(&gettext("Plain Text"));
             syntax_combo_box.set_active(0);
 
             #[allow(unused_variables)]
             syntax_combo_box.connect_changed(clone!(core => move |cb|{
                 if let Some(lang) = cb.get_active_text() {
+                    // xi-editor doesn't know about the translations
+                    let lang = if lang == gettext("Plain Text") {
+                        "Plain Text".to_string()
+                    } else {
+                        lang
+                    };
                     let ev = main_win.borrow().get_current_edit_view();
                     let core = &main_win.borrow().core;
                     MainWin::set_language(&core, &ev.borrow().view_id, &lang);
@@ -637,6 +643,7 @@ impl MainWin {
             .borrow()
             .avail_languages
             .iter()
+            .filter(|l| l != &&"Plain Text".to_string())
             .for_each(|lang| syntax_combo_box.append_text(lang));
 
         if let Some(view_id) = value.as_str() {
