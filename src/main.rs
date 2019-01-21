@@ -23,11 +23,11 @@ use crate::main_win::MainWin;
 use crate::pref_storage::{Config, GtkXiConfig, XiConfig};
 use crate::rpc::{Core, Handler};
 use crate::source::{new_source, SourceFuncs};
-use gettextrs::{bindtextdomain, gettext, setlocale, textdomain, LocaleCategory};
+use gettextrs::{gettext, TextDomain, TextDomainError};
 use gio::{ApplicationExt, ApplicationExtManual, ApplicationFlags, FileExt};
 use glib::MainContext;
 use gtk::Application;
-use log::{debug, error, trace};
+use log::{debug, error, info, trace, warn};
 use mio::unix::{pipe, PipeReader, PipeWriter};
 use mio::TryRead;
 use serde_json::{json, Value};
@@ -158,10 +158,17 @@ fn main() {
     let handler = MyHandler::new(shared_queue.clone());
     let core = Core::new(xi_peer, rx, handler.clone());
 
-    // Set up the textdomain for gettext
-    setlocale(LocaleCategory::LcAll, "de_DE.UTF-8");
-    bindtextdomain("gxi", crate::globals::LOCALEDIR.unwrap_or("./po"));
-    textdomain("gxi");
+    // No need to gettext this, gettext doesn't work yet
+    match TextDomain::new("gxi").push("po").init() {
+        Ok(locale) => info!("Translation found, setting locale to {:?}", locale),
+        Err(TextDomainError::TranslationNotFound(lang)) => {
+            // We don't have an 'en' catalog since the messages are English by default
+            if lang != "en" {
+                warn!("Translation not found for lang {}", lang)
+            }
+        }
+        Err(TextDomainError::InvalidLocale(locale)) => warn!("Invalid locale {}", locale),
+    }
 
     let application = Application::new(
         crate::globals::LOCALEDIR.unwrap_or("com.github.Cogitri.gxi"),
