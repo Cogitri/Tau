@@ -1,9 +1,9 @@
 use crate::main_win::MainState;
 use crate::pref_storage::{Config, GtkXiConfig, XiConfig};
 use crate::rpc::Core;
-use gettextrs::{bindtextdomain, gettext, setlocale, textdomain, LocaleCategory};
+use gettextrs::gettext;
 use gtk::*;
-use log::{debug, error};
+use log::{debug, error, trace};
 use pango::*;
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -36,11 +36,6 @@ impl PrefsWin {
         let word_wrap_checkbutton: ToggleButton =
             builder.get_object("word_wrap_checkbutton").unwrap();
 
-        // Set up the textdomain for gettext
-        setlocale(LocaleCategory::LcAll, "");
-        bindtextdomain("gxi", crate::globals::LOCALEDIR.unwrap_or("./po"));
-        textdomain("gxi");
-
         {
             let conf = xi_config.lock().unwrap();
 
@@ -48,7 +43,7 @@ impl PrefsWin {
             font_desc.set_size(conf.config.font_size as i32 * 1024);
             font_desc.set_family(&conf.config.font_face);
 
-            debug!(
+            trace!(
                 "{}: {}",
                 gettext("Setting font description"),
                 &conf.config.font_face
@@ -82,7 +77,7 @@ impl PrefsWin {
             for (i, theme_name) in main_state.themes.iter().enumerate() {
                 theme_combo_box.append_text(theme_name);
                 if &main_state.theme_name == theme_name {
-                    debug!("{} {}", gettext("Settings window active"), i);
+                    trace!("{}: {}", gettext("Setting active theme"), i);
                     theme_combo_box.set_active(i as i32);
                 }
             }

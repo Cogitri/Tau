@@ -897,8 +897,8 @@ impl EditView {
 
     fn handle_key_press_event(&mut self, ek: &EventKey) -> Inhibit {
         debug!(
-            "{} {}={:?}, {}={:?}, {}={:?} {}={:?} {}={:?}",
-            gettext("Processing key press:"),
+            "{}: {}={:?}, {}={:?}, {}={:?} {}={:?} {}={:?}",
+            gettext("Processing key press"),
             gettext("value"),
             ek.get_keyval(),
             gettext("state"),

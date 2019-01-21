@@ -286,7 +286,7 @@ impl MainWin {
                 "{} {} {}",
                 gettext("Theme"),
                 &state.theme_name,
-                gettext("isn't available, setting to default..."),
+                gettext("isn't available, setting to default"),
             );
 
             if let Some(theme_name) = state.themes.first().map(Clone::clone) {

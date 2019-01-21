@@ -23,7 +23,7 @@ use crate::main_win::MainWin;
 use crate::pref_storage::{Config, GtkXiConfig, XiConfig};
 use crate::rpc::{Core, Handler};
 use crate::source::{new_source, SourceFuncs};
-use gettextrs::gettext;
+use gettextrs::{bindtextdomain, gettext, setlocale, textdomain, LocaleCategory};
 use gio::{ApplicationExt, ApplicationExtManual, ApplicationFlags, FileExt};
 use glib::MainContext;
 use gtk::Application;
@@ -157,6 +157,11 @@ fn main() {
     let (xi_peer, rx) = xi_thread::start_xi_thread();
     let handler = MyHandler::new(shared_queue.clone());
     let core = Core::new(xi_peer, rx, handler.clone());
+
+    // Set up the textdomain for gettext
+    setlocale(LocaleCategory::LcAll, "de_DE.UTF-8");
+    bindtextdomain("gxi", crate::globals::LOCALEDIR.unwrap_or("./po"));
+    textdomain("gxi");
 
     let application = Application::new(
         crate::globals::LOCALEDIR.unwrap_or("com.github.Cogitri.gxi"),

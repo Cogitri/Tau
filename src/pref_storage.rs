@@ -97,11 +97,11 @@ impl<T> Config<T> {
     where
         T: Clone + Debug + DeserializeOwned,
     {
-        trace!("{}", gettext("Opening config file!"));
+        trace!("{}", gettext("Opening config file"));
         let mut config_file = OpenOptions::new().read(true).open(&self.path)?;
         let mut config_string = String::new();
 
-        trace!("{}", gettext("Reading config file!"));
+        trace!("{}", gettext("Reading config file"));
         config_file.read_to_string(&mut config_string)?;
 
         let config_toml: T = toml::from_str(&config_string)?;
