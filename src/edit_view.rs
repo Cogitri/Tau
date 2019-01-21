@@ -281,6 +281,8 @@ impl EditView {
             edit_view.borrow_mut().vscrollbar_change_value(value)
         }));
 
+        crate::MainWin::set_language(&core, view_id, "Plain Text");
+
         edit_view
     }
 }
