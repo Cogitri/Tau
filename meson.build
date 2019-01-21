@@ -27,9 +27,6 @@ grabber = find_program('scripts/grabber.sh')
 c = run_command(grabber)
 sources = c.stdout().strip().split('\n')
 
-# Well this isn't pretty
-rust_target = get_option('rust-target')
-
 custom_target('cargo-build-gxi',
                         input: sources,
                         output: ['gxi'],
@@ -41,8 +38,8 @@ custom_target('cargo-build-gxi',
                                   '@OUTPUT@',
                                   meson.current_build_dir(),
                                   'gxi',
-                                  rust_target,
                                   gxi_plugin_dir,
+								  meson.is_cross_build(),
                                  ])
 
 syntect_build_path = join_paths(meson.current_source_dir(), 'vendor', 'xi-editor', 'rust', 'syntect-plugin')
