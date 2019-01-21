@@ -8,3 +8,5 @@ target
 /.idea/**
 /install/**
 /build/**
+/po/*.mo
+/po/*.pot
