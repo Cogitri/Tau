@@ -95,13 +95,15 @@ impl MainWin {
         {
             let main_win = main_win.clone();
 
-            syntax_combo_box.append_text("None");
+            syntax_combo_box.append_text("Plain Text");
             syntax_combo_box.set_active(0);
 
             #[allow(unused_variables)]
             syntax_combo_box.connect_changed(clone!(core => move |cb|{
                 if let Some(lang) = cb.get_active_text() {
-                    main_win.borrow().set_language(&lang);
+                    let ev = main_win.borrow().get_current_edit_view();
+                    let core = &main_win.borrow().core;
+                    MainWin::set_language(&core, &ev.borrow().view_id, &lang);
                 }
             }));
         }
@@ -494,11 +496,9 @@ impl MainWin {
         }
     }
 
-    pub fn set_language(&self, lang: &str) {
+    pub fn set_language(core: &Rc<RefCell<Core>>, view_id: &str, lang: &str) {
         debug!("{} '{:?}'", gettext("Changing language to"), lang);
-        let core = self.core.borrow();
-        let edit_view = self.get_current_edit_view().clone();
-        core.set_language(&edit_view.borrow().view_id, &lang);
+        core.borrow().set_language(&view_id, &lang);
     }
 
     /// Display the FileChooserDialog for opening, send the result to the Xi core.
