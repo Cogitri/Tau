@@ -1,31 +1,16 @@
 sudo: true
+dist: bionic
 language: rust
-env:
-  matrix:
-    - DIST: "xenial"
-      RUST_VER: "stable"
-    - DIST: "xenial"
-      RUST_VER: "nightly"
-    - DIST: "bionic"
-      RUST_VER: "stable"
-    - DIST: "bionic"
-      RUST_VER: "nightly"
+rust:
+  - stable
+  - beta
+  - nightly
+cache: cargo
 addons:
   apt:
     packages:
     - libgtk-3-dev
+    - cmake
+    - libpango1.0-dev
 before_install:
-  - docker run -d --name ubuntu-test -v $(pwd):/travis ubuntu:$DIST tail -f /dev/null
-  - docker ps
-install:
-  - docker exec -t ubuntu-test bash -c "apt-get update;
-    apt-get install -y libgtk-3-dev cmake gcc g++;"
-script:
-  - docker exec -t ubuntu-test bash -c "(curl https://sh.rustup.rs -sSf | sh -s -- -y) &&
-    source \$HOME/.cargo/env &&
-    cd /travis &&
-    rustup install $RUST_VER &&
-    rustc --version &&
-    cargo test &&
-    cargo doc &&
-    cargo build"
+  sudo apt-get install libgtk-3-dev cmake libpango1.0-dev
