@@ -1,0 +1,449 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the gxi package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: gxi\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-01-21 14:33+0100\n"
+"PO-Revision-Date: 2019-01-21 14:33+0100\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.2.1\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: src/main.rs:66
+msgid "Failed to write to the signalling pipe"
+msgstr "Das Schreiben der Signal-Pipe ist fehlgeschlagen"
+
+#: src/main.rs:68
+msgid "Pushing to queue"
+msgstr "Füge zur Warteschlange hinzu"
+
+#: src/main.rs:98
+msgid "Dispatching messages to xi"
+msgstr "Schicke Nachrichten zu Xi"
+
+#: src/main.rs:101
+msgid "Found a message for xi"
+msgstr "Habe eine Nachricht für Xi gefunden"
+
+#: src/main.rs:108
+msgid "Failed to read the signalling pipe!"
+msgstr "Das Lesen der Signal-Pipe ist fehlgeschlagen!"
+
+#: src/main.rs:170
+msgid "Failed to create the GTK+ application"
+msgstr "Das Erstellen der GTK+ Applikation ist fehlgeschlagen"
+
+#: src/main.rs:179
+msgid "Failed to create the config dir"
+msgstr "Das Erstellen des Konfigurationsverzeichnis ist fehlgeschagen"
+
+#: src/main.rs:209
+msgid "Couldn't read config, falling back to the default XI-Editor config"
+msgstr ""
+"Konnte die Konfiguration nicht lesen, falle zurück zur Xi-Editor "
+"Standardkonfiguration"
+
+#: src/main.rs:243
+msgid "Couldn't read config, falling back to the default GXI config"
+msgstr ""
+"Konnte die Konfiguration nicht lesen, falle zurück zur GXI "
+"Standardkonfiguration"
+
+#: src/main.rs:260
+msgid "Couldn't determine home dir! Settings will be temporary"
+msgstr ""
+"Konnte das home Verzeichnis nicht bestimmen! Vorgenommene Einstellungen "
+"werden nur temporär sein"
+
+#: src/main.rs:269
+msgid "Failed to create temporary config dir"
+msgstr ""
+"Das Erstellen des temporären Konfigurationsverzeichnisses ist fehlgeschlagen"
+
+#: src/main.rs:306
+msgid "Starting gxi"
+msgstr "Starte gxi"
+
+#: src/main.rs:330
+msgid "Activating new view"
+msgstr "Aktiviere eine neue EditView"
+
+#: src/main.rs:348
+msgid "Opening new file"
+msgstr "Öffne eine neue Datei"
+
+#: src/main.rs:372
+msgid "Shutting down..."
+msgstr "Schließe die Applikation..."
+
+#: src/main_win.rs:66
+msgid "Theme name"
+msgstr "Das konvertieren der Thema-Einstellungen ist fehlgeschöagen"
+
+#: src/main_win.rs:187
+msgid "Auto indent"
+msgstr "Thema-Name"
+
+#: src/main_win.rs:211
+msgid "Space indent"
+msgstr "Einrücken mit Leerzeichen"
+
+#: src/main_win.rs:265
+msgid "!!! UNHANDLED NOTIFICATION, PLEASE OPEN A BUGREPORT!"
+msgstr "!!! NICHT BEHANDELTE BENACHRICHTIGUNG, BITTE ÖFFNE EINEN BUG-REPORT!"
+
+#: src/main_win.rs:287 src/ui/prefs_win.glade:32
+msgid "Theme"
+msgstr "Thema"
+
+#: src/main_win.rs:289
+msgid "isn't available, setting to default"
+msgstr "ist nicht verfügbar, setze zurück zum Standard"
+
+#: src/main_win.rs:308
+msgid "Failed to convert theme settings"
+msgstr "Das konvertieren der Thema-Einstellungen ist fehgelschlagen"
+
+#: src/main_win.rs:342
+msgid "!!! UNHANDLED available_plugins, PLEASE OPEN A BUGRPEORT"
+msgstr ""
+"!!! NICHT BEHANDELTES 'available_plugins' , BITTE ÖFFNE EINEN BUG-REPORT"
+
+#: src/main_win.rs:407 src/main_win.rs:423 src/main_win.rs:457
+#: src/main_win.rs:476 src/main_win.rs:489
+msgid "Handling"
+msgstr "Behandlung"
+
+#: src/main_win.rs:447
+msgid "Failed to find View"
+msgstr "Das Finden der View ist fehlgeschlagen"
+
+#: src/main_win.rs:498
+msgid "Changing language to"
+msgstr "Wechsle die Sprache zu"
+
+#: src/main_win.rs:516 src/main_win.rs:556
+msgid "FileChooserDialog open response"
+msgstr "FileChooserDialog Öffnungs-Antwort"
+
+#: src/main_win.rs:602
+msgid "Failed to get the current EditView"
+msgstr "Das Erhalten der momentanen EditView ist fehlgeschlagen"
+
+#: src/main_win.rs:681
+msgid "AskSaveDialog response (1=save)"
+msgstr "AskSaveDialog Antwort (1=speichern)"
+
+#: src/xi_thread.rs:45
+msgid "Didn't expect xi-rpc to call read()"
+msgstr "Unerwarteter Aufruf von read() von xi-rpc"
+
+#: src/xi_thread.rs:53
+msgid "Didn't expect xi-rpc to call fill_buf()"
+msgstr "Unerwarteter Aufruf von fill_buf() von xi-rpc"
+
+#: src/xi_thread.rs:57
+msgid "Didn't expect xi-rpc to call consume()"
+msgstr "Unerwarteter Aufruf von consume() von xi-rpc"
+
+#: src/xi_thread.rs:77
+msgid "Didn't expect xi-rpc to call write()"
+msgstr "Unerwarteter Aufruf von write() von xi-rpc"
+
+#: src/xi_thread.rs:81
+msgid "Didn't expect xi-rpc to call flush()"
+msgstr "Unerwarteter Aufruf von flush() von xi-rpc"
+
+#: src/xi_thread.rs:88
+msgid "RPC rx thread lost"
+msgstr "RPC-Empfangs-Thread verloren"
+
+#: src/ui/gxi.glade:22
+msgid "Save As..."
+msgstr "Speichern unter..."
+
+#: src/ui/gxi.glade:36
+msgid "Save All"
+msgstr "Alles speicherm"
+
+#: src/ui/gxi.glade:61
+msgid "Find..."
+msgstr "Finden..."
+
+#: src/ui/gxi.glade:86
+msgid "Auto Indent"
+msgstr "Automatisches einrücken"
+
+#: src/ui/gxi.glade:100
+msgid "Insert Spaces"
+msgstr "Einrücken mit Leerzeichen"
+
+#: src/ui/gxi.glade:125 src/ui/prefs_win.glade:7
+msgid "Preferences"
+msgstr "Einstellungen"
+
+#: src/ui/gxi.glade:150
+msgid "Help"
+msgstr "Hilfe"
+
+#: src/ui/gxi.glade:164
+msgid "About"
+msgstr "Über"
+
+#: src/ui/gxi.glade:189
+msgid "Close All"
+msgstr "Alles schließen"
+
+#: src/ui/gxi.glade:203
+msgid "Close"
+msgstr "Schließen"
+
+#: src/ui/gxi.glade:217
+msgid "Quit"
+msgstr "Schließen"
+
+#: src/ui/gxi.glade:252
+msgid "Open"
+msgstr "Öffnen"
+
+#: src/ui/gxi.glade:293
+msgid "Save"
+msgstr "Speichern"
+
+#: src/ui/gxi.glade:308
+msgid "Syntax Selection"
+msgstr "Syntax Auswahl"
+
+#: src/ui/gxi.glade:443
+msgid "Save changes to document \"Untitled\" before closing?"
+msgstr ""
+"Sollen die Änderungen des Dokuments \"Untitled\" vorm Schließen gespeichert "
+"werden?"
+
+#: src/ui/prefs_win.glade:54
+msgid "Font"
+msgstr "Schriftart"
+
+#: src/ui/prefs_win.glade:104
+msgid "Appearance"
+msgstr "Aussehen"
+
+#: src/ui/prefs_win.glade:117
+msgid "Treat spaces like tabs"
+msgstr "Behandle Leerzeichen wie Tabs"
+
+#: src/ui/prefs_win.glade:132
+msgid "Scroll past the end of documents"
+msgstr "Scrolle über das Ende des Dokuments hinaus"
+
+#: src/ui/prefs_win.glade:147
+msgid "Wrap lines at the end of the view instead of offering scrolling"
+msgstr "Breche Zeilen am Rand um, anstatt horizontal zu scrollen"
+
+#: src/ui/prefs_win.glade:170
+msgid "Editing"
+msgstr "Textbearbeitung"
+
+#: src/ui/find_replace.glade:59
+msgid "Find"
+msgstr "Finden"
+
+#: src/ui/find_replace.glade:121
+msgid "No Results"
+msgstr "Keine Ergebnisse"
+
+#: src/ui/find_replace.glade:153 src/ui/find_replace.glade:163
+msgid "Replace"
+msgstr "Ersetzen"
+
+#: src/ui/find_replace.glade:176
+msgid "Replace All"
+msgstr "Alles Ersetzen"
+
+#: src/edit_view.rs:74
+msgid "Events"
+msgstr "Events"
+
+#: src/edit_view.rs:118
+msgid "Sucessfully set fontdir"
+msgstr "Habe erfolgreich das Schriftarten-Verzeichnis gesetzt"
+
+#: src/edit_view.rs:120
+msgid "Failed to set fontdir"
+msgstr "Das Setzen des Schriftarten-Verzeichnisses ist fehlgeschlagen"
+
+#: src/edit_view.rs:126 src/edit_view.rs:454 src/edit_view.rs:618
+msgid "Failed to get Pango context"
+msgstr "Das Holen des Pango Kontexts ist fehlgeschlage"
+
+#: src/edit_view.rs:140
+msgid "Failed to get Pango language"
+msgstr "Das Holen der Pango Sprache ist fehlgeschlagen"
+
+#: src/edit_view.rs:143
+msgid "Failed to load Pango font set"
+msgstr "Das Laden des Pango Schriftartensets ist fehlgeschlagen"
+
+#: src/edit_view.rs:146
+msgid "Failed to load Pango font metrics"
+msgstr "Das Laden der Pango Schriftartenmaße ist fehlgeschlagen"
+
+#: src/edit_view.rs:155
+msgid "Pango size"
+msgstr "Pango Größe"
+
+#: src/edit_view.rs:164
+msgid "Font metrics"
+msgstr "Schriftmaße"
+
+#: src/edit_view.rs:276
+msgid "Size changed to"
+msgstr "Größe geändert zu"
+
+#: src/edit_view.rs:276
+msgid "width"
+msgstr "Breite"
+
+#: src/edit_view.rs:276
+msgid "height"
+msgstr "Höhe"
+
+#: src/edit_view.rs:313 src/edit_view.rs:315
+msgid "Untitled"
+msgstr "Unbenannt"
+
+#: src/edit_view.rs:324
+msgid "Setting title to"
+msgstr "Setze Titel zu"
+
+#: src/edit_view.rs:341 src/prefs_win.rs:65
+msgid "Setting font to"
+msgstr "Setze Schriftart zu"
+
+#: src/edit_view.rs:364
+msgid "Unhandled config option"
+msgstr "Unbehandelte Konfigurationsoption"
+
+#: src/edit_view.rs:472
+msgid "Allocating DrawingArea size"
+msgstr "Belege DrawingArea Größe"
+
+#: src/edit_view.rs:482
+msgid "Vertical scrollbar changed value"
+msgstr "Der Wert der vertikalen Scrollbar hat sich geändert"
+
+#: src/edit_view.rs:498
+msgid "Updating visible scroll region"
+msgstr "Update den sichtbaren Scroll-Bereich"
+
+#: src/edit_view.rs:505
+msgid "Requesting new lines..."
+msgstr "Frage neue Linien an..."
+
+#: src/edit_view.rs:512
+msgid "...and scrolling to them"
+msgstr "...und scrolle zu ihnen"
+
+#: src/edit_view.rs:559
+msgid "Drawing EditView"
+msgstr "Zeichne EditView"
+
+#: src/edit_view.rs:560
+msgid "vertical adjustment"
+msgstr "vertikale Einstellung"
+
+#: src/edit_view.rs:563
+msgid "horizontal adjustment"
+msgstr "horizontale Einstellung"
+
+#: src/edit_view.rs:878
+msgid "Smooth scrolling failed"
+msgstr "Smooth-Scrolling fehlgeschlagen"
+
+#: src/edit_view.rs:901
+msgid "Processing key press"
+msgstr "Verarbeite Knopfdruck"
+
+#: src/edit_view.rs:902
+msgid "value"
+msgstr "Wert"
+
+#: src/edit_view.rs:904
+msgid "state"
+msgstr "Status"
+
+#: src/edit_view.rs:906
+msgid "length"
+msgstr "Länge"
+
+#: src/edit_view.rs:908
+msgid "group"
+msgstr "Gruppe"
+
+#: src/edit_view.rs:910
+msgid "unicode"
+msgstr "Unicode"
+
+#: src/pref_storage.rs:100
+msgid "Opening config file"
+msgstr "Öffne die Konfigurationsdatei"
+
+#: src/pref_storage.rs:104
+msgid "Reading config file"
+msgstr "Lese die Konfigurationsdatei"
+
+#: src/pref_storage.rs:108
+msgid "Xi-Config"
+msgstr "Xi-Konfiguration"
+
+#: src/prefs_win.rs:48
+msgid "Setting font description"
+msgstr "Setze Schriftart"
+
+#: src/prefs_win.rs:66
+msgid "Setting font size to"
+msgstr "Setze Schriftgröße zu"
+
+#: src/prefs_win.rs:80
+msgid "Setting active theme"
+msgstr "Setze aktives Thema"
+
+#: src/prefs_win.rs:88
+msgid "Theme changed to"
+msgstr "Thema gewechselt zu"
+
+#: src/prefs_win.rs:110
+msgid "Scrolling past end"
+msgstr "Scrollen über das Ende des Dokuments hinaus"
+
+#: src/prefs_win.rs:125
+msgid "Word wrapping"
+msgstr "Zeilenumbruch"
+
+#: src/prefs_win.rs:140
+msgid "Tab stops"
+msgstr "Tab stops"
+
+#: src/rpc.rs:67
+msgid "unexpected result"
+msgstr "Unerwartetes Ergebnis"
+
+#: src/rpc.rs:70
+msgid "Got"
+msgstr "Habe"
+
+#: src/rpc.rs:70
+msgid "at RPC level"
+msgstr "im RPC level"
+
+#~ msgid "Settings window active"
+#~ msgstr "Setze aktives Thema"
