@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gxi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-01-21 23:41+0100\n"
+"POT-Creation-Date: 2019-01-22 23:07+0100\n"
 "PO-Revision-Date: 2019-01-21 12:14-0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,126 +18,138 @@ msgstr ""
 "X-Generator: Poedit 2.2.1\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: src/main.rs:66
+#: src/about_win.rs:15
+msgid "GTK frontend for the xi text editor, written in Rust"
+msgstr ""
+
+#: src/about_win.rs:22
+msgid "gxi's Github Repo"
+msgstr ""
+
+#: src/about_win.rs:27
+msgid "Showing about window"
+msgstr ""
+
+#: src/main.rs:67
 msgid "Failed to write to the signalling pipe"
 msgstr ""
 
-#: src/main.rs:68
+#: src/main.rs:69
 msgid "Pushing to queue"
 msgstr ""
 
-#: src/main.rs:98
+#: src/main.rs:99
 msgid "Dispatching messages to xi"
 msgstr ""
 
-#: src/main.rs:101
+#: src/main.rs:102
 msgid "Found a message for xi"
 msgstr ""
 
-#: src/main.rs:108
+#: src/main.rs:109
 msgid "Failed to read the signalling pipe!"
 msgstr ""
 
-#: src/main.rs:177
+#: src/main.rs:178
 msgid "Failed to create the GTK+ application"
 msgstr ""
 
-#: src/main.rs:186
+#: src/main.rs:187
 msgid "Failed to create the config dir"
 msgstr ""
 
-#: src/main.rs:216
+#: src/main.rs:217
 msgid "Couldn't read config, falling back to the default XI-Editor config"
 msgstr ""
 "Leitura da configuração impossível. Usando configuração padrão do Editor XI"
 
-#: src/main.rs:250
+#: src/main.rs:251
 msgid "Couldn't read config, falling back to the default GXI config"
 msgstr "Leitura da configuração impossível. Usando configuração padrão do GXI"
 
-#: src/main.rs:267
+#: src/main.rs:268
 msgid "Couldn't determine home dir! Settings will be temporary"
 msgstr ""
 
-#: src/main.rs:276
+#: src/main.rs:277
 msgid "Failed to create temporary config dir"
 msgstr "Falha ao criar diretório temporário de configuração"
 
-#: src/main.rs:313
+#: src/main.rs:314
 msgid "Starting gxi"
 msgstr "Iniciando gxi"
 
-#: src/main.rs:337
+#: src/main.rs:338
 msgid "Activating new view"
 msgstr ""
 
-#: src/main.rs:355
+#: src/main.rs:356
 msgid "Opening new file"
 msgstr "Abrindo novo arquivo"
 
-#: src/main.rs:379
+#: src/main.rs:380
 msgid "Shutting down..."
 msgstr "Desligando"
 
-#: src/main_win.rs:66
+#: src/main_win.rs:67
 msgid "Theme name"
 msgstr "Nome do Tema"
 
 #. xi-editor doesn't know about the translations
-#: src/main_win.rs:98 src/main_win.rs:105
+#: src/main_win.rs:99 src/main_win.rs:106
 msgid "Plain Text"
 msgstr ""
 
-#: src/main_win.rs:195
+#: src/main_win.rs:203
 msgid "Auto indent"
 msgstr "Indentar Automaticamente"
 
-#: src/main_win.rs:219
+#: src/main_win.rs:227
 msgid "Space indent"
 msgstr "Indentar com espaços"
 
-#: src/main_win.rs:273
+#: src/main_win.rs:281
 msgid "!!! UNHANDLED NOTIFICATION, PLEASE OPEN A BUGREPORT!"
 msgstr ""
 
-#: src/main_win.rs:295 src/ui/prefs_win.glade:32
+#: src/main_win.rs:303 src/ui/prefs_win.glade:32
 msgid "Theme"
 msgstr "Tema"
 
-#: src/main_win.rs:297
+#: src/main_win.rs:305
 msgid "isn't available, setting to default"
 msgstr "indisponivel, configurando como padrão"
 
-#: src/main_win.rs:316
+#: src/main_win.rs:324
 msgid "Failed to convert theme settings"
 msgstr ""
 
-#: src/main_win.rs:350
+#: src/main_win.rs:358
 msgid "!!! UNHANDLED available_plugins, PLEASE OPEN A BUGRPEORT"
 msgstr ""
 
-#: src/main_win.rs:415 src/main_win.rs:431 src/main_win.rs:465
-#: src/main_win.rs:484 src/main_win.rs:497
+#: src/main_win.rs:423 src/main_win.rs:439 src/main_win.rs:473
+#: src/main_win.rs:492 src/main_win.rs:505
 msgid "Handling"
 msgstr ""
 
-#: src/main_win.rs:455
+#: src/main_win.rs:463
 msgid "Failed to find View"
 msgstr ""
 
-#: src/main_win.rs:506
+#: src/main_win.rs:514
 msgid "Changing language to"
 msgstr "Mudando Língua para"
 
-#: src/main_win.rs:522 src/main_win.rs:562
+#: src/main_win.rs:530 src/main_win.rs:570
 msgid "FileChooserDialog open response"
 msgstr ""
 
-#: src/main_win.rs:608
+#: src/main_win.rs:620
 msgid "Failed to get the current EditView"
 msgstr ""
 
-#: src/main_win.rs:688
+#: src/main_win.rs:700
 msgid "AskSaveDialog response (1=save)"
 msgstr ""
 
