@@ -11,15 +11,12 @@ env:
     - DIST: "bionic"
       RUST_VER: "nightly"
 
-
-
-
 before_install:
   - docker run -d --name ubuntu-test -v $(pwd):/travis ubuntu:$DIST tail -f /dev/null
   - docker ps
 install:
   - docker exec -t ubuntu-test bash -c "apt-get update;
-    apt-get install -y libgtk-3-dev cmake gcc g++;"
+    apt-get install -y libgtk-3-dev cmake gcc g++ curl;"
 script:
   - docker exec -t ubuntu-test bash -c "(curl https://sh.rustup.rs -sSf | sh -s -- -y) &&
     source \$HOME/.cargo/env &&
