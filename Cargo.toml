@@ -9,7 +9,6 @@ keywords = ["gxi", "xi"]
 categories = ["editor"]
 license = "MIT"
 edition = "2018"
-publish = false
 
 [dependencies]
 cairo-rs = "0.5"
@@ -32,8 +31,8 @@ serde = "1"
 serde_json = "1"
 serde_derive = "1"
 servo-fontconfig = "0.4"
-xi-core-lib = { path="vendor/xi-editor/rust/core-lib" }
-xi-rpc = { path="vendor/xi-editor/rust/rpc" }
+xi-core-lib = { version="0.2.0", path="vendor/xi-editor/rust/core-lib" }
+xi-rpc = { version="0.2.0", path="vendor/xi-editor/rust/rpc" }
 dirs = "1"
 toml = "0.4"
 tempfile = "3"
