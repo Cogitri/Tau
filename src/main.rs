@@ -160,7 +160,10 @@ fn main() {
     let core = Core::new(xi_peer, rx, handler.clone());
 
     // No need to gettext this, gettext doesn't work yet
-    match TextDomain::new("gxi").push("po").init() {
+    match TextDomain::new("gxi")
+        .push(crate::globals::LOCALEDIR.unwrap_or("po"))
+        .init()
+    {
         Ok(locale) => info!("Translation found, setting locale to {:?}", locale),
         Err(TextDomainError::TranslationNotFound(lang)) => {
             // We don't have an 'en' catalog since the messages are English by default
@@ -172,7 +175,7 @@ fn main() {
     }
 
     let application = Application::new(
-        crate::globals::LOCALEDIR.unwrap_or("com.github.Cogitri.gxi"),
+        crate::globals::APP_ID.unwrap_or("com.github.Cogitri.gxi"),
         ApplicationFlags::HANDLES_OPEN,
     )
     .expect(&gettext("Failed to create the GTK+ application"));
