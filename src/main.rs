@@ -5,6 +5,7 @@
 #[macro_use]
 mod macros;
 
+mod about_win;
 mod clipboard;
 mod edit_view;
 mod errors;

@@ -1,3 +1,4 @@
+use crate::about_win::AboutWin;
 use crate::edit_view::EditView;
 use crate::pref_storage::{Config, GtkXiConfig, XiConfig};
 use crate::prefs_win::PrefsWin;
@@ -134,6 +135,13 @@ impl MainWin {
                 MainWin::prefs(main_win.clone(), xi_config.clone(), gxi_config.clone())
             }));
             application.add_action(&prefs_action);
+        }
+        {
+            let about_action = SimpleAction::new("about", None);
+            about_action.connect_activate(clone!(main_win => move |_,_| {
+                MainWin::about(main_win.clone())
+            }));
+            application.add_action(&about_action);
         }
         {
             let find_action = SimpleAction::new("find", None);
@@ -590,6 +598,10 @@ impl MainWin {
         PrefsWin::new(&main_win.window, &main_state, &core, xi_config, gxi_config);
 
         //prefs_win.run();
+    }
+
+    fn about(main_win: Rc<RefCell<MainWin>>) {
+        AboutWin::new(&main_win.borrow().window);
     }
 
     fn find(main_win: &Rc<RefCell<MainWin>>) {
