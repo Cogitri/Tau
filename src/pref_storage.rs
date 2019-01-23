@@ -1,7 +1,7 @@
 use crate::errors::Error;
 use gettextrs::gettext;
-use gio::{Settings, SettingsExt};
-use log::{debug, trace};
+use gio::{Settings, SettingsExt, SettingsSchemaSource};
+use log::{debug, trace, warn};
 use serde::{de::DeserializeOwned, Serialize};
 use serde_derive::*;
 use std::fmt::Debug;
@@ -120,12 +120,23 @@ impl<T> Config<T> {
 }
 
 pub fn get_theme_schema() -> String {
-    Settings::new(crate::globals::APP_ID.unwrap_or("com.github.Cogitri.gxi"))
-        .get_string("theme-name")
-        .unwrap_or("InspiredGitHub".to_string()) // The default themeW
+    SettingsSchemaSource::get_default()
+        .and_then(|settings_source| settings_source.lookup("com.github.Cogitri.gxi", true))
+        .and_then(|_| {
+            Settings::new(crate::globals::APP_ID.unwrap_or("com.github.Cogitri.gxi"))
+                .get_string("theme-name")
+        })
+        .unwrap_or_else(|| {
+            warn!("Couldn't find GSchema! Defaulting to default theme.");
+            "InspiredGitHub".to_string()
+        })
 }
 
 pub fn set_theme_schema(theme_name: &str) {
-    Settings::new(crate::globals::APP_ID.unwrap_or("com.github.Cogitri.gxi"))
-        .set_string("theme-name", theme_name);
+    SettingsSchemaSource::get_default()
+        .and_then(|settings_source| settings_source.lookup("com.github.Cogitri.gxi", true))
+        .map(|_| {
+            Settings::new(crate::globals::APP_ID.unwrap_or("com.github.Cogitri.gxi"))
+                .set_string("theme-name", theme_name);
+        });
 }
