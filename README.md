@@ -38,21 +38,28 @@ After these steps you should be able to run gxi simply by invoking `gxi`
 
 ### Installation on Arch/Manjaro
 
-The package for Arch Linux is [gxi-git](https://aur.archlinux.org/packages/gxi-git/). Building and installing
-(including dependencies) can be accomplished with:
+There are two packages for gxi in Arch Linux's
+[AUR](https://aur.archlinux.org/). The first is the versioned package
+[gxi](https://aur.archlinux.org/packages/gxi/) and the second is the git
+repository tracking package
+[gxi-git](https://aur.archlinux.org/packages/gxi-git/). Building and installing
+(including dependencies) the first package can be accomplished with:
 
 ```sh
-yaourt -Sy gxi-git
+yaourt -Sy gxi
 ```
 
-Alternatively use ``makepkg``:
+Alternatively use `makepkg`:
 
 ```sh
-curl -L -O https://aur.archlinux.org/cgit/aur.git/snapshot/gxi-git.tar.gz
-tar -xvf gxi-git.tar.gz
-cd gxi-git
+curl -L -O https://aur.archlinux.org/cgit/aur.git/snapshot/gxi.tar.gz
+tar -xvf gxi.tar.gz
+cd gxi
 makepkg -Csri
 ```
 
-Please consult the [Arch Wiki](https://wiki.archlinux.org/index.php/Arch_User_Repository#Installing_packages) for more information regarding installing
-packages from the AUR.
+Building and installing the git tracking package is identical, just replace all occurrences of
+`gxi` with `gxi-git`.
+
+Please consult the [Arch Wiki](https://wiki.archlinux.org/index.php/Arch_User_Repository#Installing_packages)
+for more information regarding installing packages from the AUR.
