@@ -35,3 +35,24 @@ from a different rev can lead to very weird bugs.
 
 
 After these steps you should be able to run gxi simply by invoking `gxi`
+
+### Installation on Arch/Manjaro
+
+The package for Arch Linux is [gxi-git](https://aur.archlinux.org/packages/gxi-git/). Building and installing
+(including dependencies) can be accomplished with:
+
+```sh
+yaourt -Sy gxi-git
+```
+
+Alternatively use ``makepkg``:
+
+```sh
+curl -L -O https://aur.archlinux.org/cgit/aur.git/snapshot/gxi-git.tar.gz
+tar -xvf gxi-git.tar.gz
+cd gxi-git
+makepkg -Csri
+```
+
+Please consult the [Arch Wiki](https://wiki.archlinux.org/index.php/Arch_User_Repository#Installing_packages) for more information regarding installing
+packages from the AUR.
