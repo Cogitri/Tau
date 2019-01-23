@@ -16,7 +16,9 @@ gxi_bindir = join_paths(gxi_prefix, get_option('bindir'))
 gxi_datadir = get_option('datadir')
 gxi_localedir = join_paths(gxi_prefix, get_option('localedir'))
 gxi_plugin_dir = join_paths(gxi_prefix, get_option('libdir'), 'gxi', 'plugins')
+gxi_podir = join_paths(meson.current_source_dir(), 'po')
 
+i18n = import('i18n')
 subdir('data')
 subdir('po')
 

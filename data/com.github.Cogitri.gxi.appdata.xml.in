@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2019 Rasmus Thomsen <rasmus.thomsen@protonmail.com> -->
+<component type="desktop-application">
+	<id>com.github.Cogitri.gxi</id>
+	<metadata_license>MIT</metadata_license>
+	<project_license>MIT</project_license>
+	<name>gxi</name>
+	<summary>GTK frontend for the xi text editor</summary>
+
+	<description>
+		<p>
+			gxi is a GTK frontend for the xi text editor written in Rust. It's a very
+			fast plain text editor.
+		</p>
+	</description>
+
+	<launchable type="desktop-id">com.github.Cogitri.gxi.desktop</launchable>
+​
+	<screenshots>
+		<screenshot type="default">
+			<image>https://github.com/Cogitri/gxi/raw/master/screenshot.jpg</image>
+		</screenshot>
+	</screenshots>
+
+	<url type="homepage">https://github.com/Cogitri/gxi</url>
+	<developer_name>Rasmus "Cogitri" Thomsen</developer_name>
+	<update_contact>rasmus.thomsen@protonmail.com</update_contact>
+
+	<provides>
+		<binary>gxi</binary>
+	</provides>
+
+	<releases>
+		<release version="0.4.3" date="2019-01-23">
+			<description>
+				<p>Use GSettings for GXI config instead of a TOML file, add appdata</p>
+			</description>
+		</release>
+	</releases>
+</component>

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gxi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-01-22 23:07+0100\n"
+"POT-Creation-Date: 2019-01-23 23:44+0100\n"
 "PO-Revision-Date: 2019-01-21 12:14-0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -17,6 +17,41 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.2.1\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: data/com.github.Cogitri.gxi.appdata.xml.in:7
+#: data/com.github.Cogitri.gxi.desktop.in:3
+msgid "gxi"
+msgstr ""
+
+#: data/com.github.Cogitri.gxi.appdata.xml.in:8
+msgid "GTK frontend for the xi text editor"
+msgstr ""
+
+#: data/com.github.Cogitri.gxi.appdata.xml.in:11
+msgid ""
+"gxi is a GTK frontend for the xi text editor written in Rust. It's a very "
+"fast plain text editor."
+msgstr ""
+
+#: data/com.github.Cogitri.gxi.appdata.xml.in:26
+msgid "Rasmus \"Cogitri\" Thomsen"
+msgstr ""
+
+#: data/com.github.Cogitri.gxi.appdata.xml.in:36
+msgid "Use GSettings for GXI config instead of a TOML file, add appdata"
+msgstr ""
+
+#: data/com.github.Cogitri.gxi.desktop.in:5
+msgid "The gxi text editor"
+msgstr ""
+
+#: data/com.github.Cogitri.gxi.gschema.xml:9
+msgid "Xi-Editor's theme"
+msgstr ""
+
+#: data/com.github.Cogitri.gxi.gschema.xml:10
+msgid "Sets the theme used for the editing area"
+msgstr ""
 
 #: src/about_win.rs:15
 msgid "GTK frontend for the xi text editor, written in Rust"
@@ -50,106 +85,102 @@ msgstr ""
 msgid "Failed to read the signalling pipe!"
 msgstr ""
 
-#: src/main.rs:178
+#: src/main.rs:181
 msgid "Failed to create the GTK+ application"
 msgstr ""
 
-#: src/main.rs:187
+#: src/main.rs:190
 msgid "Failed to create the config dir"
 msgstr ""
 
-#: src/main.rs:217
+#: src/main.rs:220
 msgid "Couldn't read config, falling back to the default XI-Editor config"
 msgstr ""
 "Leitura da configuração impossível. Usando configuração padrão do Editor XI"
 
-#: src/main.rs:251
-msgid "Couldn't read config, falling back to the default GXI config"
-msgstr "Leitura da configuração impossível. Usando configuração padrão do GXI"
-
-#: src/main.rs:268
+#: src/main.rs:236
 msgid "Couldn't determine home dir! Settings will be temporary"
 msgstr ""
 
-#: src/main.rs:277
+#: src/main.rs:245
 msgid "Failed to create temporary config dir"
 msgstr "Falha ao criar diretório temporário de configuração"
 
-#: src/main.rs:314
+#: src/main.rs:270
 msgid "Starting gxi"
 msgstr "Iniciando gxi"
 
-#: src/main.rs:338
+#: src/main.rs:294
 msgid "Activating new view"
 msgstr ""
 
-#: src/main.rs:356
+#: src/main.rs:312
 msgid "Opening new file"
 msgstr "Abrindo novo arquivo"
 
-#: src/main.rs:380
+#: src/main.rs:336
 msgid "Shutting down..."
 msgstr "Desligando"
 
-#: src/main_win.rs:67
+#: src/main_win.rs:66
 msgid "Theme name"
 msgstr "Nome do Tema"
 
 #. xi-editor doesn't know about the translations
-#: src/main_win.rs:99 src/main_win.rs:106
+#: src/main_win.rs:98 src/main_win.rs:105
 msgid "Plain Text"
 msgstr ""
 
-#: src/main_win.rs:203
+#: src/main_win.rs:202
 msgid "Auto indent"
 msgstr "Indentar Automaticamente"
 
-#: src/main_win.rs:227
+#: src/main_win.rs:226
 msgid "Space indent"
 msgstr "Indentar com espaços"
 
-#: src/main_win.rs:281
+#: src/main_win.rs:280
 msgid "!!! UNHANDLED NOTIFICATION, PLEASE OPEN A BUGREPORT!"
 msgstr ""
 
-#: src/main_win.rs:303 src/ui/prefs_win.glade:32
+#: src/main_win.rs:302 src/ui/prefs_win.glade:32
 msgid "Theme"
 msgstr "Tema"
 
-#: src/main_win.rs:305
+#: src/main_win.rs:304
 msgid "isn't available, setting to default"
 msgstr "indisponivel, configurando como padrão"
 
-#: src/main_win.rs:324
+#: src/main_win.rs:323
 msgid "Failed to convert theme settings"
 msgstr ""
 
-#: src/main_win.rs:358
+#: src/main_win.rs:357
 msgid "!!! UNHANDLED available_plugins, PLEASE OPEN A BUGRPEORT"
 msgstr ""
 
-#: src/main_win.rs:423 src/main_win.rs:439 src/main_win.rs:473
-#: src/main_win.rs:492 src/main_win.rs:505
+#: src/main_win.rs:422 src/main_win.rs:438 src/main_win.rs:472
+#: src/main_win.rs:491 src/main_win.rs:504
 msgid "Handling"
 msgstr ""
 
-#: src/main_win.rs:463
+#: src/main_win.rs:462
 msgid "Failed to find View"
 msgstr ""
 
-#: src/main_win.rs:514
+#: src/main_win.rs:513
 msgid "Changing language to"
 msgstr "Mudando Língua para"
 
-#: src/main_win.rs:530 src/main_win.rs:570
+#: src/main_win.rs:529 src/main_win.rs:569
 msgid "FileChooserDialog open response"
 msgstr ""
 
-#: src/main_win.rs:620
+#: src/main_win.rs:615
 msgid "Failed to get the current EditView"
 msgstr ""
 
-#: src/main_win.rs:700
+#: src/main_win.rs:695
 msgid "AskSaveDialog response (1=save)"
 msgstr ""
 
@@ -334,7 +365,7 @@ msgstr "Sem Titulo"
 msgid "Setting title to"
 msgstr "Configurando titulo para"
 
-#: src/edit_view.rs:343 src/prefs_win.rs:65
+#: src/edit_view.rs:343 src/prefs_win.rs:64
 msgid "Setting font to"
 msgstr "Configurando fonte para"
 
@@ -402,43 +433,43 @@ msgstr "grupo"
 msgid "unicode"
 msgstr ""
 
-#: src/pref_storage.rs:100
+#: src/pref_storage.rs:86
 msgid "Opening config file"
 msgstr "Abrindo arquivo de configuração"
 
-#: src/pref_storage.rs:104
+#: src/pref_storage.rs:90
 msgid "Reading config file"
 msgstr "Lendo arquivo de configuração"
 
-#: src/pref_storage.rs:108
+#: src/pref_storage.rs:94
 msgid "Xi-Config"
 msgstr "Configuração do XI"
 
-#: src/prefs_win.rs:48
+#: src/prefs_win.rs:47
 msgid "Setting font description"
 msgstr "Configurando"
 
-#: src/prefs_win.rs:66
+#: src/prefs_win.rs:65
 msgid "Setting font size to"
 msgstr "Configurando tamanho da fonte para"
 
-#: src/prefs_win.rs:80
+#: src/prefs_win.rs:79
 msgid "Setting active theme"
 msgstr "Configurando tema ativo"
 
-#: src/prefs_win.rs:88
+#: src/prefs_win.rs:87
 msgid "Theme changed to"
 msgstr "Tema trocado para"
 
-#: src/prefs_win.rs:110
+#: src/prefs_win.rs:107
 msgid "Scrolling past end"
 msgstr ""
 
-#: src/prefs_win.rs:125
+#: src/prefs_win.rs:122
 msgid "Word wrapping"
 msgstr ""
 
-#: src/prefs_win.rs:140
+#: src/prefs_win.rs:137
 msgid "Tab stops"
 msgstr ""
 
@@ -453,3 +484,7 @@ msgstr ""
 #: src/rpc.rs:70
 msgid "at RPC level"
 msgstr ""
+
+#~ msgid "Couldn't read config, falling back to the default GXI config"
+#~ msgstr ""
+#~ "Leitura da configuração impossível. Usando configuração padrão do GXI"

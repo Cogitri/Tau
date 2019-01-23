@@ -1,3 +1,7 @@
+data/com.github.Cogitri.gxi.appdata.xml.in
+data/com.github.Cogitri.gxi.desktop.in
+data/com.github.Cogitri.gxi.gschema.xml
+
 src/about_win.rs
 src/main.rs
 src/globals.rs
