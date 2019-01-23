@@ -9,6 +9,7 @@ keywords = ["gxi", "xi"]
 categories = ["editor"]
 license = "MIT"
 edition = "2018"
+readme = "README.md"
 
 [dependencies]
 cairo-rs = "0.5"
