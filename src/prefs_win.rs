@@ -1,5 +1,5 @@
 use crate::main_win::MainState;
-use crate::pref_storage::{Config, GtkXiConfig, XiConfig};
+use crate::pref_storage::{Config, XiConfig};
 use crate::rpc::Core;
 use gettextrs::gettext;
 use gtk::*;
@@ -20,7 +20,6 @@ impl PrefsWin {
         main_state: &Rc<RefCell<MainState>>,
         core: &Rc<RefCell<Core>>,
         xi_config: Arc<Mutex<Config<XiConfig>>>,
-        gxi_config: Arc<Mutex<Config<GtkXiConfig>>>,
     ) -> Rc<RefCell<PrefsWin>> {
         let glade_src = include_str!("ui/prefs_win.glade");
         let builder = Builder::new_from_string(glade_src);
@@ -89,9 +88,7 @@ impl PrefsWin {
                 let core = core.borrow();
                 core.set_theme(&theme_name);
 
-                let mut conf = gxi_config.lock().unwrap();
-                conf.config.theme = theme_name.clone();
-                conf.save().map_err(|e| error!("{}", e.to_string())).unwrap();
+                crate::pref_storage::set_theme_schema(&theme_name);
 
                 let mut main_state = main_state.borrow_mut();
                 main_state.theme_name = theme_name;

@@ -21,7 +21,7 @@ mod theme;
 mod xi_thread;
 
 use crate::main_win::MainWin;
-use crate::pref_storage::{Config, GtkXiConfig, XiConfig};
+use crate::pref_storage::{Config, XiConfig};
 use crate::rpc::{Core, Handler};
 use crate::source::{new_source, SourceFuncs};
 use gettextrs::{gettext, TextDomain, TextDomainError};
@@ -181,7 +181,7 @@ fn main() {
     .expect(&gettext("Failed to create the GTK+ application"));
 
     //TODO: This part really needs better error handling...
-    let (xi_config_dir, xi_config, gxi_config) = if let Some(user_config_dir) = dirs::config_dir() {
+    let (xi_config_dir, xi_config) = if let Some(user_config_dir) = dirs::config_dir() {
         let config_dir = user_config_dir.join("gxi");
         std::fs::create_dir_all(&config_dir)
             .map_err(|e| {
@@ -226,44 +226,9 @@ fn main() {
             }
         };
 
-        let mut gxi_config = Config::<GtkXiConfig>::new(
-            config_dir
-                .join("gxi.toml")
-                .to_str()
-                .map(|s| s.to_string())
-                .unwrap(),
-        );
-
-        gxi_config = match gxi_config.open() {
-            Ok(_) => {
-                let gxi_config = gxi_config.open().unwrap();
-
-                /*
-                We have to immediately save the config file here to "upgrade" it (as in add missing
-                entries which have been added by us during a version upgrade
-                */
-                gxi_config
-                    .save()
-                    .unwrap_or_else(|e| error!("{}", e.to_string()));
-
-                gxi_config.clone()
-            }
-            Err(_) => {
-                error!(
-                    "{}",
-                    gettext("Couldn't read config, falling back to the default GXI config")
-                );
-                gxi_config
-                    .save()
-                    .unwrap_or_else(|e| error!("{}", e.to_string()));
-                gxi_config
-            }
-        };
-
         (
             config_dir.to_str().map(|s| s.to_string()).unwrap(),
             xi_config,
-            gxi_config,
         )
     } else {
         error!(
@@ -295,21 +260,9 @@ fn main() {
             .save()
             .unwrap_or_else(|e| error!("{}", e.to_string()));
 
-        let gxi_config = Config::<GtkXiConfig>::new(
-            config_dir
-                .join("gxi.toml")
-                .to_str()
-                .map(|s| s.to_string())
-                .unwrap(),
-        );
-        gxi_config
-            .save()
-            .unwrap_or_else(|e| error!("{}", e.to_string()));
-
         (
             config_dir.to_str().map(|s| s.to_string()).unwrap(),
             xi_config,
-            gxi_config,
         )
     };
 
@@ -323,7 +276,7 @@ fn main() {
             &shared_queue,
             &Rc::new(RefCell::new(core.clone())),
             Arc::new(Mutex::new(xi_config.clone())),
-            Arc::new(Mutex::new(gxi_config.clone())));
+           );
 
         let source = new_source(QueueSource {
             win: main_win.clone(),

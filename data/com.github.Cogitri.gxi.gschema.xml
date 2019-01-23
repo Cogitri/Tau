@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<schemalist>
+
+    <schema path="/com/github/Cogitri/gxi/" id="com.github.Cogitri.gxi">
+
+        <key name="theme-name" type="s">
+            <default>"InspiredGitHub"</default>
+            <summary>Xi-Editor's theme</summary>
+            <description>
+                Sets the theme used for the editing area
+            </description>
+        </key>
+
+    </schema>
+
+</schemalist>

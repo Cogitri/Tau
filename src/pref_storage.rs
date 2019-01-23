@@ -1,5 +1,6 @@
 use crate::errors::Error;
 use gettextrs::gettext;
+use gio::{Settings, SettingsExt};
 use log::{debug, trace};
 use serde::{de::DeserializeOwned, Serialize};
 use serde_derive::*;
@@ -8,26 +9,11 @@ use std::fs::OpenOptions;
 use std::io::prelude::*;
 use tempfile::tempdir;
 
-/// Generic wrapper struct around GtkXiConfig and XiConfig
+/// Generic wrapper struct around XiConfig
 #[derive(Clone, Debug)]
 pub struct Config<T> {
     pub path: String,
     pub config: T,
-}
-
-/// For stuff that _doesn't_ go into preferences.xiconfig and has to be set by us
-#[derive(Clone, Debug, Deserialize, Serialize)]
-#[serde(default)]
-pub struct GtkXiConfig {
-    pub theme: String,
-}
-
-impl Default for GtkXiConfig {
-    fn default() -> GtkXiConfig {
-        GtkXiConfig {
-            theme: "InspiredGitHub".to_string(),
-        }
-    }
 }
 
 /// For stuff that goes into preferences.xiconfig
@@ -131,4 +117,15 @@ impl<T> Config<T> {
 
         Ok(())
     }
+}
+
+pub fn get_theme_schema() -> String {
+    Settings::new(crate::globals::APP_ID.unwrap_or("com.github.Cogitri.gxi"))
+        .get_string("theme-name")
+        .unwrap_or("InspiredGitHub".to_string()) // The default themeW
+}
+
+pub fn set_theme_schema(theme_name: &str) {
+    Settings::new(crate::globals::APP_ID.unwrap_or("com.github.Cogitri.gxi"))
+        .set_string("theme-name", theme_name);
 }

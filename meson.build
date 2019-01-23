@@ -77,3 +77,5 @@ foreach a: synctect_assets
         install_dir: syntect_dir,
     )
 endforeach
+
+meson.add_install_script('meson_post_install.py')

@@ -1,6 +1,6 @@
 use crate::about_win::AboutWin;
 use crate::edit_view::EditView;
-use crate::pref_storage::{Config, GtkXiConfig, XiConfig};
+use crate::pref_storage::{Config, XiConfig};
 use crate::prefs_win::PrefsWin;
 use crate::proto::{self, ThemeSettings};
 use crate::rpc::Core;
@@ -54,7 +54,6 @@ impl MainWin {
         shared_queue: &Arc<Mutex<SharedQueue>>,
         core: &Rc<RefCell<Core>>,
         config: Arc<Mutex<Config<XiConfig>>>,
-        gxi_config: Arc<Mutex<Config<GtkXiConfig>>>,
     ) -> Rc<RefCell<MainWin>> {
         let glade_src = include_str!("ui/gxi.glade");
         let builder = Builder::new_from_string(glade_src);
@@ -63,7 +62,7 @@ impl MainWin {
         let notebook: Notebook = builder.get_object("notebook").unwrap();
         let syntax_combo_box: ComboBoxText = builder.get_object("syntax_combo_box").unwrap();
 
-        let theme_name = gxi_config.lock().unwrap().config.theme.to_string();
+        let theme_name = crate::pref_storage::get_theme_schema();
         debug!("{}: {}", gettext("Theme name"), &theme_name);
 
         let main_win = Rc::new(RefCell::new(MainWin {
@@ -132,7 +131,7 @@ impl MainWin {
             let prefs_action = SimpleAction::new("prefs", None);
             let xi_config = config.clone();
             prefs_action.connect_activate(clone!(main_win => move |_,_| {
-                MainWin::prefs(main_win.clone(), xi_config.clone(), gxi_config.clone())
+                MainWin::prefs(main_win.clone(), xi_config.clone())
             }));
             application.add_action(&prefs_action);
         }
@@ -583,11 +582,7 @@ impl MainWin {
         fcd.destroy();
     }
 
-    fn prefs(
-        main_win: Rc<RefCell<MainWin>>,
-        xi_config: Arc<Mutex<Config<XiConfig>>>,
-        gxi_config: Arc<Mutex<Config<GtkXiConfig>>>,
-    ) {
+    fn prefs(main_win: Rc<RefCell<MainWin>>, xi_config: Arc<Mutex<Config<XiConfig>>>) {
         // let (main_state, core) = {
         //     let main_win = main_win.borrow();
         //     (main_win.state.clone(), main_win.core.clone())
@@ -595,7 +590,7 @@ impl MainWin {
         let main_win = main_win.borrow();
         let main_state = main_win.state.clone();
         let core = main_win.core.clone();
-        PrefsWin::new(&main_win.window, &main_state, &core, xi_config, gxi_config);
+        PrefsWin::new(&main_win.window, &main_state, &core, xi_config);
 
         //prefs_win.run();
     }
