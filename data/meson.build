@@ -38,4 +38,6 @@ if appstream_util.found()
     )
 endif
 
-install_data('com.github.Cogitri.gxi.gschema.xml', install_dir: join_paths(get_option('datadir'), 'glib-2.0', 'schemas'))
+install_data('com.github.Cogitri.gxi.gschema.xml', install_dir: join_paths(gxi_datadir, 'glib-2.0', 'schemas'))
+
+install_subdir('icons', install_dir: gxi_datadir)

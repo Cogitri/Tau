@@ -4,6 +4,7 @@ Exec=gxi %U
 Comment=The gxi text editor
 Encoding=UTF-8
 Type=Application
+Icon=com.github.Cogitri.gxi
 Categories=GTK;GNOME;Utility;TextEditor;
 Terminal=false
 MimeType=text/plain;
