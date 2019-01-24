@@ -10,3 +10,7 @@ target
 /build/**
 /po/*.mo
 /po/*.pot
+# flatpak stuff
+.flatpak-builder/**
+gxi/**
+repo/**
