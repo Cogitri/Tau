@@ -55,7 +55,7 @@ impl Default for XiConfig {
             translate_tabs_to_spaces: false,
             use_tab_stops: true,
             plugin_search_path: vec![String::new()],
-            font_face: "Inconsolata".to_string(),
+            font_face: get_default_monospace_font_schema(),
             font_size: 12,
             auto_indent: true,
             scroll_past_end: false,
@@ -139,4 +139,16 @@ pub fn set_theme_schema(theme_name: &str) {
             Settings::new(crate::globals::APP_ID.unwrap_or("com.github.Cogitri.gxi"))
                 .set_string("theme-name", theme_name);
         });
+}
+
+pub fn get_default_monospace_font_schema() -> String {
+    SettingsSchemaSource::get_default()
+        .and_then(|settings_source| settings_source.lookup("org.gnome.desktop.interface", true))
+        .and_then(|_| {
+            Settings::new("org.gnome.desktop.interface").get_string("monospace-font-name")
+        })
+        .unwrap_or_else(|| {
+            warn!("Couldn't find GSchema! Defaulting to default monospace font.");
+            "Monospace".to_string()
+        })
 }

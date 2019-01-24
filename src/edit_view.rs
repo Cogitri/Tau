@@ -2,7 +2,6 @@ use crate::linecache::{Line, LineCache};
 use crate::main_win::MainState;
 use crate::rpc::{self, Core};
 use crate::theme::set_source_color;
-use ::fontconfig::fontconfig;
 use cairo::Context;
 use gdk::enums::key;
 use gdk::*;
@@ -14,7 +13,6 @@ use pangocairo::functions::*;
 use serde_json::Value;
 use std::cell::RefCell;
 use std::cmp::{max, min};
-use std::ffi::CString;
 use std::rc::Rc;
 use std::u32;
 
@@ -107,19 +105,6 @@ impl EditView {
         let close_button = Button::new_from_icon_name("window-close", 0);
         tab_hbox.add(&close_button);
         tab_hbox.show_all();
-
-        unsafe {
-            let fonts_dir = CString::new("fonts").unwrap();
-            let ret = fontconfig::FcConfigAppFontAddDir(
-                fontconfig::FcConfigGetCurrent(),
-                fonts_dir.as_ptr() as *const u8,
-            );
-            if ret == 1 {
-                debug!("{}", gettext("Sucessfully set fontdir"));
-            } else {
-                error!("{}", gettext("Failed to set fontdir"));
-            }
-        }
 
         let pango_ctx = da
             .get_pango_context()
