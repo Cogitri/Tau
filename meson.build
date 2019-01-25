@@ -81,3 +81,8 @@ foreach a: synctect_assets
 endforeach
 
 meson.add_install_script('meson_post_install.py')
+
+run_target(
+  'release',
+  command: ['scripts/release.sh', meson.project_name(), meson.project_version()]
+)
