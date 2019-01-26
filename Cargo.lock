@@ -597,7 +597,7 @@ dependencies = [
 
 [[package]]
 name = "gxi"
-version = "0.4.4"
+version = "0.4.5"
 dependencies = [
  "cairo-rs 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "dirs 1.0.4 (registry+https://github.com/rust-lang/crates.io-index)",
