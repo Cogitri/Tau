@@ -23,11 +23,11 @@ esac
 
 sed -i "s/version: '$current'/version: '$next'/" meson.build
 sed -i "s/version = \"$current\"/version = \"$next\"/" Cargo.toml
-sed -i "s/version=\"$current\".*/version=\"$next\" date=\"$(date +%Y-%m-%d)\"\/>/" data/com.github.Cogitri.gxi.appdata.xml.in
+${EDITOR:=nano} data/com.github.Cogitri.gxi.appdata.xml.in
 
-cargo check
+ninja -C build test
 
 git commit -av
-git tag -s $next
+git tag -s v$next
 
 ninja -C build release
