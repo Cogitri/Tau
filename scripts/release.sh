@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if ! [ "$MESON_BUILD_ROOT" ]; then
+    echo "This can only be run via meson, exiting!"
+    exit 1
+fi
+
 PKGVER=$1-$2
 DEST=${MESON_BUILD_ROOT}
 DIST=$DEST/dist/$PKGVER
@@ -29,7 +34,8 @@ ginst build.rs \
 # cargo vendor
 pushd $SRC/vendor/xi-editor/rust/syntect-plugin/
 mkdir -p $DIST/vendor/xi-editor/rust/syntect-plugin/.cargo/
-cargo vendor --no-merge-sources  cargo-vendor | sed -r 's|(^directory = ).*(vendor.*)|\\1"\\2"|g' > $DIST/vendor/xi-editor/rust/syntect-plugin/.cargo/config
+# Replace full path with relative path via sed
+cargo vendor --no-merge-sources | sed -r 's|(^directory = ).*(vendor.*)|\1"\2|g' > $DIST/vendor/xi-editor/rust/syntect-plugin/.cargo/config
 popd
 
 ginst vendor
