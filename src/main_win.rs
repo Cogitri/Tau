@@ -514,28 +514,56 @@ impl MainWin {
         core.borrow().set_language(&view_id, &lang);
     }
 
-    /// Display the FileChooserDialog for opening, send the result to the Xi core.
+    /// Display the FileChooserNative for opening, send the result to the Xi core.
+    /// Don't use FileChooserDialog here, it doesn't work for Flatpaks.
     /// This may call the GTK main loop.  There must not be any RefCell borrows out while this
     /// function runs.
     pub fn handle_open_button(main_win: &Rc<RefCell<MainWin>>) {
-        let fcd = FileChooserDialog::new::<FileChooserDialog>(None, None, FileChooserAction::Open);
-        fcd.set_transient_for(Some(&main_win.borrow().window.clone()));
-        fcd.add_button("Open", 33);
-        fcd.set_default_response(33);
-        fcd.set_select_multiple(true);
-        let response = fcd.run(); // Can call main loop, can't have any borrows out
-        debug!(
-            "{}: {}",
-            gettext("FileChooserDialog open response"),
-            response
+        let fcn = FileChooserNative::new(
+            Some(gettext("Open a file to edit").as_str()),
+            Some(&main_win.borrow().window),
+            FileChooserAction::Open,
+            Some(gettext("Open").as_str()),
+            Some(gettext("Cancel").as_str()),
         );
-        if response == 33 {
-            let win = main_win.borrow();
-            for file in fcd.get_filenames() {
-                win.req_new_view(Some(&file.to_string_lossy()));
+        fcn.set_transient_for(Some(&main_win.borrow().window.clone()));
+        fcn.set_select_multiple(true);
+
+        fcn.connect_response(clone!(main_win => move |fcd, res| {
+            debug!(
+                "{}: {}",
+                gettext("FileChooserNative open response"),
+                res
+            );
+
+            if ResponseType::from(res) == ResponseType::Accept {
+                let win = main_win.borrow();
+                for file in fcd.get_filenames() {
+                    let file_str = &file.to_string_lossy().into_owned();
+                    match &std::fs::File::open(file_str) {
+                        Ok(_) => win.req_new_view(Some(&file_str)),
+                        Err(e) => {
+                            let err = format!("{} '{}': {}", &gettext("Couldn't open file"), &file_str, &e.to_string());
+                            let err_dialog = MessageDialog::new(
+                                Some(&win.window),
+                                DialogFlags::MODAL,
+                                MessageType::Error,
+                                ButtonsType::Ok,
+                                &err,
+                            );
+
+                            err_dialog.connect_response(move |err_dialog, _| {
+                                err_dialog.destroy();
+                            });
+
+                            err_dialog.show_all();
+                        }
+                    }
+                }
             }
-        }
-        fcd.destroy();
+        }));
+
+        fcn.run();
     }
 
     pub fn handle_save_button(main_win: &Rc<RefCell<MainWin>>) {
@@ -555,31 +583,64 @@ impl MainWin {
         MainWin::save_as(main_win, &edit_view);
     }
 
-    /// Display the FileChooserDialog, send the result to the Xi core.
+    /// Display the FileChooserNative, send the result to the Xi core.
+    /// Don't use FileChooserDialog here, it doesn't work for Flatpaks.
     /// This may call the GTK main loop.  There must not be any RefCell borrows out while this
     /// function runs.
     fn save_as(main_win: &Rc<RefCell<MainWin>>, edit_view: &Rc<RefCell<EditView>>) {
-        let fcd = FileChooserDialog::new::<FileChooserDialog>(None, None, FileChooserAction::Save);
-        fcd.set_transient_for(Some(&main_win.borrow().window.clone()));
-        fcd.add_button("Save", 33);
-        fcd.set_default_response(33);
-        let response = fcd.run(); // Can call main loop, can't have any borrows out
-        debug!(
-            "{}: {}",
-            gettext("FileChooserDialog open response"),
-            response
+        let fcn = FileChooserNative::new(
+            Some(gettext("Save file").as_str()),
+            Some(&main_win.borrow().window),
+            FileChooserAction::Save,
+            Some(gettext("Save").as_str()),
+            Some(gettext("Cancel").as_str()),
         );
-        if response == 33 {
-            let win = main_win.borrow();
-            if let Some(file) = fcd.get_filename() {
-                debug!("saving {:?}", file);
-                let view_id = edit_view.borrow().view_id.clone();
-                let file = file.to_string_lossy();
-                win.core.borrow().save(&view_id, &file);
-                edit_view.borrow_mut().set_file(&file);
+        fcn.set_transient_for(Some(&main_win.borrow().window.clone()));
+        fcn.set_current_name("");
+
+        fcn.connect_response(clone!(edit_view, main_win => move |fcd, res| {
+            debug!(
+                "{}: {}",
+                gettext("FileChooserNative save response"),
+                res
+            );
+
+            if ResponseType::from(res) == ResponseType::Accept {
+                let win = main_win.borrow();
+                for file in fcd.get_filenames() {
+                    let file_str = &file.to_string_lossy().into_owned();
+                    if let Some(file) = fcd.get_filename() {
+                        match &std::fs::OpenOptions::new().write(true).open(&file) {
+                            Ok(_) => {
+                                debug!("{} {:?}", gettext("Saving file"), &file);
+                                let view_id = edit_view.borrow().view_id.clone();
+                                let file = file.to_string_lossy();
+                                win.core.borrow().save(&view_id, &file);
+                                edit_view.borrow_mut().set_file(&file);
+                            }
+                        Err(e) => {
+                            let err = format!("{} '{}': {}", &gettext("Couldn't save file"), &file_str, &e.to_string());
+                            let err_dialog = MessageDialog::new(
+                                Some(&win.window),
+                                DialogFlags::MODAL,
+                                MessageType::Error,
+                                ButtonsType::Ok,
+                                &err,
+                            );
+
+                            err_dialog.connect_response(move |err_dialog, _| {
+                                err_dialog.destroy();
+                            });
+
+                            err_dialog.show_all();
+                        }
+                    }
+                }
             }
-        }
-        fcd.destroy();
+                }
+        }));
+
+        fcn.run();
     }
 
     fn prefs(main_win: Rc<RefCell<MainWin>>, xi_config: Arc<Mutex<Config<XiConfig>>>) {
