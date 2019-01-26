@@ -9,7 +9,7 @@ dependency('gio-2.0', version: '>= 2.56')
 dependency('cairo', version: '>= 1.16')
 dependency('gtk+-3.0', version: '>= 3.20')
 # required for syntect-plugin: onig_sys
-find_program('cmake', required: true)
+#find_program('cmake', required: true)
 
 gxi_prefix = get_option('prefix')
 gxi_bindir = join_paths(gxi_prefix, get_option('bindir'))
@@ -87,4 +87,10 @@ meson.add_install_script('meson_post_install.py')
 run_target(
   'release',
   command: ['scripts/release.sh', meson.project_name(), meson.project_version()]
+)
+
+test(
+  'cargo test',
+  cargo,
+  args: 'test',
 )
