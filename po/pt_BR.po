@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gxi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-01-23 23:44+0100\n"
+"POT-Creation-Date: 2019-01-27 15:40+0100\n"
 "PO-Revision-Date: 2019-01-21 12:14-0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -38,11 +38,25 @@ msgid "Rasmus \"Cogitri\" Thomsen"
 msgstr ""
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:36
+msgid ""
+"Use FileChooserNative instead of FileChooserDialog, fixes file opening/"
+"saving in flatpaks"
+msgstr ""
+
+#: data/com.github.Cogitri.gxi.appdata.xml.in:41
+msgid "Use GSettings to determine default font"
+msgstr ""
+
+#: data/com.github.Cogitri.gxi.appdata.xml.in:46
 msgid "Use GSettings for GXI config instead of a TOML file, add appdata"
 msgstr ""
 
 #: data/com.github.Cogitri.gxi.desktop.in:5
 msgid "The gxi text editor"
+msgstr ""
+
+#: data/com.github.Cogitri.gxi.desktop.in:8
+msgid "com.github.Cogitri.gxi"
 msgstr ""
 
 #: data/com.github.Cogitri.gxi.gschema.xml:9
@@ -122,66 +136,112 @@ msgstr "Abrindo novo arquivo"
 msgid "Shutting down..."
 msgstr "Desligando"
 
-#: src/main_win.rs:66
+#: src/main_win.rs:67
 msgid "Theme name"
 msgstr "Nome do Tema"
 
 #. xi-editor doesn't know about the translations
-#: src/main_win.rs:98 src/main_win.rs:105
+#: src/main_win.rs:99 src/main_win.rs:106
 msgid "Plain Text"
 msgstr ""
 
-#: src/main_win.rs:202
+#: src/main_win.rs:210
 msgid "Auto indent"
 msgstr "Indentar Automaticamente"
 
-#: src/main_win.rs:226
+#: src/main_win.rs:234
 msgid "Space indent"
 msgstr "Indentar com espaços"
 
-#: src/main_win.rs:280
+#: src/main_win.rs:290
 msgid "!!! UNHANDLED NOTIFICATION, PLEASE OPEN A BUGREPORT!"
 msgstr ""
 
-#: src/main_win.rs:302 src/ui/prefs_win.glade:32
+#: src/main_win.rs:312 src/ui/prefs_win.glade:32
 msgid "Theme"
 msgstr "Tema"
 
-#: src/main_win.rs:304
+#: src/main_win.rs:314
 msgid "isn't available, setting to default"
 msgstr "indisponivel, configurando como padrão"
 
-#: src/main_win.rs:323
+#: src/main_win.rs:333
 msgid "Failed to convert theme settings"
 msgstr ""
 
-#: src/main_win.rs:357
+#: src/main_win.rs:367
 msgid "!!! UNHANDLED available_plugins, PLEASE OPEN A BUGRPEORT"
 msgstr ""
 
-#: src/main_win.rs:422 src/main_win.rs:438 src/main_win.rs:472
-#: src/main_win.rs:491 src/main_win.rs:504
+#: src/main_win.rs:446 src/main_win.rs:462 src/main_win.rs:496
+#: src/main_win.rs:515 src/main_win.rs:528
 msgid "Handling"
 msgstr ""
 
-#: src/main_win.rs:462
+#: src/main_win.rs:486
 msgid "Failed to find View"
 msgstr ""
 
-#: src/main_win.rs:513
+#: src/main_win.rs:537
 msgid "Changing language to"
 msgstr "Mudando Língua para"
 
-#: src/main_win.rs:529 src/main_win.rs:569
-msgid "FileChooserDialog open response"
+#: src/main_win.rs:547
+msgid "Open a file to edit"
 msgstr ""
 
-#: src/main_win.rs:615
+#: src/main_win.rs:550 src/ui/gxi.glade:266
+msgid "Open"
+msgstr "Abrir"
+
+#: src/main_win.rs:551 src/main_win.rs:608
+msgid "Cancel"
+msgstr ""
+
+#: src/main_win.rs:559
+msgid "FileChooserNative open response"
+msgstr ""
+
+#: src/main_win.rs:570
+msgid "Couldn't open file"
+msgstr ""
+
+#: src/main_win.rs:604
+#, fuzzy
+msgid "Save file"
+msgstr "Salvar Todos"
+
+#: src/main_win.rs:607 src/ui/gxi.glade:307
+msgid "Save"
+msgstr "Salvar"
+
+#: src/main_win.rs:616
+msgid "FileChooserNative save response"
+msgstr ""
+
+#: src/main_win.rs:627
+#, fuzzy
+msgid "Saving file"
+msgstr "Iniciando gxi"
+
+#: src/main_win.rs:634
+msgid "Couldn't save file"
+msgstr ""
+
+#: src/main_win.rs:681
 msgid "Failed to get the current EditView"
 msgstr ""
 
-#: src/main_win.rs:695
+#: src/main_win.rs:761
 msgid "AskSaveDialog response (1=save)"
+msgstr ""
+
+#: src/errors.rs:46
+msgid "No default application"
+msgstr ""
+
+#: src/errors.rs:48
+msgid "Default application has wrong type"
 msgstr ""
 
 #: src/xi_thread.rs:45
@@ -220,51 +280,48 @@ msgstr "Salvar Todos"
 msgid "Find..."
 msgstr "Achar..."
 
-#: src/ui/gxi.glade:86
+#: src/ui/gxi.glade:75
+#, fuzzy
+msgid "Replace..."
+msgstr "Substituir"
+
+#: src/ui/gxi.glade:100
 msgid "Auto Indent"
 msgstr "Indentar Automaticamente"
 
-#: src/ui/gxi.glade:100
+#: src/ui/gxi.glade:114
 msgid "Insert Spaces"
 msgstr "Inserir Espaços"
 
-#: src/ui/gxi.glade:125 src/ui/prefs_win.glade:7
+#: src/ui/gxi.glade:139 src/ui/prefs_win.glade:7
 msgid "Preferences"
 msgstr "Preferencias"
 
-#: src/ui/gxi.glade:150
+#: src/ui/gxi.glade:164
 msgid "Help"
 msgstr "Ajuda"
 
-#: src/ui/gxi.glade:164
+#: src/ui/gxi.glade:178
 msgid "About"
 msgstr "Sobre"
 
-#: src/ui/gxi.glade:189
+#: src/ui/gxi.glade:203
 msgid "Close All"
 msgstr "Fechar todas"
 
-#: src/ui/gxi.glade:203
+#: src/ui/gxi.glade:217
 msgid "Close"
 msgstr "Fechar"
 
-#: src/ui/gxi.glade:217
+#: src/ui/gxi.glade:231
 msgid "Quit"
 msgstr "Sair"
 
-#: src/ui/gxi.glade:252
-msgid "Open"
-msgstr "Abrir"
-
-#: src/ui/gxi.glade:293
-msgid "Save"
-msgstr "Salvar"
-
-#: src/ui/gxi.glade:308
+#: src/ui/gxi.glade:322
 msgid "Syntax Selection"
 msgstr ""
 
-#: src/ui/gxi.glade:443
+#: src/ui/gxi.glade:457
 msgid "Save changes to document \"Untitled\" before closing?"
 msgstr ""
 
@@ -309,127 +366,119 @@ msgstr "Substituir"
 msgid "Replace All"
 msgstr "Substituir Todas"
 
-#: src/edit_view.rs:74
+#: src/edit_view.rs:72
 msgid "Events"
 msgstr "Eventos"
 
-#: src/edit_view.rs:118
-msgid "Sucessfully set fontdir"
-msgstr "Diretório de fontes configurado com sucesso"
-
-#: src/edit_view.rs:120
-msgid "Failed to set fontdir"
-msgstr "Falha em configurar diretório de fontes"
-
-#: src/edit_view.rs:126 src/edit_view.rs:456 src/edit_view.rs:620
+#: src/edit_view.rs:111 src/edit_view.rs:441 src/edit_view.rs:605
 msgid "Failed to get Pango context"
 msgstr ""
 
-#: src/edit_view.rs:140
+#: src/edit_view.rs:125
 msgid "Failed to get Pango language"
 msgstr ""
 
-#: src/edit_view.rs:143
+#: src/edit_view.rs:128
 msgid "Failed to load Pango font set"
 msgstr ""
 
-#: src/edit_view.rs:146
+#: src/edit_view.rs:131
 msgid "Failed to load Pango font metrics"
 msgstr ""
 
-#: src/edit_view.rs:155
+#: src/edit_view.rs:140
 msgid "Pango size"
 msgstr ""
 
-#: src/edit_view.rs:164
+#: src/edit_view.rs:149
 msgid "Font metrics"
 msgstr ""
 
-#: src/edit_view.rs:276
+#: src/edit_view.rs:261
 msgid "Size changed to"
 msgstr "Tamanho mudado para"
 
-#: src/edit_view.rs:276
+#: src/edit_view.rs:261
 msgid "width"
 msgstr "largura"
 
-#: src/edit_view.rs:276
+#: src/edit_view.rs:261
 msgid "height"
 msgstr "altura"
 
-#: src/edit_view.rs:315 src/edit_view.rs:317
+#: src/edit_view.rs:300 src/edit_view.rs:302
 msgid "Untitled"
 msgstr "Sem Titulo"
 
-#: src/edit_view.rs:326
+#: src/edit_view.rs:311
 msgid "Setting title to"
 msgstr "Configurando titulo para"
 
-#: src/edit_view.rs:343 src/prefs_win.rs:64
+#: src/edit_view.rs:328 src/prefs_win.rs:64
 msgid "Setting font to"
 msgstr "Configurando fonte para"
 
-#: src/edit_view.rs:366
+#: src/edit_view.rs:351
 msgid "Unhandled config option"
 msgstr ""
 
-#: src/edit_view.rs:474
+#: src/edit_view.rs:459
 msgid "Allocating DrawingArea size"
 msgstr ""
 
-#: src/edit_view.rs:484
+#: src/edit_view.rs:469
 msgid "Vertical scrollbar changed value"
 msgstr ""
 
-#: src/edit_view.rs:500
+#: src/edit_view.rs:485
 msgid "Updating visible scroll region"
 msgstr ""
 
-#: src/edit_view.rs:507
+#: src/edit_view.rs:492
 msgid "Requesting new lines..."
 msgstr ""
 
-#: src/edit_view.rs:514
+#: src/edit_view.rs:499
 msgid "...and scrolling to them"
 msgstr ""
 
-#: src/edit_view.rs:561
+#: src/edit_view.rs:546
 msgid "Drawing EditView"
 msgstr ""
 
-#: src/edit_view.rs:562
+#: src/edit_view.rs:547
 msgid "vertical adjustment"
 msgstr ""
 
-#: src/edit_view.rs:565
+#: src/edit_view.rs:550
 msgid "horizontal adjustment"
 msgstr ""
 
-#: src/edit_view.rs:880
+#: src/edit_view.rs:865
 msgid "Smooth scrolling failed"
 msgstr ""
 
-#: src/edit_view.rs:903
+#: src/edit_view.rs:888
 msgid "Processing key press"
 msgstr "Processando pressionamento da tecla"
 
-#: src/edit_view.rs:904
+#: src/edit_view.rs:889
 msgid "value"
 msgstr "valor"
 
-#: src/edit_view.rs:906
+#: src/edit_view.rs:891
 msgid "state"
 msgstr "estado"
 
-#: src/edit_view.rs:908
+#: src/edit_view.rs:893
 msgid "length"
 msgstr "lagura"
 
-#: src/edit_view.rs:910
+#: src/edit_view.rs:895
 msgid "group"
 msgstr "grupo"
 
-#: src/edit_view.rs:912
+#: src/edit_view.rs:897
 msgid "unicode"
 msgstr ""
 
@@ -484,6 +533,12 @@ msgstr ""
 #: src/rpc.rs:70
 msgid "at RPC level"
 msgstr ""
+
+#~ msgid "Sucessfully set fontdir"
+#~ msgstr "Diretório de fontes configurado com sucesso"
+
+#~ msgid "Failed to set fontdir"
+#~ msgstr "Falha em configurar diretório de fontes"
 
 #~ msgid "Couldn't read config, falling back to the default GXI config"
 #~ msgstr ""
