@@ -5,7 +5,7 @@ GTK frontend, written in Rust, for the [xi editor](https://github.com/google/xi-
 
 gxi is a work in progress!
 
-![screenshot](/screenshot.jpg?raw=true)
+![screenshot](/data/screenshot.png?raw=true)
 
 ## Installing
 
