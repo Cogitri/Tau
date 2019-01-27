@@ -12,6 +12,22 @@
             </description>
         </key>
 
+        <key name="draw-spaces" type="b">
+            <default>false</default>
+            <summary>Draw spaces</summary>
+            <description>
+                Visually draw spaces
+            </description>
+        </key>
+
+        <key name="draw-tabs" type="b">
+            <default>false</default>
+            <summary>Draw tabs</summary>
+            <description>
+                Visually draw tabs
+            </description>
+        </key>
+
     </schema>
 
 </schemalist>

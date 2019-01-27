@@ -1,5 +1,5 @@
 use crate::main_win::MainState;
-use crate::pref_storage::{Config, XiConfig};
+use crate::pref_storage::*;
 use crate::rpc::Core;
 use gettextrs::gettext;
 use gtk::*;
@@ -34,6 +34,10 @@ impl PrefsWin {
             builder.get_object("scroll_past_end_checkbutton").unwrap();
         let word_wrap_checkbutton: ToggleButton =
             builder.get_object("word_wrap_checkbutton").unwrap();
+        let draw_spaces_checkbutton: ToggleButton =
+            builder.get_object("draw_spaces_checkbutton").unwrap();
+        let draw_tabs_checkbutton: ToggleButton =
+            builder.get_object("draw_tabs_checkbutton").unwrap();
 
         {
             let conf = xi_config.lock().unwrap();
@@ -138,6 +142,24 @@ impl PrefsWin {
                     conf.config.use_tab_stops = value;
                     conf.save().map_err(|e| error!("{}", e.to_string())).unwrap();
             }));
+        }
+
+        {
+            draw_spaces_checkbutton.set_active(get_draw_spaces_schema());
+
+            draw_spaces_checkbutton.connect_toggled(move |toggle_btn| {
+                let value = toggle_btn.get_active();
+                set_draw_spaces_schema(value);
+            });
+        }
+
+        {
+            draw_tabs_checkbutton.set_active(get_draw_spaces_schema());
+
+            draw_tabs_checkbutton.connect_toggled(move |toggle_btn| {
+                let value = toggle_btn.get_active();
+                set_draw_tabs_schema(value);
+            });
         }
 
         let prefs_win = Rc::new(RefCell::new(PrefsWin {

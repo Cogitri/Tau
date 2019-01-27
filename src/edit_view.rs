@@ -1,5 +1,6 @@
 use crate::linecache::{Line, LineCache};
 use crate::main_win::MainState;
+use crate::pref_storage::*;
 use crate::rpc::{self, Core};
 use crate::theme::set_source_color;
 use cairo::Context;
@@ -618,6 +619,15 @@ impl EditView {
                 update_layout(cr, &layout);
                 show_layout(cr, &layout);
 
+                // Well this is stupid, but (for some reason) Pango gets the width of "·" wrong!
+                // It only thinks that the width of that char is 5, when it actually is 10 (like all
+                // other chars. So we have to replace it with some other char here to trick Pango into
+                // drawing the cursor at the correct position later on
+                if get_draw_spaces_schema() || get_draw_tabs_schema() {
+                    let line_text = layout.get_text().unwrap();
+                    layout.set_text(&line_text.replace("·", "a").replace("→", "a"));
+                }
+
                 let layout_line = layout.get_line(0);
                 if layout_line.is_none() {
                     continue;
@@ -685,10 +695,22 @@ impl EditView {
             &line.text()
         };
 
+        // Replace spaces with '·'. Do this here since we only want
+        // to draw this, we don't want to save the file like that.
+        let mut line_view = if get_draw_spaces_schema() {
+            line_view.replace(" ", "·")
+        } else {
+            line_view.to_string()
+        };
+
+        if get_draw_tabs_schema() {
+            line_view = line_view.replace("\t", "→")
+        }
+
         // let layout = create_layout(cr).unwrap();
         let layout = pango::Layout::new(&pango_ctx);
         layout.set_font_description(&self.font.font_desc);
-        layout.set_text(line_view);
+        layout.set_text(&line_view);
 
         let mut ix = 0;
         let attr_list = pango::AttrList::new();

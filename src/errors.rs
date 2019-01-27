@@ -1,11 +1,8 @@
-use crate::MainWin;
 use failure::Fail;
 use gettextrs::gettext;
 use gio::prelude::*;
 use gtk::prelude::*;
 use gtk::*;
-use std::cell::RefCell;
-use std::rc::Rc;
 
 #[derive(Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Fail)]
 pub enum Error {
