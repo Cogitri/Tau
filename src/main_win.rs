@@ -272,6 +272,7 @@ impl MainWin {
             }
             CoreMsg::Notification { method, params } => {
                 match method.as_ref() {
+                    "alert" => main_win.borrow_mut().alert(&params),
                     "available_themes" => main_win.borrow_mut().available_themes(&params),
                     "available_plugins" => main_win.borrow_mut().available_plugins(&params),
                     "config_changed" => main_win.borrow_mut().config_changed(&params),
@@ -295,6 +296,13 @@ impl MainWin {
             }
         };
     }
+
+    pub fn alert(&self, params: &Value) {
+        if let Some(err_msg) = params["msg"].as_str() {
+            ErrorDialog::new(&err_msg, false);
+        }
+    }
+
     pub fn available_themes(&mut self, params: &Value) {
         let mut state = self.state.borrow_mut();
         state.themes.clear();
