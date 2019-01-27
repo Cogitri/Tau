@@ -604,7 +604,7 @@ impl EditView {
                     .get_pango_context()
                     .expect(&gettext("Failed to get Pango context"));
                 let linecount_layout =
-                    self.create_layout_for_linecount(&pango_ctx, &main_state, i, padding);
+                    self.create_layout_for_linecount(&pango_ctx, &main_state, i + 1, padding);
                 update_layout(cr, &linecount_layout);
                 show_layout(cr, &linecount_layout);
 
