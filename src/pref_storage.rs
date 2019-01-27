@@ -152,3 +152,47 @@ pub fn get_default_monospace_font_schema() -> String {
             "Monospace".to_string()
         })
 }
+
+pub fn get_draw_spaces_schema() -> bool {
+    SettingsSchemaSource::get_default()
+        .and_then(|settings_source| settings_source.lookup("com.github.Cogitri.gxi", true))
+        .map(|_| {
+            Settings::new(crate::globals::APP_ID.unwrap_or("com.github.Cogitri.gxi"))
+                .get_boolean("draw-spaces")
+        })
+        .unwrap_or_else(|| {
+            warn!("Couldn't find GSchema! Defaulting to not drawing tabs!");
+            false
+        })
+}
+
+pub fn set_draw_spaces_schema(val: bool) {
+    SettingsSchemaSource::get_default()
+        .and_then(|settings_source| settings_source.lookup("com.github.Cogitri.gxi", true))
+        .map(|_| {
+            Settings::new(crate::globals::APP_ID.unwrap_or("com.github.Cogitri.gxi"))
+                .set_boolean("draw-spaces", val);
+        });
+}
+
+pub fn get_draw_tabs_schema() -> bool {
+    SettingsSchemaSource::get_default()
+        .and_then(|settings_source| settings_source.lookup("com.github.Cogitri.gxi", true))
+        .map(|_| {
+            Settings::new(crate::globals::APP_ID.unwrap_or("com.github.Cogitri.gxi"))
+                .get_boolean("draw-tabs")
+        })
+        .unwrap_or_else(|| {
+            warn!("Couldn't find GSchema! Defaulting to not drawing tabs!");
+            false
+        })
+}
+
+pub fn set_draw_tabs_schema(val: bool) {
+    SettingsSchemaSource::get_default()
+        .and_then(|settings_source| settings_source.lookup("com.github.Cogitri.gxi", true))
+        .map(|_| {
+            Settings::new(crate::globals::APP_ID.unwrap_or("com.github.Cogitri.gxi"))
+                .set_boolean("draw-tabs", val);
+        });
+}
