@@ -442,7 +442,7 @@ impl EditView {
 
             let padding: usize = format!("{}", self.line_cache.height().saturating_sub(1)).len();
             let linecount_layout =
-                self.create_linecount_for_line(&pango_ctx, &main_state, line_num, padding);
+                self.create_layout_for_linecount(&pango_ctx, &main_state, line_num, padding);
             let linecount_offset = f64::from(linecount_layout.get_extents().1.width / pango::SCALE);
 
             let layout = self.create_layout_for_line(&pango_ctx, &main_state, line);
@@ -604,7 +604,7 @@ impl EditView {
                     .get_pango_context()
                     .expect(&gettext("Failed to get Pango context"));
                 let linecount_layout =
-                    self.create_linecount_for_line(&pango_ctx, &main_state, i, padding);
+                    self.create_layout_for_linecount(&pango_ctx, &main_state, i, padding);
                 update_layout(cr, &linecount_layout);
                 show_layout(cr, &linecount_layout);
 
@@ -646,8 +646,8 @@ impl EditView {
         Inhibit(false)
     }
 
-    // Creates a pango layout for a particular line in the linecache
-    fn create_linecount_for_line(
+    // Creates a pango layout for a particular linecount (the count on the left) in the linecache
+    fn create_layout_for_linecount(
         &self,
         pango_ctx: &pango::Context,
         _main_state: &MainState,
