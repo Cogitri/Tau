@@ -1075,6 +1075,13 @@ impl EditView {
             .find(&self.view_id, &needle, false, Some(false));
     }
 
+    pub fn start_replace(&self) {
+        self.search_bar.set_search_mode(true);
+        self.replace.replace_expander.set_expanded(true);
+        self.replace.replace_revealer.set_reveal_child(true);
+        self.search_entry.grab_focus();
+    }
+
     pub fn stop_search(&self) {
         self.search_bar.set_search_mode(false);
         self.da.grab_focus();

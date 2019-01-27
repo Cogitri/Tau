@@ -150,6 +150,13 @@ impl MainWin {
             application.add_action(&find_action);
         }
         {
+            let replace_action = SimpleAction::new("replace", None);
+            replace_action.connect_activate(clone!(main_win => move |_,_| {
+                MainWin::replace(&main_win);
+            }));
+            application.add_action(&replace_action);
+        }
+        {
             let save_action = SimpleAction::new("save", None);
             save_action.connect_activate(clone!(main_win => move |_,_| {
                 MainWin::handle_save_button(&main_win.clone());
@@ -239,6 +246,7 @@ impl MainWin {
             app.set_accels_for_action("app.new", &["<Primary>n"]);
             app.set_accels_for_action("app.open", &["<Primary>o"]);
             app.set_accels_for_action("app.quit", &["<Primary>q"]);
+            app.set_accels_for_action("app.replace", &["<Primary>r"]);
         }
 
         window.show_all();
@@ -678,6 +686,11 @@ impl MainWin {
     fn find(main_win: &Rc<RefCell<MainWin>>) {
         let edit_view = main_win.borrow().get_current_edit_view().clone();
         edit_view.borrow().start_search();
+    }
+
+    fn replace(main_win: &Rc<RefCell<MainWin>>) {
+        let edit_view = main_win.borrow().get_current_edit_view().clone();
+        edit_view.borrow().start_replace();
     }
 
     fn get_current_edit_view(&self) -> Rc<RefCell<EditView>> {
