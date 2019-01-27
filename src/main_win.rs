@@ -1,5 +1,6 @@
 use crate::about_win::AboutWin;
 use crate::edit_view::EditView;
+use crate::errors::ErrorDialog;
 use crate::pref_storage::{Config, XiConfig};
 use crate::prefs_win::PrefsWin;
 use crate::proto::{self, ThemeSettings};
@@ -567,19 +568,7 @@ impl MainWin {
                         Ok(_) => win.req_new_view(Some(&file_str)),
                         Err(e) => {
                             let err = format!("{} '{}': {}", &gettext("Couldn't open file"), &file_str, &e.to_string());
-                            let err_dialog = MessageDialog::new(
-                                Some(&win.window),
-                                DialogFlags::MODAL,
-                                MessageType::Error,
-                                ButtonsType::Ok,
-                                &err,
-                            );
-
-                            err_dialog.connect_response(move |err_dialog, _| {
-                                err_dialog.destroy();
-                            });
-
-                            err_dialog.show_all();
+                            ErrorDialog::new(&err, false)
                         }
                     }
                 }
@@ -643,19 +632,7 @@ impl MainWin {
                             }
                         Err(e) => {
                             let err = format!("{} '{}': {}", &gettext("Couldn't save file"), &file_str, &e.to_string());
-                            let err_dialog = MessageDialog::new(
-                                Some(&win.window),
-                                DialogFlags::MODAL,
-                                MessageType::Error,
-                                ButtonsType::Ok,
-                                &err,
-                            );
-
-                            err_dialog.connect_response(move |err_dialog, _| {
-                                err_dialog.destroy();
-                            });
-
-                            err_dialog.show_all();
+                            ErrorDialog::new(&err, false)
                         }
                     }
                 }
