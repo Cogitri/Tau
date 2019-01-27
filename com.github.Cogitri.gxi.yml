@@ -3,12 +3,12 @@ runtime: org.freedesktop.Platform
 runtime-version: "18.08"
 sdk: org.freedesktop.Sdk
 sdk-extensions:
-  - - org.freedesktop.Sdk.Extension.rust-stable
+  - org.freedesktop.Sdk.Extension.rust-stable
 command: gxi
 finish-args:
+  - --share=ipc
   - --socket=x11
   - --socket=wayland
-  - --filesystem=home
   - --filesystem=xdg-run/dconf
   - --filesystem=xdg-config/dconf:ro
   - --filesystem=xdg-config/gxi
@@ -16,13 +16,11 @@ finish-args:
   - --env=DCONF_USER_CONFIG_DIR=.config/dconf
 build-options:
   append-path: /usr/lib/sdk/rust-stable/bin
-  build-args:
-  - --share=network
   env: { CARGO_HOME: "/run/build/gxi/cargo", RUST_BACKTRACE: "1" }
 modules:
   - name: gxi
     buildsystem: meson
     sources:
       - type: archive
-        url: https://github.com/Cogitri/gxi/releases/download/v0.4.4/gxi-0.4.4.tar.xz
-        sha256: b094c966fe79ec23e6b8cfcbae459b003255606084deed44dd60b60ec0035ed6
+        url: https://github.com/Cogitri/gxi/releases/download/v0.4.5/gxi-0.4.5.tar.xz
+        sha256: fea30514fc9666d09c5985b505f8d59376d9f7bd571e033424206e1abc41f728
