@@ -268,6 +268,7 @@ impl MainWin {
                     "config_changed" => main_win.borrow_mut().config_changed(&params),
                     "def_style" => main_win.borrow_mut().def_style(&params),
                     "find_status" => main_win.borrow_mut().find_status(&params),
+                    "replace_status" => main_win.borrow_mut().replace_status(&params),
                     "update" => main_win.borrow_mut().update(&params),
                     "scroll_to" => main_win.borrow_mut().scroll_to(&params),
                     "theme_changed" => main_win.borrow_mut().theme_changed(&params),
@@ -385,6 +386,20 @@ impl MainWin {
 
         if let Some(ev) = self.views.get(&view_id) {
             ev.borrow_mut().find_status(&params["queries"]);
+        }
+    }
+
+    pub fn replace_status(&mut self, params: &Value) {
+        let view_id = {
+            let view_id = params["view_id"].as_str();
+            if view_id.is_none() {
+                return;
+            }
+            view_id.unwrap().to_string()
+        };
+
+        if let Some(ev) = self.views.get(&view_id) {
+            ev.borrow_mut().replace_status(&params["status"]);
         }
     }
 

@@ -1094,6 +1094,13 @@ impl EditView {
         }
     }
 
+    //TODO: Handle preserve_case
+    pub fn replace_status(&self, status: &Value) {
+        if let Some(chars) = status["chars"].as_str() {
+            &self.replace.replace_entry.set_text(chars);
+        }
+    }
+
     pub fn find_next(&self) {
         self.core
             .borrow()
