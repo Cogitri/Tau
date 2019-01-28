@@ -60,8 +60,11 @@ impl Core {
                 if let Value::String(ref method) = msg["method"] {
                     handler.notification(&method, &msg["params"]);
                 } else if let Some(id) = msg["id"].as_u64() {
-                    let mut state = rx_core_handle.state.lock().unwrap();
-                    if let Some(callback) = state.pending.remove(&id) {
+                    let callback = {
+                        let mut state = rx_core_handle.state.lock().unwrap();
+                        state.pending.remove(&id)
+                    };
+                    if let Some(callback) = callback {
                         callback.call(&msg["result"]);
                     } else {
                         println!("{}", gettext("unexpected result"));
