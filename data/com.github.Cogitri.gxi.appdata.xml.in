@@ -2,10 +2,11 @@
 <!-- Copyright 2019 Rasmus Thomsen <rasmus.thomsen@protonmail.com> -->
 <component type="desktop-application">
 	<id>com.github.Cogitri.gxi</id>
-	<metadata_license>MIT</metadata_license>
+	<metadata_license>CC0-1.0</metadata_license>
 	<project_license>MIT</project_license>
 	<name>gxi</name>
 	<summary>GTK frontend for the xi text editor</summary>
+	<translation type="gettext">gxi</translation>
 
 	<description>
 		<p>
@@ -33,17 +34,17 @@
 	<releases>
 		<release version="0.4.5" date="2019-01-26">
 			<description>
-				<p>Use FileChooserNative instead of FileChooserDialog, fixes file opening/saving in flatpaks</p>
+				<p>Use FileChooserNative instead of FileChooserDialog, fixes file opening/saving in flatpaks.</p>
 			</description>
 		</release>
 		<release version="0.4.4" date="2019-01-24">
 			<description>
-				<p>Use GSettings to determine default font</p>
+				<p>Use GSettings to determine the default font.</p>
 			</description>
 		</release>
 		<release version="0.4.3" date="2019-01-23">
 			<description>
-				<p>Use GSettings for GXI config instead of a TOML file, add appdata</p>
+				<p>Use GSettings for GXI config instead of a TOML file, add appdata.</p>
 			</description>
 		</release>
 	</releases>
