@@ -4,9 +4,10 @@ project(
   license: 'MIT',
 )
 
-dependency('glib-2.0', version: '>= 2.56')
-dependency('gio-2.0', version: '>= 2.56')
-dependency('cairo', version: '>= 1.16')
+dependency('glib-2.0', version: '>= 2.38')
+dependency('gio-2.0', version: '>= 2.38')
+dependency('cairo', version: '>= 1')
+dependency('pango', version: '>=1.38')
 dependency('gtk+-3.0', version: '>= 3.20')
 
 gxi_prefix = get_option('prefix')
