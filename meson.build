@@ -92,4 +92,5 @@ test(
   'cargo test',
   cargo,
   args: 'test',
+  timeout: 3000,
 )
