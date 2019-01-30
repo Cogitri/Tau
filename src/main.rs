@@ -118,7 +118,7 @@ fn main() {
         crate::globals::APP_ID.unwrap_or("com.github.Cogitri.gxi"),
         ApplicationFlags::HANDLES_OPEN,
     )
-    .expect(&gettext("Failed to create the GTK+ application"));
+    .unwrap_or_else(|_| panic!("{}", gettext("Failed to create the GTK+ application")));
 
     //TODO: This part really needs better error handling...
     let (xi_config_dir, xi_config) = if let Some(user_config_dir) = dirs::config_dir() {

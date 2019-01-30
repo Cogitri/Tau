@@ -40,9 +40,9 @@ impl ErrorDialog {
     /// Creates a new ErrorDialog containing the err_msg. Quits the application if fatal is true.
     pub fn new(err_msg: &str, fatal: bool) {
         let application = gio::Application::get_default()
-            .expect(&gettext("No default application"))
+            .unwrap_or_else(|| panic!("{}", &gettext("No default application")))
             .downcast::<gtk::Application>()
-            .expect(&gettext("Default application has wrong type"));
+            .unwrap_or_else(|_| panic!("{}", &gettext("Default application has wrong type")));
 
         let err_dialog = MessageDialog::new(
             application.get_active_window().as_ref(),

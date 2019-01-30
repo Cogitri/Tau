@@ -109,7 +109,7 @@ impl EditView {
 
         let pango_ctx = da
             .get_pango_context()
-            .expect(&gettext("Failed to get Pango context"));
+            .unwrap_or_else(|| panic!("{}", &gettext("Failed to get Pango context")));
         let font_list: Vec<String> = pango_ctx
             .list_families()
             .iter()
@@ -123,13 +123,13 @@ impl EditView {
         pango_ctx.set_font_description(&font_desc);
         let language = pango_ctx
             .get_language()
-            .expect(&gettext("Failed to get Pango language"));
+            .unwrap_or_else(|| panic!("{}", &gettext("Failed to get Pango language")));
         let fontset = pango_ctx
             .load_fontset(&font_desc, &language)
-            .expect(&gettext("Failed to load Pango font set"));
+            .unwrap_or_else(|| panic!("{}", &gettext("Failed to load Pango font set")));
         let metrics = fontset
             .get_metrics()
-            .expect(&gettext("Failed to load Pango font metrics"));
+            .unwrap_or_else(|| panic!("{}", &gettext("Failed to load Pango font metrics")));
 
         // cr.select_font_face("Inconsolata", ::cairo::enums::FontSlant::Normal, ::cairo::enums::FontWeight::Normal);
         // cr.set_font_size(16.0);
@@ -298,9 +298,9 @@ impl EditView {
             Some(ref f) => f
                 .split(::std::path::MAIN_SEPARATOR)
                 .last()
-                .unwrap_or(&format!("{}", gettext("Untitled")))
+                .unwrap_or(&gettext("Untitled"))
                 .to_string(),
-            None => format!("{}", gettext("Untitled")),
+            None => gettext("Untitled"),
         };
 
         let mut full_title = String::new();
@@ -439,7 +439,7 @@ impl EditView {
             let pango_ctx = self
                 .da
                 .get_pango_context()
-                .expect(&gettext("Failed to get Pango context"));
+                .unwrap_or_else(|| panic!("{}", &gettext("Failed to get Pango context")));
 
             let padding: usize = format!("{}", self.line_cache.height().saturating_sub(1)).len();
             let linecount_layout =
@@ -603,7 +603,7 @@ impl EditView {
                 let pango_ctx = self
                     .da
                     .get_pango_context()
-                    .expect(&gettext("Failed to get Pango context"));
+                    .unwrap_or_else(|| panic!("{}", &gettext("Failed to get Pango context")));
                 let linecount_layout =
                     self.create_layout_for_linecount(&pango_ctx, &main_state, i + 1, padding);
                 update_layout(cr, &linecount_layout);
@@ -1126,7 +1126,7 @@ impl EditView {
     //TODO: Handle preserve_case
     pub fn replace_status(&self, status: &Value) {
         if let Some(chars) = status["chars"].as_str() {
-            &self.replace.replace_entry.set_text(chars);
+            self.replace.replace_entry.set_text(chars);
         }
     }
 
