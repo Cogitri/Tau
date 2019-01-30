@@ -16,28 +16,20 @@ mod pref_storage;
 mod prefs_win;
 mod proto;
 mod rpc;
-mod source;
 mod theme;
 mod xi_thread;
 
 use crate::main_win::MainWin;
 use crate::pref_storage::{Config, XiConfig};
 use crate::rpc::{Core, Handler};
-use crate::source::{new_source, SourceFuncs};
+use crossbeam_deque::{Injector, Worker};
 use gettextrs::{gettext, TextDomain, TextDomainError};
 use gio::{ApplicationExt, ApplicationExtManual, ApplicationFlags, FileExt};
-use glib::MainContext;
 use gtk::Application;
 use log::{debug, error, info, trace, warn};
-use mio::deprecated::unix::{pipe, PipeReader, PipeWriter};
-use mio::deprecated::TryRead;
 use serde_json::{json, Value};
-use std::any::Any;
 use std::cell::RefCell;
-use std::collections::VecDeque;
 use std::env::args;
-use std::io::Write;
-use std::os::unix::io::AsRawFd;
 use std::rc::Rc;
 use std::sync::{Arc, Mutex};
 
@@ -51,63 +43,17 @@ pub enum CoreMsg {
         file_name: Option<String>,
         value: Value,
     },
+    ShutDown {},
 }
 
 pub struct SharedQueue {
-    queue: VecDeque<CoreMsg>,
-    pipe_writer: PipeWriter,
-    pipe_reader: PipeReader,
+    queue: Injector<CoreMsg>,
 }
 
 impl SharedQueue {
     pub fn add_core_msg(&mut self, msg: CoreMsg) {
-        if self.queue.is_empty() {
-            self.pipe_writer
-                .write_all(&[0u8])
-                .expect(&gettext("Failed to write to the signalling pipe"));
-        }
         trace!("{}", gettext("Pushing to queue"));
-        self.queue.push_back(msg);
-    }
-}
-
-trait IdleCallback: Send {
-    fn call(self: Box<Self>, a: &Any);
-}
-
-impl<F: FnOnce(&Any) + Send> IdleCallback for F {
-    fn call(self: Box<F>, a: &Any) {
-        (*self)(a)
-    }
-}
-
-struct QueueSource {
-    win: Rc<RefCell<MainWin>>,
-    queue: Arc<Mutex<SharedQueue>>,
-}
-
-impl SourceFuncs for QueueSource {
-    fn check(&self) -> bool {
-        false
-    }
-
-    fn prepare(&self) -> (bool, Option<u32>) {
-        (false, None)
-    }
-
-    fn dispatch(&self) -> bool {
-        trace!("{}", gettext("Dispatching messages to xi"));
-        let mut shared_queue = self.queue.lock().unwrap();
-        while let Some(msg) = shared_queue.queue.pop_front() {
-            trace!("{}", gettext("Found a message for xi"));
-            MainWin::handle_msg(self.win.clone(), msg);
-        }
-        let mut buf = [0u8; 64];
-        shared_queue
-            .pipe_reader
-            .try_read(&mut buf)
-            .expect(&gettext("Failed to read the signalling pipe!"));
-        true
+        self.queue.push(msg);
     }
 }
 
@@ -145,14 +91,8 @@ fn main() {
         .default_format_timestamp(false)
         .init();
 
-    let queue: VecDeque<CoreMsg> = Default::default();
-    let (reader, writer) = pipe().unwrap();
-    let reader_raw_fd = reader.as_raw_fd();
-
     let shared_queue = Arc::new(Mutex::new(SharedQueue {
-        queue: queue.clone(),
-        pipe_writer: writer,
-        pipe_reader: reader,
+        queue: Injector::<CoreMsg>::new(),
     }));
 
     let (xi_peer, rx) = xi_thread::start_xi_thread();
@@ -278,16 +218,26 @@ fn main() {
             Arc::new(Mutex::new(xi_config.clone())),
            );
 
-        let source = new_source(QueueSource {
-            win: main_win.clone(),
-            queue: shared_queue.clone(),
-        });
-        unsafe {
-            use glib::translate::ToGlibPtr;
-            ::glib_sys::g_source_add_unix_fd(source.to_glib_none().0, reader_raw_fd, ::glib_sys::G_IO_IN);
-        }
-        let main_context = MainContext::default();
-        source.attach(&main_context);
+        gtk::idle_add(clone!(shared_queue, main_win => move || {
+            let local = Worker::new_fifo();
+            let mut cont_gtk = true;
+            while let Some(msg) = local.pop().or_else(|| {
+                std::iter::repeat_with(|| {
+                    shared_queue.lock().unwrap().queue.steal_batch_and_pop(&local)
+                })
+                .find(|s| !s.is_retry())
+                .and_then(|s| s.success())
+            }) {
+                match msg {
+                    CoreMsg::ShutDown { } => cont_gtk = false,
+                    _ => {
+                        trace!("{}", gettext("Found a message for xi"));
+                        MainWin::handle_msg(main_win.clone(), msg);
+                    },
+                }
+            }
+            gtk::Continue(cont_gtk)
+        }));
     }));
 
     application.connect_activate(clone!(shared_queue, core => move |_| {
@@ -332,9 +282,13 @@ fn main() {
             );
         }
     }));
-    application.connect_shutdown(move |_| {
+
+    application.connect_shutdown(clone!(shared_queue => move |_| {
         debug!("{}", gettext("Shutting down..."));
-    });
+        shared_queue.lock().unwrap().add_core_msg(
+            CoreMsg::ShutDown {}
+        )
+    }));
 
     application.run(&args().collect::<Vec<_>>());
 }
