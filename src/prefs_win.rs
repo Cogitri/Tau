@@ -58,8 +58,7 @@ impl PrefsWin {
         {
             let conf = xi_config.lock().unwrap().clone();
 
-            #[allow(unused_variables)]
-            font_chooser_widget.connect_property_font_notify(clone!(core => move |font_widget|{
+            font_chooser_widget.connect_property_font_notify(move |font_widget| {
                 if let Some(font_desc) = font_widget.get_font_desc() {
                     let mut font_conf = conf.clone();
 
@@ -70,9 +69,12 @@ impl PrefsWin {
 
                     font_conf.config.font_size = font_size as u32;
                     font_conf.config.font_face = font_family;
-                    font_conf.save().map_err(|e| error!("{}", e.to_string())).unwrap();
+                    font_conf
+                        .save()
+                        .map_err(|e| error!("{}", e.to_string()))
+                        .unwrap();
                 }
-            }));
+            });
         }
 
         {
@@ -104,14 +106,15 @@ impl PrefsWin {
 
             scroll_past_end_checkbutton.set_active(conf.config.scroll_past_end);
 
-            #[allow(unused_variables)]
-            scroll_past_end_checkbutton.connect_toggled(clone!(core => move |toggle_btn| {
+            scroll_past_end_checkbutton.connect_toggled(move |toggle_btn| {
                 let value = toggle_btn.get_active();
-                    let mut conf = conf.clone();
-                    debug!("{}: {}", gettext("Scrolling past end"), value);
-                    conf.config.scroll_past_end = value;
-                    conf.save().map_err(|e| error!("{}", e.to_string())).unwrap();
-            }));
+                let mut conf = conf.clone();
+                debug!("{}: {}", gettext("Scrolling past end"), value);
+                conf.config.scroll_past_end = value;
+                conf.save()
+                    .map_err(|e| error!("{}", e.to_string()))
+                    .unwrap();
+            });
         }
 
         {
@@ -119,14 +122,15 @@ impl PrefsWin {
 
             word_wrap_checkbutton.set_active(conf.config.word_wrap);
 
-            #[allow(unused_variables)]
-            word_wrap_checkbutton.connect_toggled(clone!(core => move |toggle_btn| {
+            word_wrap_checkbutton.connect_toggled(move |toggle_btn| {
                 let value = toggle_btn.get_active();
-                    let mut conf = conf.clone();
-                    debug!("{}: {}", gettext("Word wrapping"), value);
-                    conf.config.word_wrap = value;
-                    conf.save().map_err(|e| error!("{}", e.to_string())).unwrap();
-            }));
+                let mut conf = conf.clone();
+                debug!("{}: {}", gettext("Word wrapping"), value);
+                conf.config.word_wrap = value;
+                conf.save()
+                    .map_err(|e| error!("{}", e.to_string()))
+                    .unwrap();
+            });
         }
 
         {
@@ -134,14 +138,15 @@ impl PrefsWin {
 
             tab_stops_checkbutton.set_active(conf.config.use_tab_stops);
 
-            #[allow(unused_variables)]
-            tab_stops_checkbutton.connect_toggled(clone!(core => move |toggle_btn| {
+            tab_stops_checkbutton.connect_toggled(move |toggle_btn| {
                 let value = toggle_btn.get_active();
-                    let mut conf = conf.clone();
-                    debug!("{}: {}", gettext("Tab stops"), value);
-                    conf.config.use_tab_stops = value;
-                    conf.save().map_err(|e| error!("{}", e.to_string())).unwrap();
-            }));
+                let mut conf = conf.clone();
+                debug!("{}: {}", gettext("Tab stops"), value);
+                conf.config.use_tab_stops = value;
+                conf.save()
+                    .map_err(|e| error!("{}", e.to_string()))
+                    .unwrap();
+            });
         }
 
         {

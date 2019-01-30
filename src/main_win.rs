@@ -99,8 +99,7 @@ impl MainWin {
             syntax_combo_box.append_text(&gettext("Plain Text"));
             syntax_combo_box.set_active(0);
 
-            #[allow(unused_variables)]
-            syntax_combo_box.connect_changed(clone!(core => move |cb|{
+            syntax_combo_box.connect_changed(move |cb| {
                 if let Some(lang) = cb.get_active_text() {
                     // xi-editor doesn't know about the translations
                     let lang = if lang == gettext("Plain Text") {
@@ -112,7 +111,7 @@ impl MainWin {
                     let core = &main_win.borrow().core;
                     MainWin::set_language(&core, &ev.borrow().view_id, &lang);
                 }
-            }));
+            });
         }
         {
             let open_action = SimpleAction::new("open", None);
@@ -202,17 +201,18 @@ impl MainWin {
                 &config.lock().unwrap().config.auto_indent.to_variant(),
             );;
 
-            #[allow(unused_variables)]
-            auto_indent_action.connect_change_state(clone!(main_win => move |action, value| {
+            auto_indent_action.connect_change_state(move |action, value| {
                 if let Some(value) = value.as_ref() {
                     action.set_state(value);
                     let value: bool = value.get().unwrap();
                     debug!("{}: {}", gettext("Auto indent"), value);
                     let mut conf = config.lock().unwrap();
                     conf.config.auto_indent = value;
-                    conf.save().map_err(|e| error!("{}", e.to_string())).unwrap();
+                    conf.save()
+                        .map_err(|e| error!("{}", e.to_string()))
+                        .unwrap();
                 }
-            }));
+            });
             application.add_action(&auto_indent_action);
         }
         {
@@ -226,17 +226,18 @@ impl MainWin {
                     .translate_tabs_to_spaces
                     .to_variant(),
             );;
-            #[allow(unused_variables)]
-            space_indent_action.connect_change_state(clone!(main_win => move |action, value| {
+            space_indent_action.connect_change_state(move |action, value| {
                 if let Some(value) = value.as_ref() {
                     action.set_state(value);
                     let value: bool = value.get().unwrap();
                     debug!("{}: {}", gettext("Space indent"), value);
                     let mut conf = config.lock().unwrap();
                     conf.config.translate_tabs_to_spaces = value;
-                    conf.save().map_err(|e| error!("{}", e.to_string())).unwrap();
+                    conf.save()
+                        .map_err(|e| error!("{}", e.to_string()))
+                        .unwrap();
                 }
-            }));
+            });
             application.add_action(&space_indent_action);
         }
 
