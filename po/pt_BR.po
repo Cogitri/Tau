@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gxi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-01-27 15:40+0100\n"
+"POT-Creation-Date: 2019-01-30 22:49+0100\n"
 "PO-Revision-Date: 2019-01-21 12:14-0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -27,28 +27,34 @@ msgstr ""
 msgid "GTK frontend for the xi text editor"
 msgstr ""
 
-#: data/com.github.Cogitri.gxi.appdata.xml.in:11
+#: data/com.github.Cogitri.gxi.appdata.xml.in:12
 msgid ""
 "gxi is a GTK frontend for the xi text editor written in Rust. It's a very "
 "fast plain text editor."
 msgstr ""
 
-#: data/com.github.Cogitri.gxi.appdata.xml.in:26
+#: data/com.github.Cogitri.gxi.appdata.xml.in:27
 msgid "Rasmus \"Cogitri\" Thomsen"
 msgstr ""
 
-#: data/com.github.Cogitri.gxi.appdata.xml.in:36
+#: data/com.github.Cogitri.gxi.appdata.xml.in:37
+msgid ""
+"Fix hangs during startup, add 'Replace...' button and shortcut. Adds an "
+"option to visually draw spaces/tabs"
+msgstr ""
+
+#: data/com.github.Cogitri.gxi.appdata.xml.in:42
 msgid ""
 "Use FileChooserNative instead of FileChooserDialog, fixes file opening/"
-"saving in flatpaks"
+"saving in flatpaks."
 msgstr ""
 
-#: data/com.github.Cogitri.gxi.appdata.xml.in:41
-msgid "Use GSettings to determine default font"
+#: data/com.github.Cogitri.gxi.appdata.xml.in:47
+msgid "Use GSettings to determine the default font."
 msgstr ""
 
-#: data/com.github.Cogitri.gxi.appdata.xml.in:46
-msgid "Use GSettings for GXI config instead of a TOML file, add appdata"
+#: data/com.github.Cogitri.gxi.appdata.xml.in:52
+msgid "Use GSettings for GXI config instead of a TOML file, add appdata."
 msgstr ""
 
 #: data/com.github.Cogitri.gxi.desktop.in:5
@@ -67,6 +73,22 @@ msgstr ""
 msgid "Sets the theme used for the editing area"
 msgstr ""
 
+#: data/com.github.Cogitri.gxi.gschema.xml:17
+msgid "Draw spaces"
+msgstr ""
+
+#: data/com.github.Cogitri.gxi.gschema.xml:18 src/ui/prefs_win.glade:163
+msgid "Visually draw spaces"
+msgstr ""
+
+#: data/com.github.Cogitri.gxi.gschema.xml:25
+msgid "Draw tabs"
+msgstr ""
+
+#: data/com.github.Cogitri.gxi.gschema.xml:26 src/ui/prefs_win.glade:177
+msgid "Visually draw tabs"
+msgstr ""
+
 #: src/about_win.rs:15
 msgid "GTK frontend for the xi text editor, written in Rust"
 msgstr ""
@@ -79,60 +101,48 @@ msgstr ""
 msgid "Showing about window"
 msgstr ""
 
-#: src/main.rs:67
-msgid "Failed to write to the signalling pipe"
-msgstr ""
-
-#: src/main.rs:69
+#: src/main.rs:55
 msgid "Pushing to queue"
 msgstr ""
 
-#: src/main.rs:99
-msgid "Dispatching messages to xi"
-msgstr ""
-
-#: src/main.rs:102
-msgid "Found a message for xi"
-msgstr ""
-
-#: src/main.rs:109
-msgid "Failed to read the signalling pipe!"
-msgstr ""
-
-#: src/main.rs:181
+#: src/main.rs:121
 msgid "Failed to create the GTK+ application"
 msgstr ""
 
-#: src/main.rs:190
+#: src/main.rs:130
 msgid "Failed to create the config dir"
 msgstr ""
 
-#: src/main.rs:220
+#: src/main.rs:160
 msgid "Couldn't read config, falling back to the default XI-Editor config"
 msgstr ""
 "Leitura da configuração impossível. Usando configuração padrão do Editor XI"
 
-#: src/main.rs:236
+#: src/main.rs:176
 msgid "Couldn't determine home dir! Settings will be temporary"
 msgstr ""
 
-#: src/main.rs:245
+#: src/main.rs:185
 msgid "Failed to create temporary config dir"
 msgstr "Falha ao criar diretório temporário de configuração"
 
-#: src/main.rs:270
+#: src/main.rs:210
 msgid "Starting gxi"
 msgstr "Iniciando gxi"
 
-#: src/main.rs:294
+#: src/main.rs:234
+msgid "Found a message for xi"
+msgstr ""
+
+#: src/main.rs:244
 msgid "Activating new view"
 msgstr ""
 
-#: src/main.rs:312
+#: src/main.rs:262
 msgid "Opening new file"
 msgstr "Abrindo novo arquivo"
 
-#: src/main.rs:336
+#: src/main.rs:287
 msgid "Shutting down..."
 msgstr "Desligando"
 
@@ -141,106 +151,106 @@ msgid "Theme name"
 msgstr "Nome do Tema"
 
 #. xi-editor doesn't know about the translations
-#: src/main_win.rs:99 src/main_win.rs:106
+#: src/main_win.rs:99 src/main_win.rs:105
 msgid "Plain Text"
 msgstr ""
 
-#: src/main_win.rs:210
+#: src/main_win.rs:208
 msgid "Auto indent"
 msgstr "Indentar Automaticamente"
 
-#: src/main_win.rs:234
+#: src/main_win.rs:233
 msgid "Space indent"
 msgstr "Indentar com espaços"
 
-#: src/main_win.rs:290
+#: src/main_win.rs:292
 msgid "!!! UNHANDLED NOTIFICATION, PLEASE OPEN A BUGREPORT!"
 msgstr ""
 
-#: src/main_win.rs:312 src/ui/prefs_win.glade:32
+#: src/main_win.rs:322 src/ui/prefs_win.glade:32
 msgid "Theme"
 msgstr "Tema"
 
-#: src/main_win.rs:314
+#: src/main_win.rs:324
 msgid "isn't available, setting to default"
 msgstr "indisponivel, configurando como padrão"
 
-#: src/main_win.rs:333
+#: src/main_win.rs:343
 msgid "Failed to convert theme settings"
 msgstr ""
 
-#: src/main_win.rs:367
+#: src/main_win.rs:377
 msgid "!!! UNHANDLED available_plugins, PLEASE OPEN A BUGRPEORT"
 msgstr ""
 
-#: src/main_win.rs:446 src/main_win.rs:462 src/main_win.rs:496
-#: src/main_win.rs:515 src/main_win.rs:528
+#: src/main_win.rs:456 src/main_win.rs:472 src/main_win.rs:506
+#: src/main_win.rs:525 src/main_win.rs:538
 msgid "Handling"
 msgstr ""
 
-#: src/main_win.rs:486
+#: src/main_win.rs:496
 msgid "Failed to find View"
 msgstr ""
 
-#: src/main_win.rs:537
+#: src/main_win.rs:547
 msgid "Changing language to"
 msgstr "Mudando Língua para"
 
-#: src/main_win.rs:547
+#: src/main_win.rs:557
 msgid "Open a file to edit"
 msgstr ""
 
-#: src/main_win.rs:550 src/ui/gxi.glade:266
+#: src/main_win.rs:560 src/ui/gxi.glade:266
 msgid "Open"
 msgstr "Abrir"
 
-#: src/main_win.rs:551 src/main_win.rs:608
+#: src/main_win.rs:561 src/main_win.rs:618
 msgid "Cancel"
 msgstr ""
 
-#: src/main_win.rs:559
+#: src/main_win.rs:569
 msgid "FileChooserNative open response"
 msgstr ""
 
-#: src/main_win.rs:570
+#: src/main_win.rs:580
 msgid "Couldn't open file"
 msgstr ""
 
-#: src/main_win.rs:604
+#: src/main_win.rs:614
 #, fuzzy
 msgid "Save file"
 msgstr "Salvar Todos"
 
-#: src/main_win.rs:607 src/ui/gxi.glade:307
+#: src/main_win.rs:617 src/ui/gxi.glade:307
 msgid "Save"
 msgstr "Salvar"
 
-#: src/main_win.rs:616
+#: src/main_win.rs:626
 msgid "FileChooserNative save response"
 msgstr ""
 
-#: src/main_win.rs:627
+#: src/main_win.rs:637
 #, fuzzy
 msgid "Saving file"
 msgstr "Iniciando gxi"
 
-#: src/main_win.rs:634
+#: src/main_win.rs:644
 msgid "Couldn't save file"
 msgstr ""
 
-#: src/main_win.rs:681
+#: src/main_win.rs:691
 msgid "Failed to get the current EditView"
 msgstr ""
 
-#: src/main_win.rs:761
+#: src/main_win.rs:771
 msgid "AskSaveDialog response (1=save)"
 msgstr ""
 
-#: src/errors.rs:46
+#: src/errors.rs:43
 msgid "No default application"
 msgstr ""
 
-#: src/errors.rs:48
+#: src/errors.rs:45
 msgid "Default application has wrong type"
 msgstr ""
 
@@ -345,7 +355,7 @@ msgstr "Continuar após final do documento"
 msgid "Wrap lines at the end of the view instead of offering scrolling"
 msgstr ""
 
-#: src/ui/prefs_win.glade:170
+#: src/ui/prefs_win.glade:198
 msgid "Editing"
 msgstr "Editando"
 
@@ -366,119 +376,119 @@ msgstr "Substituir"
 msgid "Replace All"
 msgstr "Substituir Todas"
 
-#: src/edit_view.rs:72
+#: src/edit_view.rs:73
 msgid "Events"
 msgstr "Eventos"
 
-#: src/edit_view.rs:111 src/edit_view.rs:441 src/edit_view.rs:605
+#: src/edit_view.rs:112 src/edit_view.rs:442 src/edit_view.rs:606
 msgid "Failed to get Pango context"
 msgstr ""
 
-#: src/edit_view.rs:125
+#: src/edit_view.rs:126
 msgid "Failed to get Pango language"
 msgstr ""
 
-#: src/edit_view.rs:128
+#: src/edit_view.rs:129
 msgid "Failed to load Pango font set"
 msgstr ""
 
-#: src/edit_view.rs:131
+#: src/edit_view.rs:132
 msgid "Failed to load Pango font metrics"
 msgstr ""
 
-#: src/edit_view.rs:140
+#: src/edit_view.rs:141
 msgid "Pango size"
 msgstr ""
 
-#: src/edit_view.rs:149
+#: src/edit_view.rs:150
 msgid "Font metrics"
 msgstr ""
 
-#: src/edit_view.rs:261
+#: src/edit_view.rs:262
 msgid "Size changed to"
 msgstr "Tamanho mudado para"
 
-#: src/edit_view.rs:261
+#: src/edit_view.rs:262
 msgid "width"
 msgstr "largura"
 
-#: src/edit_view.rs:261
+#: src/edit_view.rs:262
 msgid "height"
 msgstr "altura"
 
-#: src/edit_view.rs:300 src/edit_view.rs:302
+#: src/edit_view.rs:301 src/edit_view.rs:303
 msgid "Untitled"
 msgstr "Sem Titulo"
 
-#: src/edit_view.rs:311
+#: src/edit_view.rs:312
 msgid "Setting title to"
 msgstr "Configurando titulo para"
 
-#: src/edit_view.rs:328 src/prefs_win.rs:64
+#: src/edit_view.rs:329 src/prefs_win.rs:67
 msgid "Setting font to"
 msgstr "Configurando fonte para"
 
-#: src/edit_view.rs:351
+#: src/edit_view.rs:352
 msgid "Unhandled config option"
 msgstr ""
 
-#: src/edit_view.rs:459
+#: src/edit_view.rs:460
 msgid "Allocating DrawingArea size"
 msgstr ""
 
-#: src/edit_view.rs:469
+#: src/edit_view.rs:470
 msgid "Vertical scrollbar changed value"
 msgstr ""
 
-#: src/edit_view.rs:485
+#: src/edit_view.rs:486
 msgid "Updating visible scroll region"
 msgstr ""
 
-#: src/edit_view.rs:492
+#: src/edit_view.rs:493
 msgid "Requesting new lines..."
 msgstr ""
 
-#: src/edit_view.rs:499
+#: src/edit_view.rs:500
 msgid "...and scrolling to them"
 msgstr ""
 
-#: src/edit_view.rs:546
+#: src/edit_view.rs:547
 msgid "Drawing EditView"
 msgstr ""
 
-#: src/edit_view.rs:547
+#: src/edit_view.rs:548
 msgid "vertical adjustment"
 msgstr ""
 
-#: src/edit_view.rs:550
+#: src/edit_view.rs:551
 msgid "horizontal adjustment"
 msgstr ""
 
-#: src/edit_view.rs:865
+#: src/edit_view.rs:887
 msgid "Smooth scrolling failed"
 msgstr ""
 
-#: src/edit_view.rs:888
+#: src/edit_view.rs:910
 msgid "Processing key press"
 msgstr "Processando pressionamento da tecla"
 
-#: src/edit_view.rs:889
+#: src/edit_view.rs:911
 msgid "value"
 msgstr "valor"
 
-#: src/edit_view.rs:891
+#: src/edit_view.rs:913
 msgid "state"
 msgstr "estado"
 
-#: src/edit_view.rs:893
+#: src/edit_view.rs:915
 msgid "length"
 msgstr "lagura"
 
-#: src/edit_view.rs:895
+#: src/edit_view.rs:917
 msgid "group"
 msgstr "grupo"
 
-#: src/edit_view.rs:897
+#: src/edit_view.rs:919
 msgid "unicode"
 msgstr ""
 
@@ -494,43 +504,43 @@ msgstr "Lendo arquivo de configuração"
 msgid "Xi-Config"
 msgstr "Configuração do XI"
 
-#: src/prefs_win.rs:47
+#: src/prefs_win.rs:51
 msgid "Setting font description"
 msgstr "Configurando"
 
-#: src/prefs_win.rs:65
+#: src/prefs_win.rs:68
 msgid "Setting font size to"
 msgstr "Configurando tamanho da fonte para"
 
-#: src/prefs_win.rs:79
+#: src/prefs_win.rs:85
 msgid "Setting active theme"
 msgstr "Configurando tema ativo"
 
-#: src/prefs_win.rs:87
+#: src/prefs_win.rs:93
 msgid "Theme changed to"
 msgstr "Tema trocado para"
 
-#: src/prefs_win.rs:107
+#: src/prefs_win.rs:112
 msgid "Scrolling past end"
 msgstr ""
 
-#: src/prefs_win.rs:122
+#: src/prefs_win.rs:128
 msgid "Word wrapping"
 msgstr ""
 
-#: src/prefs_win.rs:137
+#: src/prefs_win.rs:144
 msgid "Tab stops"
 msgstr ""
 
-#: src/rpc.rs:67
+#: src/rpc.rs:70
 msgid "unexpected result"
 msgstr "resultado inesperado"
 
-#: src/rpc.rs:70
+#: src/rpc.rs:73
 msgid "Got"
 msgstr ""
 
-#: src/rpc.rs:70
+#: src/rpc.rs:73
 msgid "at RPC level"
 msgstr ""
 

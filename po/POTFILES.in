@@ -5,7 +5,6 @@ data/com.github.Cogitri.gxi.gschema.xml
 src/about_win.rs
 src/main.rs
 src/globals.rs
-src/source.rs
 src/main_win.rs
 src/errors.rs
 src/xi_thread.rs
