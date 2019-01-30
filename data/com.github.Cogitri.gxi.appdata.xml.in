@@ -32,6 +32,11 @@
 	</provides>
 
 	<releases>
+		<release version="0.4.6" date="2019-01-30">
+			<description>
+				<p>Fix hangs during startup, add 'Replace...' button and shortcut. Adds an option to visually draw spaces/tabs</p>
+			</description>
+		</release>
 		<release version="0.4.5" date="2019-01-26">
 			<description>
 				<p>Use FileChooserNative instead of FileChooserDialog, fixes file opening/saving in flatpaks.</p>

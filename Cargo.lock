@@ -605,7 +605,7 @@ dependencies = [
 
 [[package]]
 name = "gxi"
-version = "0.4.5"
+version = "0.4.6"
 dependencies = [
  "cairo-rs 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "crossbeam-deque 0.7.1 (registry+https://github.com/rust-lang/crates.io-index)",
