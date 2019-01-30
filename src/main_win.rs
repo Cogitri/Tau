@@ -630,7 +630,7 @@ impl MainWin {
                 for file in fcd.get_filenames() {
                     let file_str = &file.to_string_lossy().into_owned();
                     if let Some(file) = fcd.get_filename() {
-                        match &std::fs::OpenOptions::new().write(true).open(&file) {
+                        match &std::fs::OpenOptions::new().write(true).create(true).open(&file) {
                             Ok(_) => {
                                 debug!("{} {:?}", gettext("Saving file"), &file);
                                 let view_id = edit_view.borrow().view_id.clone();
