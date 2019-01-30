@@ -625,7 +625,7 @@ impl EditView {
                 // drawing the cursor at the correct position later on
                 if get_draw_spaces_schema() || get_draw_tabs_schema() {
                     let line_text = layout.get_text().unwrap();
-                    layout.set_text(&line_text.replace("·", "a").replace("→", "a"));
+                    layout.set_text(&line_text.replace("·", " ").replace("→", "a"));
                 }
 
                 let layout_line = layout.get_line(0);
