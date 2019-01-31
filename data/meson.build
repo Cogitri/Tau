@@ -29,7 +29,15 @@ appdata_file = i18n.merge_file ('appdata-file',
 
 appstream_util = find_program('appstream-util', required: false)
 
-if appstream_util.found()
+# https://github.com/hughsie/appstream-glib/issues/146
+appstream_min_version = '0.7.2'
+
+appstream_ver_stdout = run_command([appstream_util, '--version'])
+appstream_ver = appstream_ver_stdout.stdout().split('	')[1].strip()
+if appstream_ver.version_compare('<' + appstream_min_version)
+  # Using 'warning' here would be a good idea, but meson on Ubuntu 14.04 isn't recent enough.
+  message('WARN: Found appstream, but it is too old! Wanted >= @0@, found @1@'.format(appstream_ver, appstream_min_version))
+elif appstream_util.found()
     test(
         'validate-appdata', appstream_util,
         args: [
