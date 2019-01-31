@@ -25,6 +25,7 @@ use crate::rpc::Core;
 use crossbeam_deque::{Injector, Worker};
 use gettextrs::{gettext, TextDomain, TextDomainError};
 use gio::{ApplicationExt, ApplicationExtManual, ApplicationFlags, FileExt};
+use glib::prelude::*;
 use gtk::Application;
 use log::{debug, error, info, trace, warn};
 use serde_json::{json, Value};
@@ -76,7 +77,7 @@ fn main() {
     };
 
     let (xi_peer, rx) = xi_thread::start_xi_thread();
-    let core = Core::new(xi_peer);
+    let core = Core::new(xi_peer, rx, shared_queue.clone());
 
     // No need to gettext this, gettext doesn't work yet
     match TextDomain::new("gxi")
@@ -185,7 +186,6 @@ fn main() {
         )
     };
 
-    let rx = Rc::new(RefCell::new(rx));
     application.connect_startup(clone!(shared_queue, core => move |application| {
         debug!("{}", gettext("Starting gxi"));
 
@@ -198,9 +198,12 @@ fn main() {
             Arc::new(Mutex::new(xi_config.clone())),
            );
 
+        let local = Worker::new_fifo();
+        let mut cont_gtk = true;
+
+        let (startup_tx, startup_rx) = glib::MainContext::channel(glib::PRIORITY_DEFAULT);
+
         gtk::idle_add(clone!(shared_queue, main_win => move || {
-            let local = Worker::new_fifo();
-            let mut cont_gtk = true;
             while let Some(msg) = local.pop().or_else(|| {
                 std::iter::repeat_with(|| {
                     shared_queue.queue_rx.lock().unwrap().steal_batch_and_pop(&local)
@@ -209,7 +212,10 @@ fn main() {
                 .and_then(|s| s.success())
             }) {
                 match msg {
-                    CoreMsg::ShutDown { } => cont_gtk = false,
+                    CoreMsg::ShutDown { } => {
+                        debug!("Shutdown receive");
+                        cont_gtk = false;
+                        },
                     _ => {
                         trace!("{}", gettext("Found a message for xi"));
                         MainWin::handle_msg(main_win.clone(), msg);
@@ -217,30 +223,6 @@ fn main() {
                 }
             }
             gtk::Continue(cont_gtk)
-        }));
-
-        gtk::idle_add(clone!(shared_queue, core, rx => move || {
-            while let Ok(msg) = rx.borrow().recv() {
-                if let Value::String(ref method) = msg["method"] {
-                    shared_queue.add_core_msg(CoreMsg::Notification {
-                        method: method.to_string(),
-                        params: msg["params"].clone(),
-                    });
-                } else if let Some(id) = msg["id"].as_u64() {
-                    let callback = {
-                        let mut state = core.state.write().unwrap();
-                        state.pending.remove(&id)
-                    };
-                    if let Some(callback) = callback {
-                        callback.call(&msg["result"]);
-                    } else {
-                        println!("{}", gettext("unexpected result"));
-                    }
-                } else {
-                    println!("{} {:?} {}", gettext("Got"), msg, gettext("at RPC level"));
-                }
-            }
-            gtk::Continue(true)
         }));
     }));
 

@@ -1,9 +1,12 @@
 use crate::xi_thread::XiPeer;
+use crate::{CoreMsg, SharedQueue};
+use gettextrs::gettext;
 use log::debug;
 use serde_json::{json, Value};
 use std::collections::BTreeMap;
-use std::sync::mpsc::channel;
-use std::sync::{Arc, RwLock};
+use std::sync::mpsc::{channel, Receiver};
+use std::sync::{Arc, Mutex};
+use std::thread;
 
 pub const XI_SHIFT_KEY_MASK: u32 = 1 << 1;
 pub const XI_CONTROL_KEY_MASK: u32 = 1 << 2;
@@ -11,7 +14,7 @@ pub const XI_ALT_KEY_MASK: u32 = 1 << 3;
 
 #[derive(Clone)]
 pub struct Core {
-    pub state: Arc<RwLock<CoreState>>,
+    pub state: Arc<Mutex<CoreState>>,
 }
 
 pub struct CoreState {
@@ -36,15 +39,41 @@ impl Core {
     ///
     /// The handler is invoked for incoming RPC notifications. Note that
     /// it must be `Send` because it is called from a dedicated thread.
-    pub fn new(xi_peer: XiPeer) -> Core {
+    pub fn new(xi_peer: XiPeer, rx: Receiver<Value>, shared_queue: SharedQueue) -> Core {
         let state = CoreState {
             xi_peer,
             id: 0,
             pending: BTreeMap::new(),
         };
-        Core {
-            state: Arc::new(RwLock::new(state)),
-        }
+        let core = Core {
+            state: Arc::new(Mutex::new(state)),
+        };
+
+        let rx_core = core.clone();
+        std::thread::spawn(move || {
+            while let Ok(msg) = rx.recv() {
+                if let Value::String(ref method) = msg["method"] {
+                    shared_queue.add_core_msg(CoreMsg::Notification {
+                        method: method.to_string(),
+                        params: msg["params"].clone(),
+                    });
+                } else if let Some(id) = msg["id"].as_u64() {
+                    let callback = {
+                        let mut state = rx_core.state.lock().unwrap();
+                        state.pending.remove(&id)
+                    };
+                    if let Some(callback) = callback {
+                        callback.call(&msg["result"]);
+                    } else {
+                        println!("{}", gettext("unexpected result"));
+                    }
+                } else {
+                    println!("{} {:?} {}", gettext("Got"), msg, gettext("at RPC level"));
+                }
+            }
+        });
+
+        core
     }
 
     pub fn send_notification(&self, method: &str, params: &Value) {
@@ -52,13 +81,13 @@ impl Core {
             "method": method,
             "params": params,
         });
-        let state = self.state.read().unwrap();
+        let state = self.state.lock().unwrap();
         debug!("Xi-CORE <-- {}", cmd);
         state.xi_peer.send_json(&cmd);
     }
 
     pub fn send_result(&self, result: &Value) {
-        let state = self.state.read().unwrap();
+        let state = self.state.lock().unwrap();
         let cmd = json!({
             "id": state.id,
             "result": result,
@@ -72,7 +101,7 @@ impl Core {
     where
         F: FnOnce(&Value) + Send + 'static,
     {
-        let mut state = self.state.write().unwrap();
+        let mut state = self.state.lock().unwrap();
         let id = state.id;
         let cmd = json!({
             "method": method,
