@@ -228,7 +228,7 @@ fn main() {
                     });
                 } else if let Some(id) = msg["id"].as_u64() {
                     let callback = {
-                        let mut state = core.state.lock().unwrap();
+                        let mut state = core.state.write().unwrap();
                         state.pending.remove(&id)
                     };
                     if let Some(callback) = callback {

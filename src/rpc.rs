@@ -1,11 +1,9 @@
 use crate::xi_thread::XiPeer;
-use gettextrs::gettext;
 use log::debug;
 use serde_json::{json, Value};
 use std::collections::BTreeMap;
-use std::sync::mpsc::{channel, Receiver};
-use std::sync::{Arc, Mutex};
-use std::thread;
+use std::sync::mpsc::channel;
+use std::sync::{Arc, RwLock};
 
 pub const XI_SHIFT_KEY_MASK: u32 = 1 << 1;
 pub const XI_CONTROL_KEY_MASK: u32 = 1 << 2;
@@ -13,7 +11,7 @@ pub const XI_ALT_KEY_MASK: u32 = 1 << 3;
 
 #[derive(Clone)]
 pub struct Core {
-    pub state: Arc<Mutex<CoreState>>,
+    pub state: Arc<RwLock<CoreState>>,
 }
 
 pub struct CoreState {
@@ -45,7 +43,7 @@ impl Core {
             pending: BTreeMap::new(),
         };
         Core {
-            state: Arc::new(Mutex::new(state)),
+            state: Arc::new(RwLock::new(state)),
         }
     }
 
@@ -54,13 +52,13 @@ impl Core {
             "method": method,
             "params": params,
         });
-        let state = self.state.lock().unwrap();
+        let state = self.state.read().unwrap();
         debug!("Xi-CORE <-- {}", cmd);
         state.xi_peer.send_json(&cmd);
     }
 
     pub fn send_result(&self, result: &Value) {
-        let state = self.state.lock().unwrap();
+        let state = self.state.read().unwrap();
         let cmd = json!({
             "id": state.id,
             "result": result,
@@ -74,7 +72,7 @@ impl Core {
     where
         F: FnOnce(&Value) + Send + 'static,
     {
-        let mut state = self.state.lock().unwrap();
+        let mut state = self.state.write().unwrap();
         let id = state.id;
         let cmd = json!({
             "method": method,
