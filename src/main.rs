@@ -46,24 +46,32 @@ pub enum CoreMsg {
     ShutDown {},
 }
 
+#[derive(Clone)]
 pub struct SharedQueue {
-    queue: Injector<CoreMsg>,
+    queue_rx: Arc<Mutex<Injector<CoreMsg>>>,
+    queue_tx: Arc<Mutex<Injector<CoreMsg>>>,
 }
 
 impl SharedQueue {
-    pub fn add_core_msg(&mut self, msg: CoreMsg) {
-        trace!("{}", gettext("Pushing to queue"));
-        self.queue.push(msg);
+    /// A message from xi-editor that we have to process (e.g. that we should scroll)
+    pub fn add_core_msg(&self, msg: CoreMsg) {
+        trace!("{}", gettext("Pushing to rx queue"));
+        self.queue_rx.lock().unwrap().push(msg);
+    }
+    /// A message that we want to send to xi-editor in order for it to process it (e.g. a key stroke)
+    pub fn send_msg(&self, msg: CoreMsg) {
+        trace!("{}", gettext("Pushing to tx queue"));
+        self.queue_tx.lock().unwrap().push(msg);
     }
 }
 
 #[derive(Clone)]
 struct MyHandler {
-    shared_queue: Arc<Mutex<SharedQueue>>,
+    shared_queue: SharedQueue,
 }
 
 impl MyHandler {
-    fn new(shared_queue: Arc<Mutex<SharedQueue>>) -> MyHandler {
+    fn new(shared_queue: SharedQueue) -> MyHandler {
         MyHandler { shared_queue }
     }
 }
@@ -76,13 +84,10 @@ impl Handler for MyHandler {
         );
         let method2 = method.to_string();
         let params2 = params.clone();
-        self.shared_queue
-            .lock()
-            .unwrap()
-            .add_core_msg(CoreMsg::Notification {
-                method: method2,
-                params: params2,
-            });
+        self.shared_queue.add_core_msg(CoreMsg::Notification {
+            method: method2,
+            params: params2,
+        });
     }
 }
 
@@ -91,9 +96,10 @@ fn main() {
         .default_format_timestamp(false)
         .init();
 
-    let shared_queue = Arc::new(Mutex::new(SharedQueue {
-        queue: Injector::<CoreMsg>::new(),
-    }));
+    let shared_queue = SharedQueue {
+        queue_rx: Arc::new(Mutex::new(Injector::<CoreMsg>::new())),
+        queue_tx: Arc::new(Mutex::new(Injector::<CoreMsg>::new())),
+    };
 
     let (xi_peer, rx) = xi_thread::start_xi_thread();
     let handler = MyHandler::new(shared_queue.clone());
@@ -223,7 +229,7 @@ fn main() {
             let mut cont_gtk = true;
             while let Some(msg) = local.pop().or_else(|| {
                 std::iter::repeat_with(|| {
-                    shared_queue.lock().unwrap().queue.steal_batch_and_pop(&local)
+                    shared_queue.queue_rx.lock().unwrap().steal_batch_and_pop(&local)
                 })
                 .find(|s| !s.is_retry())
                 .and_then(|s| s.success())
@@ -238,6 +244,12 @@ fn main() {
             }
             gtk::Continue(cont_gtk)
         }));
+
+        /*
+        gtk::idle_add(clone!(shared_queue => || {
+
+
+        }))*/
     }));
 
     application.connect_activate(clone!(shared_queue, core => move |_| {
@@ -246,10 +258,9 @@ fn main() {
         let mut params = json!({});
         params["file_path"] = Value::Null;
 
-        let shared_queue2 = shared_queue.clone();
+        let shared_queue = shared_queue.clone();
         core.send_request("new_view", &params,
             move |value| {
-                let mut shared_queue = shared_queue2.lock().unwrap();
                 shared_queue.add_core_msg(CoreMsg::NewViewReply{
                     file_name: None,
                     value: value.clone(),
@@ -270,10 +281,9 @@ fn main() {
             let mut params = json!({});
             params["file_path"] = json!(path);
 
-            let shared_queue2 = shared_queue.clone();
+            let shared_queue = shared_queue.clone();
             core.send_request("new_view", &params,
                 move |value| {
-                    let mut shared_queue = shared_queue2.lock().unwrap();
                     shared_queue.add_core_msg(CoreMsg::NewViewReply{
                         file_name: Some(path),
                     value: value.clone(),
@@ -285,7 +295,7 @@ fn main() {
 
     application.connect_shutdown(clone!(shared_queue => move |_| {
         debug!("{}", gettext("Shutting down..."));
-        shared_queue.lock().unwrap().add_core_msg(
+        shared_queue.add_core_msg(
             CoreMsg::ShutDown {}
         )
     }));
