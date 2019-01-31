@@ -60,15 +60,16 @@ impl EditView {
         view_id: &str,
     ) -> Rc<RefCell<EditView>> {
         let da = DrawingArea::new();
-        let hscrollbar = Scrollbar::new(Orientation::Horizontal, None);
-        let vscrollbar = Scrollbar::new(Orientation::Vertical, None);
+        let fake_adjustment = Adjustment::new(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+        let hscrollbar = Scrollbar::new(Orientation::Horizontal, &fake_adjustment);
+        let vscrollbar = Scrollbar::new(Orientation::Vertical, &fake_adjustment);
 
         da.set_events(
-            EventMask::BUTTON_PRESS_MASK.bits() as i32
-                | EventMask::BUTTON_RELEASE_MASK.bits() as i32
-                | EventMask::BUTTON_MOTION_MASK.bits() as i32
-                | EventMask::SCROLL_MASK.bits() as i32
-                | EventMask::SMOOTH_SCROLL_MASK.bits() as i32,
+            EventMask::BUTTON_PRESS_MASK
+                | EventMask::BUTTON_RELEASE_MASK
+                | EventMask::BUTTON_MOTION_MASK
+                | EventMask::SCROLL_MASK
+                | EventMask::SMOOTH_SCROLL_MASK,
         );
         debug!("{}: {:?}", gettext("Events"), da.get_events());
         da.set_can_focus(true);
@@ -103,7 +104,7 @@ impl EditView {
         let tab_hbox = gtk::Box::new(Orientation::Horizontal, 5);
         let label = Label::new(Some(""));
         tab_hbox.add(&label);
-        let close_button = Button::new_from_icon_name("window-close", 0);
+        let close_button = Button::new_from_icon_name("window-close", IconSize::Button);
         tab_hbox.add(&close_button);
         tab_hbox.show_all();
 
@@ -115,6 +116,7 @@ impl EditView {
             .iter()
             .filter(|f| f.is_monospace())
             .filter_map(|f| f.get_name())
+            .map(|f| f.to_string())
             .collect();
         main_state.borrow_mut().fonts = font_list;
 
@@ -208,7 +210,11 @@ impl EditView {
         }));
 
         search_entry.connect_search_changed(clone!(edit_view => move |w| {
-            edit_view.borrow_mut().search_changed(w.get_text());
+            if let Some(text) = w.get_text() {
+                edit_view.borrow_mut().search_changed(Some(text.to_string()));
+            } else {
+                edit_view.borrow_mut().search_changed(None);
+            }
         }));
 
         search_entry.connect_activate(clone!(edit_view => move |_| {
@@ -665,7 +671,7 @@ impl EditView {
         padding: usize,
     ) -> pango::Layout {
         let line_view = format!("{:>offset$} ", n, offset = padding);
-        let layout = pango::Layout::new(&pango_ctx);
+        let layout = pango::Layout::new(pango_ctx);
         layout.set_font_description(&self.font.font_desc);
         layout.set_text(line_view.as_str());
         layout
@@ -708,7 +714,7 @@ impl EditView {
         }
 
         // let layout = create_layout(cr).unwrap();
-        let layout = pango::Layout::new(&pango_ctx);
+        let layout = pango::Layout::new(pango_ctx);
         layout.set_font_description(&self.font.font_desc);
         layout.set_text(&line_view);
 
@@ -1065,7 +1071,6 @@ impl EditView {
         // if let Some(text) = Clipboard::get(&SELECTION_CLIPBOARD).wait_for_text() {
         //     self.core.borrow().insert(view_id, &text);
         // }
-        use crate::clipboard::ClipboardRequest;
         let view_id2 = view_id.to_string().clone();
         let core = self.core.clone();
         Clipboard::get(&SELECTION_CLIPBOARD).request_text(move |_, text| {
@@ -1077,7 +1082,6 @@ impl EditView {
         // if let Some(text) = Clipboard::get(&SELECTION_PRIMARY).wait_for_text() {
         //     self.core.borrow().insert(view_id, &text);
         // }
-        use crate::clipboard::ClipboardRequest;
         let view_id2 = view_id.to_string().clone();
         let core = self.core.clone();
         Clipboard::get(&SELECTION_PRIMARY).request_text(move |_, text| {
@@ -1091,7 +1095,7 @@ impl EditView {
         self.replace.replace_expander.set_expanded(false);
         self.replace.replace_revealer.set_reveal_child(false);
         self.search_entry.grab_focus();
-        let needle = self.search_entry.get_text().unwrap_or_default();
+        let needle = self.search_entry.get_text().unwrap();
         self.core
             .borrow()
             .find(&self.view_id, &needle, false, Some(false));
@@ -1148,18 +1152,20 @@ impl EditView {
     }
 
     pub fn replace(&self) {
-        let replace_chars = self.replace.replace_entry.get_text().unwrap_or_default();
-        self.core
-            .borrow()
-            .replace(&self.view_id, &replace_chars, false);
-        self.core.borrow().replace_next(&self.view_id);
+        if let Some(replace_chars) = self.replace.replace_entry.get_text() {
+            self.core
+                .borrow()
+                .replace(&self.view_id, replace_chars.as_str(), false);
+            self.core.borrow().replace_next(&self.view_id);
+        }
     }
 
     pub fn replace_all(&self) {
-        let replace_chars = self.replace.replace_entry.get_text().unwrap_or_default();
-        self.core
-            .borrow()
-            .replace(&self.view_id, &replace_chars, false);
-        self.core.borrow().replace_all(&self.view_id);
+        if let Some(replace_chars) = self.replace.replace_entry.get_text() {
+            self.core
+                .borrow()
+                .replace(&self.view_id, replace_chars.as_str(), false);
+            self.core.borrow().replace_all(&self.view_id);
+        }
     }
 }

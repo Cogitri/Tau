@@ -68,7 +68,7 @@ impl PrefsWin {
                     debug!("{} {}", gettext("Setting font size to"), &font_size);
 
                     font_conf.config.font_size = font_size as u32;
-                    font_conf.config.font_face = font_family;
+                    font_conf.config.font_face = font_family.to_string();
                     font_conf
                         .save()
                         .map_err(|e| error!("{}", e.to_string()))
@@ -83,21 +83,21 @@ impl PrefsWin {
                 theme_combo_box.append_text(theme_name);
                 if &main_state.theme_name == theme_name {
                     trace!("{}: {}", gettext("Setting active theme"), i);
-                    theme_combo_box.set_active(i as i32);
+                    theme_combo_box.set_active(i as u32);
                 }
             }
         }
 
         theme_combo_box.connect_changed(clone!(core, main_state => move |cb|{
             if let Some(theme_name) = cb.get_active_text() {
-                debug!("{} {:?}", gettext("Theme changed to"), cb.get_active_text());
+                debug!("{} {:?}", gettext("Theme changed to"), &theme_name);
                 let core = core.borrow();
                 core.set_theme(&theme_name);
 
                 crate::pref_storage::set_theme_schema(&theme_name);
 
                 let mut main_state = main_state.borrow_mut();
-                main_state.theme_name = theme_name;
+                main_state.theme_name = theme_name.to_string();
             }
         }));
 

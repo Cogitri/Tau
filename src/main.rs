@@ -6,7 +6,6 @@
 mod macros;
 
 mod about_win;
-mod clipboard;
 mod edit_view;
 mod errors;
 mod globals;
@@ -196,12 +195,10 @@ fn main() {
             &shared_queue,
             &Rc::new(RefCell::new(core.clone())),
             Arc::new(Mutex::new(xi_config.clone())),
-           );
+        );
 
         let local = Worker::new_fifo();
         let mut cont_gtk = true;
-
-        let (startup_tx, startup_rx) = glib::MainContext::channel(glib::PRIORITY_DEFAULT);
 
         gtk::idle_add(clone!(shared_queue, main_win => move || {
             while let Some(msg) = local.pop().or_else(|| {
