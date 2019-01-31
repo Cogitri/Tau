@@ -21,7 +21,7 @@ mod xi_thread;
 
 use crate::main_win::MainWin;
 use crate::pref_storage::{Config, XiConfig};
-use crate::rpc::{Core, Handler};
+use crate::rpc::Core;
 use crossbeam_deque::{Injector, Worker};
 use gettextrs::{gettext, TextDomain, TextDomainError};
 use gio::{ApplicationExt, ApplicationExtManual, ApplicationFlags, FileExt};
@@ -65,32 +65,6 @@ impl SharedQueue {
     }
 }
 
-#[derive(Clone)]
-struct MyHandler {
-    shared_queue: SharedQueue,
-}
-
-impl MyHandler {
-    fn new(shared_queue: SharedQueue) -> MyHandler {
-        MyHandler { shared_queue }
-    }
-}
-
-impl Handler for MyHandler {
-    fn notification(&self, method: &str, params: &Value) {
-        debug!(
-            "Xi-CORE --> {{\"method\": \"{}\", \"params\":{}}}",
-            method, params
-        );
-        let method2 = method.to_string();
-        let params2 = params.clone();
-        self.shared_queue.add_core_msg(CoreMsg::Notification {
-            method: method2,
-            params: params2,
-        });
-    }
-}
-
 fn main() {
     env_logger::Builder::from_default_env()
         .default_format_timestamp(false)
@@ -102,8 +76,7 @@ fn main() {
     };
 
     let (xi_peer, rx) = xi_thread::start_xi_thread();
-    let handler = MyHandler::new(shared_queue.clone());
-    let core = Core::new(xi_peer, rx, handler.clone());
+    let core = Core::new(xi_peer);
 
     // No need to gettext this, gettext doesn't work yet
     match TextDomain::new("gxi")
@@ -212,6 +185,7 @@ fn main() {
         )
     };
 
+    let rx = Rc::new(RefCell::new(rx));
     application.connect_startup(clone!(shared_queue, core => move |application| {
         debug!("{}", gettext("Starting gxi"));
 
@@ -245,11 +219,29 @@ fn main() {
             gtk::Continue(cont_gtk)
         }));
 
-        /*
-        gtk::idle_add(clone!(shared_queue => || {
-
-
-        }))*/
+        gtk::idle_add(clone!(shared_queue, core, rx => move || {
+            while let Ok(msg) = rx.borrow().recv() {
+                if let Value::String(ref method) = msg["method"] {
+                    shared_queue.add_core_msg(CoreMsg::Notification {
+                        method: method.to_string(),
+                        params: msg["params"].clone(),
+                    });
+                } else if let Some(id) = msg["id"].as_u64() {
+                    let callback = {
+                        let mut state = core.state.lock().unwrap();
+                        state.pending.remove(&id)
+                    };
+                    if let Some(callback) = callback {
+                        callback.call(&msg["result"]);
+                    } else {
+                        println!("{}", gettext("unexpected result"));
+                    }
+                } else {
+                    println!("{} {:?} {}", gettext("Got"), msg, gettext("at RPC level"));
+                }
+            }
+            gtk::Continue(true)
+        }));
     }));
 
     application.connect_activate(clone!(shared_queue, core => move |_| {
