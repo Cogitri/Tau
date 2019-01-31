@@ -1,4 +1,5 @@
 use crate::xi_thread::XiPeer;
+use crate::{CoreMsg, SharedQueue};
 use gettextrs::gettext;
 use log::debug;
 use serde_json::{json, Value};
@@ -13,21 +14,17 @@ pub const XI_ALT_KEY_MASK: u32 = 1 << 3;
 
 #[derive(Clone)]
 pub struct Core {
-    state: Arc<Mutex<CoreState>>,
+    pub state: Arc<Mutex<CoreState>>,
 }
 
-struct CoreState {
-    xi_peer: XiPeer,
-    id: u64,
-    pending: BTreeMap<u64, Box<Callback>>,
+pub struct CoreState {
+    pub xi_peer: XiPeer,
+    pub id: u64,
+    pub pending: BTreeMap<u64, Box<Callback>>,
 }
 
-trait Callback: Send {
+pub trait Callback: Send {
     fn call(self: Box<Self>, result: &Value);
-}
-
-pub trait Handler {
-    fn notification(&self, method: &str, params: &Value);
 }
 
 impl<F: FnOnce(&Value) + Send> Callback for F {
@@ -42,10 +39,7 @@ impl Core {
     ///
     /// The handler is invoked for incoming RPC notifications. Note that
     /// it must be `Send` because it is called from a dedicated thread.
-    pub fn new<H>(xi_peer: XiPeer, rx: Receiver<Value>, handler: H) -> Core
-    where
-        H: Handler + Send + 'static,
-    {
+    pub fn new(xi_peer: XiPeer, rx: Receiver<Value>, shared_queue: SharedQueue) -> Core {
         let state = CoreState {
             xi_peer,
             id: 0,
@@ -54,14 +48,18 @@ impl Core {
         let core = Core {
             state: Arc::new(Mutex::new(state)),
         };
-        let rx_core_handle = core.clone();
+
+        let rx_core = core.clone();
         thread::spawn(move || {
             while let Ok(msg) = rx.recv() {
                 if let Value::String(ref method) = msg["method"] {
-                    handler.notification(&method, &msg["params"]);
+                    shared_queue.add_core_msg(CoreMsg::Notification {
+                        method: method.to_string(),
+                        params: msg["params"].clone(),
+                    });
                 } else if let Some(id) = msg["id"].as_u64() {
                     let callback = {
-                        let mut state = rx_core_handle.state.lock().unwrap();
+                        let mut state = rx_core.state.lock().unwrap();
                         state.pending.remove(&id)
                     };
                     if let Some(callback) = callback {
@@ -74,6 +72,7 @@ impl Core {
                 }
             }
         });
+
         core
     }
 

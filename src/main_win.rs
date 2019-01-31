@@ -37,7 +37,7 @@ pub struct MainState {
 
 pub struct MainWin {
     core: Rc<RefCell<Core>>,
-    shared_queue: Arc<Mutex<SharedQueue>>,
+    shared_queue: SharedQueue,
     window: ApplicationWindow,
     notebook: Notebook,
     builder: Builder,
@@ -52,7 +52,7 @@ const GLADE_SRC: &str = include_str!("ui/gxi.glade");
 impl MainWin {
     pub fn new(
         application: &Application,
-        shared_queue: &Arc<Mutex<SharedQueue>>,
+        shared_queue: &SharedQueue,
         core: &Rc<RefCell<Core>>,
         config: Arc<Mutex<Config<XiConfig>>>,
     ) -> Rc<RefCell<MainWin>> {
@@ -255,6 +255,7 @@ impl MainWin {
 
         main_win
     }
+    /*
     pub fn activate(_application: &Application, _shared_queue: Arc<Mutex<SharedQueue>>) {
         // TODO
         unimplemented!();
@@ -263,10 +264,12 @@ impl MainWin {
         // TODO
         unimplemented!();
     }
+    */
 }
 
 impl MainWin {
     pub fn handle_msg(main_win: Rc<RefCell<MainWin>>, msg: CoreMsg) {
+        trace!("handle msg");
         match msg {
             CoreMsg::NewViewReply { file_name, value } => {
                 MainWin::new_view_response(&main_win, file_name, &value)
@@ -697,13 +700,12 @@ impl MainWin {
             params["file_path"] = json!(file_name);
         }
 
-        let shared_queue2 = self.shared_queue.clone();
+        let shared_queue = self.shared_queue.clone();
         let file_name2 = file_name.map(|s| s.to_string());
         self.core
             .borrow_mut()
             .send_request("new_view", &params, move |value| {
                 let value = value.clone();
-                let mut shared_queue = shared_queue2.lock().unwrap();
                 shared_queue.add_core_msg(CoreMsg::NewViewReply {
                     file_name: file_name2,
                     value,
