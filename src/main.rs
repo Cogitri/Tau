@@ -185,6 +185,35 @@ fn main() {
         )
     };
 
+    let (tx, rx) = glib::MainContext::channel::<Rc<RefCell<MainWin>>>(glib::source::PRIORITY_HIGH);
+
+    rx.attach(
+        &glib::MainContext::default(),
+        clone!(shared_queue => move |main_win| {
+            let local = Worker::new_fifo();
+                while let Some(msg) = local.pop().or_else(|| {
+                    std::iter::repeat_with(|| {
+                        shared_queue.queue_rx.lock().unwrap().steal_batch_and_pop(&local)
+                    })
+                    .find(|s| !s.is_retry())
+                    .and_then(|s| s.success())
+                }) {
+                    match msg {
+                        CoreMsg::ShutDown { } => {
+                            debug!("Shutdown receive");
+                            break;
+                            },
+                        _ => {
+                            trace!("{}", gettext("Found a message for xi"));
+                            MainWin::handle_msg(main_win.clone(), msg);
+                        },
+                    }
+                }
+
+                glib::source::Continue(true)
+        }),
+    );
+
     application.connect_startup(clone!(shared_queue, core => move |application| {
         debug!("{}", gettext("Starting gxi"));
 
@@ -197,30 +226,7 @@ fn main() {
             Arc::new(Mutex::new(xi_config.clone())),
         );
 
-        let local = Worker::new_fifo();
-        let mut cont_gtk = true;
-
-        gtk::idle_add(clone!(shared_queue, main_win => move || {
-            while let Some(msg) = local.pop().or_else(|| {
-                std::iter::repeat_with(|| {
-                    shared_queue.queue_rx.lock().unwrap().steal_batch_and_pop(&local)
-                })
-                .find(|s| !s.is_retry())
-                .and_then(|s| s.success())
-            }) {
-                match msg {
-                    CoreMsg::ShutDown { } => {
-                        debug!("Shutdown receive");
-                        cont_gtk = false;
-                        },
-                    _ => {
-                        trace!("{}", gettext("Found a message for xi"));
-                        MainWin::handle_msg(main_win.clone(), msg);
-                    },
-                }
-            }
-            gtk::Continue(cont_gtk)
-        }));
+        tx.send(main_win);
     }));
 
     application.connect_activate(clone!(shared_queue, core => move |_| {
