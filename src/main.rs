@@ -100,6 +100,9 @@ fn main() {
     )
     .unwrap_or_else(|_| panic!("{}", gettext("Failed to create the GTK+ application")));
 
+    application.connect_startup(clone!(shared_queue, core => move |application| {
+        debug!("{}", gettext("Starting gxi"));
+
     //TODO: This part really needs better error handling...
     let (xi_config_dir, xi_config) = if let Some(user_config_dir) = dirs::config_dir() {
         let config_dir = user_config_dir.join("gxi");
@@ -132,7 +135,13 @@ fn main() {
                     .save()
                     .unwrap_or_else(|e| error!("{}", e.to_string()));
 
-                xi_config.clone()
+        Config::<XiConfig>::new(
+            config_dir
+                .join("preferences.xiconfig")
+                .to_str()
+                .map(|s| s.to_string())
+                .unwrap()
+        )
             }
             Err(_) => {
                 error!(
@@ -186,16 +195,13 @@ fn main() {
         )
     };
 
-    application.connect_startup(clone!(shared_queue, core => move |application| {
-        debug!("{}", gettext("Starting gxi"));
-
         core.client_started(&xi_config_dir, include_str!(concat!(env!("OUT_DIR"), "/plugin-dir.in")));
 
         let main_win = MainWin::new(
             application,
             &shared_queue,
             &Rc::new(RefCell::new(core.clone())),
-            Arc::new(Mutex::new(xi_config.clone())),
+            Arc::new(Mutex::new(xi_config)),
            );
 
         let local = Worker::new_fifo();
