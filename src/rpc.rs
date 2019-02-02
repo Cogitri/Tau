@@ -180,6 +180,17 @@ impl Core {
         );
     }
 
+    pub fn resize(&self, view_id: &str, width: i32, height: i32) {
+        self.send_edit_cmd(
+            view_id,
+            "resize",
+            &json!({
+                "width": width,
+                "height": height,
+            }),
+        )
+    }
+
     pub fn delete_forward(&self, view_id: &str) {
         self.send_edit_cmd(view_id, "delete_forward", &json!({}))
     }

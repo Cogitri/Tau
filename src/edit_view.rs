@@ -261,6 +261,7 @@ impl EditView {
         da.connect_size_allocate(clone!(edit_view => move |_,alloc| {
             debug!("{}: {}={} {}={}", gettext("Size changed to"), gettext("width"), alloc.width, gettext("height"), alloc.height);
             edit_view.borrow_mut().da_size_allocate(alloc.width, alloc.height);
+            edit_view.borrow().do_resize(&edit_view.borrow().view_id,alloc.width, alloc.height);
         }));
 
         vscrollbar.connect_change_value(clone!(edit_view => move |_,_,value| {
@@ -1084,6 +1085,10 @@ impl EditView {
             core.borrow().gesture_point_select(&view_id2, line, col);
             core.borrow().insert(&view_id2, &text);
         });
+    }
+
+    fn do_resize(&self, view_id: &str, width: i32, height: i32) {
+        self.core.borrow().resize(view_id, width, height);
     }
 
     pub fn start_search(&self) {
