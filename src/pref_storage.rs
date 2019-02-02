@@ -17,7 +17,7 @@ pub struct Config<T> {
 }
 
 /// For stuff that goes into preferences.xiconfig
-#[derive(Clone, Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize)]
 #[serde(default)]
 pub struct XiConfig {
     pub tab_size: u32,
@@ -81,7 +81,7 @@ impl<T> Config<T> {
 
     pub fn open(&mut self) -> Result<&mut Config<T>, Error>
     where
-        T: Clone + Debug + DeserializeOwned,
+        T: Debug + DeserializeOwned,
     {
         trace!("{}", gettext("Opening config file"));
         let mut config_file = OpenOptions::new().read(true).open(&self.path)?;
@@ -93,7 +93,7 @@ impl<T> Config<T> {
         let config_toml: T = toml::from_str(&config_string)?;
         debug!("{}: {:?}", gettext("Xi-Config"), config_toml);
 
-        self.config = config_toml.clone();
+        self.config = config_toml;
 
         Ok(self)
     }

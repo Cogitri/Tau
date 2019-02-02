@@ -56,25 +56,25 @@ impl PrefsWin {
         }
 
         {
-            let conf = xi_config.lock().unwrap().clone();
+            font_chooser_widget.connect_property_font_notify(
+                clone!(xi_config => move |font_widget| {
+                    if let Some(font_desc) = font_widget.get_font_desc() {
+                        let mut font_conf = xi_config.lock().unwrap();
 
-            font_chooser_widget.connect_property_font_notify(move |font_widget| {
-                if let Some(font_desc) = font_widget.get_font_desc() {
-                    let mut font_conf = conf.clone();
+                        let font_family = font_desc.get_family().unwrap();
+                        let font_size = font_desc.get_size() / 1024;
+                        debug!("{} {}", gettext("Setting font to"), &font_family);
+                        debug!("{} {}", gettext("Setting font size to"), &font_size);
 
-                    let font_family = font_desc.get_family().unwrap();
-                    let font_size = font_desc.get_size() / 1024;
-                    debug!("{} {}", gettext("Setting font to"), &font_family);
-                    debug!("{} {}", gettext("Setting font size to"), &font_size);
-
-                    font_conf.config.font_size = font_size as u32;
-                    font_conf.config.font_face = font_family;
-                    font_conf
-                        .save()
-                        .map_err(|e| error!("{}", e.to_string()))
-                        .unwrap();
-                }
-            });
+                        font_conf.config.font_size = font_size as u32;
+                        font_conf.config.font_face = font_family;
+                        font_conf
+                            .save()
+                            .map_err(|e| error!("{}", e.to_string()))
+                            .unwrap();
+                    }
+                }),
+            );
         }
 
         {
@@ -102,51 +102,56 @@ impl PrefsWin {
         }));
 
         {
-            let conf = xi_config.lock().unwrap().clone();
+            {
+                let conf = xi_config.lock().unwrap();
+                scroll_past_end_checkbutton.set_active(conf.config.scroll_past_end);
+            }
 
-            scroll_past_end_checkbutton.set_active(conf.config.scroll_past_end);
-
-            scroll_past_end_checkbutton.connect_toggled(move |toggle_btn| {
-                let value = toggle_btn.get_active();
-                let mut conf = conf.clone();
+            scroll_past_end_checkbutton.connect_toggled(clone!(xi_config => move |toggle_btn| {
+                let value = toggle_btn.get_active();;
                 debug!("{}: {}", gettext("Scrolling past end"), value);
+                let mut conf = xi_config.lock().unwrap();
                 conf.config.scroll_past_end = value;
                 conf.save()
                     .map_err(|e| error!("{}", e.to_string()))
                     .unwrap();
-            });
+            }));
         }
 
         {
-            let conf = xi_config.lock().unwrap().clone();
+            {
+                let conf = xi_config.lock().unwrap();
 
-            word_wrap_checkbutton.set_active(conf.config.word_wrap);
+                word_wrap_checkbutton.set_active(conf.config.word_wrap);
+            }
 
-            word_wrap_checkbutton.connect_toggled(move |toggle_btn| {
+            word_wrap_checkbutton.connect_toggled(clone!(xi_config => move |toggle_btn| {
                 let value = toggle_btn.get_active();
-                let mut conf = conf.clone();
                 debug!("{}: {}", gettext("Word wrapping"), value);
+                let mut conf = xi_config.lock().unwrap();
                 conf.config.word_wrap = value;
                 conf.save()
                     .map_err(|e| error!("{}", e.to_string()))
                     .unwrap();
-            });
+            }));
         }
 
         {
-            let conf = xi_config.lock().unwrap().clone();
+            {
+                let conf = xi_config.lock().unwrap();
 
-            tab_stops_checkbutton.set_active(conf.config.use_tab_stops);
+                tab_stops_checkbutton.set_active(conf.config.use_tab_stops);
+            }
 
-            tab_stops_checkbutton.connect_toggled(move |toggle_btn| {
+            tab_stops_checkbutton.connect_toggled(clone!(xi_config => move |toggle_btn| {
                 let value = toggle_btn.get_active();
-                let mut conf = conf.clone();
+                let mut conf = xi_config.lock().unwrap();
                 debug!("{}: {}", gettext("Tab stops"), value);
                 conf.config.use_tab_stops = value;
                 conf.save()
                     .map_err(|e| error!("{}", e.to_string()))
                     .unwrap();
-            });
+            }));
         }
 
         {
@@ -159,7 +164,7 @@ impl PrefsWin {
         }
 
         {
-            draw_tabs_checkbutton.set_active(get_draw_spaces_schema());
+            draw_tabs_checkbutton.set_active(get_draw_tabs_schema());
 
             draw_tabs_checkbutton.connect_toggled(move |toggle_btn| {
                 let value = toggle_btn.get_active();
