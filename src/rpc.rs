@@ -1,7 +1,7 @@
 use crate::xi_thread::XiPeer;
 use crate::{CoreMsg, SharedQueue};
 use gettextrs::gettext;
-use log::debug;
+use log::{debug, error};
 use serde_json::{json, Value};
 use std::collections::BTreeMap;
 use std::sync::mpsc::{channel, Receiver};
@@ -52,12 +52,18 @@ impl Core {
         let rx_core = core.clone();
         thread::spawn(move || {
             while let Ok(msg) = rx.recv() {
+                debug!("{:?}", msg);
                 if let Value::String(ref method) = msg["method"] {
                     shared_queue.add_core_msg(CoreMsg::Notification {
                         method: method.to_string(),
                         params: msg["params"].clone(),
+                        id: msg["id"].as_u64(),
                     });
                 } else if let Some(id) = msg["id"].as_u64() {
+                    debug!(
+                        "Xi-CORE --> {{\"method\": \"{}\", \"params\":{}}}",
+                        &msg["method"], &msg["params"]
+                    );
                     let callback = {
                         let mut state = rx_core.state.lock().unwrap();
                         state.pending.remove(&id)
@@ -65,10 +71,10 @@ impl Core {
                     if let Some(callback) = callback {
                         callback.call(&msg["result"]);
                     } else {
-                        println!("{}", gettext("unexpected result"));
+                        error!("{}: {:?}", gettext("unexpected result"), msg);
                     }
                 } else {
-                    println!("{} {:?} {}", gettext("Got"), msg, gettext("at RPC level"));
+                    error!("{} {:?} {}", gettext("Got"), msg, gettext("at RPC level"));
                 }
             }
         });
@@ -86,10 +92,10 @@ impl Core {
         state.xi_peer.send_json(&cmd);
     }
 
-    pub fn send_result(&self, result: &Value) {
+    pub fn send_result(&self, id: u64, result: &Value) {
         let state = self.state.lock().unwrap();
         let cmd = json!({
-            "id": state.id,
+            "id": id,
             "result": result,
         });
         debug!("Xi-CORE <-- result: {}", cmd);
