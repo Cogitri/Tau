@@ -38,6 +38,7 @@ pub enum CoreMsg {
     Notification {
         method: String,
         params: Value,
+        id: Option<u64>,
     },
     NewViewReply {
         file_name: Option<String>,

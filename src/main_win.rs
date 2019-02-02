@@ -274,7 +274,7 @@ impl MainWin {
             CoreMsg::NewViewReply { file_name, value } => {
                 MainWin::new_view_response(&main_win, file_name, &value)
             }
-            CoreMsg::Notification { method, params } => {
+            CoreMsg::Notification { method, params, id } => {
                 match method.as_ref() {
                     "alert" => main_win.borrow_mut().alert(&params),
                     "available_themes" => main_win.borrow_mut().available_themes(&params),
@@ -286,7 +286,7 @@ impl MainWin {
                     "update" => main_win.borrow_mut().update(&params),
                     "scroll_to" => main_win.borrow_mut().scroll_to(&params),
                     "theme_changed" => main_win.borrow_mut().theme_changed(&params),
-                    "measure_width" => main_win.borrow().measure_width(params),
+                    "measure_width" => main_win.borrow().measure_width(id, params),
                     "available_languages" => main_win.borrow_mut().available_languages(&params),
                     "language_changed" => main_win.borrow_mut().language_changed(&params),
                     _ => {
@@ -505,9 +505,14 @@ impl MainWin {
         }
     }
 
-    pub fn measure_width(&self, line_string: Value) {
-        debug!("{} 'measure_width' {:?}", gettext("Handling"), line_string);
-        let request: Vec<MeasureWidth> = serde_json::from_value(line_string).unwrap();
+    pub fn measure_width(&self, id: Option<u64>, params: Value) {
+        trace!(
+            "{} 'measure_width' id: {:?} {:?}",
+            gettext("Handling"),
+            id,
+            params
+        );
+        let request: Vec<MeasureWidth> = serde_json::from_value(params).unwrap();
         let edit_view = self.get_current_edit_view();
 
         let mut widths = Vec::new();
@@ -519,9 +524,10 @@ impl MainWin {
         }
         //let widths: Vec<f64> = request.iter().map(|x| x.strings.iter().map(|v| edit_view.borrow().line_width(&v)).collect::<Vec<f64>>()).collect();
 
-        self.core
-            .borrow()
-            .send_result(&serde_json::to_value(vec![widths]).unwrap());
+        self.core.borrow().send_result(
+            id.unwrap_or(0),
+            &serde_json::to_value(vec![widths]).unwrap(),
+        );
     }
 
     pub fn available_languages(&mut self, params: &Value) {
