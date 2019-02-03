@@ -124,9 +124,7 @@ fn main() {
                 .unwrap(),
         );
 
-        xi_config = match xi_config.open() {
-            Ok(_) => {
-                let xi_config = xi_config.open().unwrap();
+        xi_config = if let Ok(xi_config) = xi_config.open() {
                 /*
                 We have to immediately save the config file here to "upgrade" it (as in add missing
                 entries which have been added by us during a version upgrade
@@ -142,8 +140,7 @@ fn main() {
                 .map(|s| s.to_string())
                 .unwrap()
         )
-            }
-            Err(_) => {
+            } else {
                 error!(
                     "{}",
                     gettext("Couldn't read config, falling back to the default XI-Editor config")
@@ -152,8 +149,7 @@ fn main() {
                     .save()
                     .unwrap_or_else(|e| error!("{}", e.to_string()));
                 xi_config
-            }
-        };
+            };
 
         (
             config_dir.to_str().map(|s| s.to_string()).unwrap(),
