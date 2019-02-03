@@ -10,7 +10,7 @@ use std::io::prelude::*;
 use tempfile::tempdir;
 
 /// Generic wrapper struct around XiConfig
-#[derive(Clone, Debug)]
+#[derive(Debug)]
 pub struct Config<T> {
     pub path: String,
     pub config: T,
