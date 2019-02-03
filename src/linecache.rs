@@ -10,15 +10,22 @@ pub struct StyleSpan {
     pub id: usize,
 }
 
+/// A Struct representing _one_ line which xi has sent us.
+/// # Fields:
+/// * text: Contains the text of that line
+/// * line_num: The number of the line. Multiple lines may have the same num due to word wrapping.
+/// * cursor: What position the cursor is at
+/// * styles: What style this is (e.g. italic, underlined)
 #[derive(Clone, Debug)]
 pub struct Line {
     text: String,
     cursor: Vec<u64>,
     pub styles: Vec<StyleSpan>,
+    line_num: u64,
 }
 
 impl Line {
-    pub fn from_json(v: &Value) -> Line {
+    pub fn from_json(v: &Value, line_num: u64) -> Line {
         let text = v["text"].as_str().unwrap().to_owned();
         let cursor = if let Some(arr) = v["cursor"].as_array() {
             arr.iter().map(|c| c.as_u64().unwrap()).collect::<Vec<_>>()
@@ -56,6 +63,7 @@ impl Line {
             text,
             cursor,
             styles,
+            line_num,
         }
     }
 
@@ -65,6 +73,10 @@ impl Line {
 
     pub fn cursor(&self) -> &[u64] {
         &self.cursor
+    }
+
+    pub fn line_num(&self) -> &u64 {
+        &self.line_num
     }
 }
 
@@ -165,14 +177,26 @@ impl LineCache {
                         new_lines.push(None);
                     }
                     new_invalid_after = 0;
-                    //let json_lines = op.lines.unwrap_or_else(Vec::new);
-                    // for json_line in op.lines.iter().flat_map(|l| l.iter()) {
                     for line in op["lines"].as_array().unwrap() {
-                        let line = Line::from_json(line);
+                        // xi only send 'ln' for actual lines
+                        let n = if let Some(ln) = line["ln"].as_u64() {
+                            ln
+                        // If it doesn't send ln this line is the result of a linebreak, so it should
+                        // use the line num of the previous line.
+                        } else {
+                            new_lines
+                                .last()
+                                .cloned()
+                                .unwrap()
+                                .map(|l| l.line_num)
+                                .unwrap_or(0)
+                        };
+                        let line = Line::from_json(line, n);
                         new_lines.push(Some(Line {
                             cursor: line.cursor.clone(),
                             text: line.text.clone(),
                             styles: line.styles.clone(),
+                            line_num: line.line_num,
                         }));
                     }
                 }
@@ -252,7 +276,7 @@ mod test {
             "ops": [
                 {"op":"invalidate", "n": 20},
                 {"op":"ins", "n": 30, "lines": [
-                    {"text": "20\n"},
+                    {"text": "20\n", "ln": 1},
                     {"text": "21\n"},
                 ]},
                 {"op":"invalidate", "n": 10},

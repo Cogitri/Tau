@@ -605,8 +605,12 @@ impl EditView {
                     .da
                     .get_pango_context()
                     .unwrap_or_else(|| panic!("{}", &gettext("Failed to get Pango context")));
-                let linecount_layout =
-                    self.create_layout_for_linecount(&pango_ctx, &main_state, i + 1, padding);
+                let linecount_layout = self.create_layout_for_linecount(
+                    &pango_ctx,
+                    &main_state,
+                    *line.line_num(),
+                    padding,
+                );
                 update_layout(cr, &linecount_layout);
                 show_layout(cr, &linecount_layout);
 
@@ -673,9 +677,12 @@ impl EditView {
     }
 
     pub fn line_width(&self, line_string: &str) -> f64 {
-        let line = Line::from_json(&serde_json::json!({
-            "text": line_string,
-        }));
+        let line = Line::from_json(
+            &serde_json::json!({
+                "text": line_string,
+            }),
+            0,
+        );
         let main_state = self.main_state.borrow();
         let pango_ctx = self.da.get_pango_context().unwrap();
         let linecount_layout = self.create_layout_for_line(&pango_ctx, &main_state, &line);
