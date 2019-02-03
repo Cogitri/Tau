@@ -127,19 +127,31 @@ fn main() {
         xi_config = if let Ok(xi_config) = xi_config.open() {
                 /*
                 We have to immediately save the config file here to "upgrade" it (as in add missing
-                entries which have been added by us during a version upgrade
+                entries which have been added by us during a version upgrade). This works because
+                the above call to Config::new() sets defaults.
                 */
                 xi_config
                     .save()
                     .unwrap_or_else(|e| error!("{}", e.to_string()));
 
-        Config::<XiConfig>::new(
-            config_dir
-                .join("preferences.xiconfig")
-                .to_str()
-                .map(|s| s.to_string())
-                .unwrap()
-        )
+                Config {
+                    path: xi_config.path.to_string(),
+                    config: XiConfig {
+                                tab_size: xi_config.config.tab_size,
+                                translate_tabs_to_spaces: xi_config.config.translate_tabs_to_spaces,
+                                use_tab_stops: xi_config.config.use_tab_stops,
+                                plugin_search_path: xi_config.config.plugin_search_path.clone(),
+                                font_face: xi_config.config.font_face.to_string(),
+                                font_size: xi_config.config.font_size,
+                                auto_indent: xi_config.config.auto_indent,
+                                scroll_past_end: xi_config.config.scroll_past_end,
+                                wrap_width: xi_config.config.wrap_width,
+                                word_wrap: xi_config.config.word_wrap,
+                                autodetect_whitespace: xi_config.config.autodetect_whitespace,
+                                line_ending: xi_config.config.line_ending.to_string(),
+                                surrounding_pairs: xi_config.config.surrounding_pairs.clone(),
+                    },
+                }
             } else {
                 error!(
                     "{}",
