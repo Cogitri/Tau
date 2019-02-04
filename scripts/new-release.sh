@@ -25,6 +25,8 @@ sed -i "s/version: '$current'/version: '$next'/" meson.build
 sed -i "s/version = \"$current\"/version = \"$next\"/" Cargo.toml
 ${EDITOR:=nano} data/com.github.Cogitri.gxi.appdata.xml.in
 
+./scripts/make-changelog.sh v${current} >> Changelog.md
+
 ninja -C build test
 
 git commit -av
