@@ -34,10 +34,9 @@ impl PrefsWin {
             builder.get_object("scroll_past_end_checkbutton").unwrap();
         let word_wrap_checkbutton: ToggleButton =
             builder.get_object("word_wrap_checkbutton").unwrap();
-        let draw_spaces_checkbutton: ToggleButton =
-            builder.get_object("draw_spaces_checkbutton").unwrap();
-        let draw_tabs_checkbutton: ToggleButton =
-            builder.get_object("draw_tabs_checkbutton").unwrap();
+        let draw_trailing_spaces_checkbutton: ToggleButton = builder
+            .get_object("draw_trailing_spaces_checkbutton")
+            .unwrap();
 
         {
             let conf = xi_config.lock().unwrap();
@@ -155,20 +154,11 @@ impl PrefsWin {
         }
 
         {
-            draw_spaces_checkbutton.set_active(get_draw_spaces_schema());
+            draw_trailing_spaces_checkbutton.set_active(get_draw_trailing_spaces_schema());
 
-            draw_spaces_checkbutton.connect_toggled(move |toggle_btn| {
+            draw_trailing_spaces_checkbutton.connect_toggled(move |toggle_btn| {
                 let value = toggle_btn.get_active();
-                set_draw_spaces_schema(value);
-            });
-        }
-
-        {
-            draw_tabs_checkbutton.set_active(get_draw_tabs_schema());
-
-            draw_tabs_checkbutton.connect_toggled(move |toggle_btn| {
-                let value = toggle_btn.get_active();
-                set_draw_tabs_schema(value);
+                set_draw_trailing_spaces_schema(value);
             });
         }
 

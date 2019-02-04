@@ -153,12 +153,12 @@ pub fn get_default_monospace_font_schema() -> String {
         })
 }
 
-pub fn get_draw_spaces_schema() -> bool {
+pub fn get_draw_trailing_spaces_schema() -> bool {
     SettingsSchemaSource::get_default()
         .and_then(|settings_source| settings_source.lookup("com.github.Cogitri.gxi", true))
         .map(|_| {
             Settings::new(crate::globals::APP_ID.unwrap_or("com.github.Cogitri.gxi"))
-                .get_boolean("draw-spaces")
+                .get_boolean("draw-trailing-spaces")
         })
         .unwrap_or_else(|| {
             warn!("Couldn't find GSchema! Defaulting to not drawing tabs!");
@@ -166,33 +166,11 @@ pub fn get_draw_spaces_schema() -> bool {
         })
 }
 
-pub fn set_draw_spaces_schema(val: bool) {
+pub fn set_draw_trailing_spaces_schema(val: bool) {
     if let Some(_) = SettingsSchemaSource::get_default()
         .and_then(|settings_source| settings_source.lookup("com.github.Cogitri.gxi", true))
     {
         Settings::new(crate::globals::APP_ID.unwrap_or("com.github.Cogitri.gxi"))
-            .set_boolean("draw-spaces", val);
-    };
-}
-
-pub fn get_draw_tabs_schema() -> bool {
-    SettingsSchemaSource::get_default()
-        .and_then(|settings_source| settings_source.lookup("com.github.Cogitri.gxi", true))
-        .map(|_| {
-            Settings::new(crate::globals::APP_ID.unwrap_or("com.github.Cogitri.gxi"))
-                .get_boolean("draw-tabs")
-        })
-        .unwrap_or_else(|| {
-            warn!("Couldn't find GSchema! Defaulting to not drawing tabs!");
-            false
-        })
-}
-
-pub fn set_draw_tabs_schema(val: bool) {
-    if let Some(_) = SettingsSchemaSource::get_default()
-        .and_then(|settings_source| settings_source.lookup("com.github.Cogitri.gxi", true))
-    {
-        Settings::new(crate::globals::APP_ID.unwrap_or("com.github.Cogitri.gxi"))
-            .set_boolean("draw-tabs", val);
+            .set_boolean("draw-trailing-spaces", val);
     };
 }

@@ -628,10 +628,7 @@ impl EditView {
                 // It only thinks that the width of that char is 5, when it actually is 10 (like all
                 // other chars. So we have to replace it with some other char here to trick Pango into
                 // drawing the cursor at the correct position later on
-                if get_draw_spaces_schema() || get_draw_tabs_schema() {
-                    let line_text = layout.get_text().unwrap();
-                    layout.set_text(&line_text.replace("·", " ").replace("→", "a"));
-                }
+                layout.set_text(&layout.get_text().unwrap().replace("·", " "));
 
                 let layout_line = layout.get_line(0);
                 if layout_line.is_none() {
@@ -705,15 +702,19 @@ impl EditView {
 
         // Replace spaces with '·'. Do this here since we only want
         // to draw this, we don't want to save the file like that.
-        let mut line_view = if get_draw_spaces_schema() {
-            line_view.replace(" ", "·")
+        let line_view = if get_draw_trailing_spaces_schema() && line_view.ends_with(' ') {
+            let last_char = line_view.trim_end().len();
+            let (line_view_without_space, spaces) = line_view.split_at(last_char);
+            let space_range = std::ops::Range {
+                start: 0,
+                end: spaces.len(),
+            };
+            let highlighted_spaces: String = space_range.into_iter().map(|_| "·").collect();
+
+            format!("{}{}", line_view_without_space, highlighted_spaces)
         } else {
             line_view.to_string()
         };
-
-        if get_draw_tabs_schema() {
-            line_view = line_view.replace("\t", "→")
-        }
 
         // let layout = create_layout(cr).unwrap();
         let layout = pango::Layout::new(&pango_ctx);

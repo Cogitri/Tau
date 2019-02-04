@@ -12,19 +12,11 @@
             </description>
         </key>
 
-        <key name="draw-spaces" type="b">
+        <key name="draw-trailing-spaces" type="b">
             <default>false</default>
-            <summary>Draw spaces</summary>
+            <summary>Draw trailing spaces</summary>
             <description>
-                Visually draw spaces
-            </description>
-        </key>
-
-        <key name="draw-tabs" type="b">
-            <default>false</default>
-            <summary>Draw tabs</summary>
-            <description>
-                Visually draw tabs
+                Draw spaces which are at the end of a line
             </description>
         </key>
 
