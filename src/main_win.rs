@@ -9,7 +9,7 @@ use crate::theme::{Color, Style, Theme};
 use crate::CoreMsg;
 use crate::SharedQueue;
 use gettextrs::gettext;
-use gio::{ActionMapExt, SimpleAction, SimpleActionExt};
+use gio::{ActionMapExt, SimpleAction};
 use gtk::*;
 use log::{debug, error, trace};
 use serde_derive::*;
@@ -101,6 +101,7 @@ impl MainWin {
 
             syntax_combo_box.connect_changed(move |cb| {
                 if let Some(lang) = cb.get_active_text() {
+                    let lang = lang.to_string();
                     // xi-editor doesn't know about the translations
                     let lang = if lang == gettext("Plain Text") {
                         "Plain Text".to_string()
@@ -574,7 +575,7 @@ impl MainWin {
 
         fcn.connect_response(clone!(main_win => move |fcd, res| {
             debug!(
-                "{}: {}",
+                "{}: {:#?}",
                 gettext("FileChooserNative open response"),
                 res
             );
@@ -631,7 +632,7 @@ impl MainWin {
 
         fcn.connect_response(clone!(edit_view, main_win => move |fcd, res| {
             debug!(
-                "{}: {}",
+                "{}: {:#?}",
                 gettext("FileChooserNative save response"),
                 res
             );

@@ -12,21 +12,22 @@ edition = "2018"
 readme = "README.md"
 
 [dependencies]
-cairo-rs = "0.5"
+cairo-rs = {git="https://github.com/gtk-rs/cairo"}
 env_logger = "0.6"
 failure = "0.1"
-gdk = "0.9"
-gio = "0.5"
-glib = "0.6"
-glib-sys = { version = "0.7", features = ["v2_36"] }
-gobject-sys = "0.7"
-gtk = { version = "0.5", features = ["v3_20"] }
-gtk-sys = { version = "0.7", features = ["v3_20"] }
+gdk = {git="https://github.com/gtk-rs/gdk"}
+gio = {git="https://github.com/gtk-rs/gio"}
+glib = {git="https://github.com/gtk-rs/glib"}
+glib-sys = {git="https://github.com/gtk-rs/sys", features = ["v2_44"] }
+gobject-sys = {git="https://github.com/gtk-rs/sys"}
+gtk = {git="https://github.com/gtk-rs/gtk", features = ["v3_20"] }
+gtk-sys = {git="https://github.com/gtk-rs/sys", features = ["v3_20"] }
+pango-sys = {git="https://github.com/gtk-rs/sys", features = ["v1_38"]}
 lazy_static = "1"
 libc = "0.2"
 log = "0.4"
-pango = { version = "0.5", features = ["v1_38"] }
-pangocairo = "0.6"
+pango = {git="https://github.com/gtk-rs/pango", features = ["v1_38"] }
+pangocairo = {git="https://github.com/gtk-rs/pangocairo"}
 serde = "1"
 serde_json = "1"
 serde_derive = "1"
@@ -37,6 +38,7 @@ toml = "0.4"
 tempfile = "3"
 gettext-rs = { version="0.4", features=["gettext-system"] }
 crossbeam-deque = "0.7"
+cairo-sys-rs = {git="https://github.com/gtk-rs/cairo"}
 
 [profile.release]
 lto = true

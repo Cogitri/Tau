@@ -126,6 +126,7 @@ pub fn get_theme_schema() -> String {
             Settings::new(crate::globals::APP_ID.unwrap_or("com.github.Cogitri.gxi"))
                 .get_string("theme-name")
         })
+        .map(|s| s.to_string())
         .unwrap_or_else(|| {
             warn!("Couldn't find GSchema! Defaulting to default theme.");
             "InspiredGitHub".to_string()
@@ -147,6 +148,7 @@ pub fn get_default_monospace_font_schema() -> String {
         .and_then(|_| {
             Settings::new("org.gnome.desktop.interface").get_string("monospace-font-name")
         })
+        .map(|s| s.to_string())
         .unwrap_or_else(|| {
             warn!("Couldn't find GSchema! Defaulting to default monospace font.");
             "Monospace".to_string()

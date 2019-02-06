@@ -6,7 +6,6 @@
 mod macros;
 
 mod about_win;
-mod clipboard;
 mod edit_view;
 mod errors;
 mod globals;
@@ -25,6 +24,7 @@ use crate::rpc::Core;
 use crossbeam_deque::{Injector, Worker};
 use gettextrs::{gettext, TextDomain, TextDomainError};
 use gio::{ApplicationExt, ApplicationExtManual, ApplicationFlags, FileExt};
+use glib::MainContext;
 use gtk::Application;
 use log::{debug, error, info, trace, warn};
 use serde_json::{json, Value};
@@ -76,8 +76,8 @@ fn main() {
         queue_tx: Arc::new(Mutex::new(Injector::<CoreMsg>::new())),
     };
 
-    let (xi_peer, rx) = xi_thread::start_xi_thread();
-    let core = Core::new(xi_peer, rx, shared_queue.clone());
+    let (xi_peer, xi_rx) = xi_thread::start_xi_thread();
+    let core = Core::new(xi_peer, xi_rx,shared_queue.clone());
 
     // No need to gettext this, gettext doesn't work yet
     match TextDomain::new("gxi")
