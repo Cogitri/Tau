@@ -6,8 +6,7 @@ use crate::prefs_win::PrefsWin;
 use crate::proto::{self, ThemeSettings};
 use crate::rpc::Core;
 use crate::theme::{Color, Style, Theme};
-use crate::CoreMsg;
-use crate::SharedQueue;
+use crate::{CoreMsg, ErrMsg, SharedQueue};
 use gettextrs::gettext;
 use gio::{ActionMapExt, SimpleAction};
 use gtk::*;
@@ -304,8 +303,11 @@ impl MainWin {
     }
 
     pub fn alert(&self, params: &Value) {
-        if let Some(err_msg) = params["msg"].as_str() {
-            ErrorDialog::new(&err_msg, false);
+        if let Some(msg) = params["msg"].as_str() {
+            ErrorDialog::new(ErrMsg {
+                msg: msg.to_string(),
+                fatal: false,
+            });
         }
     }
 
@@ -587,8 +589,8 @@ impl MainWin {
                     match &std::fs::File::open(file_str) {
                         Ok(_) => win.req_new_view(Some(&file_str)),
                         Err(e) => {
-                            let err = format!("{} '{}': {}", &gettext("Couldn't open file"), &file_str, &e.to_string());
-                            ErrorDialog::new(&err, false)
+                            let err_msg = format!("{} '{}': {}", &gettext("Couldn't open file"), &file_str, &e.to_string());
+                            ErrorDialog::new(ErrMsg{msg: err_msg, fatal: false})
                         }
                     }
                 }
@@ -651,8 +653,8 @@ impl MainWin {
                                 edit_view.borrow_mut().set_file(&file);
                             }
                         Err(e) => {
-                            let err = format!("{} '{}': {}", &gettext("Couldn't save file"), &file_str, &e.to_string());
-                            ErrorDialog::new(&err, false)
+                            let err_msg = format!("{} '{}': {}", &gettext("Couldn't save file"), &file_str, &e.to_string());
+                            ErrorDialog::new(ErrMsg {msg: err_msg, fatal: false})
                         }
                     }
                 }

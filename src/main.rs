@@ -47,6 +47,11 @@ pub enum CoreMsg {
     ShutDown {},
 }
 
+pub struct ErrMsg {
+    msg: String,
+    fatal: bool,
+}
+
 #[derive(Clone)]
 pub struct SharedQueue {
     queue_rx: Arc<Mutex<Injector<CoreMsg>>>,
@@ -76,7 +81,7 @@ fn main() {
         queue_tx: Arc::new(Mutex::new(Injector::<CoreMsg>::new())),
     };
 
-    let (err_tx, err_rx) = MainContext::channel::<&'static str>(glib::PRIORITY_DEFAULT);
+    let (err_tx, err_rx) = MainContext::channel::<ErrMsg>(glib::PRIORITY_DEFAULT);
 
     let (xi_peer, xi_rx) = xi_thread::start_xi_thread();
     let core = Core::new(xi_peer, xi_rx, err_tx, shared_queue.clone());
@@ -105,7 +110,7 @@ fn main() {
     let main_context = MainContext::default();
     main_context.acquire();
     err_rx.attach(&main_context, |err_msg| {
-        crate::errors::ErrorDialog::new(err_msg, true);
+        crate::errors::ErrorDialog::new(err_msg);
         glib::source::Continue(false)
     });
 

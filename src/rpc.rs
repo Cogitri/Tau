@@ -1,5 +1,5 @@
 use crate::xi_thread::XiPeer;
-use crate::{CoreMsg, SharedQueue};
+use crate::{CoreMsg, ErrMsg, SharedQueue};
 use gettextrs::gettext;
 use log::{debug, error};
 use serde_json::{json, Value};
@@ -42,7 +42,7 @@ impl Core {
     pub fn new(
         xi_peer: XiPeer,
         xi_rx: Receiver<Value>,
-        err_tx: glib::Sender<&'static str>,
+        err_tx: glib::Sender<ErrMsg>,
         shared_queue: SharedQueue,
     ) -> Core {
         let state = CoreState {
@@ -83,7 +83,13 @@ impl Core {
                 }
             }
 
-            err_tx.send("Xi-Editor has died!").unwrap();
+            //TODO: Gracefully handle xi-editor crashes
+            err_tx
+                .send(ErrMsg {
+                    msg: "Xi-Editor has crashed!".to_string(),
+                    fatal: true,
+                })
+                .unwrap();
         });
 
         core
