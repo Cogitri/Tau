@@ -110,9 +110,6 @@ impl LineCache {
             .max()
             .unwrap_or(0)
     }
-    pub fn last_actual_line(&self) -> u64 {
-        self.lines.len() as u64 - self.n_invalid_before - self.n_invalid_after - 1
-    }
     pub fn get_line(&self, n: u64) -> Option<&Line> {
         if n < self.n_invalid_before || n > self.n_invalid_before + self.lines.len() as u64 {
             return None;

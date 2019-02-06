@@ -599,7 +599,6 @@ impl MainWin {
 
     pub fn handle_save_button(main_win: &Rc<RefCell<MainWin>>) {
         let edit_view = main_win.borrow().get_current_edit_view().clone();
-        edit_view.borrow_mut().prepare_save();
         if edit_view.borrow().file_name.is_some() {
             let ev = edit_view.borrow_mut();
             let core = main_win.borrow().core.clone();
@@ -612,7 +611,6 @@ impl MainWin {
 
     fn current_save_as(main_win: &Rc<RefCell<MainWin>>) {
         let edit_view = main_win.borrow().get_current_edit_view().clone();
-        edit_view.borrow_mut().prepare_save();
         MainWin::save_as(main_win, &edit_view);
     }
 

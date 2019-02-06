@@ -8,7 +8,7 @@ use gdk::enums::key;
 use gdk::*;
 use gettextrs::gettext;
 use gtk::{self, *};
-use log::{debug, error, info, trace};
+use log::{debug, error, trace};
 use pango::{self, ContextExt, LayoutExt, *};
 use pangocairo::functions::*;
 use serde_json::Value;
@@ -1174,20 +1174,5 @@ impl EditView {
             .borrow()
             .replace(&self.view_id, &replace_chars, false);
         self.core.borrow().replace_all(&self.view_id);
-    }
-
-    pub fn prepare_save(&mut self) {
-        trace!("{}", gettext("Preparing save"));
-        let last_line_num = self.line_cache.last_actual_line();
-        error!("Last line: {}", last_line_num);
-        if let Some(line) = self.line_cache.get_line(last_line_num as u64) {
-            if !line.text().ends_with('\n') {
-                info!(
-                    "{}",
-                    gettext("Last line doesn't end with a newline, inserting one")
-                );
-                self.core.borrow().insert_newline(&self.view_id);
-            }
-        }
     }
 }
