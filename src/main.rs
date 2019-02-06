@@ -76,8 +76,10 @@ fn main() {
         queue_tx: Arc::new(Mutex::new(Injector::<CoreMsg>::new())),
     };
 
+    let (err_tx, err_rx) = MainContext::channel::<&'static str>(glib::PRIORITY_DEFAULT);
+
     let (xi_peer, xi_rx) = xi_thread::start_xi_thread();
-    let core = Core::new(xi_peer, xi_rx,shared_queue.clone());
+    let core = Core::new(xi_peer, xi_rx, err_tx, shared_queue.clone());
 
     // No need to gettext this, gettext doesn't work yet
     match TextDomain::new("gxi")
@@ -99,6 +101,13 @@ fn main() {
         ApplicationFlags::HANDLES_OPEN,
     )
     .unwrap_or_else(|_| panic!("{}", gettext("Failed to create the GTK+ application")));
+
+    let main_context = MainContext::default();
+    main_context.acquire();
+    err_rx.attach(&main_context, |err_msg| {
+        crate::errors::ErrorDialog::new(err_msg, true);
+        glib::source::Continue(false)
+    });
 
     application.connect_startup(clone!(shared_queue, core => move |application| {
         debug!("{}", gettext("Starting gxi"));

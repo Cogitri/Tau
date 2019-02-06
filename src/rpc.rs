@@ -39,7 +39,12 @@ impl Core {
     ///
     /// The handler is invoked for incoming RPC notifications. Note that
     /// it must be `Send` because it is called from a dedicated thread.
-    pub fn new(xi_peer: XiPeer, rx: Receiver<Value>, shared_queue: SharedQueue) -> Core {
+    pub fn new(
+        xi_peer: XiPeer,
+        xi_rx: Receiver<Value>,
+        err_tx: glib::Sender<&'static str>,
+        shared_queue: SharedQueue,
+    ) -> Core {
         let state = CoreState {
             xi_peer,
             id: 0,
@@ -51,7 +56,7 @@ impl Core {
 
         let rx_core = core.clone();
         thread::spawn(move || {
-            while let Ok(msg) = rx.recv() {
+            while let Ok(msg) = xi_rx.recv() {
                 debug!("{:?}", msg);
                 if let Value::String(ref method) = msg["method"] {
                     shared_queue.add_core_msg(CoreMsg::Notification {
@@ -77,6 +82,8 @@ impl Core {
                     error!("{} {:?} {}", gettext("Got"), msg, gettext("at RPC level"));
                 }
             }
+
+            err_tx.send("Xi-Editor has died!").unwrap();
         });
 
         core
