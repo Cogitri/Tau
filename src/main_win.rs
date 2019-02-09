@@ -269,7 +269,7 @@ impl MainWin {
 
 impl MainWin {
     pub fn handle_msg(main_win: Rc<RefCell<MainWin>>, msg: CoreMsg) {
-        trace!("handle msg");
+        trace!("{}: {:?}", gettext("Handling CoreMsg"), msg);
         match msg {
             CoreMsg::NewViewReply { file_name, value } => {
                 MainWin::new_view_response(&main_win, file_name, &value)
