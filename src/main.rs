@@ -23,12 +23,11 @@ use crate::main_win::MainWin;
 use crate::pref_storage::Config;
 use crate::rpc::Core;
 use crate::shared_queue::{CoreMsg, ErrMsg, SharedQueue};
-use crossbeam_deque::Worker;
 use gettextrs::{gettext, TextDomain, TextDomainError};
 use gio::{ApplicationExt, ApplicationExtManual, ApplicationFlags, FileExt};
 use glib::MainContext;
 use gtk::Application;
-use log::{debug, info, trace, warn};
+use log::{debug, info, warn};
 use serde_json::{json, Value};
 use std::cell::RefCell;
 use std::env::args;
@@ -83,36 +82,12 @@ fn main() {
         let xi_config_dir = { xi_config.lock().unwrap().path.clone() };
         core.client_started(&xi_config_dir, include_str!(concat!(env!("OUT_DIR"), "/plugin-dir.in")));
 
-        let main_win = MainWin::new(
+        MainWin::new(
             application,
-            &shared_queue,
+            shared_queue.clone(),
             &Rc::new(RefCell::new(core.clone())),
             xi_config.clone(),
            );
-
-        let local = Worker::new_fifo();
-        let mut cont_gtk = true;
-        gtk::idle_add(clone!(shared_queue, main_win => move || {
-            while let Some(msg) = local.pop().or_else(|| {
-                std::iter::repeat_with(|| {
-                    shared_queue.queue_rx.lock().unwrap().steal_batch_and_pop(&local)
-                })
-                .find(|s| !s.is_retry())
-                .and_then(|s| s.success())
-            }) {
-                match msg {
-                    CoreMsg::ShutDown { } => {
-                        debug!("Shutdown receive");
-                        cont_gtk = false;
-                        },
-                    _ => {
-                        trace!("{}", gettext("Found a message for xi"));
-                        MainWin::handle_msg(main_win.clone(), msg);
-                    },
-                }
-            }
-            gtk::Continue(cont_gtk)
-        }));
     }));
 
     application.connect_activate(clone!(shared_queue, core => move |_| {

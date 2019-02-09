@@ -1,14 +1,16 @@
 use crate::about_win::AboutWin;
 use crate::edit_view::EditView;
 use crate::errors::ErrorDialog;
-use crate::pref_storage::{Config, XiConfig};
+use crate::pref_storage::Config;
 use crate::prefs_win::PrefsWin;
 use crate::proto::{self, ThemeSettings};
 use crate::rpc::Core;
 use crate::shared_queue::{CoreMsg, ErrMsg, SharedQueue};
 use crate::theme::{Color, Style, Theme};
+use crossbeam_deque::Worker;
 use gettextrs::gettext;
 use gio::{ActionMapExt, SimpleAction};
+use glib::MainContext;
 use gtk::*;
 use log::{debug, error, trace};
 use serde_derive::*;
@@ -17,6 +19,7 @@ use std::cell::RefCell;
 use std::collections::{BTreeMap, HashMap};
 use std::rc::Rc;
 use std::sync::{Arc, Mutex};
+use std::thread;
 
 #[derive(Deserialize)]
 pub struct MeasureWidth {
@@ -51,7 +54,7 @@ const GLADE_SRC: &str = include_str!("ui/gxi.glade");
 impl MainWin {
     pub fn new(
         application: &Application,
-        shared_queue: &SharedQueue,
+        shared_queue: SharedQueue,
         core: &Rc<RefCell<Core>>,
         config: Arc<Mutex<Config>>,
     ) -> Rc<RefCell<MainWin>> {
@@ -84,6 +87,40 @@ impl MainWin {
                 selected_language: Default::default(),
             })),
         }));
+
+        let (msg_tx, msg_rx) = MainContext::channel::<CoreMsg>(glib::PRIORITY_HIGH);
+        let main_context = MainContext::default();
+        main_context.acquire();
+
+        thread::spawn(move || {
+            let local = Worker::new_fifo();
+
+            loop {
+                while let Some(msg) = local.pop().or_else(|| {
+                    std::iter::repeat_with(|| {
+                        shared_queue
+                            .queue_rx
+                            .lock()
+                            .unwrap()
+                            .steal_batch_and_pop(&local)
+                    })
+                    .find(|s| !s.is_retry())
+                    .and_then(|s| s.success())
+                }) {
+                    trace!("{}: {:?}", gettext("Found message in queue"), msg);
+                    msg_tx.send(msg).unwrap();
+                }
+            }
+        });
+
+        msg_rx.attach(
+            &main_context,
+            clone!(main_win => move |msg| {
+                trace!("{}", gettext("Found a message from xi"));
+                MainWin::handle_msg(main_win.clone(), msg);
+                glib::source::Continue(true)
+            }),
+        );
 
         window.set_application(application);
 
