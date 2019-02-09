@@ -20,7 +20,7 @@ mod theme;
 mod xi_thread;
 
 use crate::main_win::MainWin;
-use crate::pref_storage::{Config, XiConfig};
+use crate::pref_storage::Config;
 use crate::rpc::Core;
 use crate::shared_queue::{CoreMsg, ErrMsg, SharedQueue};
 use crossbeam_deque::Worker;
@@ -28,7 +28,7 @@ use gettextrs::{gettext, TextDomain, TextDomainError};
 use gio::{ApplicationExt, ApplicationExtManual, ApplicationFlags, FileExt};
 use glib::MainContext;
 use gtk::Application;
-use log::{debug, error, info, trace, warn};
+use log::{debug, info, trace, warn};
 use serde_json::{json, Value};
 use std::cell::RefCell;
 use std::env::args;
@@ -75,116 +75,19 @@ fn main() {
         glib::source::Continue(false)
     });
 
-    application.connect_startup(clone!(shared_queue, core => move |application| {
+    let xi_config = Arc::new(Mutex::new(Config::new()));
+
+    application.connect_startup(clone!(shared_queue, core, xi_config => move |application| {
         debug!("{}", gettext("Starting gxi"));
 
-    //TODO: This part really needs better error handling...
-    let (xi_config_dir, xi_config) = if let Some(user_config_dir) = dirs::config_dir() {
-        let config_dir = user_config_dir.join("gxi");
-        std::fs::create_dir_all(&config_dir)
-            .map_err(|e| {
-                error!(
-                    "{}: {}",
-                    gettext("Failed to create the config dir"),
-                    e.to_string()
-                )
-            })
-            .unwrap();
-
-        let mut xi_config = Config::<XiConfig>::new(
-            config_dir
-                .join("preferences.xiconfig")
-                .to_str()
-                .map(|s| s.to_string())
-                .unwrap(),
-        );
-
-        xi_config = if let Ok(xi_config) = xi_config.open() {
-                /*
-                We have to immediately save the config file here to "upgrade" it (as in add missing
-                entries which have been added by us during a version upgrade). This works because
-                the above call to Config::new() sets defaults.
-                */
-                xi_config
-                    .save()
-                    .unwrap_or_else(|e| error!("{}", e.to_string()));
-
-                Config {
-                    path: xi_config.path.to_string(),
-                    config: XiConfig {
-                                tab_size: xi_config.config.tab_size,
-                                translate_tabs_to_spaces: xi_config.config.translate_tabs_to_spaces,
-                                use_tab_stops: xi_config.config.use_tab_stops,
-                                plugin_search_path: xi_config.config.plugin_search_path.clone(),
-                                font_face: xi_config.config.font_face.to_string(),
-                                font_size: xi_config.config.font_size,
-                                auto_indent: xi_config.config.auto_indent,
-                                scroll_past_end: xi_config.config.scroll_past_end,
-                                wrap_width: xi_config.config.wrap_width,
-                                word_wrap: xi_config.config.word_wrap,
-                                autodetect_whitespace: xi_config.config.autodetect_whitespace,
-                                line_ending: xi_config.config.line_ending.to_string(),
-                                surrounding_pairs: xi_config.config.surrounding_pairs.clone(),
-                    },
-                }
-            } else {
-                error!(
-                    "{}",
-                    gettext("Couldn't read config, falling back to the default XI-Editor config")
-                );
-                xi_config
-                    .save()
-                    .unwrap_or_else(|e| error!("{}", e.to_string()));
-                xi_config
-            };
-
-        (
-            config_dir.to_str().map(|s| s.to_string()).unwrap(),
-            xi_config,
-        )
-    } else {
-        error!(
-            "{}",
-            gettext("Couldn't determine home dir! Settings will be temporary")
-        );
-
-        let config_dir = tempfile::Builder::new()
-            .prefix("gxi-config")
-            .tempdir()
-            .map_err(|e| {
-                error!(
-                    "{} {}",
-                    gettext("Failed to create temporary config dir"),
-                    e.to_string()
-                )
-            })
-            .unwrap()
-            .into_path();
-
-        let xi_config = Config::<XiConfig>::new(
-            config_dir
-                .join("preferences.xiconfig")
-                .to_str()
-                .map(|s| s.to_string())
-                .unwrap(),
-        );
-        xi_config
-            .save()
-            .unwrap_or_else(|e| error!("{}", e.to_string()));
-
-        (
-            config_dir.to_str().map(|s| s.to_string()).unwrap(),
-            xi_config,
-        )
-    };
-
+        let xi_config_dir = { xi_config.lock().unwrap().path.clone() };
         core.client_started(&xi_config_dir, include_str!(concat!(env!("OUT_DIR"), "/plugin-dir.in")));
 
         let main_win = MainWin::new(
             application,
             &shared_queue,
             &Rc::new(RefCell::new(core.clone())),
-            Arc::new(Mutex::new(xi_config)),
+            xi_config.clone(),
            );
 
         let local = Worker::new_fifo();

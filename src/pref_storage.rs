@@ -1,19 +1,17 @@
 use crate::errors::Error;
 use gettextrs::gettext;
 use gio::{Settings, SettingsExt, SettingsSchemaSource};
-use log::{debug, trace, warn};
-use serde::{de::DeserializeOwned, Serialize};
+use log::{debug, error, trace, warn};
 use serde_derive::*;
-use std::fmt::Debug;
 use std::fs::OpenOptions;
 use std::io::prelude::*;
 use tempfile::tempdir;
 
 /// Generic wrapper struct around XiConfig
 #[derive(Debug)]
-pub struct Config<T> {
+pub struct Config {
     pub path: String,
-    pub config: T,
+    pub config: XiConfig,
 }
 
 /// For stuff that goes into preferences.xiconfig
@@ -68,21 +66,107 @@ impl Default for XiConfig {
     }
 }
 
-impl<T> Config<T> {
-    pub fn new(path: String) -> Config<T>
-    where
-        T: Default,
-    {
-        Config {
-            config: T::default(),
-            path,
-        }
+impl Config {
+    pub fn new() -> Config {
+        let xi_config = if let Some(user_config_dir) = dirs::config_dir() {
+            let config_dir = user_config_dir.join("gxi");
+            std::fs::create_dir_all(&config_dir)
+                .map_err(|e| {
+                    error!(
+                        "{}: {}",
+                        gettext("Failed to create the config dir"),
+                        e.to_string()
+                    )
+                })
+                .unwrap();
+
+            let mut xi_config = Config {
+                config: XiConfig::default(),
+                path: config_dir
+                    .join("preferences.xiconfig")
+                    .to_str()
+                    .map(|s| s.to_string())
+                    .unwrap(),
+            };
+
+            xi_config = if let Ok(xi_config) = xi_config.open() {
+                /*
+                We have to immediately save the config file here to "upgrade" it (as in add missing
+                entries which have been added by us during a version upgrade). This works because
+                the above call to Config::new() sets defaults.
+                */
+                xi_config
+                    .save()
+                    .unwrap_or_else(|e| error!("{}", e.to_string()));
+
+                Config {
+                    path: xi_config.path.to_string(),
+                    config: XiConfig {
+                        tab_size: xi_config.config.tab_size,
+                        translate_tabs_to_spaces: xi_config.config.translate_tabs_to_spaces,
+                        use_tab_stops: xi_config.config.use_tab_stops,
+                        plugin_search_path: xi_config.config.plugin_search_path.clone(),
+                        font_face: xi_config.config.font_face.to_string(),
+                        font_size: xi_config.config.font_size,
+                        auto_indent: xi_config.config.auto_indent,
+                        scroll_past_end: xi_config.config.scroll_past_end,
+                        wrap_width: xi_config.config.wrap_width,
+                        word_wrap: xi_config.config.word_wrap,
+                        autodetect_whitespace: xi_config.config.autodetect_whitespace,
+                        line_ending: xi_config.config.line_ending.to_string(),
+                        surrounding_pairs: xi_config.config.surrounding_pairs.clone(),
+                    },
+                }
+            } else {
+                error!(
+                    "{}",
+                    gettext("Couldn't read config, falling back to the default XI-Editor config")
+                );
+                xi_config
+                    .save()
+                    .unwrap_or_else(|e| error!("{}", e.to_string()));
+                xi_config
+            };
+
+            xi_config
+        } else {
+            error!(
+                "{}",
+                gettext("Couldn't determine home dir! Settings will be temporary")
+            );
+
+            let config_dir = tempfile::Builder::new()
+                .prefix("gxi-config")
+                .tempdir()
+                .map_err(|e| {
+                    error!(
+                        "{} {}",
+                        gettext("Failed to create temporary config dir"),
+                        e.to_string()
+                    )
+                })
+                .unwrap()
+                .into_path();
+
+            let xi_config = Config {
+                config: XiConfig::default(),
+                path: config_dir
+                    .join("preferences.xiconfig")
+                    .to_str()
+                    .map(|s| s.to_string())
+                    .unwrap(),
+            };
+            xi_config
+                .save()
+                .unwrap_or_else(|e| error!("{}", e.to_string()));
+
+            xi_config
+        };
+
+        xi_config
     }
 
-    pub fn open(&mut self) -> Result<&mut Config<T>, Error>
-    where
-        T: Debug + DeserializeOwned,
-    {
+    pub fn open(&mut self) -> Result<&mut Config, Error> {
         trace!("{}", gettext("Opening config file"));
         let mut config_file = OpenOptions::new().read(true).open(&self.path)?;
         let mut config_string = String::new();
@@ -90,7 +174,7 @@ impl<T> Config<T> {
         trace!("{}", gettext("Reading config file"));
         config_file.read_to_string(&mut config_string)?;
 
-        let config_toml: T = toml::from_str(&config_string)?;
+        let config_toml: XiConfig = toml::from_str(&config_string)?;
         debug!("{}: {:?}", gettext("Xi-Config"), config_toml);
 
         self.config = config_toml;
@@ -100,10 +184,7 @@ impl<T> Config<T> {
 
     /// Atomically write the config. First writes the config to a tmp_file (non-atomic) and then
     /// copies that (atomically). This ensures that the config files stay valid
-    pub fn save(&self) -> Result<(), Error>
-    where
-        T: Serialize,
-    {
+    pub fn save(&self) -> Result<(), Error> {
         let tmp_dir = tempdir()?;
         let tmp_file_path = tmp_dir.path().join(".gxi-atomic");
         let mut tmp_file = OpenOptions::new()

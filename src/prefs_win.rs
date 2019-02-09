@@ -19,7 +19,7 @@ impl PrefsWin {
         parent: &ApplicationWindow,
         main_state: &Rc<RefCell<MainState>>,
         core: &Rc<RefCell<Core>>,
-        xi_config: Arc<Mutex<Config<XiConfig>>>,
+        xi_config: Arc<Mutex<Config>>,
     ) -> Rc<RefCell<PrefsWin>> {
         let glade_src = include_str!("ui/prefs_win.glade");
         let builder = Builder::new_from_string(glade_src);

@@ -53,7 +53,7 @@ impl MainWin {
         application: &Application,
         shared_queue: &SharedQueue,
         core: &Rc<RefCell<Core>>,
-        config: Arc<Mutex<Config<XiConfig>>>,
+        config: Arc<Mutex<Config>>,
     ) -> Rc<RefCell<MainWin>> {
         let glade_src = include_str!("ui/gxi.glade");
         let builder = Builder::new_from_string(glade_src);
@@ -665,7 +665,7 @@ impl MainWin {
         fcn.run();
     }
 
-    fn prefs(main_win: Rc<RefCell<MainWin>>, xi_config: Arc<Mutex<Config<XiConfig>>>) {
+    fn prefs(main_win: Rc<RefCell<MainWin>>, xi_config: Arc<Mutex<Config>>) {
         // let (main_state, core) = {
         //     let main_win = main_win.borrow();
         //     (main_win.state.clone(), main_win.core.clone())
