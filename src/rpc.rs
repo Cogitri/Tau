@@ -1,5 +1,5 @@
+use crate::shared_queue::{CoreMsg, ErrMsg, SharedQueue};
 use crate::xi_thread::XiPeer;
-use crate::{CoreMsg, ErrMsg, SharedQueue};
 use gettextrs::gettext;
 use log::{debug, error};
 use serde_json::{json, Value};

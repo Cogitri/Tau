@@ -1,4 +1,4 @@
-use crate::ErrMsg;
+use crate::shared_queue::ErrMsg;
 use failure::Fail;
 use gettextrs::gettext;
 use gio::prelude::*;

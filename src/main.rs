@@ -15,13 +15,15 @@ mod pref_storage;
 mod prefs_win;
 mod proto;
 mod rpc;
+mod shared_queue;
 mod theme;
 mod xi_thread;
 
 use crate::main_win::MainWin;
 use crate::pref_storage::{Config, XiConfig};
 use crate::rpc::Core;
-use crossbeam_deque::{Injector, Worker};
+use crate::shared_queue::{CoreMsg, ErrMsg, SharedQueue};
+use crossbeam_deque::Worker;
 use gettextrs::{gettext, TextDomain, TextDomainError};
 use gio::{ApplicationExt, ApplicationExtManual, ApplicationFlags, FileExt};
 use glib::MainContext;
@@ -33,53 +35,12 @@ use std::env::args;
 use std::rc::Rc;
 use std::sync::{Arc, Mutex};
 
-#[derive(Clone, Debug)]
-pub enum CoreMsg {
-    Notification {
-        method: String,
-        params: Value,
-        id: Option<u64>,
-    },
-    NewViewReply {
-        file_name: Option<String>,
-        value: Value,
-    },
-    ShutDown {},
-}
-
-pub struct ErrMsg {
-    msg: String,
-    fatal: bool,
-}
-
-#[derive(Clone)]
-pub struct SharedQueue {
-    queue_rx: Arc<Mutex<Injector<CoreMsg>>>,
-    queue_tx: Arc<Mutex<Injector<CoreMsg>>>,
-}
-
-impl SharedQueue {
-    /// A message from xi-editor that we have to process (e.g. that we should scroll)
-    pub fn add_core_msg(&self, msg: CoreMsg) {
-        trace!("{}", gettext("Pushing to rx queue"));
-        self.queue_rx.lock().unwrap().push(msg);
-    }
-    /// A message that we want to send to xi-editor in order for it to process it (e.g. a key stroke)
-    pub fn send_msg(&self, msg: CoreMsg) {
-        trace!("{}", gettext("Pushing to tx queue"));
-        self.queue_tx.lock().unwrap().push(msg);
-    }
-}
-
 fn main() {
     env_logger::Builder::from_default_env()
         .default_format_timestamp(false)
         .init();
 
-    let shared_queue = SharedQueue {
-        queue_rx: Arc::new(Mutex::new(Injector::<CoreMsg>::new())),
-        queue_tx: Arc::new(Mutex::new(Injector::<CoreMsg>::new())),
-    };
+    let shared_queue = SharedQueue::new();
 
     let (err_tx, err_rx) = MainContext::channel::<ErrMsg>(glib::PRIORITY_DEFAULT);
 
