@@ -55,7 +55,7 @@ impl PrefsWin {
         }
 
         {
-            font_chooser_widget.connect_property_font_notify(
+            font_chooser_widget.connect_property_font_desc_notify(
                 clone!(xi_config => move |font_widget| {
                     if let Some(font_desc) = font_widget.get_font_desc() {
                         let mut font_conf = xi_config.lock().unwrap();
