@@ -15,7 +15,6 @@ pub enum CoreMsg {
         file_name: Option<String>,
         value: Value,
     },
-    ShutDown {},
 }
 
 pub struct ErrMsg {

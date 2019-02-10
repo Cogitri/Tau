@@ -131,12 +131,9 @@ fn main() {
         }
     }));
 
-    application.connect_shutdown(clone!(shared_queue => move |_| {
+    application.connect_shutdown(move |_| {
         debug!("{}", gettext("Shutting down..."));
-        shared_queue.add_core_msg(
-            CoreMsg::ShutDown {}
-        )
-    }));
+    });
 
     application.run(&args().collect::<Vec<_>>());
 }
