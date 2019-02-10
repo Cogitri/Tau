@@ -39,12 +39,12 @@ impl SharedQueue {
 
     /// A message from xi-editor that we have to process (e.g. that we should scroll)
     pub fn add_core_msg(&self, msg: CoreMsg) {
-        trace!("{}", gettext("Pushing to rx queue"));
+        trace!("{}: {:?}", gettext("Pushing message to rx queue"), msg);
         self.queue_rx.lock().unwrap().push(msg);
     }
     /// A message that we want to send to xi-editor in order for it to process it (e.g. a key stroke)
     pub fn send_msg(&self, msg: CoreMsg) {
-        trace!("{}", gettext("Pushing to tx queue"));
+        trace!("{}: {:?}", gettext("Pushing message to tx queue"), msg);
         self.queue_tx.lock().unwrap().push(msg);
     }
 }
