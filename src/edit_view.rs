@@ -60,9 +60,8 @@ impl EditView {
         view_id: &str,
     ) -> Rc<RefCell<EditView>> {
         let da = DrawingArea::new();
-        let fake_adjustment = Adjustment::new(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-        let hscrollbar = Scrollbar::new(Orientation::Horizontal, &fake_adjustment);
-        let vscrollbar = Scrollbar::new(Orientation::Vertical, &fake_adjustment);
+        let hscrollbar = Scrollbar::new(Orientation::Horizontal, None::<&gtk::Adjustment>);
+        let vscrollbar = Scrollbar::new(Orientation::Vertical, None::<&gtk::Adjustment>);
 
         da.set_events(
             EventMask::BUTTON_PRESS_MASK
