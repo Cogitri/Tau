@@ -46,26 +46,11 @@ fn main() {
     let (xi_peer, xi_rx) = xi_thread::start_xi_thread();
     let core = Core::new(xi_peer, xi_rx, err_tx, shared_queue.clone());
 
-    // No need to gettext this, gettext doesn't work yet
-    match TextDomain::new("gxi")
-        .push(crate::globals::LOCALEDIR.unwrap_or("po"))
-        .init()
-    {
-        Ok(locale) => info!("Translation found, setting locale to {:?}", locale),
-        Err(TextDomainError::TranslationNotFound(lang)) => {
-            // We don't have an 'en' catalog since the messages are English by default
-            if lang != "en" {
-                warn!("Translation not found for lang {}", lang)
-            }
-        }
-        Err(TextDomainError::InvalidLocale(locale)) => warn!("Invalid locale {}", locale),
-    }
-
     let application = Application::new(
         crate::globals::APP_ID.unwrap_or("com.github.Cogitri.gxi"),
         ApplicationFlags::HANDLES_OPEN,
     )
-    .unwrap_or_else(|_| panic!("{}", gettext("Failed to create the GTK+ application")));
+    .unwrap_or_else(|_| panic!("Failed to create the GTK+ application"));
 
     let main_context = MainContext::default();
     main_context.acquire();
@@ -74,19 +59,34 @@ fn main() {
         glib::source::Continue(false)
     });
 
-    let xi_config = Arc::new(Mutex::new(Config::new()));
-
-    application.connect_startup(clone!(shared_queue, core, xi_config => move |application| {
+    application.connect_startup(clone!(shared_queue, core => move |application| {
         debug!("{}", gettext("Starting gxi"));
 
-        let xi_config_dir = { xi_config.lock().unwrap().path.clone() };
+        let xi_config = Config::new();
+
+        // No need to gettext this, gettext doesn't work yet
+        match TextDomain::new("gxi")
+            .push(crate::globals::LOCALEDIR.unwrap_or("po"))
+            .init()
+        {
+            Ok(locale) => info!("Translation found, setting locale to {:?}", locale),
+            Err(TextDomainError::TranslationNotFound(lang)) => {
+                // We don't have an 'en' catalog since the messages are English by default
+                if lang != "en" {
+                    warn!("Translation not found for lang {}", lang)
+                }
+            }
+            Err(TextDomainError::InvalidLocale(locale)) => warn!("Invalid locale {}", locale),
+        }
+
+        let xi_config_dir = { xi_config.path.clone() };
         core.client_started(&xi_config_dir, include_str!(concat!(env!("OUT_DIR"), "/plugin-dir.in")));
 
         MainWin::new(
             application,
             shared_queue.clone(),
             &Rc::new(RefCell::new(core.clone())),
-            xi_config.clone(),
+            Arc::new(Mutex::new(xi_config)),
            );
     }));
 
