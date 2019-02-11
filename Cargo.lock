@@ -164,8 +164,9 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 [[package]]
 name = "cairo-rs"
 version = "0.5.0"
-source = "git+https://github.com/gtk-rs/cairo#9b8caaef36c0dd18c5eb7c207177f4470a3807a8"
+source = "git+https://github.com/gtk-rs/cairo#fb6df6413e4e1baef13060ff694a5196a565d18e"
 dependencies = [
+ "bitflags 1.0.4 (registry+https://github.com/rust-lang/crates.io-index)",
  "cairo-sys-rs 0.7.0 (git+https://github.com/gtk-rs/cairo)",
  "glib 0.6.0 (git+https://github.com/gtk-rs/glib)",
  "glib-sys 0.7.0 (git+https://github.com/gtk-rs/sys)",
@@ -176,7 +177,7 @@ dependencies = [
 [[package]]
 name = "cairo-sys-rs"
 version = "0.7.0"
-source = "git+https://github.com/gtk-rs/cairo#9b8caaef36c0dd18c5eb7c207177f4470a3807a8"
+source = "git+https://github.com/gtk-rs/cairo#fb6df6413e4e1baef13060ff694a5196a565d18e"
 dependencies = [
  "glib-sys 0.7.0 (git+https://github.com/gtk-rs/sys)",
  "libc 0.2.48 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -532,7 +533,7 @@ dependencies = [
 [[package]]
 name = "glib"
 version = "0.6.0"
-source = "git+https://github.com/gtk-rs/glib#44e9f62da77efa6f372e7c09a04b0c2610b92d1e"
+source = "git+https://github.com/gtk-rs/glib#51b753e02186b1fc270368fa11ab5b357f9bd7f1"
 dependencies = [
  "bitflags 1.0.4 (registry+https://github.com/rust-lang/crates.io-index)",
  "glib-sys 0.7.0 (git+https://github.com/gtk-rs/sys)",
