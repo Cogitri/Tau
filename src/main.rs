@@ -79,7 +79,8 @@ fn main() {
             Err(TextDomainError::InvalidLocale(locale)) => warn!("Invalid locale {}", locale),
         }
 
-        let xi_config_dir = { xi_config.path.clone() };
+        let mut xi_config_dir = xi_config.path.clone();
+        xi_config_dir.truncate(xi_config_dir.rfind("/").unwrap_or_else(|| panic!("{}", gettext("Failed to set config dir!"))));
         core.client_started(&xi_config_dir, include_str!(concat!(env!("OUT_DIR"), "/plugin-dir.in")));
 
         MainWin::new(
