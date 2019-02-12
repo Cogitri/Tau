@@ -36,7 +36,7 @@ dependencies = [
 [[package]]
 name = "atk"
 version = "0.5.0"
-source = "git+https://github.com/gtk-rs/atk#9d84fe2fa86231ce2fa503f4010abda024923042"
+source = "git+https://github.com/gtk-rs/atk#f9e8baf5d87346f5c133ac29da5740f6d47e8fb3"
 dependencies = [
  "atk-sys 0.7.0 (git+https://github.com/gtk-rs/sys)",
  "bitflags 1.0.4 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -164,8 +164,9 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 [[package]]
 name = "cairo-rs"
 version = "0.5.0"
-source = "git+https://github.com/gtk-rs/cairo#9b8caaef36c0dd18c5eb7c207177f4470a3807a8"
+source = "git+https://github.com/gtk-rs/cairo#fb6df6413e4e1baef13060ff694a5196a565d18e"
 dependencies = [
+ "bitflags 1.0.4 (registry+https://github.com/rust-lang/crates.io-index)",
  "cairo-sys-rs 0.7.0 (git+https://github.com/gtk-rs/cairo)",
  "glib 0.6.0 (git+https://github.com/gtk-rs/glib)",
  "glib-sys 0.7.0 (git+https://github.com/gtk-rs/sys)",
@@ -176,7 +177,7 @@ dependencies = [
 [[package]]
 name = "cairo-sys-rs"
 version = "0.7.0"
-source = "git+https://github.com/gtk-rs/cairo#9b8caaef36c0dd18c5eb7c207177f4470a3807a8"
+source = "git+https://github.com/gtk-rs/cairo#fb6df6413e4e1baef13060ff694a5196a565d18e"
 dependencies = [
  "glib-sys 0.7.0 (git+https://github.com/gtk-rs/sys)",
  "libc 0.2.48 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -421,7 +422,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 [[package]]
 name = "gdk"
 version = "0.9.0"
-source = "git+https://github.com/gtk-rs/gdk#4ea70d00e4b7d55e7144851034f7ebf907490a8f"
+source = "git+https://github.com/gtk-rs/gdk#5f047c4c378c32092bab6fd158ba035e81ad7ab8"
 dependencies = [
  "bitflags 1.0.4 (registry+https://github.com/rust-lang/crates.io-index)",
  "cairo-rs 0.5.0 (git+https://github.com/gtk-rs/cairo)",
@@ -440,7 +441,7 @@ dependencies = [
 [[package]]
 name = "gdk-pixbuf"
 version = "0.5.0"
-source = "git+https://github.com/gtk-rs/gdk-pixbuf#735d44af29471ce471d4c395c895b3e511b9db99"
+source = "git+https://github.com/gtk-rs/gdk-pixbuf#009ae1b0e284a2d89f440a156fda6b7adc12807e"
 dependencies = [
  "gdk-pixbuf-sys 0.7.0 (git+https://github.com/gtk-rs/sys)",
  "gio 0.5.1 (git+https://github.com/gtk-rs/gio)",
@@ -506,7 +507,7 @@ dependencies = [
 [[package]]
 name = "gio"
 version = "0.5.1"
-source = "git+https://github.com/gtk-rs/gio#7b9ad033fd7a07d8de2c0e04d59a718461675818"
+source = "git+https://github.com/gtk-rs/gio#ca7a48df78982767dca7212c7bfeaf59337c54af"
 dependencies = [
  "bitflags 1.0.4 (registry+https://github.com/rust-lang/crates.io-index)",
  "fragile 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -563,7 +564,7 @@ dependencies = [
 [[package]]
 name = "gtk"
 version = "0.5.0"
-source = "git+https://github.com/gtk-rs/gtk#39bf01a966002a9205bcbba0715b979fa564dba8"
+source = "git+https://github.com/gtk-rs/gtk#7e8e80628925b89e001783bb810f7c7ff4a98be2"
 dependencies = [
  "atk 0.5.0 (git+https://github.com/gtk-rs/atk)",
  "bitflags 1.0.4 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -863,7 +864,7 @@ dependencies = [
 [[package]]
 name = "pango"
 version = "0.5.0"
-source = "git+https://github.com/gtk-rs/pango#fd037fee5ad9890de77fe4a6b527980dfff64f3f"
+source = "git+https://github.com/gtk-rs/pango#466d6155bc4fcb5fa8f76cf6b63b9e42528f7e4c"
 dependencies = [
  "bitflags 1.0.4 (registry+https://github.com/rust-lang/crates.io-index)",
  "glib 0.6.0 (git+https://github.com/gtk-rs/glib)",
