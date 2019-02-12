@@ -42,7 +42,7 @@ impl PrefsWin {
             let conf = xi_config.lock().unwrap();
 
             let mut font_desc = FontDescription::new();
-            font_desc.set_size(conf.config.font_size as i32 * 1024);
+            font_desc.set_size(conf.config.font_size as i32 * pango::SCALE);
             font_desc.set_family(&conf.config.font_face);
 
             trace!(
@@ -61,7 +61,7 @@ impl PrefsWin {
                         let mut font_conf = xi_config.lock().unwrap();
 
                         let font_family = font_desc.get_family().unwrap();
-                        let font_size = font_desc.get_size() / 1024;
+                        let font_size = font_desc.get_size() / pango::SCALE;
                         debug!("{} {}", gettext("Setting font to"), &font_family);
                         debug!("{} {}", gettext("Setting font size to"), &font_size);
 
