@@ -333,13 +333,7 @@ impl EditView {
                     "font_face" => {
                         if let Some(font_face) = value.as_str() {
                             debug!("{}: {}", gettext("Setting font to"), font_face);
-                            if font_face == "InconsolataGo" {
-                                // TODO This shouldn't be necessary, but the only font I've found
-                                // to bundle is "Inconsolata"
-                                self.font.font_desc.set_family("Inconsolata");
-                            } else {
-                                self.font.font_desc.set_family(font_face);
-                            }
+                            self.font.font_desc.set_family(font_face);
                         }
                     }
                     // These are handled in main_win via XiConfig
