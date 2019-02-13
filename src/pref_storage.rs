@@ -31,6 +31,7 @@ pub struct XiConfig {
     pub autodetect_whitespace: bool,
     pub line_ending: String,
     pub surrounding_pairs: Vec<Vec<String>>,
+    pub save_with_newline: bool,
 }
 
 impl Default for XiConfig {
@@ -62,6 +63,7 @@ impl Default for XiConfig {
             autodetect_whitespace: true,
             line_ending: LINE_ENDING.to_string(),
             surrounding_pairs,
+            save_with_newline: true,
         }
     }
 }
@@ -115,6 +117,7 @@ impl Config {
                         autodetect_whitespace: xi_config.config.autodetect_whitespace,
                         line_ending: xi_config.config.line_ending.to_string(),
                         surrounding_pairs: xi_config.config.surrounding_pairs.clone(),
+                        save_with_newline: xi_config.config.save_with_newline,
                     },
                 }
             } else {

@@ -348,6 +348,7 @@ impl EditView {
                     "wrap_width" => (),
                     "line_ending" => (),
                     "surrounding_pairs" => (),
+                    "save_with_newline" => (),
                     _ => {
                         error!("{}: {}", gettext("Unhandled config option"), name);
                     }
