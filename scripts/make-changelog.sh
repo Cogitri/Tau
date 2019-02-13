@@ -21,6 +21,8 @@ feats=() # New Features
 fixes=() # Fixes
 
 while read -r c; do
+    # Don't include reverted commits in changelog
+    grep -q '^Revert ' <<< "$c" && continue
 	# Add all features to the array
 	if grep -q '^feat(.*): ' <<< "$c"; then
 		feats+=("${c#*feat}")

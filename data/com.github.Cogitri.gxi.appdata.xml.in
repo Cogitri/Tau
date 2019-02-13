@@ -32,6 +32,20 @@
 	</provides>
 
 	<releases>
+		<release version="0.5.0" date="2019-02-13">
+			<description>
+				<p>This release contains the following feature changes: </p>
+					<ul>
+						 <li>(shared_queue): more verbose trace logging</li>
+ 						 <li>(main_win): use a thread to handle CoreMsgs instead of add_idle</li>
+ 						 <li>(main): display error window if xi-editor crashes</li>
+ 						 <li>(edit_view): add newline to end of the file if it doesn't terminate with one</li>
+ 						 <li>edit_view): only draw trailing spaces</li>
+ 						 <li>(shared_queue): also use for sending stuff to xi</li>
+ 						 <li>(gettext): build against system gettext</li>
+					</ul>
+			</description>
+		</release>
 		<release version="0.4.6" date="2019-01-30">
 			<description>
 				<p>Fix hangs during startup, add 'Replace...' button and shortcut. Adds an option to visually draw spaces/tabs</p>
