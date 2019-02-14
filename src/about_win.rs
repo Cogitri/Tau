@@ -4,6 +4,7 @@ use log::trace;
 use std::cell::RefCell;
 use std::rc::Rc;
 
+/// The about window, which displays some simple info about gxi
 pub struct AboutWin {
     about_dialog: AboutDialog,
 }
