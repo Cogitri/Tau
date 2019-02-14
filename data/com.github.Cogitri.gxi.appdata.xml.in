@@ -32,6 +32,11 @@
 	</provides>
 
 	<releases>
+		<release version="0.5.1" date="2019-02-14">
+			<description>
+				<p> This release fixes the build without appstream-util. </p>
+			</description>
+		</release>
 		<release version="0.5.0" date="2019-02-13">
 			<description>
 				<p>This release contains the following feature changes: </p>
