@@ -17,12 +17,14 @@ use std::cmp::{max, min};
 use std::rc::Rc;
 use std::u32;
 
+/// The EvReplace struct holds the find+replace elements of the EditView.
 pub struct EVReplace {
     replace_expander: Expander,
     replace_revealer: Revealer,
     replace_entry: Entry,
 }
 
+/// The EvFont struct holds all information about the font used in the EditView.
 pub struct EVFont {
     font_height: f64,
     font_width: f64,
@@ -31,6 +33,7 @@ pub struct EVFont {
     font_desc: FontDescription,
 }
 
+/// The EditView is the part of gxi that does the actual editing. This is where you edit documents.
 pub struct EditView {
     core: Rc<RefCell<Core>>,
     main_state: Rc<RefCell<MainState>>,
@@ -53,6 +56,8 @@ pub struct EditView {
 }
 
 impl EditView {
+    /// Initialises a new EditView. Sets up scrollbars, the actual editing area, the fonts,
+    /// the syntax lang and connects all events which might happen during usage (e.g. scrolling)
     pub fn new(
         main_state: &Rc<RefCell<MainState>>,
         core: &Rc<RefCell<Core>>,
@@ -279,6 +284,7 @@ impl EditView {
     }
 }
 
+/// Convert gtk modifiers to xi ones
 fn convert_gtk_modifier(mt: ModifierType) -> u32 {
     let mut ret = 0;
     if mt.contains(ModifierType::SHIFT_MASK) {
@@ -294,11 +300,13 @@ fn convert_gtk_modifier(mt: ModifierType) -> u32 {
 }
 
 impl EditView {
+    /// Set the name of the file the EditView is currently editing and calls [update_title](struct.EditView.html#method.update_title)
     pub fn set_file(&mut self, file_name: &str) {
         self.file_name = Some(file_name.to_string());
         self.update_title();
     }
 
+    /// Update the title of the EditView to the currently set file_name
     fn update_title(&self) {
         let title = match self.file_name {
             Some(ref f) => f
@@ -319,6 +327,9 @@ impl EditView {
         self.label.set_text(&full_title);
     }
 
+    /// If xi-editor sends us a [config_changed](https://xi-editor.io/docs/frontend-protocol.html#config_changed)
+    /// msg we process it here, e.g. setting the font face/size xi-editor tells us. Most configs don't
+    /// need special handling by us though.
     pub fn config_changed(&mut self, changes: &Value) {
         if let Some(map) = changes.as_object() {
             for (name, value) in map {
@@ -350,13 +361,16 @@ impl EditView {
                     "surrounding_pairs" => (),
                     "save_with_newline" => (),
                     _ => {
-                        error!("{}: {}", gettext("Unhandled config option"), name);
+                        error!("{}: {}", gettext("Unhandled config option, open a bug report!"), name);
                     }
                 }
             }
         }
     }
 
+    /// If xi-editor sends us a [update](https://xi-editor.io/docs/frontend-protocol.html#config_changed)
+    /// msg we process it here, setting the scrollbars upper limit accordingly, checking if the EditView
+    /// is pristine (has unsaved changes) and queue a new draw of the EditView.
     pub fn update(&mut self, params: &Value) {
         let update = &params["update"];
         self.line_cache.apply_update(update);
@@ -426,6 +440,9 @@ impl EditView {
         }
     }
 
+    /// Maps x|y pixel coordinates to the line num and col. This can be used e.g. for
+    /// determining the firt and last time, but setting the y coordinate to 0 and the
+    /// last pixel.
     pub fn da_px_to_cell(&self, main_state: &MainState, x: f64, y: f64) -> (u64, u64) {
         // let first_line = (vadj.get_value() / font_extents.height) as usize;
         let x = x + self.hscrollbar.get_adjustment().get_value();
@@ -457,6 +474,7 @@ impl EditView {
         (index as u64, (y / self.font.font_height) as u64)
     }
 
+    /// Allocate the space our DrawingArea needs.
     fn da_size_allocate(&mut self, da_width: i32, da_height: i32) {
         debug!("{}", gettext("Allocating DrawingArea size"));
         let vadj = self.vscrollbar.get_adjustment();
@@ -467,6 +485,7 @@ impl EditView {
         self.update_visible_scroll_region();
     }
 
+    /// Upon changing the vertical scrollbar we have to call [update_visible_scroll_region](struct.EditView.html#method.vscrollbar_change_value)
     fn vscrollbar_change_value(&mut self, value: f64) -> Inhibit {
         debug!("{} {}", gettext("Vertical scrollbar changed value"), value);
 
@@ -475,6 +494,9 @@ impl EditView {
         Inhibit(false)
     }
 
+    /// This updates the part of the document that's visible to the user, e.g. when scrolling.
+    /// This requests the required lines from xi-editor to add them to the line cache and then
+    /// adjusts the scrolling to the visible region.
     fn update_visible_scroll_region(&self) {
         let main_state = self.main_state.borrow();
         let da_height = self.da.get_allocated_height();
@@ -504,6 +526,7 @@ impl EditView {
             .scroll(&self.view_id, first_line, last_line);
     }
 
+    /// Returns the width&height of the entire document
     fn get_text_size(&self) -> (f64, f64) {
         let da_width = f64::from(self.da.get_allocated_width());
         let da_height = f64::from(self.da.get_allocated_height());
@@ -525,6 +548,8 @@ impl EditView {
         (width, height)
     }
 
+    /// Handles the drawing of the EditView. This is called when we get a update from xi-editor or if
+    /// gtk requests us to draw the EditView. This draws the background, all lines and the cursor.
     pub fn handle_draw(&mut self, cr: &Context) -> Inhibit {
         // let foreground = self.main_state.borrow().theme.foreground;
         let theme = &self.main_state.borrow().theme;
@@ -658,7 +683,7 @@ impl EditView {
         Inhibit(false)
     }
 
-    // Creates a pango layout for a particular linecount (the count on the left) in the linecache
+    /// Creates a pango layout for a particular linecount (the count on the left) in the linecache
     fn create_layout_for_linecount(
         &self,
         pango_ctx: &pango::Context,
@@ -673,6 +698,7 @@ impl EditView {
         layout
     }
 
+    /// Checks how wide a line is
     pub fn line_width(&self, line_string: &str) -> f64 {
         let line = Line::from_json(
             &serde_json::json!({
@@ -687,7 +713,7 @@ impl EditView {
         f64::from(linecount_layout.get_extents().1.width / pango::SCALE)
     }
 
-    // Creates a pango layout for a particular line in the linecache
+    /// Creates a pango layout for a particular line in the linecache
     fn create_layout_for_line(
         &self,
         pango_ctx: &pango::Context,
@@ -793,6 +819,7 @@ impl EditView {
         layout
     }
 
+    /// Scrolls vertically to the line specified and horizontally to the column specified.
     pub fn scroll_to(&mut self, line: u64, col: u64) {
         {
             let cur_top = self.font.font_height * ((line + 1) as f64) - self.font.font_ascent;
@@ -825,6 +852,8 @@ impl EditView {
         }
     }
 
+    /// Handles button presses such as Shift, Ctrl etc. and primary pasting (i.e. via Ctrl+V, not
+    /// via middle mouse click).
     pub fn handle_button_press(&self, eb: &EventButton) -> Inhibit {
         self.da.grab_focus();
 
@@ -866,6 +895,8 @@ impl EditView {
         Inhibit(false)
     }
 
+    /// Handle selecting line(s) by dragging the mouse across them while having the left mouse
+    /// button clicked.
     pub fn handle_drag(&mut self, em: &EventMotion) -> Inhibit {
         let (x, y) = em.get_position();
         let (col, line) = {
@@ -881,6 +912,9 @@ impl EditView {
         Inhibit(false)
     }
 
+    /// Handles scroll events, i.e. the user dragging the scrollbar, scrolling via a mouse wheel
+    /// or via a touchpad/drawing tablet (which use SmoothScrolling, which may scroll vertically
+    /// and horizontally at the same time).
     pub fn handle_scroll(&mut self, es: &EventScroll) -> Inhibit {
         self.da.grab_focus();
         // TODO: Make this user configurable!
@@ -913,6 +947,7 @@ impl EditView {
         Inhibit(false)
     }
 
+    /// Handles all (special) key press events, e.g. copy, pasting, PgUp/Down etc.
     fn handle_key_press_event(&mut self, ek: &EventKey) -> Inhibit {
         debug!(
             "{}: {}={:?}, {}={:?}, {}={:?} {}={:?} {}={:?}",
@@ -1058,18 +1093,21 @@ impl EditView {
         Inhibit(true)
     }
 
+    /// Copies text to the clipboard
     fn do_cut(&self, view_id: &str) {
         if let Some(text) = self.core.borrow_mut().cut(view_id) {
             Clipboard::get(&SELECTION_CLIPBOARD).set_text(&text);
         }
     }
 
+    /// Copies text to the clipboard
     fn do_copy(&self, view_id: &str) {
         if let Some(text) = self.core.borrow_mut().copy(view_id) {
             Clipboard::get(&SELECTION_CLIPBOARD).set_text(&text);
         }
     }
 
+    /// Pastes text from the clipboard into the EditView
     fn do_paste(&self, view_id: &str) {
         // if let Some(text) = Clipboard::get(&SELECTION_CLIPBOARD).wait_for_text() {
         //     self.core.borrow().insert(view_id, &text);
@@ -1093,10 +1131,12 @@ impl EditView {
         });
     }
 
+    /// Resize the EditView
     fn do_resize(&self, view_id: &str, width: i32, height: i32) {
         self.core.borrow().resize(view_id, width, height);
     }
 
+    /// Opens the find dialog (Ctrl+F)
     pub fn start_search(&self) {
         self.search_bar.set_search_mode(true);
         self.replace.replace_expander.set_expanded(false);
@@ -1108,6 +1148,7 @@ impl EditView {
             .find(&self.view_id, &needle, false, Some(false));
     }
 
+    /// Opens the replace dialog (Ctrl+R)
     pub fn start_replace(&self) {
         self.search_bar.set_search_mode(true);
         self.replace.replace_expander.set_expanded(true);
@@ -1115,11 +1156,13 @@ impl EditView {
         self.search_entry.grab_focus();
     }
 
+    /// Closes the find/replace dialog
     pub fn stop_search(&self) {
         self.search_bar.set_search_mode(false);
         self.da.grab_focus();
     }
 
+    /// Displays how many matches have been found in the find/replace dialog.
     pub fn find_status(&self, queries: &Value) {
         if let Some(queries) = queries.as_array() {
             for query in queries {
@@ -1134,6 +1177,7 @@ impl EditView {
         }
     }
 
+    /// Displays what chars will be replaced in the replace dialog
     //TODO: Handle preserve_case
     pub fn replace_status(&self, status: &Value) {
         if let Some(chars) = status["chars"].as_str() {
@@ -1141,16 +1185,19 @@ impl EditView {
         }
     }
 
+    /// Go to the next match in the find/replace dialog
     pub fn find_next(&self) {
         self.core
             .borrow()
             .find_next(&self.view_id, Some(true), Some(true));
     }
 
+    /// Go the to previous match in the find/replace dialog
     pub fn find_prev(&self) {
         self.core.borrow().find_previous(&self.view_id, Some(true));
     }
 
+    /// Tells xi-editor that we're searching for a different string (or none) now
     pub fn search_changed(&self, s: Option<String>) {
         let needle = s.unwrap_or_default();
         self.core
@@ -1158,6 +1205,7 @@ impl EditView {
             .find(&self.view_id, &needle, false, Some(false));
     }
 
+    /// Replace _one_ match with the replacement string
     pub fn replace(&self) {
         if let Some(replace_chars) = self.replace.replace_entry.get_text() {
             self.core
@@ -1167,6 +1215,7 @@ impl EditView {
         }
     }
 
+    /// Replace _all_ matches with the replacement string
     pub fn replace_all(&self) {
         if let Some(replace_chars) = self.replace.replace_entry.get_text() {
             self.core
