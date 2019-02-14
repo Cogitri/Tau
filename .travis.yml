@@ -18,6 +18,8 @@ deploy:
   verbose: true
   target_branch: gh-pages
   local-dir: target/doc
+  on:
+    branch: pages-ci
 
 before_install:
   - docker run -d --name ubuntu-test -v $(pwd):/travis ubuntu:$DIST tail -f /dev/null
