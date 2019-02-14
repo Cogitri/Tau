@@ -8,7 +8,6 @@ src/globals.rs
 src/main_win.rs
 src/errors.rs
 src/xi_thread.rs
-src/clipboard.rs
 src/proto.rs
 src/ui/gxi.glade
 src/ui/prefs_win.glade
