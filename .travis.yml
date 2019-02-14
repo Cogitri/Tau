@@ -10,6 +10,16 @@ env:
       RUST_VER: "stable"
     - DIST: "bionic"
       RUST_VER: "nightly"
+deploy:
+  provider: pages
+  skip-cleanup: true
+  github-token: $GH_TOKEN
+  keep-history: true
+  verbose: true
+  target_branch: gh-pages
+  local-dir: target/doc
+  on:
+    branch: master
 
 before_install:
   - docker run -d --name ubuntu-test -v $(pwd):/travis ubuntu:$DIST tail -f /dev/null
@@ -25,3 +35,8 @@ script:
     rustc --version &&
     meson _build &&
     ninja -C _build test"
+after_success: |
+  [ $TRAVIS_BRANCH = master ] &&
+  [ $TRAVIS_PULL_REQUEST = false ] &&
+  cargo rustdoc -- --document-private-items &&
+  echo "<meta http-equiv=refresh content=0;url=`echo $TRAVIS_REPO_SLUG | cut -d '/' -f 2`/index.html>" > target/doc/index.html
