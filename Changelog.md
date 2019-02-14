@@ -1,3 +1,12 @@
+## Changes in v0.5.1
+
+### Feature changes
+
+ - No new features
+
+### Bugfixes
+
+ - (meson): fix build with appstream-utils
 
 ## Changes in v0.5.0
 
@@ -28,12 +37,3 @@
  - (edit_view): send 'resize' to xi upon allocating a new size
  - (rpc): correctly handle measure_width
  - (meson): only validate appstream if appstream-util is recent enough
-## Changes in v0.5.1
-
-### Feature changes
-
- - No new features
-
-### Bugfixes
-
- - (meson): fix build with appstream-utils
