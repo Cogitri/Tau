@@ -18,8 +18,6 @@ deploy:
   verbose: true
   target_branch: gh-pages
   local-dir: target/doc
-  on:
-    branch: master
 
 before_install:
   - docker run -d --name ubuntu-test -v $(pwd):/travis ubuntu:$DIST tail -f /dev/null
@@ -36,7 +34,5 @@ script:
     meson _build &&
     ninja -C _build test"
 after_success: |
-  [ $TRAVIS_BRANCH = master ] &&
-  [ $TRAVIS_PULL_REQUEST = false ] &&
   cargo rustdoc -- --document-private-items &&
   echo '<meta http-equiv="refresh" content="0;url=https://cogitri.github.io/gxi/gxi">' > target/doc/index.html
