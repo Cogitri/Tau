@@ -3,19 +3,26 @@
 # Takes 2 tags and get all commits between them and turns
 # it into a release notes based on AngularJS style
 if [ -z "$1" ]; then
+    echo "Need a new version" >&2
+    exit 1
+fi
+
+if [ -z "$2" ]; then
 	echo "Need a starting tag" >&2
 	exit 1
 fi
 
-stag="$1"
+stag="$2"
 
-if [ "$2" ]; then
-	ftag="$2"
+if [ "$3" ]; then
+	ftag="$3"
 else
 	ftag=master
 fi
 
 commits="$(git log --pretty='%s' ${ftag}...${stag})"
+
+printf "%s\\n\\n" "## Changes in $1"
 
 feats=() # New Features
 fixes=() # Fixes
@@ -35,7 +42,7 @@ while read -r c; do
 	fi
 done <<< "$commits"
 
-printf "%s\\n\\n" "## Feature changes"
+printf "%s\\n\\n" "### Feature changes"
 
 if [ ${#feats[@]} -eq 0 ]; then
 	echo " - No new features"
@@ -47,7 +54,7 @@ fi
 
 echo ""
 
-printf "%s\\n\\n" "## Bugfixes"
+printf "%s\\n\\n" "### Bugfixes"
 
 if [ ${#fixes[@]} -eq 0 ]; then
 	echo " - No bugfixes"

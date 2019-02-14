@@ -1,4 +1,7 @@
-## Feature changes
+
+## Changes in v0.5.0
+
+### Feature changes
 
  - (shared_queue): more verbose trace logging
  - (main_win): use a thread to handle CoreMsgs instead of add_idle
@@ -8,7 +11,7 @@
  - (shared_queue): also use for sending stuff to xi
  - (gettext): build against system gettext
 
-## Bugfixes
+### Bugfixes
 
  - (prefs_win): use pango::SCALE instead of hardcoding 1024
  - (edit_view): we don't ship the Inconsolata font anymore
