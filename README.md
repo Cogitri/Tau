@@ -4,9 +4,12 @@
 
 GTK frontend, written in Rust, for the [xi editor](https://github.com/google/xi-editor).
 
-gxi is a work in progress!
-
 ![screenshot](/data/screenshot.png?raw=true)
+
+## Contributing
+
+Please see the docs on https://cogitri.github.io/gxi to learn more about gxi's inner workings. 
+[gtk-rs' site](https://gtk-rs.org/) offers documentation and examples about how gtk-rs works.
 
 ## Installing
 
