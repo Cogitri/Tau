@@ -38,3 +38,6 @@ script:
 after_success: |
   cargo rustdoc -- --document-private-items &&
   echo '<meta http-equiv="refresh" content="0;url=https://cogitri.github.io/gxi/gxi">' > target/doc/index.html
+  ls -lah &&
+  pwd &&
+  ls -lah target/
