@@ -36,6 +36,7 @@ script:
     meson _build &&
     ninja -C _build test"
 after_success: |
+  sudo chown -R travis:travis * &&
   cargo rustdoc -- --document-private-items &&
   echo '<meta http-equiv="refresh" content="0;url=https://cogitri.github.io/gxi/gxi">' > target/doc/index.html
   ls -lah &&
