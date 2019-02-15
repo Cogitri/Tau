@@ -34,11 +34,10 @@ script:
     rustup install $RUST_VER &&
     rustc --version &&
     meson _build &&
-    ninja -C _build test"
+    ninja -C _build test &&
+    cargo rustdoc -- --document-private-items"
 after_success: |
   [ $TRAVIS_BRANCH = master ] &&
   [ $TRAVIS_PULL_REQUEST = false ] &&
-  # docker sets target/ perms as root:root
   sudo chown -R travis:travis * &&
-  cargo rustdoc -- --document-private-items &&
   echo '<meta http-equiv="refresh" content="0;url=https://cogitri.github.io/gxi/gxi">' > target/doc/index.html
