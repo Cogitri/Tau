@@ -361,7 +361,11 @@ impl EditView {
                     "surrounding_pairs" => (),
                     "save_with_newline" => (),
                     _ => {
-                        error!("{}: {}", gettext("Unhandled config option, open a bug report!"), name);
+                        error!(
+                            "{}: {}",
+                            gettext("Unhandled config option, open a bug report!"),
+                            name
+                        );
                     }
                 }
             }
