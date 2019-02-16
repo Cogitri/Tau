@@ -1,5 +1,5 @@
 use log::{error, trace};
-use serde_json::Value;
+use serde_json::{json, Value};
 use std::cmp::min;
 use std::collections::HashMap;
 
@@ -184,12 +184,13 @@ impl LineCache {
                         // If it doesn't send ln this line is the result of a linebreak, so it should
                         // use the line num of the previous line.
                         } else {
-                            new_lines
-                                .last()
-                                .cloned()
-                                .unwrap()
-                                .map(|l| l.line_num)
-                                .unwrap_or(0)
+                            if let Some(previous_line) = new_lines.last().cloned() {
+                                previous_line
+                                    .unwrap_or(Line::from_json(&json!({"text": ""}), 0))
+                                    .line_num
+                            } else {
+                                0
+                            }
                         };
                         let line = Line::from_json(line, n);
                         new_lines.push(Some(Line {
