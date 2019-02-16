@@ -178,10 +178,6 @@ impl Core {
         self.send_notification("set_theme", &json!({ "theme_name": theme_name }));
     }
 
-    pub fn request_lines(&self, view_id: &str, first_line: u64, last_line: u64) {
-        self.send_edit_cmd(view_id, "request_lines", &json!([first_line, last_line]));
-    }
-
     /// Inserts the `chars` string at the current cursor location.
     pub fn insert(&self, view_id: &str, chars: &str) {
         self.send_edit_cmd(

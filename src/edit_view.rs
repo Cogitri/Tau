@@ -514,17 +514,7 @@ impl EditView {
             first_line,
             last_line
         );
-        //TODO: This is _really_ not so nice. Instead of requesting more lines than we actually have to it'd be nicer to request them JIT
-        let first_req_line = first_line as f64 * (0.1 * self.line_cache.height() as f64);
-        let last_req_line = last_line as f64 * (0.1 * self.line_cache.height() as f64);
-        debug!("{}", gettext("Requesting new lines..."));
-        self.core.borrow().request_lines(
-            &self.view_id,
-            first_req_line as u64,
-            last_req_line as u64,
-        );
 
-        debug!("{}", gettext("...and scrolling to them"));
         self.core
             .borrow()
             .scroll(&self.view_id, first_line, last_line);
