@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gxi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-15 00:09+0100\n"
+"POT-Creation-Date: 2019-02-17 10:21+0100\n"
 "PO-Revision-Date: 2019-01-21 12:14-0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -130,24 +130,24 @@ msgstr ""
 msgid "Showing about window"
 msgstr ""
 
-#: src/main.rs:63
+#: src/main.rs:123
 msgid "Starting gxi"
 msgstr "Iniciando gxi"
 
-#: src/main.rs:83
+#: src/main.rs:143
 #, fuzzy
 msgid "Failed to set config dir!"
 msgstr "Falha em configurar diretório de fontes"
 
-#: src/main.rs:95
+#: src/main.rs:155
 msgid "Activating new view"
 msgstr ""
 
-#: src/main.rs:112
+#: src/main.rs:172
 msgid "Opening new file"
 msgstr "Abrindo novo arquivo"
 
-#: src/main.rs:136
+#: src/main.rs:196
 msgid "Shutting down..."
 msgstr "Desligando"
 
@@ -180,86 +180,106 @@ msgstr "Indentar com espaços"
 msgid "Handling CoreMsg"
 msgstr ""
 
-#: src/main_win.rs:332
+#: src/main_win.rs:334
 msgid "!!! UNHANDLED NOTIFICATION, PLEASE OPEN A BUGREPORT!"
 msgstr ""
 
-#: src/main_win.rs:364 src/ui/prefs_win.glade:32
+#: src/main_win.rs:366 src/ui/prefs_win.glade:32
 msgid "Theme"
 msgstr "Tema"
 
-#: src/main_win.rs:366
+#: src/main_win.rs:368
 msgid "isn't available, setting to default"
 msgstr "indisponivel, configurando como padrão"
 
-#: src/main_win.rs:385
+#: src/main_win.rs:387
 msgid "Failed to convert theme settings"
 msgstr ""
 
-#: src/main_win.rs:419
-msgid "!!! UNHANDLED available_plugins, PLEASE OPEN A BUGRPEORT"
+#: src/main_win.rs:428
+msgid "Couldn't find syntect plugin, functionality will be limited!"
 msgstr ""
 
-#: src/main_win.rs:498 src/main_win.rs:514 src/main_win.rs:550
-#: src/main_win.rs:573 src/main_win.rs:586
+#: src/main_win.rs:507 src/main_win.rs:523 src/main_win.rs:588
+#: src/main_win.rs:611 src/main_win.rs:624
 msgid "Handling"
 msgstr ""
 
-#: src/main_win.rs:538
+#: src/main_win.rs:547
 msgid "Failed to find View"
 msgstr ""
 
-#: src/main_win.rs:595
+#: src/main_win.rs:563
+msgid "has stopped due to an user-initiated exit"
+msgstr ""
+
+#: src/main_win.rs:566
+msgid "has crashed with error code"
+msgstr ""
+
+#: src/main_win.rs:569
+msgid "has crashed"
+msgstr ""
+
+#: src/main_win.rs:575
+msgid "Plugin"
+msgstr ""
+
+#: src/main_win.rs:578
+msgid "functionality will be limited"
+msgstr ""
+
+#: src/main_win.rs:633
 msgid "Changing language to"
 msgstr "Mudando Língua para"
 
-#: src/main_win.rs:605
+#: src/main_win.rs:643
 msgid "Open a file to edit"
 msgstr ""
 
-#: src/main_win.rs:608 src/ui/gxi.glade:266
+#: src/main_win.rs:646 src/ui/gxi.glade:266
 msgid "Open"
 msgstr "Abrir"
 
-#: src/main_win.rs:609 src/main_win.rs:666
+#: src/main_win.rs:647 src/main_win.rs:704
 msgid "Cancel"
 msgstr ""
 
-#: src/main_win.rs:617
+#: src/main_win.rs:655
 msgid "FileChooserNative open response"
 msgstr ""
 
-#: src/main_win.rs:628
+#: src/main_win.rs:666
 msgid "Couldn't open file"
 msgstr ""
 
-#: src/main_win.rs:662
+#: src/main_win.rs:700
 #, fuzzy
 msgid "Save file"
 msgstr "Salvar Todos"
 
-#: src/main_win.rs:665 src/ui/gxi.glade:307
+#: src/main_win.rs:703 src/ui/gxi.glade:307
 msgid "Save"
 msgstr "Salvar"
 
-#: src/main_win.rs:674
+#: src/main_win.rs:712
 msgid "FileChooserNative save response"
 msgstr ""
 
-#: src/main_win.rs:685
+#: src/main_win.rs:723
 #, fuzzy
 msgid "Saving file"
 msgstr "Iniciando gxi"
 
-#: src/main_win.rs:692
+#: src/main_win.rs:730
 msgid "Couldn't save file"
 msgstr ""
 
-#: src/main_win.rs:739
+#: src/main_win.rs:777
 msgid "Failed to get the current EditView"
 msgstr ""
 
-#: src/main_win.rs:818
+#: src/main_win.rs:856
 msgid "AskSaveDialog response (1=save)"
 msgstr ""
 
@@ -397,7 +417,7 @@ msgstr "Substituir Todas"
 msgid "Events"
 msgstr "Eventos"
 
-#: src/edit_view.rs:117 src/edit_view.rs:460 src/edit_view.rs:632
+#: src/edit_view.rs:117 src/edit_view.rs:464 src/edit_view.rs:626
 msgid "Failed to get Pango context"
 msgstr ""
 
@@ -445,67 +465,59 @@ msgstr "Configurando titulo para"
 msgid "Setting font to"
 msgstr "Configurando fonte para"
 
-#: src/edit_view.rs:364
+#: src/edit_view.rs:366
 msgid "Unhandled config option, open a bug report!"
 msgstr ""
 
-#: src/edit_view.rs:479
+#: src/edit_view.rs:483
 msgid "Allocating DrawingArea size"
 msgstr ""
 
-#: src/edit_view.rs:490
+#: src/edit_view.rs:494
 msgid "Vertical scrollbar changed value"
 msgstr ""
 
-#: src/edit_view.rs:509
+#: src/edit_view.rs:513
 msgid "Updating visible scroll region"
 msgstr ""
 
-#: src/edit_view.rs:516
-msgid "Requesting new lines..."
-msgstr ""
-
-#: src/edit_view.rs:523
-msgid "...and scrolling to them"
-msgstr ""
-
-#: src/edit_view.rs:573
+#: src/edit_view.rs:567
 msgid "Drawing EditView"
 msgstr ""
 
-#: src/edit_view.rs:574
+#: src/edit_view.rs:568
 msgid "vertical adjustment"
 msgstr ""
 
-#: src/edit_view.rs:577
+#: src/edit_view.rs:571
 msgid "horizontal adjustment"
 msgstr ""
 
-#: src/edit_view.rs:930
+#: src/edit_view.rs:924
 msgid "Smooth scrolling failed"
 msgstr ""
 
-#: src/edit_view.rs:954
+#: src/edit_view.rs:948
 msgid "Processing key press"
 msgstr "Processando pressionamento da tecla"
 
-#: src/edit_view.rs:955
+#: src/edit_view.rs:949
 msgid "value"
 msgstr "valor"
 
-#: src/edit_view.rs:957
+#: src/edit_view.rs:951
 msgid "state"
 msgstr "estado"
 
-#: src/edit_view.rs:959
+#: src/edit_view.rs:953
 msgid "length"
 msgstr "lagura"
 
-#: src/edit_view.rs:961
+#: src/edit_view.rs:955
 msgid "group"
 msgstr "grupo"
 
-#: src/edit_view.rs:963
+#: src/edit_view.rs:957
 msgid "unicode"
 msgstr ""
 

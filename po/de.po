@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gxi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-15 00:09+0100\n"
-"PO-Revision-Date: 2019-02-15 00:30+0100\n"
+"POT-Creation-Date: 2019-02-17 10:21+0100\n"
+"PO-Revision-Date: 2019-02-17 10:23+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -142,23 +142,23 @@ msgstr "gxi's Github Repository"
 msgid "Showing about window"
 msgstr "Zeige das 'über' Fenster"
 
-#: src/main.rs:63
+#: src/main.rs:123
 msgid "Starting gxi"
 msgstr "Starte gxi"
 
-#: src/main.rs:83
+#: src/main.rs:143
 msgid "Failed to set config dir!"
 msgstr "Das Setzen des Konfigurations-Verzeichnisses ist fehlgeschlagen"
 
-#: src/main.rs:95
+#: src/main.rs:155
 msgid "Activating new view"
 msgstr "Aktiviere eine neue EditView"
 
-#: src/main.rs:112
+#: src/main.rs:172
 msgid "Opening new file"
 msgstr "Öffne eine neue Datei"
 
-#: src/main.rs:136
+#: src/main.rs:196
 msgid "Shutting down..."
 msgstr "Schließe die Applikation..."
 
@@ -191,85 +191,106 @@ msgstr "Einrücken mit Leerzeichen"
 msgid "Handling CoreMsg"
 msgstr "Behandle eine CoreMsg"
 
-#: src/main_win.rs:332
+#: src/main_win.rs:334
 msgid "!!! UNHANDLED NOTIFICATION, PLEASE OPEN A BUGREPORT!"
 msgstr "!!! NICHT BEHANDELTE BENACHRICHTIGUNG, BITTE ÖFFNE EINEN BUG-REPORT!"
 
-#: src/main_win.rs:364 src/ui/prefs_win.glade:32
+#: src/main_win.rs:366 src/ui/prefs_win.glade:32
 msgid "Theme"
 msgstr "Thema"
 
-#: src/main_win.rs:366
+#: src/main_win.rs:368
 msgid "isn't available, setting to default"
 msgstr "ist nicht verfügbar, setze zurück zum Standard"
 
-#: src/main_win.rs:385
+#: src/main_win.rs:387
 msgid "Failed to convert theme settings"
 msgstr "Das konvertieren der Thema-Einstellungen ist fehgelschlagen"
 
-#: src/main_win.rs:419
-msgid "!!! UNHANDLED available_plugins, PLEASE OPEN A BUGRPEORT"
+#: src/main_win.rs:428
+msgid "Couldn't find syntect plugin, functionality will be limited!"
 msgstr ""
-"!!! NICHT BEHANDELTES 'available_plugins' , BITTE ÖFFNE EINEN BUG-REPORT"
+"Konnte das Syntect-Plugin nicht finden, einige Funktionen werden nicht "
+"funktionieren"
 
-#: src/main_win.rs:498 src/main_win.rs:514 src/main_win.rs:550
-#: src/main_win.rs:573 src/main_win.rs:586
+#: src/main_win.rs:507 src/main_win.rs:523 src/main_win.rs:588
+#: src/main_win.rs:611 src/main_win.rs:624
 msgid "Handling"
 msgstr "Behandlung"
 
-#: src/main_win.rs:538
+#: src/main_win.rs:547
 msgid "Failed to find View"
 msgstr "Das Finden der View ist fehlgeschlagen"
 
-#: src/main_win.rs:595
+#: src/main_win.rs:563
+msgid "has stopped due to an user-initiated exit"
+msgstr "wurde aufgrund des Users angehalten"
+
+#: src/main_win.rs:566
+msgid "has crashed with error code"
+msgstr "ist abgestürzt mit dem Fehlercode"
+
+#: src/main_win.rs:569
+msgid "has crashed"
+msgstr "ist abgestürzt"
+
+#: src/main_win.rs:575
+msgid "Plugin"
+msgstr "Plugin"
+
+#: src/main_win.rs:578
+msgid "functionality will be limited"
+msgstr "einige Funktionen werden nicht funktionieren"
+
+#: src/main_win.rs:633
 msgid "Changing language to"
 msgstr "Wechsle die Sprache zu"
 
-#: src/main_win.rs:605
+#: src/main_win.rs:643
 msgid "Open a file to edit"
 msgstr "Öffne eine Datei zum editieren"
 
-#: src/main_win.rs:608 src/ui/gxi.glade:266
+#: src/main_win.rs:646 src/ui/gxi.glade:266
 msgid "Open"
 msgstr "Öffnen"
 
-#: src/main_win.rs:609 src/main_win.rs:666
+#: src/main_win.rs:647 src/main_win.rs:704
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: src/main_win.rs:617
+#: src/main_win.rs:655
 msgid "FileChooserNative open response"
 msgstr "FileChooserNative Öffnungs-Antwort"
 
-#: src/main_win.rs:628
+#: src/main_win.rs:666
 msgid "Couldn't open file"
 msgstr "Konnte Datei nicht öffnen"
 
-#: src/main_win.rs:662
+#: src/main_win.rs:700
 msgid "Save file"
 msgstr "Datei speichern"
 
-#: src/main_win.rs:665 src/ui/gxi.glade:307
+#: src/main_win.rs:703 src/ui/gxi.glade:307
 msgid "Save"
 msgstr "Speichern"
 
-#: src/main_win.rs:674
+#: src/main_win.rs:712
 msgid "FileChooserNative save response"
 msgstr "FileChooserNative Öffnungs-Antwort"
 
-#: src/main_win.rs:685
+#: src/main_win.rs:723
 msgid "Saving file"
 msgstr "Speichere Datei"
 
-#: src/main_win.rs:692
+#: src/main_win.rs:730
 msgid "Couldn't save file"
 msgstr "Konnte Datei nicht speichern"
 
-#: src/main_win.rs:739
+#: src/main_win.rs:777
 msgid "Failed to get the current EditView"
 msgstr "Das Erhalten der momentanen EditView ist fehlgeschlagen"
 
-#: src/main_win.rs:818
+#: src/main_win.rs:856
 msgid "AskSaveDialog response (1=save)"
 msgstr "AskSaveDialog Antwort (1=speichern)"
 
@@ -407,7 +428,7 @@ msgstr "Alles Ersetzen"
 msgid "Events"
 msgstr "Events"
 
-#: src/edit_view.rs:117 src/edit_view.rs:460 src/edit_view.rs:632
+#: src/edit_view.rs:117 src/edit_view.rs:464 src/edit_view.rs:626
 msgid "Failed to get Pango context"
 msgstr "Das Holen des Pango Kontexts ist fehlgeschlage"
 
@@ -455,67 +476,59 @@ msgstr "Setze Titel zu"
 msgid "Setting font to"
 msgstr "Setze Schriftart zu"
 
-#: src/edit_view.rs:364
+#: src/edit_view.rs:366
 msgid "Unhandled config option, open a bug report!"
 msgstr "Unbehandelte Konfigurationsoption, bitte öffne einen Bugreport!"
 
-#: src/edit_view.rs:479
+#: src/edit_view.rs:483
 msgid "Allocating DrawingArea size"
 msgstr "Belege DrawingArea Größe"
 
-#: src/edit_view.rs:490
+#: src/edit_view.rs:494
 msgid "Vertical scrollbar changed value"
 msgstr "Der Wert der vertikalen Scrollbar hat sich geändert"
 
-#: src/edit_view.rs:509
+#: src/edit_view.rs:513
 msgid "Updating visible scroll region"
 msgstr "Update den sichtbaren Scroll-Bereich"
 
-#: src/edit_view.rs:516
-msgid "Requesting new lines..."
-msgstr "Frage neue Linien an..."
-
-#: src/edit_view.rs:523
-msgid "...and scrolling to them"
-msgstr "...und scrolle zu ihnen"
-
-#: src/edit_view.rs:573
+#: src/edit_view.rs:567
 msgid "Drawing EditView"
 msgstr "Zeichne EditView"
 
-#: src/edit_view.rs:574
+#: src/edit_view.rs:568
 msgid "vertical adjustment"
 msgstr "vertikale Einstellung"
 
-#: src/edit_view.rs:577
+#: src/edit_view.rs:571
 msgid "horizontal adjustment"
 msgstr "horizontale Einstellung"
 
-#: src/edit_view.rs:930
+#: src/edit_view.rs:924
 msgid "Smooth scrolling failed"
 msgstr "Smooth-Scrolling fehlgeschlagen"
 
-#: src/edit_view.rs:954
+#: src/edit_view.rs:948
 msgid "Processing key press"
 msgstr "Verarbeite Knopfdruck"
 
-#: src/edit_view.rs:955
+#: src/edit_view.rs:949
 msgid "value"
 msgstr "Wert"
 
-#: src/edit_view.rs:957
+#: src/edit_view.rs:951
 msgid "state"
 msgstr "Status"
 
-#: src/edit_view.rs:959
+#: src/edit_view.rs:953
 msgid "length"
 msgstr "Länge"
 
-#: src/edit_view.rs:961
+#: src/edit_view.rs:955
 msgid "group"
 msgstr "Gruppe"
 
-#: src/edit_view.rs:963
+#: src/edit_view.rs:957
 msgid "unicode"
 msgstr "Unicode"
 
@@ -591,6 +604,16 @@ msgstr "Habe"
 #: src/rpc.rs:82
 msgid "at RPC level"
 msgstr "im RPC level"
+
+#~ msgid "!!! UNHANDLED available_plugins, PLEASE OPEN A BUGRPEORT"
+#~ msgstr ""
+#~ "!!! NICHT BEHANDELTES 'available_plugins' , BITTE ÖFFNE EINEN BUG-REPORT"
+
+#~ msgid "Requesting new lines..."
+#~ msgstr "Frage neue Linien an..."
+
+#~ msgid "...and scrolling to them"
+#~ msgstr "...und scrolle zu ihnen"
 
 #~ msgid "Visually draw spaces"
 #~ msgstr "Zeige Leerzeichen an"
