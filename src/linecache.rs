@@ -1,5 +1,5 @@
 use log::{error, trace};
-use serde_json::{json, Value};
+use serde_json::Value;
 use std::cmp::min;
 use std::collections::HashMap;
 
@@ -21,11 +21,11 @@ pub struct Line {
     text: String,
     cursor: Vec<u64>,
     pub styles: Vec<StyleSpan>,
-    line_num: u64,
+    line_num: Option<u64>,
 }
 
 impl Line {
-    pub fn from_json(v: &Value, line_num: u64) -> Line {
+    pub fn from_json(v: &Value, line_num: Option<u64>) -> Line {
         let text = v["text"].as_str().unwrap().to_owned();
         let cursor = if let Some(arr) = v["cursor"].as_array() {
             arr.iter().map(|c| c.as_u64().unwrap()).collect::<Vec<_>>()
@@ -75,7 +75,7 @@ impl Line {
         &self.cursor
     }
 
-    pub fn line_num(&self) -> &u64 {
+    pub fn line_num(&self) -> &Option<u64> {
         &self.line_num
     }
 }
@@ -179,20 +179,8 @@ impl LineCache {
                     new_invalid_after = 0;
                     for line in op["lines"].as_array().unwrap() {
                         // xi only send 'ln' for actual lines
-                        let n = if let Some(ln) = line["ln"].as_u64() {
-                            ln
-                        // If it doesn't send ln this line is the result of a linebreak, so it should
-                        // use the line num of the previous line.
-                        } else {
-                            if let Some(previous_line) = new_lines.last().cloned() {
-                                previous_line
-                                    .unwrap_or(Line::from_json(&json!({"text": ""}), 0))
-                                    .line_num
-                            } else {
-                                0
-                            }
-                        };
-                        let line = Line::from_json(line, n);
+                        let ln = line["ln"].as_u64();
+                        let line = Line::from_json(line, ln);
                         new_lines.push(Some(Line {
                             cursor: line.cursor.clone(),
                             text: line.text.clone(),

@@ -627,7 +627,7 @@ impl EditView {
                 let linecount_layout = self.create_layout_for_linecount(
                     &pango_ctx,
                     &main_state,
-                    *line.line_num(),
+                    line.line_num().unwrap_or(i),
                     padding,
                 );
                 update_layout(cr, &linecount_layout);
@@ -698,7 +698,7 @@ impl EditView {
             &serde_json::json!({
                 "text": line_string,
             }),
-            0,
+            None,
         );
         let main_state = self.main_state.borrow();
         let pango_ctx = self.da.get_pango_context().unwrap();
