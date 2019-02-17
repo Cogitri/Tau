@@ -612,6 +612,9 @@ impl EditView {
 
         let main_state = self.main_state.borrow();
 
+        //FIXME: Xi sends us the 'ln' (logical linenumber) param for this, but that isn't updated on every draw!
+        let mut current_line = 0;
+
         for i in first_line..last_line {
             // Keep track of the starting x position
             if let Some(line) = self.line_cache.get_line(i) {
@@ -620,6 +623,10 @@ impl EditView {
                     self.font.font_height * (i as f64) - vadj.get_value(),
                 );
 
+                if line.line_num().is_some() {
+                    current_line += 1
+                }
+
                 let pango_ctx = self
                     .da
                     .get_pango_context()
@@ -627,7 +634,7 @@ impl EditView {
                 let linecount_layout = self.create_layout_for_linecount(
                     &pango_ctx,
                     &main_state,
-                    line.line_num().unwrap_or(i),
+                    current_line,
                     padding,
                 );
                 update_layout(cr, &linecount_layout);
