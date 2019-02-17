@@ -1,3 +1,7 @@
+<a href="https://cogitri.github.io/gxi">
+    <img src="./data/icons//hicolor/scalable/apps/com.github.Cogitri.gxi.svg" alt="gxi logo" title="gxi" align="right" height="100" />
+</a>
+
 # gxi
 [![Drone CI Build Status](https://drone.exqa.de/api/badges/Cogitri/gxi/status.svg)](https://drone.exqa.de/Cogitri/gxi)
 [![Travis CI Build Status](https://travis-ci.com/Cogitri/gxi.svg?branch=master)](https://travis-ci.com/Cogitri/gxi)
