@@ -326,6 +326,8 @@ impl MainWin {
                     "measure_width" => main_win.borrow().measure_width(id, params),
                     "available_languages" => main_win.borrow_mut().available_languages(&params),
                     "language_changed" => main_win.borrow_mut().language_changed(&params),
+                    "plugin_started" => main_win.borrow_mut().plugin_started(&params),
+                    "plugin_stopped" => main_win.borrow_mut().plugin_stopped(&params),
                     _ => {
                         error!(
                             "{}: {}",
@@ -411,14 +413,21 @@ impl MainWin {
     }
 
     pub fn available_plugins(&mut self, params: &Value) {
-        if let Some(_) = params.get("plugins") {
-            // TODO: There is one (or more!) plugins available, handle them!
-        } else {
-            error!(
-                "{} {}",
-                gettext("!!! UNHANDLED available_plugins, PLEASE OPEN A BUGRPEORT"),
-                params
-            );
+        let mut has_syntect = false;
+
+        if let Some(available_plugins) = params["plugins"].as_array() {
+            for x in available_plugins {
+                if x["name"] == "xi-syntect-plugin" {
+                    has_syntect = true;
+                }
+            }
+        }
+
+        if !has_syntect {
+            ErrorDialog::new(ErrMsg {
+                msg: gettext("Couldn't find syntect plugin, functionality will be limited!"),
+                fatal: false,
+            });
         }
     }
 
@@ -541,6 +550,35 @@ impl MainWin {
                 self.notebook.set_current_page(idx);
                 edit_view.borrow_mut().scroll_to(line, col)
             }
+        }
+    }
+
+    fn plugin_started(&self, params: &Value) {}
+
+    fn plugin_stopped(&self, params: &Value) {
+        if let Some(plugin) = params["plugin"].as_str() {
+            let err_code = params["code"].as_u64();
+
+            let err_msg = match err_code {
+                Some(0) => gettext("has stopped due to an user-initiated exit"),
+                Some(_) => format!(
+                    "{} {}",
+                    gettext("has crashed with error code"),
+                    err_code.unwrap()
+                ),
+                None => gettext("has crashed"),
+            };
+
+            ErrorDialog::new(ErrMsg {
+                msg: format!(
+                    "{} {} {} {}",
+                    gettext("Plugin"),
+                    plugin,
+                    err_msg,
+                    gettext("functionality will be limited")
+                ),
+                fatal: false,
+            })
         }
     }
 
