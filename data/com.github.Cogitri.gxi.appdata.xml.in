@@ -32,6 +32,14 @@
 	</provides>
 
 	<releases>
+		<release version="0.5.2" date="2019-02-18">
+			<description>
+				<p>
+					This release fixes the linecount upon deleting lines and fixes some crashes.
+					It also adds a new icon.
+				</p>
+			</description>
+		</release>
 		<release version="0.5.1" date="2019-02-14">
 			<description>
 				<p> This release fixes the build without appstream-util. </p>

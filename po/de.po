@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gxi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-17 10:21+0100\n"
-"PO-Revision-Date: 2019-02-17 10:23+0100\n"
+"POT-Creation-Date: 2019-02-18 19:50+0100\n"
+"PO-Revision-Date: 2019-02-18 19:53+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -40,45 +40,53 @@ msgid "Rasmus \"Cogitri\" Thomsen"
 msgstr "Rasmus \"Cogitri\" Thomsen"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:37
+msgid ""
+"This release fixes the linecount upon deleting lines and fixes some crashes. "
+"It also adds a new icon."
+msgstr ""
+"Mit diesem Release hat gxi ein neues Icon bekommen. Außerdem wird nun die "
+"richtige Linienzahl angezeigt, wenn eine Linie gelöscht wurde."
+
+#: data/com.github.Cogitri.gxi.appdata.xml.in:45
 msgid "This release fixes the build without appstream-util."
 msgstr "Dieses Releases behebt das bauen der Applikation ohne appstream-util."
 
-#: data/com.github.Cogitri.gxi.appdata.xml.in:42
+#: data/com.github.Cogitri.gxi.appdata.xml.in:50
 msgid "This release contains the following feature changes:"
 msgstr "Dieses Release beinhaltet die folgenden Verbesserungen:"
 
-#: data/com.github.Cogitri.gxi.appdata.xml.in:44
+#: data/com.github.Cogitri.gxi.appdata.xml.in:52
 msgid "(shared_queue): more verbose trace logging"
 msgstr "(shared_queue): Besseres trace logging"
 
-#: data/com.github.Cogitri.gxi.appdata.xml.in:45
+#: data/com.github.Cogitri.gxi.appdata.xml.in:53
 msgid "(main_win): use a thread to handle CoreMsgs instead of add_idle"
 msgstr "(main_win): Nutze einen thread um CoreMsg zu behandeln"
 
-#: data/com.github.Cogitri.gxi.appdata.xml.in:46
+#: data/com.github.Cogitri.gxi.appdata.xml.in:54
 msgid "(main): display error window if xi-editor crashes"
 msgstr "(main): Zeige ein Fehler an, wenn xi-editor crashed"
 
-#: data/com.github.Cogitri.gxi.appdata.xml.in:47
+#: data/com.github.Cogitri.gxi.appdata.xml.in:55
 msgid ""
 "(edit_view): add newline to end of the file if it doesn't terminate with one"
 msgstr ""
 "(edit_view): Füge eine neue Linie dem Dokument hinzu, falls es nicht mit "
 "einer endet"
 
-#: data/com.github.Cogitri.gxi.appdata.xml.in:48
+#: data/com.github.Cogitri.gxi.appdata.xml.in:56
 msgid "edit_view): only draw trailing spaces"
 msgstr "(edit_view): Zeige nur nachhängende Leerzeichen an"
 
-#: data/com.github.Cogitri.gxi.appdata.xml.in:49
+#: data/com.github.Cogitri.gxi.appdata.xml.in:57
 msgid "(shared_queue): also use for sending stuff to xi"
 msgstr "(shared_queue): Nutze sie auch um Nachrichten zu xi zu senden"
 
-#: data/com.github.Cogitri.gxi.appdata.xml.in:50
+#: data/com.github.Cogitri.gxi.appdata.xml.in:58
 msgid "(gettext): build against system gettext"
 msgstr "(gettext): Benutze das gettext des Systems"
 
-#: data/com.github.Cogitri.gxi.appdata.xml.in:56
+#: data/com.github.Cogitri.gxi.appdata.xml.in:64
 msgid ""
 "Fix hangs during startup, add 'Replace...' button and shortcut. Adds an "
 "option to visually draw spaces/tabs"
@@ -87,7 +95,7 @@ msgstr ""
 "wurde ein Knopf (und Shortcut) für Finden+Ersetzen hinzugefügt und eine "
 "Option um Leerzeichen und Tabs anzuzeigen."
 
-#: data/com.github.Cogitri.gxi.appdata.xml.in:61
+#: data/com.github.Cogitri.gxi.appdata.xml.in:69
 msgid ""
 "Use FileChooserNative instead of FileChooserDialog, fixes file opening/"
 "saving in flatpaks."
@@ -96,11 +104,11 @@ msgstr ""
 "funktioniert jetzt das Öffnen/Schließen von Dateien in der Flatpak-Version "
 "von gxi."
 
-#: data/com.github.Cogitri.gxi.appdata.xml.in:66
+#: data/com.github.Cogitri.gxi.appdata.xml.in:74
 msgid "Use GSettings to determine the default font."
 msgstr "GSettings wird nun genutzt, um die Standardschriftart zu bestimmen."
 
-#: data/com.github.Cogitri.gxi.appdata.xml.in:71
+#: data/com.github.Cogitri.gxi.appdata.xml.in:79
 msgid "Use GSettings for GXI config instead of a TOML file, add appdata."
 msgstr ""
 "Jetzt nutzt gxi GSettings statt einer TOML Datei. Außerdem wurde eine ."
@@ -158,10 +166,6 @@ msgstr "Aktiviere eine neue EditView"
 msgid "Opening new file"
 msgstr "Öffne eine neue Datei"
 
-#: src/main.rs:196
-msgid "Shutting down..."
-msgstr "Schließe die Applikation..."
-
 #: src/main_win.rs:69
 msgid "Theme name"
 msgstr "Das konvertieren der Thema-Einstellungen ist fehlgeschöagen"
@@ -187,110 +191,114 @@ msgstr "Thema-Name"
 msgid "Space indent"
 msgstr "Einrücken mit Leerzeichen"
 
-#: src/main_win.rs:309
+#: src/main_win.rs:292
+msgid "Shutting down..."
+msgstr "Schließe die Applikation..."
+
+#: src/main_win.rs:314
 msgid "Handling CoreMsg"
 msgstr "Behandle eine CoreMsg"
 
-#: src/main_win.rs:334
+#: src/main_win.rs:339
 msgid "!!! UNHANDLED NOTIFICATION, PLEASE OPEN A BUGREPORT!"
 msgstr "!!! NICHT BEHANDELTE BENACHRICHTIGUNG, BITTE ÖFFNE EINEN BUG-REPORT!"
 
-#: src/main_win.rs:366 src/ui/prefs_win.glade:32
+#: src/main_win.rs:371 src/ui/prefs_win.glade:32
 msgid "Theme"
 msgstr "Thema"
 
-#: src/main_win.rs:368
+#: src/main_win.rs:373
 msgid "isn't available, setting to default"
 msgstr "ist nicht verfügbar, setze zurück zum Standard"
 
-#: src/main_win.rs:387
+#: src/main_win.rs:392
 msgid "Failed to convert theme settings"
 msgstr "Das konvertieren der Thema-Einstellungen ist fehgelschlagen"
 
-#: src/main_win.rs:428
+#: src/main_win.rs:433
 msgid "Couldn't find syntect plugin, functionality will be limited!"
 msgstr ""
 "Konnte das Syntect-Plugin nicht finden, einige Funktionen werden nicht "
 "funktionieren"
 
-#: src/main_win.rs:507 src/main_win.rs:523 src/main_win.rs:588
-#: src/main_win.rs:611 src/main_win.rs:624
+#: src/main_win.rs:512 src/main_win.rs:528 src/main_win.rs:593
+#: src/main_win.rs:616 src/main_win.rs:629
 msgid "Handling"
 msgstr "Behandlung"
 
-#: src/main_win.rs:547
+#: src/main_win.rs:552
 msgid "Failed to find View"
 msgstr "Das Finden der View ist fehlgeschlagen"
 
-#: src/main_win.rs:563
+#: src/main_win.rs:568
 msgid "has stopped due to an user-initiated exit"
 msgstr "wurde aufgrund des Users angehalten"
 
-#: src/main_win.rs:566
+#: src/main_win.rs:571
 msgid "has crashed with error code"
 msgstr "ist abgestürzt mit dem Fehlercode"
 
-#: src/main_win.rs:569
+#: src/main_win.rs:574
 msgid "has crashed"
 msgstr "ist abgestürzt"
 
-#: src/main_win.rs:575
+#: src/main_win.rs:580
 msgid "Plugin"
 msgstr "Plugin"
 
-#: src/main_win.rs:578
+#: src/main_win.rs:583
 msgid "functionality will be limited"
 msgstr "einige Funktionen werden nicht funktionieren"
 
-#: src/main_win.rs:633
+#: src/main_win.rs:638
 msgid "Changing language to"
 msgstr "Wechsle die Sprache zu"
 
-#: src/main_win.rs:643
+#: src/main_win.rs:648
 msgid "Open a file to edit"
 msgstr "Öffne eine Datei zum editieren"
 
-#: src/main_win.rs:646 src/ui/gxi.glade:266
+#: src/main_win.rs:651 src/ui/gxi.glade:266
 msgid "Open"
 msgstr "Öffnen"
 
-#: src/main_win.rs:647 src/main_win.rs:704
+#: src/main_win.rs:652 src/main_win.rs:709
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: src/main_win.rs:655
+#: src/main_win.rs:660
 msgid "FileChooserNative open response"
 msgstr "FileChooserNative Öffnungs-Antwort"
 
-#: src/main_win.rs:666
+#: src/main_win.rs:671
 msgid "Couldn't open file"
 msgstr "Konnte Datei nicht öffnen"
 
-#: src/main_win.rs:700
+#: src/main_win.rs:705
 msgid "Save file"
 msgstr "Datei speichern"
 
-#: src/main_win.rs:703 src/ui/gxi.glade:307
+#: src/main_win.rs:708 src/ui/gxi.glade:307
 msgid "Save"
 msgstr "Speichern"
 
-#: src/main_win.rs:712
+#: src/main_win.rs:717
 msgid "FileChooserNative save response"
 msgstr "FileChooserNative Öffnungs-Antwort"
 
-#: src/main_win.rs:723
+#: src/main_win.rs:728
 msgid "Saving file"
 msgstr "Speichere Datei"
 
-#: src/main_win.rs:730
+#: src/main_win.rs:735
 msgid "Couldn't save file"
 msgstr "Konnte Datei nicht speichern"
 
-#: src/main_win.rs:777
+#: src/main_win.rs:782
 msgid "Failed to get the current EditView"
 msgstr "Das Erhalten der momentanen EditView ist fehlgeschlagen"
 
-#: src/main_win.rs:856
+#: src/main_win.rs:861
 msgid "AskSaveDialog response (1=save)"
 msgstr "AskSaveDialog Antwort (1=speichern)"
 
@@ -428,7 +436,7 @@ msgstr "Alles Ersetzen"
 msgid "Events"
 msgstr "Events"
 
-#: src/edit_view.rs:117 src/edit_view.rs:464 src/edit_view.rs:626
+#: src/edit_view.rs:117 src/edit_view.rs:464 src/edit_view.rs:633
 msgid "Failed to get Pango context"
 msgstr "Das Holen des Pango Kontexts ist fehlgeschlage"
 
@@ -504,31 +512,31 @@ msgstr "vertikale Einstellung"
 msgid "horizontal adjustment"
 msgstr "horizontale Einstellung"
 
-#: src/edit_view.rs:924
+#: src/edit_view.rs:931
 msgid "Smooth scrolling failed"
 msgstr "Smooth-Scrolling fehlgeschlagen"
 
-#: src/edit_view.rs:948
+#: src/edit_view.rs:955
 msgid "Processing key press"
 msgstr "Verarbeite Knopfdruck"
 
-#: src/edit_view.rs:949
+#: src/edit_view.rs:956
 msgid "value"
 msgstr "Wert"
 
-#: src/edit_view.rs:951
+#: src/edit_view.rs:958
 msgid "state"
 msgstr "Status"
 
-#: src/edit_view.rs:953
+#: src/edit_view.rs:960
 msgid "length"
 msgstr "Länge"
 
-#: src/edit_view.rs:955
+#: src/edit_view.rs:962
 msgid "group"
 msgstr "Gruppe"
 
-#: src/edit_view.rs:957
+#: src/edit_view.rs:964
 msgid "unicode"
 msgstr "Unicode"
 

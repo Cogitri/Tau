@@ -1,3 +1,19 @@
+## Changes in v0.5.2
+
+### Feature changes
+
+ - (data): new icon
+ - (main_win): notify the user if a plugin isn't available or has crashed
+
+### Bugfixes
+
+ - (data): add drop shadow to icon
+ - (data): less grey, more white in icon
+ - (edit_view): fix line numbers upon deleting lines
+ - (i18n): update translations
+ - (linecache): don't assume we always have at least one line in the linecache
+ - (i18n): update translations
+
 ## Changes in v0.5.1
 
 ### Feature changes
