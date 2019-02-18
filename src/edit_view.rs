@@ -613,7 +613,7 @@ impl EditView {
         let main_state = self.main_state.borrow();
 
         //FIXME: Xi sends us the 'ln' (logical linenumber) param for this, but that isn't updated on every draw!
-        let mut current_line = 0;
+        let mut current_line = first_line;
 
         for i in first_line..last_line {
             // Keep track of the starting x position
