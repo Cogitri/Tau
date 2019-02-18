@@ -250,11 +250,11 @@
   </object>
   <object class="GtkApplicationWindow" id="appwindow">
     <property name="can_focus">False</property>
-    <property name="role">com.github.bvinc.gxi</property>
+    <property name="role">com.github.Cogitri.gxi</property>
     <property name="default_width">1150</property>
     <property name="default_height">750</property>
     <property name="icon_name">text-x-generic</property>
-    <property name="startup_id">com.github.bvinc.gxi</property>
+    <property name="startup_id">com.github.Cogitri.gxi</property>
     <child type="titlebar">
       <object class="GtkHeaderBar" id="header_bar">
         <property name="visible">True</property>
