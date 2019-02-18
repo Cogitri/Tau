@@ -87,6 +87,7 @@ use gettextrs::{gettext, TextDomain, TextDomainError};
 use gio::{ApplicationExt, ApplicationExtManual, ApplicationFlags, FileExt};
 use glib::MainContext;
 use gtk::Application;
+use human_panic::setup_panic;
 use log::{debug, info, warn};
 use serde_json::{json, Value};
 use std::cell::RefCell;
@@ -95,6 +96,8 @@ use std::rc::Rc;
 use std::sync::{Arc, Mutex};
 
 fn main() {
+    setup_panic!();
+
     env_logger::Builder::from_default_env()
         .default_format_timestamp(false)
         .init();
