@@ -164,7 +164,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 [[package]]
 name = "cairo-rs"
 version = "0.5.0"
-source = "git+https://github.com/gtk-rs/cairo#346fd93ec42539dfdee43edacb61275d55841fd4"
+source = "git+https://github.com/gtk-rs/cairo#e6567eb578a6e864a1929966c01caa2ed5805198"
 dependencies = [
  "bitflags 1.0.4 (registry+https://github.com/rust-lang/crates.io-index)",
  "cairo-sys-rs 0.7.0 (git+https://github.com/gtk-rs/cairo)",
@@ -177,7 +177,7 @@ dependencies = [
 [[package]]
 name = "cairo-sys-rs"
 version = "0.7.0"
-source = "git+https://github.com/gtk-rs/cairo#346fd93ec42539dfdee43edacb61275d55841fd4"
+source = "git+https://github.com/gtk-rs/cairo#e6567eb578a6e864a1929966c01caa2ed5805198"
 dependencies = [
  "glib-sys 0.7.0 (git+https://github.com/gtk-rs/sys)",
  "libc 0.2.48 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -533,7 +533,7 @@ dependencies = [
 [[package]]
 name = "glib"
 version = "0.6.0"
-source = "git+https://github.com/gtk-rs/glib#f33d7434ba960dc4b4038de9b9d8779dbdedf912"
+source = "git+https://github.com/gtk-rs/glib#d257b35d562eaf1a89acf7e7eeb7eedc376778ba"
 dependencies = [
  "bitflags 1.0.4 (registry+https://github.com/rust-lang/crates.io-index)",
  "glib-sys 0.7.0 (git+https://github.com/gtk-rs/sys)",
@@ -545,7 +545,7 @@ dependencies = [
 [[package]]
 name = "glib-sys"
 version = "0.7.0"
-source = "git+https://github.com/gtk-rs/sys#a187c4b95ec2162dac23adb00743f6c72b25466e"
+source = "git+https://github.com/gtk-rs/sys#c68dace3c4e28bf936781f0b836c88f852cb2e9e"
 dependencies = [
  "libc 0.2.48 (registry+https://github.com/rust-lang/crates.io-index)",
  "pkg-config 0.3.14 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -554,7 +554,7 @@ dependencies = [
 [[package]]
 name = "gobject-sys"
 version = "0.7.0"
-source = "git+https://github.com/gtk-rs/sys#a187c4b95ec2162dac23adb00743f6c72b25466e"
+source = "git+https://github.com/gtk-rs/sys#c68dace3c4e28bf936781f0b836c88f852cb2e9e"
 dependencies = [
  "glib-sys 0.7.0 (git+https://github.com/gtk-rs/sys)",
  "libc 0.2.48 (registry+https://github.com/rust-lang/crates.io-index)",
