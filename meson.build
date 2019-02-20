@@ -30,8 +30,11 @@ grabber = find_program('scripts/grabber.sh')
 c = run_command(grabber)
 sources = c.stdout().strip().split('\n')
 
-# Well this isn't pretty
-rust_target = get_option('rust-target')
+if meson.is_cross_build()
+  cross_build='true'
+else
+  cross_build='false'
+endif
 
 custom_target('cargo-build-gxi',
                         input: sources,
@@ -45,7 +48,7 @@ custom_target('cargo-build-gxi',
                                   '@OUTPUT@',
                                   meson.current_build_dir(),
                                   'gxi',
-                                  rust_target,
+                                  cross_build,
                                   gxi_plugin_dir,
                                   gxi_localedir,
                                   meson.project_version(),
@@ -87,7 +90,7 @@ custom_target('cargo-build-syntect',
                                   '@OUTPUT@',
                                   syntect_releasebin_path,
                                   'xi-syntect-plugin',
-                                  rust_target,
+                                  cross_build,
                                  ])
 
 synctect_assets = ['assets/Makefile.toml', 'assets/YAML.toml', 'manifest.toml']
