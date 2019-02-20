@@ -569,7 +569,7 @@ impl MainWin {
         }
     }
 
-    fn plugin_started(&self, params: &Value) {}
+    fn plugin_started(&self, _params: &Value) {}
 
     fn plugin_stopped(&self, params: &Value) {
         if let Some(plugin) = params["plugin"].as_str() {
