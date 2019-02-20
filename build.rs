@@ -8,7 +8,7 @@ fn main() {
     let dest_path = Path::new(&out_dir).join("plugin-dir.in");
     let mut f = File::create(&dest_path).unwrap();
 
-    let plugin_dir_default = "/usr/lib/gxi/plugins";
+    let plugin_dir_default = "/usr/local/lib/gxi/plugins";
 
     let plugin_dir = if let Some(plugin_dir_env) = env::var_os("GXI_PLUGIN_DIR") {
         plugin_dir_env.to_str().unwrap().to_string()
