@@ -899,6 +899,7 @@ impl MainWin {
         let save_action = if !pristine {
             let builder = Builder::new_from_string(&GLADE_SRC);
             let ask_save_dialog: Dialog = builder.get_object("ask_save_dialog").unwrap();
+            ask_save_dialog.set_title(&format!("{}", gettext("Save unsaved changes")));
             let ret = ask_save_dialog.run();
             ask_save_dialog.destroy();
             match ret {
