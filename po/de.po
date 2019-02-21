@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gxi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-18 19:50+0100\n"
-"PO-Revision-Date: 2019-02-18 19:53+0100\n"
+"POT-Creation-Date: 2019-02-21 15:31+0100\n"
+"PO-Revision-Date: 2019-02-21 15:32+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -41,52 +41,60 @@ msgstr "Rasmus \"Cogitri\" Thomsen"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:37
 msgid ""
+"Ask user if changes should be saved upon closing. Also makes panics more "
+"readable."
+msgstr ""
+"Fragt den Benutzer, ob Änderungen beim schließen gespeichert werden soll. "
+"Außerdem verbessert es die Lesbarkeit von panics."
+
+#: data/com.github.Cogitri.gxi.appdata.xml.in:42
+msgid ""
 "This release fixes the linecount upon deleting lines and fixes some crashes. "
 "It also adds a new icon."
 msgstr ""
 "Mit diesem Release hat gxi ein neues Icon bekommen. Außerdem wird nun die "
 "richtige Linienzahl angezeigt, wenn eine Linie gelöscht wurde."
 
-#: data/com.github.Cogitri.gxi.appdata.xml.in:45
+#: data/com.github.Cogitri.gxi.appdata.xml.in:50
 msgid "This release fixes the build without appstream-util."
 msgstr "Dieses Releases behebt das bauen der Applikation ohne appstream-util."
 
-#: data/com.github.Cogitri.gxi.appdata.xml.in:50
+#: data/com.github.Cogitri.gxi.appdata.xml.in:55
 msgid "This release contains the following feature changes:"
 msgstr "Dieses Release beinhaltet die folgenden Verbesserungen:"
 
-#: data/com.github.Cogitri.gxi.appdata.xml.in:52
+#: data/com.github.Cogitri.gxi.appdata.xml.in:57
 msgid "(shared_queue): more verbose trace logging"
 msgstr "(shared_queue): Besseres trace logging"
 
-#: data/com.github.Cogitri.gxi.appdata.xml.in:53
+#: data/com.github.Cogitri.gxi.appdata.xml.in:58
 msgid "(main_win): use a thread to handle CoreMsgs instead of add_idle"
 msgstr "(main_win): Nutze einen thread um CoreMsg zu behandeln"
 
-#: data/com.github.Cogitri.gxi.appdata.xml.in:54
+#: data/com.github.Cogitri.gxi.appdata.xml.in:59
 msgid "(main): display error window if xi-editor crashes"
 msgstr "(main): Zeige ein Fehler an, wenn xi-editor crashed"
 
-#: data/com.github.Cogitri.gxi.appdata.xml.in:55
+#: data/com.github.Cogitri.gxi.appdata.xml.in:60
 msgid ""
 "(edit_view): add newline to end of the file if it doesn't terminate with one"
 msgstr ""
 "(edit_view): Füge eine neue Linie dem Dokument hinzu, falls es nicht mit "
 "einer endet"
 
-#: data/com.github.Cogitri.gxi.appdata.xml.in:56
+#: data/com.github.Cogitri.gxi.appdata.xml.in:61
 msgid "edit_view): only draw trailing spaces"
 msgstr "(edit_view): Zeige nur nachhängende Leerzeichen an"
 
-#: data/com.github.Cogitri.gxi.appdata.xml.in:57
+#: data/com.github.Cogitri.gxi.appdata.xml.in:62
 msgid "(shared_queue): also use for sending stuff to xi"
 msgstr "(shared_queue): Nutze sie auch um Nachrichten zu xi zu senden"
 
-#: data/com.github.Cogitri.gxi.appdata.xml.in:58
+#: data/com.github.Cogitri.gxi.appdata.xml.in:63
 msgid "(gettext): build against system gettext"
 msgstr "(gettext): Benutze das gettext des Systems"
 
-#: data/com.github.Cogitri.gxi.appdata.xml.in:64
+#: data/com.github.Cogitri.gxi.appdata.xml.in:69
 msgid ""
 "Fix hangs during startup, add 'Replace...' button and shortcut. Adds an "
 "option to visually draw spaces/tabs"
@@ -95,7 +103,7 @@ msgstr ""
 "wurde ein Knopf (und Shortcut) für Finden+Ersetzen hinzugefügt und eine "
 "Option um Leerzeichen und Tabs anzuzeigen."
 
-#: data/com.github.Cogitri.gxi.appdata.xml.in:69
+#: data/com.github.Cogitri.gxi.appdata.xml.in:74
 msgid ""
 "Use FileChooserNative instead of FileChooserDialog, fixes file opening/"
 "saving in flatpaks."
@@ -104,11 +112,11 @@ msgstr ""
 "funktioniert jetzt das Öffnen/Schließen von Dateien in der Flatpak-Version "
 "von gxi."
 
-#: data/com.github.Cogitri.gxi.appdata.xml.in:74
+#: data/com.github.Cogitri.gxi.appdata.xml.in:79
 msgid "Use GSettings to determine the default font."
 msgstr "GSettings wird nun genutzt, um die Standardschriftart zu bestimmen."
 
-#: data/com.github.Cogitri.gxi.appdata.xml.in:79
+#: data/com.github.Cogitri.gxi.appdata.xml.in:84
 msgid "Use GSettings for GXI config instead of a TOML file, add appdata."
 msgstr ""
 "Jetzt nutzt gxi GSettings statt einer TOML Datei. Außerdem wurde eine ."
@@ -150,157 +158,157 @@ msgstr "gxi's Github Repository"
 msgid "Showing about window"
 msgstr "Zeige das 'über' Fenster"
 
-#: src/main.rs:123
+#: src/main.rs:126
 msgid "Starting gxi"
 msgstr "Starte gxi"
 
-#: src/main.rs:143
+#: src/main.rs:146
 msgid "Failed to set config dir!"
 msgstr "Das Setzen des Konfigurations-Verzeichnisses ist fehlgeschlagen"
 
-#: src/main.rs:155
+#: src/main.rs:158
 msgid "Activating new view"
 msgstr "Aktiviere eine neue EditView"
 
-#: src/main.rs:172
+#: src/main.rs:175
 msgid "Opening new file"
 msgstr "Öffne eine neue Datei"
 
-#: src/main_win.rs:69
+#: src/main.rs:199
+msgid "Shutting down..."
+msgstr "Schließe die Applikation..."
+
+#: src/main_win.rs:76
 msgid "Theme name"
 msgstr "Das konvertieren der Thema-Einstellungen ist fehlgeschöagen"
 
-#: src/main_win.rs:110
+#: src/main_win.rs:117
 msgid "Found message in queue"
 msgstr "Habe eine Nachricht in der Warteschlange gefunden"
 
-#: src/main_win.rs:119
+#: src/main_win.rs:126
 msgid "Found a message from xi"
 msgstr "Habe eine Nachricht von Xi gefunden"
 
 #. xi-editor doesn't know about the translations
-#: src/main_win.rs:135 src/main_win.rs:142
+#: src/main_win.rs:148 src/main_win.rs:155
 msgid "Plain Text"
 msgstr "Klartext"
 
-#: src/main_win.rs:245
+#: src/main_win.rs:261
 msgid "Auto indent"
 msgstr "Thema-Name"
 
-#: src/main_win.rs:270
+#: src/main_win.rs:286
 msgid "Space indent"
 msgstr "Einrücken mit Leerzeichen"
 
-#: src/main_win.rs:292
-msgid "Shutting down..."
-msgstr "Schließe die Applikation..."
-
-#: src/main_win.rs:314
+#: src/main_win.rs:325
 msgid "Handling CoreMsg"
 msgstr "Behandle eine CoreMsg"
 
-#: src/main_win.rs:339
+#: src/main_win.rs:350
 msgid "!!! UNHANDLED NOTIFICATION, PLEASE OPEN A BUGREPORT!"
 msgstr "!!! NICHT BEHANDELTE BENACHRICHTIGUNG, BITTE ÖFFNE EINEN BUG-REPORT!"
 
-#: src/main_win.rs:371 src/ui/prefs_win.glade:32
+#: src/main_win.rs:382 src/ui/prefs_win.glade:32
 msgid "Theme"
 msgstr "Thema"
 
-#: src/main_win.rs:373
+#: src/main_win.rs:384
 msgid "isn't available, setting to default"
 msgstr "ist nicht verfügbar, setze zurück zum Standard"
 
-#: src/main_win.rs:392
+#: src/main_win.rs:403
 msgid "Failed to convert theme settings"
 msgstr "Das konvertieren der Thema-Einstellungen ist fehgelschlagen"
 
-#: src/main_win.rs:433
+#: src/main_win.rs:444
 msgid "Couldn't find syntect plugin, functionality will be limited!"
 msgstr ""
 "Konnte das Syntect-Plugin nicht finden, einige Funktionen werden nicht "
 "funktionieren"
 
-#: src/main_win.rs:512 src/main_win.rs:528 src/main_win.rs:593
-#: src/main_win.rs:616 src/main_win.rs:629
+#: src/main_win.rs:523 src/main_win.rs:539 src/main_win.rs:604
+#: src/main_win.rs:627 src/main_win.rs:640
 msgid "Handling"
 msgstr "Behandlung"
 
-#: src/main_win.rs:552
+#: src/main_win.rs:563
 msgid "Failed to find View"
 msgstr "Das Finden der View ist fehlgeschlagen"
 
-#: src/main_win.rs:568
+#: src/main_win.rs:579
 msgid "has stopped due to an user-initiated exit"
 msgstr "wurde aufgrund des Users angehalten"
 
-#: src/main_win.rs:571
+#: src/main_win.rs:582
 msgid "has crashed with error code"
 msgstr "ist abgestürzt mit dem Fehlercode"
 
-#: src/main_win.rs:574
+#: src/main_win.rs:585
 msgid "has crashed"
 msgstr "ist abgestürzt"
 
-#: src/main_win.rs:580
+#: src/main_win.rs:591
 msgid "Plugin"
 msgstr "Plugin"
 
-#: src/main_win.rs:583
+#: src/main_win.rs:594
 msgid "functionality will be limited"
 msgstr "einige Funktionen werden nicht funktionieren"
 
-#: src/main_win.rs:638
+#: src/main_win.rs:649
 msgid "Changing language to"
 msgstr "Wechsle die Sprache zu"
 
-#: src/main_win.rs:648
+#: src/main_win.rs:659
 msgid "Open a file to edit"
 msgstr "Öffne eine Datei zum editieren"
 
-#: src/main_win.rs:651 src/ui/gxi.glade:266
+#: src/main_win.rs:662 src/ui/gxi.glade:266
 msgid "Open"
 msgstr "Öffnen"
 
-#: src/main_win.rs:652 src/main_win.rs:709
+#: src/main_win.rs:663 src/main_win.rs:720
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: src/main_win.rs:660
+#: src/main_win.rs:671
 msgid "FileChooserNative open response"
 msgstr "FileChooserNative Öffnungs-Antwort"
 
-#: src/main_win.rs:671
+#: src/main_win.rs:682
 msgid "Couldn't open file"
 msgstr "Konnte Datei nicht öffnen"
 
-#: src/main_win.rs:705
+#: src/main_win.rs:716
 msgid "Save file"
 msgstr "Datei speichern"
 
-#: src/main_win.rs:708 src/ui/gxi.glade:307
+#: src/main_win.rs:719 src/ui/gxi.glade:307
 msgid "Save"
 msgstr "Speichern"
 
-#: src/main_win.rs:717
+#: src/main_win.rs:728
 msgid "FileChooserNative save response"
 msgstr "FileChooserNative Öffnungs-Antwort"
 
-#: src/main_win.rs:728
+#: src/main_win.rs:739
 msgid "Saving file"
 msgstr "Speichere Datei"
 
-#: src/main_win.rs:735
+#: src/main_win.rs:746
 msgid "Couldn't save file"
 msgstr "Konnte Datei nicht speichern"
 
-#: src/main_win.rs:782
+#: src/main_win.rs:793
 msgid "Failed to get the current EditView"
 msgstr "Das Erhalten der momentanen EditView ist fehlgeschlagen"
 
-#: src/main_win.rs:861
-msgid "AskSaveDialog response (1=save)"
-msgstr "AskSaveDialog Antwort (1=speichern)"
+#: src/main_win.rs:902
+msgid "Save unsaved changes"
+msgstr "Speichere nicht gespeicherte Änderungen"
 
 #: src/errors.rs:44
 msgid "No default application"
@@ -612,6 +620,9 @@ msgstr "Habe"
 #: src/rpc.rs:82
 msgid "at RPC level"
 msgstr "im RPC level"
+
+#~ msgid "AskSaveDialog response (1=save)"
+#~ msgstr "AskSaveDialog Antwort (1=speichern)"
 
 #~ msgid "!!! UNHANDLED available_plugins, PLEASE OPEN A BUGRPEORT"
 #~ msgstr ""
