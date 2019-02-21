@@ -1,3 +1,17 @@
+## Changes in v0.5.3
+
+### Feature changes
+
+ - (main_win): ask user if unsaved changes should be save upon closing
+ - (main): use human_panic for better panic output
+
+### Bugfixes
+
+ - (main_win): prefix params with an underscore in plugin_started
+ - (build): set plugin_dir to '/usr/local/lib/gxi/plugins' by default
+ - (main_win): set title for ask_save_dialog
+ - (edit_view): fix line numbers upon scrolling
+
 ## Changes in v0.5.2
 
 ### Feature changes

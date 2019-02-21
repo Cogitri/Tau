@@ -32,6 +32,11 @@
 	</provides>
 
 	<releases>
+		<release version="0.5.3" date="2019-02-21">
+			<description>
+				<p> Ask user if changes should be saved upon closing. Also makes panics more readable.</p>
+			</description>
+		</release>
 		<release version="0.5.2" date="2019-02-18">
 			<description>
 				<p>
