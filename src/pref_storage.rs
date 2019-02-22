@@ -239,6 +239,17 @@ pub fn get_default_monospace_font_schema() -> String {
         })
 }
 
+pub fn get_default_interface_font_schema() -> String {
+    SettingsSchemaSource::get_default()
+        .and_then(|settings_source| settings_source.lookup("org.gnome.desktop.interface", true))
+        .and_then(|_| Settings::new("org.gnome.desktop.interface").get_string("font-name"))
+        .map(|s| s.to_string())
+        .unwrap_or_else(|| {
+            warn!("Couldn't find GSchema! Defaulting to default interface font.");
+            "Cantarell 11".to_string()
+        })
+}
+
 pub fn get_draw_trailing_spaces_schema() -> bool {
     SettingsSchemaSource::get_default()
         .and_then(|settings_source| settings_source.lookup("com.github.Cogitri.gxi", true))

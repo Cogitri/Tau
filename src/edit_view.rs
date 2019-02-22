@@ -33,6 +33,14 @@ pub struct EVFont {
     font_desc: FontDescription,
 }
 
+pub struct EVInterfaceFont {
+    font_height: f64,
+    font_width: f64,
+    font_ascent: f64,
+    font_descent: f64,
+    font_desc: FontDescription,
+}
+
 /// The EditView is the part of gxi that does the actual editing. This is where you edit documents.
 pub struct EditView {
     core: Rc<RefCell<Core>>,
@@ -41,6 +49,7 @@ pub struct EditView {
     pub file_name: Option<String>,
     pub pristine: bool,
     pub da: DrawingArea,
+    linecount_da: DrawingArea,
     pub root_widget: gtk::Box,
     pub tab_widget: gtk::Box,
     search_bar: SearchBar,
@@ -52,7 +61,8 @@ pub struct EditView {
     vscrollbar: Scrollbar,
     line_cache: LineCache,
     replace: EVReplace,
-    font: EVFont,
+    edit_font: EVFont,
+    interface_font: EVInterfaceFont,
 }
 
 impl EditView {
@@ -65,6 +75,7 @@ impl EditView {
         view_id: &str,
     ) -> Rc<RefCell<EditView>> {
         let da = DrawingArea::new();
+        let linecount_da = DrawingArea::new();
         let hscrollbar = Scrollbar::new(Orientation::Horizontal, None::<&gtk::Adjustment>);
         let vscrollbar = Scrollbar::new(Orientation::Vertical, None::<&gtk::Adjustment>);
 
@@ -88,6 +99,12 @@ impl EditView {
         let replace_all_button: Button = find_rep_builder.get_object("replace_all_button").unwrap();
         let find_status_label: Label = find_rep_builder.get_object("find_status_label").unwrap();
 
+        let replace = EVReplace {
+            replace_expander: replace_expander.clone(),
+            replace_revealer: replace_revealer.clone(),
+            replace_entry: replace_entry.clone(),
+        };
+
         // let overlay: Overlay = frame_builder.get_object("overlay").unwrap();
         // let search_revealer: Revealer = frame_builder.get_object("revealer").unwrap();
         // let frame: Frame = frame_builder.get_object("frame").unwrap();
@@ -97,6 +114,7 @@ impl EditView {
 
         let hbox = Box::new(Orientation::Horizontal, 0);
         let vbox = Box::new(Orientation::Vertical, 0);
+        hbox.pack_start(&linecount_da, false, false, 0);
         hbox.pack_start(&vbox, true, true, 0);
         hbox.pack_start(&vscrollbar, false, false, 0);
         vbox.pack_start(&search_bar, false, false, 0);
@@ -144,7 +162,7 @@ impl EditView {
         let layout = pango::Layout::new(&pango_ctx);
         layout.set_text("a");
         let (_, log_extents) = layout.get_extents();
-        debug!("{}: {:?}", gettext("Pango size"), log_extents);
+        debug!("{}: {:?}", gettext("Pango edit font size"), log_extents);
 
         let font_height = f64::from(log_extents.height) / f64::from(pango::SCALE);
         let font_width = f64::from(log_extents.width) / f64::from(pango::SCALE);
@@ -153,25 +171,65 @@ impl EditView {
 
         debug!(
             "{}: {} {} {} {}",
-            gettext("Font metrics"),
+            gettext("Edit font metrics"),
             font_width,
             font_height,
             font_ascent,
             font_descent
         );
 
-        let replace = EVReplace {
-            replace_expander: replace_expander.clone(),
-            replace_revealer: replace_revealer.clone(),
-            replace_entry: replace_entry.clone(),
-        };
-
-        let font = EVFont {
+        // The font used for editing
+        let edit_font = EVFont {
             font_height,
             font_width,
             font_ascent,
             font_descent,
             font_desc,
+        };
+
+        let interface_font = FontDescription::from_string(&get_default_interface_font_schema());
+
+        pango_ctx.set_font_description(&interface_font);
+        let if_language = pango_ctx
+            .get_language()
+            .unwrap_or_else(|| panic!("{}", &gettext("Failed to get Pango language")));
+        let if_fontset = pango_ctx
+            .load_fontset(&interface_font, &if_language)
+            .unwrap_or_else(|| panic!("{}", &gettext("Failed to load Pango font set")));
+        let if_metrics = if_fontset
+            .get_metrics()
+            .unwrap_or_else(|| panic!("{}", &gettext("Failed to load Pango font metrics")));
+
+        let if_layout = pango::Layout::new(&pango_ctx);
+        if_layout.set_text("a");
+        let (_, if_log_extents) = layout.get_extents();
+        debug!(
+            "{}: {:?}",
+            gettext("Pango interface font size"),
+            log_extents
+        );
+
+        let interface_font_height = f64::from(if_log_extents.height) / f64::from(pango::SCALE);
+        let interface_font_width = f64::from(if_log_extents.width) / f64::from(pango::SCALE);
+        let interface_font_ascent = f64::from(if_metrics.get_ascent()) / f64::from(pango::SCALE);
+        let interface_font_descent = f64::from(if_metrics.get_descent()) / f64::from(pango::SCALE);
+
+        debug!(
+            "{}: {} {} {} {}",
+            gettext("Interface font metrics"),
+            interface_font_width,
+            interface_font_height,
+            interface_font_ascent,
+            interface_font_descent
+        );
+
+        // The font used for the interface (the linecount)
+        let interface_font = EVInterfaceFont {
+            font_height: interface_font_height,
+            font_width: interface_font_width,
+            font_ascent: interface_font_ascent,
+            font_descent: interface_font_descent,
+            font_desc: interface_font,
         };
 
         let edit_view = Rc::new(RefCell::new(EditView {
@@ -180,6 +238,7 @@ impl EditView {
             file_name,
             pristine: true,
             view_id: view_id.to_string(),
+            linecount_da: linecount_da.clone(),
             da: da.clone(),
             root_widget: hbox.clone(),
             tab_widget: tab_hbox.clone(),
@@ -191,7 +250,8 @@ impl EditView {
             search_bar: search_bar.clone(),
             search_entry: search_entry.clone(),
             find_status_label: find_status_label.clone(),
-            font,
+            edit_font,
+            interface_font,
             replace,
         }));
 
@@ -201,8 +261,14 @@ impl EditView {
             edit_view.borrow().handle_button_press(eb)
         }));
 
-        da.connect_draw(clone!(edit_view => move |_,ctx| {
-            edit_view.borrow_mut().handle_draw(&ctx)
+        da.connect_draw(clone!(edit_view, linecount_da => move |_,ctx| {
+            //FIXME: Hack to make sure the linecount is in sync with the text. This should be done more effeciently!
+            linecount_da.queue_draw();
+            edit_view.borrow_mut().handle_da_draw(&ctx)
+        }));
+
+        linecount_da.connect_draw(clone!(edit_view => move |_,ctx| {
+            edit_view.borrow_mut().handle_linecount_draw(&ctx)
         }));
 
         da.connect_key_press_event(clone!(edit_view => move |_, ek| {
@@ -336,7 +402,7 @@ impl EditView {
                 match name.as_ref() {
                     "font_size" => {
                         if let Some(font_size) = value.as_u64() {
-                            self.font
+                            self.edit_font
                                 .font_desc
                                 .set_size(font_size as i32 * pango::SCALE);
                         }
@@ -344,7 +410,7 @@ impl EditView {
                     "font_face" => {
                         if let Some(font_face) = value.as_str() {
                             debug!("{}: {}", gettext("Setting font to"), font_face);
-                            self.font.font_desc.set_family(font_face);
+                            self.edit_font.font_desc.set_family(font_face);
                         }
                     }
                     // These are handled in main_win via XiConfig
@@ -452,11 +518,11 @@ impl EditView {
         let x = x + self.hscrollbar.get_adjustment().get_value();
         let y = y + self.vscrollbar.get_adjustment().get_value();
 
-        let mut y = y - self.font.font_descent;
+        let mut y = y - self.edit_font.font_descent;
         if y < 0.0 {
             y = 0.0;
         }
-        let line_num = (y / self.font.font_height) as u64;
+        let line_num = (y / self.edit_font.font_height) as u64;
         let index = if let Some(line) = self.line_cache.get_line(line_num) {
             let pango_ctx = self
                 .da
@@ -475,7 +541,7 @@ impl EditView {
         } else {
             0
         };
-        (index as u64, (y / self.font.font_height) as u64)
+        (index as u64, (y / self.edit_font.font_height) as u64)
     }
 
     /// Allocate the space our DrawingArea needs.
@@ -526,14 +592,15 @@ impl EditView {
         let da_height = f64::from(self.da.get_allocated_height());
         let num_lines = self.line_cache.height();
 
-        let all_text_height = num_lines as f64 * self.font.font_height + self.font.font_descent;
+        let all_text_height =
+            num_lines as f64 * self.edit_font.font_height + self.edit_font.font_descent;
         let height = if da_height > all_text_height {
             da_height
         } else {
             all_text_height
         };
 
-        let all_text_width = self.line_cache.width() as f64 * self.font.font_width;
+        let all_text_width = self.line_cache.width() as f64 * self.edit_font.font_width;
         let width = if da_width > all_text_width {
             da_width
         } else {
@@ -544,7 +611,7 @@ impl EditView {
 
     /// Handles the drawing of the EditView. This is called when we get a update from xi-editor or if
     /// gtk requests us to draw the EditView. This draws the background, all lines and the cursor.
-    pub fn handle_draw(&mut self, cr: &Context) -> Inhibit {
+    pub fn handle_da_draw(&mut self, cr: &Context) -> Inhibit {
         // let foreground = self.main_state.borrow().theme.foreground;
         let theme = &self.main_state.borrow().theme;
 
@@ -573,15 +640,15 @@ impl EditView {
             hadj.get_upper()
         );
 
-        let first_line = (vadj.get_value() / self.font.font_height) as u64;
+        let first_line = (vadj.get_value() / self.edit_font.font_height) as u64;
         let last_line =
-            ((vadj.get_value() + f64::from(da_height)) / self.font.font_height) as u64 + 1;
+            ((vadj.get_value() + f64::from(da_height)) / self.edit_font.font_height) as u64 + 1;
         let last_line = min(last_line, num_lines);
 
         let pango_ctx = self.da.get_pango_context().unwrap();
-        pango_ctx.set_font_description(&self.font.font_desc);
+        pango_ctx.set_font_description(&self.edit_font.font_desc);
 
-        // Draw background
+        // Draw editing background
         set_source_color(cr, theme.background);
         cr.rectangle(0.0, 0.0, f64::from(da_width), f64::from(da_height));
         cr.fill();
@@ -605,44 +672,23 @@ impl EditView {
         // }
 
         const CURSOR_WIDTH: f64 = 2.0;
-        // Calculate ordinal or max line length
-        let padding: usize = format!("{}", num_lines).len();
 
         let mut max_width = 0;
 
         let main_state = self.main_state.borrow();
-
-        //FIXME: Xi sends us the 'ln' (logical linenumber) param for this, but that isn't updated on every draw!
-        let mut current_line = first_line;
 
         for i in first_line..last_line {
             // Keep track of the starting x position
             if let Some(line) = self.line_cache.get_line(i) {
                 cr.move_to(
                     -hadj.get_value(),
-                    self.font.font_height * (i as f64) - vadj.get_value(),
+                    self.edit_font.font_height * (i as f64) - vadj.get_value(),
                 );
-
-                if line.line_num().is_some() {
-                    current_line += 1
-                }
 
                 let pango_ctx = self
                     .da
                     .get_pango_context()
                     .unwrap_or_else(|| panic!("{}", &gettext("Failed to get Pango context")));
-                let linecount_layout = self.create_layout_for_linecount(
-                    &pango_ctx,
-                    &main_state,
-                    current_line,
-                    padding,
-                );
-                update_layout(cr, &linecount_layout);
-                show_layout(cr, &linecount_layout);
-
-                let linecount_offset =
-                    f64::from(linecount_layout.get_extents().1.width / pango::SCALE);
-                cr.rel_move_to(linecount_offset, 0.0);
 
                 let layout = self.create_layout_for_line(&pango_ctx, &main_state, line);
                 max_width = max(max_width, layout.get_extents().1.width);
@@ -662,17 +708,19 @@ impl EditView {
                 }
                 let layout_line = layout_line.unwrap();
 
-                // Draw the cursor
+                // Set cursor color
                 set_source_color(cr, theme.caret);
 
                 for c in line.cursor() {
                     let x = layout_line.index_to_x(*c as i32, false) / pango::SCALE;
+                    // Draw the cursor
                     cr.rectangle(
-                        (f64::from(x)) + linecount_offset - hadj.get_value(),
-                        (((self.font.font_ascent + self.font.font_descent) as u64) * i) as f64
+                        (f64::from(x)) - hadj.get_value(),
+                        (((self.edit_font.font_ascent + self.edit_font.font_descent) as u64) * i)
+                            as f64
                             - vadj.get_value(),
                         CURSOR_WIDTH,
-                        self.font.font_ascent + self.font.font_descent,
+                        self.edit_font.font_ascent + self.edit_font.font_descent,
                     );
                     cr.fill();
                 }
@@ -684,6 +732,76 @@ impl EditView {
         Inhibit(false)
     }
 
+    /// This draws the linecount. We have this as our own widget to make sure we don't mess up text
+    /// selection etc.
+    pub fn handle_linecount_draw(&mut self, cr: &Context) -> Inhibit {
+        let theme = &self.main_state.borrow().theme;
+        let linecount_height = self.linecount_da.get_allocated_height();
+
+        let num_lines = self.line_cache.height();
+
+        let vadj = self.vscrollbar.get_adjustment();
+
+        let first_line = (vadj.get_value() / self.interface_font.font_height) as u64;
+        let last_line = ((vadj.get_value() + f64::from(linecount_height))
+            / self.interface_font.font_height) as u64
+            + 1;
+        let last_line = min(last_line, num_lines);
+
+        let pango_ctx = self.linecount_da.get_pango_context().unwrap();
+
+        // Make the linecount at least 4 chars big
+        let linecount_width = if format!("{} ", last_line).len() > 4 {
+            let width = self.interface_font.font_width * format!("{} ", last_line).len() as f64;
+            // Make sure the linecount_width is even to properly center the line number
+            if width % 2.0 == 0.0 {
+                width
+            } else {
+                width + 1.0
+            }
+        } else {
+            self.interface_font.font_width * 4.0
+        };
+
+        const SEP_LINE_WIDTH: f64 = 1.0;
+
+        // Draw linecount background
+        set_source_color(cr, theme.gutter);
+        cr.rectangle(0.0, 0.0, linecount_width, f64::from(linecount_height));
+        cr.fill();
+
+        set_source_color(cr, theme.foreground);
+        //FIXME: Xi sends us the 'ln' (logical linenumber) param for this, but that isn't updated on every draw!
+        let mut current_line = first_line;
+
+        for i in first_line..last_line {
+            // Keep track of the starting x position
+            if let Some(line) = self.line_cache.get_line(i) {
+                cr.move_to(
+                    0.0,
+                    self.interface_font.font_height * (i as f64) - vadj.get_value(),
+                );
+                if line.line_num().is_some() {
+                    current_line += 1
+                }
+
+                let linecount_layout = self.create_layout_for_linecount(
+                    &pango_ctx,
+                    &self.main_state.borrow(),
+                    current_line,
+                    linecount_width as usize,
+                );
+                update_layout(cr, &linecount_layout);
+                show_layout(cr, &linecount_layout);
+            }
+        }
+
+        // Set the appropriate size for the linecount DrawingArea, otherwise it's only 1 px wide.
+        self.linecount_da
+            .set_size_request(linecount_width as i32, linecount_height);
+        Inhibit(false)
+    }
+
     /// Creates a pango layout for a particular linecount (the count on the left) in the linecache
     fn create_layout_for_linecount(
         &self,
@@ -692,9 +810,13 @@ impl EditView {
         n: u64,
         padding: usize,
     ) -> pango::Layout {
-        let line_view = format!("{:>offset$} ", n, offset = padding);
+        let line_view = format!(
+            "{:^offset$}",
+            n,
+            offset = padding / self.interface_font.font_width as usize + 1
+        );
         let layout = pango::Layout::new(pango_ctx);
-        layout.set_font_description(&self.font.font_desc);
+        layout.set_font_description(&self.interface_font.font_desc);
         layout.set_text(line_view.as_str());
         layout
     }
@@ -745,7 +867,7 @@ impl EditView {
 
         // let layout = create_layout(cr).unwrap();
         let layout = pango::Layout::new(pango_ctx);
-        layout.set_font_description(&self.font.font_desc);
+        layout.set_font_description(&self.edit_font.font_desc);
         layout.set_text(&line_view);
 
         let mut ix = 0;
@@ -823,8 +945,9 @@ impl EditView {
     /// Scrolls vertically to the line specified and horizontally to the column specified.
     pub fn scroll_to(&mut self, line: u64, col: u64) {
         {
-            let cur_top = self.font.font_height * ((line + 1) as f64) - self.font.font_ascent;
-            let cur_bottom = cur_top + self.font.font_ascent + self.font.font_descent;
+            let cur_top =
+                self.edit_font.font_height * ((line + 1) as f64) - self.edit_font.font_ascent;
+            let cur_bottom = cur_top + self.edit_font.font_ascent + self.edit_font.font_descent;
             let vadj = self.vscrollbar.get_adjustment();
             if cur_top < vadj.get_value() {
                 vadj.set_value(cur_top);
@@ -836,8 +959,8 @@ impl EditView {
         }
 
         {
-            let cur_left = self.font.font_width * (col as f64) - self.font.font_ascent;
-            let cur_right = cur_left + self.font.font_width * 2.0;
+            let cur_left = self.edit_font.font_width * (col as f64) - self.edit_font.font_ascent;
+            let cur_right = cur_left + self.edit_font.font_width * 2.0;
             let hadj = self.hscrollbar.get_adjustment();
             if cur_left < hadj.get_value() {
                 hadj.set_value(cur_left);
@@ -919,7 +1042,7 @@ impl EditView {
     pub fn handle_scroll(&mut self, es: &EventScroll) -> Inhibit {
         self.da.grab_focus();
         // TODO: Make this user configurable!
-        let amt = self.font.font_height;
+        let amt = self.edit_font.font_height;
 
         let vadj = self.vscrollbar.get_adjustment();
         let hadj = self.hscrollbar.get_adjustment();
