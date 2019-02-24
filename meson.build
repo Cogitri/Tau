@@ -56,6 +56,25 @@ syntect_dir = join_paths(gxi_plugin_dir, 'syntect')
 syntect_bindir = join_paths(syntect_dir, 'bin')
 syntect_releasebin_path = join_paths(meson.current_build_dir(), 'vendor', 'xi-editor', 'rust')
 
+git = find_program('git', native: true, required: false)
+
+subdir_check = run_command('sh', '-c', 'ls -d $MESON_SOURCE_ROOT/vendor/xi-editor')
+
+if subdir_check.returncode() != 0
+    if git.found()
+        message('Couldn\'t find xi-editor subdir, trying to clone it')
+        if run_command(git, 'status').returncode() == 128
+            error('Can\'t clone submodule when not in a git repo!')
+            error('Make sure you\'re using the github release and not the automatically generated tarball!')
+        endif
+        submodule_update = run_command(git, 'submodule', 'update', '--init')
+        message(submodule_update.stdout())
+    else
+        error('Couldn\'t find xi-editor subdir!')
+        error('Make sure you\'re using the github release and not the automatically generated tarball!')
+    endif
+endif
+
 custom_target('cargo-build-syntect',
                         input: sources,
                         output: ['xi-syntect-plugin'],
