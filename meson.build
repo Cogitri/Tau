@@ -67,14 +67,12 @@ if subdir_check.returncode() != 0
     if git.found()
         message('Couldn\'t find xi-editor subdir, trying to clone it')
         if run_command(git, 'status').returncode() == 128
-            error('Can\'t clone submodule when not in a git repo!')
-            error('Make sure you\'re using the github release and not the automatically generated tarball!')
+            error('Can\'t clone submodule when not in a git repo! Make sure you\'re using the github release and not the automatically generated tarball!')
         endif
         submodule_update = run_command(git, 'submodule', 'update', '--init')
         message(submodule_update.stdout())
     else
-        error('Couldn\'t find xi-editor subdir!')
-        error('Make sure you\'re using the github release and not the automatically generated tarball!')
+        error('Couldn\'t find xi-editor subdir! If you\'re on a git checkout please install git and try again, if not make sure you\'re using the github release and not the automatically generated tarball!')
     endif
 endif
 
