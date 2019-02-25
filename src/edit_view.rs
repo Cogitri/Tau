@@ -742,9 +742,9 @@ impl EditView {
 
         let vadj = self.vscrollbar.get_adjustment();
 
-        let first_line = (vadj.get_value() / self.interface_font.font_height) as u64;
+        let first_line = (vadj.get_value() / self.edit_font.font_height) as u64;
         let last_line = ((vadj.get_value() + f64::from(linecount_height))
-            / self.interface_font.font_height) as u64
+            / self.edit_font.font_height) as u64
             + 1;
         let last_line = min(last_line, num_lines);
 
@@ -779,7 +779,7 @@ impl EditView {
             if let Some(line) = self.line_cache.get_line(i) {
                 cr.move_to(
                     0.0,
-                    self.interface_font.font_height * (i as f64) - vadj.get_value(),
+                    self.edit_font.font_height * (i as f64) - vadj.get_value(),
                 );
                 if line.line_num().is_some() {
                     current_line += 1
