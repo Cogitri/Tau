@@ -751,8 +751,8 @@ impl EditView {
         let pango_ctx = self.linecount_da.get_pango_context().unwrap();
 
         // Make the linecount at least 4 chars big
-        let linecount_width = if format!("{} ", last_line).len() > 4 {
-            let width = self.interface_font.font_width * format!("{} ", last_line).len() as f64;
+        let linecount_width = if format!(" {} ", last_line).len() > 4 {
+            let width = self.interface_font.font_width * format!(" {} ", last_line).len() as f64;
             // Make sure the linecount_width is even to properly center the line number
             if width % 2.0 == 0.0 {
                 width
@@ -762,8 +762,6 @@ impl EditView {
         } else {
             self.interface_font.font_width * 4.0
         };
-
-        const SEP_LINE_WIDTH: f64 = 1.0;
 
         // Draw linecount background
         set_source_color(cr, theme.gutter);
