@@ -405,12 +405,14 @@ impl EditView {
                             self.edit_font
                                 .font_desc
                                 .set_size(font_size as i32 * pango::SCALE);
+                            self.da.queue_draw();
                         }
                     }
                     "font_face" => {
                         if let Some(font_face) = value.as_str() {
                             debug!("{}: {}", gettext("Setting font to"), font_face);
                             self.edit_font.font_desc.set_family(font_face);
+                            self.da.queue_draw();
                         }
                     }
                     // These are handled in main_win via XiConfig
