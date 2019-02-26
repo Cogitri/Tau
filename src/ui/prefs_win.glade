@@ -63,8 +63,6 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="font"/>
-                <property name="language">en-gb</property>
-                <property name="level">GTK_FONT_CHOOSER_LEVEL_SIZE | GTK_FONT_CHOOSER_LEVEL_FAMILY</property>
               </object>
               <packing>
                 <property name="left_attach">1</property>
