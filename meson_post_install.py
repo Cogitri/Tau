@@ -9,5 +9,7 @@ if not os.environ.get('DESTDIR'):
     subprocess.call(['glib-compile-schemas', schemadir])
 
     icondir = os.path.join(os.environ['MESON_INSTALL_PREFIX'], 'share', 'icons', 'hicolor')
-    print('Update icon cache...')
+    print('Updating icon cache...')
     subprocess.call(['gtk-update-icon-cache', '-f', '-t', icondir])
+    print('Updating destkop (MIME) database...')
+    subprocess.call(['update-desktop-database', icondir])
