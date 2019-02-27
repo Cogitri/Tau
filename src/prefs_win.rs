@@ -7,7 +7,6 @@ use log::{debug, error, trace};
 use pango::*;
 use std::cell::RefCell;
 use std::rc::Rc;
-use std::sync::{Arc, Mutex};
 
 pub struct PrefsWin {
     core: Rc<RefCell<Core>>,
@@ -19,7 +18,7 @@ impl PrefsWin {
         parent: &ApplicationWindow,
         main_state: &Rc<RefCell<MainState>>,
         core: &Rc<RefCell<Core>>,
-        xi_config: Arc<Mutex<Config>>,
+        xi_config: Rc<RefCell<Config>>,
     ) -> Rc<RefCell<PrefsWin>> {
         let glade_src = include_str!("ui/prefs_win.glade");
         let builder = Builder::new_from_string(glade_src);
@@ -39,16 +38,15 @@ impl PrefsWin {
             .unwrap();
 
         {
-            let conf = xi_config.lock().unwrap();
-
             let mut font_desc = FontDescription::new();
-            font_desc.set_size(conf.config.font_size as i32 * pango::SCALE);
-            font_desc.set_family(&conf.config.font_face);
+            let font_face = &xi_config.borrow().config.font_face;
+            font_desc.set_size(*&xi_config.borrow().config.font_size as i32 * pango::SCALE);
+            font_desc.set_family(font_face);
 
             trace!(
                 "{}: {}",
                 gettext("Setting font description"),
-                &conf.config.font_face
+                font_face
             );
 
             font_chooser_widget.set_font_desc(&font_desc);
@@ -58,7 +56,7 @@ impl PrefsWin {
             font_chooser_widget.connect_property_font_desc_notify(
                 clone!(xi_config => move |font_widget| {
                     if let Some(font_desc) = font_widget.get_font_desc() {
-                        let mut font_conf = xi_config.lock().unwrap();
+                        let mut font_conf = xi_config.borrow_mut();
 
                         let font_family = font_desc.get_family().unwrap();
                         let font_size = font_desc.get_size() / pango::SCALE;
@@ -102,16 +100,14 @@ impl PrefsWin {
 
         {
             {
-                let conf = xi_config.lock().unwrap();
-                scroll_past_end_checkbutton.set_active(conf.config.scroll_past_end);
+                scroll_past_end_checkbutton.set_active(xi_config.borrow().config.scroll_past_end);
             }
 
             scroll_past_end_checkbutton.connect_toggled(clone!(xi_config => move |toggle_btn| {
                 let value = toggle_btn.get_active();;
                 debug!("{}: {}", gettext("Scrolling past end"), value);
-                let mut conf = xi_config.lock().unwrap();
-                conf.config.scroll_past_end = value;
-                conf.save()
+                xi_config.borrow_mut().config.scroll_past_end = value;
+                xi_config.borrow().save()
                     .map_err(|e| error!("{}", e.to_string()))
                     .unwrap();
             }));
@@ -119,17 +115,14 @@ impl PrefsWin {
 
         {
             {
-                let conf = xi_config.lock().unwrap();
-
-                word_wrap_checkbutton.set_active(conf.config.word_wrap);
+                word_wrap_checkbutton.set_active(xi_config.borrow().config.word_wrap);
             }
 
             word_wrap_checkbutton.connect_toggled(clone!(xi_config => move |toggle_btn| {
                 let value = toggle_btn.get_active();
                 debug!("{}: {}", gettext("Word wrapping"), value);
-                let mut conf = xi_config.lock().unwrap();
-                conf.config.word_wrap = value;
-                conf.save()
+                xi_config.borrow_mut().config.word_wrap = value;
+                xi_config.borrow_mut().save()
                     .map_err(|e| error!("{}", e.to_string()))
                     .unwrap();
             }));
@@ -137,17 +130,14 @@ impl PrefsWin {
 
         {
             {
-                let conf = xi_config.lock().unwrap();
-
-                tab_stops_checkbutton.set_active(conf.config.use_tab_stops);
+                tab_stops_checkbutton.set_active(xi_config.borrow().config.use_tab_stops);
             }
 
             tab_stops_checkbutton.connect_toggled(clone!(xi_config => move |toggle_btn| {
                 let value = toggle_btn.get_active();
-                let mut conf = xi_config.lock().unwrap();
                 debug!("{}: {}", gettext("Tab stops"), value);
-                conf.config.use_tab_stops = value;
-                conf.save()
+                xi_config.borrow_mut().config.use_tab_stops = value;
+                xi_config.borrow().save()
                     .map_err(|e| error!("{}", e.to_string()))
                     .unwrap();
             }));
