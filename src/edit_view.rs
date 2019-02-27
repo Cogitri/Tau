@@ -442,7 +442,7 @@ impl EditView {
 
     /// If xi-editor sends us a [update](https://xi-editor.io/docs/frontend-protocol.html#config_changed)
     /// msg we process it here, setting the scrollbars upper limit accordingly, checking if the EditView
-    /// is pristine (has unsaved changes) and queue a new draw of the EditView.
+    /// is pristine (_does not_ has unsaved changes) and queue a new draw of the EditView.
     pub fn update(&mut self, params: &Value) {
         let update = &params["update"];
         self.line_cache.apply_update(update);
