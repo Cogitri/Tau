@@ -120,6 +120,7 @@ fn main() {
 
     let main_context = MainContext::default();
     main_context.acquire();
+    // Used to create error msgs from threads other than the main thread
     err_rx.attach(&main_context, |err_msg| {
         crate::errors::ErrorDialog::new(err_msg);
         glib::source::Continue(false)
@@ -146,6 +147,7 @@ fn main() {
         }
 
         let mut xi_config_dir = xi_config.path.clone();
+        // Remove the file name from the config dir string (e.g. /home/rasmus/.config/gxi/preferences.xiconfig -> /home/rasmus/.config/gxi)
         xi_config_dir.truncate(xi_config_dir.rfind("/").unwrap_or_else(|| panic!("{}", gettext("Failed to set config dir!"))));
         core.client_started(&xi_config_dir, include_str!(concat!(env!("OUT_DIR"), "/plugin-dir.in")));
 
