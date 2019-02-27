@@ -57,6 +57,9 @@
 //! - [ErrWin](errors/struct.ErrorDialog.html)
 //! - [PrefsWin](prefs_win/struct.PrefsWin.html)
 //! - [SharedQueue](shared_queue/struct.SharedQueue.html)
+//!
+//! I can very much recommend you to look at https://mmstick.github.io/gtkrs-tutorials/ if you don't
+//! know gtk-rs yet!
 
 #![recursion_limit = "128"]
 //Just for now...
