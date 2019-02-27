@@ -96,7 +96,6 @@ use serde_json::{json, Value};
 use std::cell::RefCell;
 use std::env::args;
 use std::rc::Rc;
-use std::sync::{Arc, Mutex};
 
 fn main() {
     setup_panic!();
@@ -154,8 +153,8 @@ fn main() {
         MainWin::new(
             application,
             shared_queue.clone(),
-            &Rc::new(RefCell::new(core.clone())),
-            Arc::new(Mutex::new(xi_config)),
+            Rc::new(RefCell::new(core.clone())),
+            Rc::new(RefCell::new(xi_config)),
            );
     }));
 

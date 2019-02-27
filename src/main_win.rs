@@ -18,7 +18,6 @@ use serde_json::{self, json, Value};
 use std::cell::RefCell;
 use std::collections::{BTreeMap, HashMap};
 use std::rc::Rc;
-use std::sync::{Arc, Mutex};
 use std::thread;
 
 #[derive(Debug, PartialEq)]
@@ -62,8 +61,8 @@ impl MainWin {
     pub fn new(
         application: &Application,
         shared_queue: SharedQueue,
-        core: &Rc<RefCell<Core>>,
-        config: Arc<Mutex<Config>>,
+        core: Rc<RefCell<Core>>,
+        config: Rc<RefCell<Config>>,
     ) -> Rc<RefCell<MainWin>> {
         let glade_src = include_str!("ui/gxi.glade");
         let builder = Builder::new_from_string(glade_src);
@@ -246,26 +245,23 @@ impl MainWin {
             application.add_action(&quit_action);
         }
         {
-            let config = config.clone();
-
             let auto_indent_action = SimpleAction::new_stateful(
                 "auto_indent",
                 None,
-                &config.lock().unwrap().config.auto_indent.to_variant(),
+                &config.borrow().config.auto_indent.to_variant(),
             );;
 
-            auto_indent_action.connect_change_state(move |action, value| {
+            auto_indent_action.connect_change_state(clone!(config => move |action, value| {
                 if let Some(value) = value.as_ref() {
                     action.set_state(value);
                     let value: bool = value.get().unwrap();
                     debug!("{}: {}", gettext("Auto indent"), value);
-                    let mut conf = config.lock().unwrap();
-                    conf.config.auto_indent = value;
-                    conf.save()
+                    config.borrow_mut().config.auto_indent = value;
+                    config.borrow().save()
                         .map_err(|e| error!("{}", e.to_string()))
                         .unwrap();
                 }
-            });
+            }));
             application.add_action(&auto_indent_action);
         }
         {
@@ -273,8 +269,7 @@ impl MainWin {
                 "insert_spaces",
                 None,
                 &config
-                    .lock()
-                    .unwrap()
+                    .borrow()
                     .config
                     .translate_tabs_to_spaces
                     .to_variant(),
@@ -284,9 +279,8 @@ impl MainWin {
                     action.set_state(value);
                     let value: bool = value.get().unwrap();
                     debug!("{}: {}", gettext("Space indent"), value);
-                    let mut conf = config.lock().unwrap();
-                    conf.config.translate_tabs_to_spaces = value;
-                    conf.save()
+                    config.borrow_mut().config.translate_tabs_to_spaces = value;
+                    config.borrow().save()
                         .map_err(|e| error!("{}", e.to_string()))
                         .unwrap();
                 }
@@ -755,7 +749,7 @@ impl MainWin {
         fcn.run();
     }
 
-    fn prefs(main_win: Rc<RefCell<MainWin>>, xi_config: Arc<Mutex<Config>>) {
+    fn prefs(main_win: Rc<RefCell<MainWin>>, config: Rc<RefCell<Config>>) {
         // let (main_state, core) = {
         //     let main_win = main_win.borrow();
         //     (main_win.state.clone(), main_win.core.clone())
@@ -763,7 +757,7 @@ impl MainWin {
         let main_win = main_win.borrow();
         let main_state = main_win.state.clone();
         let core = main_win.core.clone();
-        PrefsWin::new(&main_win.window, &main_state, &core, xi_config);
+        PrefsWin::new(&main_win.window, &main_state, &core, config);
 
         //prefs_win.run();
     }
