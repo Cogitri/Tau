@@ -1,13 +1,28 @@
 ---
 kind: pipeline
-name: rustfmt
+name: QA
 
 steps:
+- name: submodules
+  image: docker:git
+  commands:
+    - git submodule update --recursive --init
 - name: rustfmt
   image: rust:latest
   commands:
     - rustup component add rustfmt
     - cargo fmt -- --check
+- name: clippy
+  image: rust:latest
+  pull: always
+  environment:
+    RUST_BACKTRACE: 1
+    GIT_AUTHOR_EMAIL: drone@exqa.de
+    GIT_AUTHOR_NAME: drone
+  commands:
+    - apt-get update && apt-get install -y libgtk-3-dev gettext
+    - rustup component add clippy
+    - cargo clippy
 - name: matrix-notification
   image: plugins/matrix
   pull: always
@@ -25,7 +40,7 @@ kind: pipeline
 name: test
 
 depends_on:
-- rustfmt
+  - QA
 
 steps:
 - name: submodules
@@ -58,6 +73,6 @@ steps:
     - failure
 ---
 kind: signature
-hmac: 1aee2648dce021a6e4e82317c278d35e8669052b67e07c9b5a6f8939b4aa7fb7
+hmac: cc5ebed62f517b06c4370fd45e841f555eba314886c729458dc125de18aafe90
 
 ...
