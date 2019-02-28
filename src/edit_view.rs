@@ -34,8 +34,7 @@ pub struct Font {
 }
 
 impl Font {
-    fn new(pango_ctx: pango::Context, font_desc: &str) -> Self {
-        let font_desc = FontDescription::from_string(font_desc);
+    fn new(pango_ctx: pango::Context, font_desc: FontDescription) -> Self {
         pango_ctx.set_font_description(&font_desc);
         let language = pango_ctx
             .get_language()
@@ -66,7 +65,6 @@ impl Font {
             font_descent
         );
 
-        // The font used for editing
         Self {
             font_height,
             font_width,
@@ -178,8 +176,8 @@ impl EditView {
             .collect();
         main_state.borrow_mut().fonts = font_list;
 
-        let edit_font = Font::new(pango_ctx.clone(), "Inconsolata 16");
-        let interface_font = Font::new(pango_ctx, &get_default_interface_font_schema());
+        let edit_font = Font::new(pango_ctx.clone(), FontDescription::from_string("Inconsolata 16"));
+        let interface_font = Font::new(pango_ctx, FontDescription::from_string(&get_default_interface_font_schema()));
 
         let edit_view = Rc::new(RefCell::new(EditView {
             core: core.clone(),
@@ -351,16 +349,21 @@ impl EditView {
                 match name.as_ref() {
                     "font_size" => {
                         if let Some(font_size) = value.as_u64() {
-                            self.edit_font
-                                .font_desc
-                                .set_size(font_size as i32 * pango::SCALE);
+                            let pango_ctx = self.da
+                                .get_pango_context()
+                                .unwrap_or_else(|| panic!("{}", &gettext("Failed to get Pango context")));
+                            self.edit_font.font_desc.set_size(font_size as i32 * pango::SCALE);
+                            self.edit_font = Font::new(pango_ctx, self.edit_font.font_desc.clone());
                             self.da.queue_draw();
                         }
                     }
                     "font_face" => {
                         if let Some(font_face) = value.as_str() {
-                            debug!("{}: {}", gettext("Setting font to"), font_face);
-                            self.edit_font.font_desc.set_family(font_face);
+                            debug!("{}: {}", gettext("Setting edit font to"), font_face);
+                            let pango_ctx = self.da
+                                .get_pango_context()
+                                .unwrap_or_else(|| panic!("{}", &gettext("Failed to get Pango context")));
+                            self.edit_font = Font::new(pango_ctx, FontDescription::from_string(&format!("{} {}",font_face, self.edit_font.font_desc.get_size() / pango::SCALE)));
                             self.da.queue_draw();
                         }
                     }
