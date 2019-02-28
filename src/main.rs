@@ -22,33 +22,33 @@
 //!
 //! Now onto more detailed explanation:
 //!
-//! - MainWin:  This is main window (as the name suggests). It holds all buttons you can see when
-//!             opening gxi, such as the open button, new tab button, the syntax selection, the save
-//!             button and window controls. It also has a `Notebook` inside of it, which holds `EditView`s.
-//!             The `Notebook` shows a tab for every open `EditView`, allowing the user to open multiple
-//!             documents at once.
-//!             The `MainWin` also has another important feature: It deals with so called `CoreMsg`s.
-//!             It grabs them from a SharedQueue which is `crossbeam_deque::Injector` under the hood.
-//!             They are messages xi-editor sends us, telling us stuff like config changes by the user
-//!             (e.g. the font size has been changed) or that we should measure the view's size for it,
-//!             for word wrapping. Please see [the xi-frontend docs](https://xi-editor.io/docs/frontend-protocol.html)
-//!             for more info.
-//!             `MainWin` processes some messages by itself, e.g. displaying an error message if xi
-//!             sends us an `alert`. It sends editing related messages to the appropriate EditView.
-//!             `MainWin` also holds the `MainState`, which holds stuff the `EditView` might need too,
-//!             e.g. the selected font face&font size, which syntax or theme has been selected etc.
+//! - `MainWin`:  This is main window (as the name suggests). It holds all buttons you can see when
+//!               opening gxi, such as the open button, new tab button, the syntax selection, the save
+//!               button and window controls. It also has a `Notebook` inside of it, which holds `EditView`s.
+//!               The `Notebook` shows a tab for every open `EditView`, allowing the user to open multiple
+//!               documents at once.
+//!               The `MainWin` also has another important feature: It deals with so called `CoreMsg`s.
+//!               It grabs them from a `SharedQueue` which is `crossbeam_deque::Injector` under the hood.
+//!               They are messages xi-editor sends us, telling us stuff like config changes by the user
+//!               (e.g. the font size has been changed) or that we should measure the view's size for it,
+//!               for word wrapping. Please see [the xi-frontend docs](https://xi-editor.io/docs/frontend-protocol.html)
+//!               for more info.
+//!               `MainWin` processes some messages by itself, e.g. displaying an error message if xi
+//!               sends us an `alert`. It sends editing related messages to the appropriate `EditView`.
+//!               `MainWin` also holds the `MainState`, which holds stuff the `EditView` might need too,
+//!               e.g. the selected font face&font size, which syntax or theme has been selected etc.
 //!
-//! - EditView: This is where all the actual editing takes place. Since this is a GTK `DrawingArea`
-//!             we have to handle everything ourselves: Scrolling to the right lines, setting editing
-//!             shortcuts (e.g. copy&paste), drawing each line and sending changes to xi-editor.
-//!             It also processes the `CoreMsg`s it receives from `MainWin`, e.g. setting the appropriate
-//!             font size&font face.
+//! - `EditView`: This is where all the actual editing takes place. Since this is a GTK `DrawingArea`
+//!               we have to handle everything ourselves: Scrolling to the right lines, setting editing
+//!               shortcuts (e.g. copy&paste), drawing each line and sending changes to xi-editor.
+//!               It also processes the `CoreMsg`s it receives from `MainWin`, e.g. setting the appropriate
+//!               font size&font face.
 //!
-//! - Core:     This deals with receiving messages from xi-editor (via a new thread) and adding them
-//!             to the SharedQueue for `MainWin` to deal with later on. It also contains the functions
-//!             to send messages back to xi-editor, e.g. for notifying it about new editing events
-//!             such as us inserting a character. Again, Please see [the xi-frontend docs](https://xi-editor.io/docs/frontend-protocol.html)
-//!             for more info on how this works and what msgs can be exchanged and how the RPC works.
+//! - `Core`:     This deals with receiving messages from xi-editor (via a new thread) and adding them
+//!               to the `SharedQueue` for `MainWin` to deal with later on. It also contains the functions
+//!               to send messages back to xi-editor, e.g. for notifying it about new editing events
+//!               such as us inserting a character. Again, Please see [the xi-frontend docs](https://xi-editor.io/docs/frontend-protocol.html)
+//!               for more info on how this works and what messages can be exchanged and how the RPC works.
 //!
 //! gxi also contains some more minor modules, please see their documentation for more info:
 //!
@@ -58,7 +58,7 @@
 //! - [PrefsWin](prefs_win/struct.PrefsWin.html)
 //! - [SharedQueue](shared_queue/struct.SharedQueue.html)
 //!
-//! I can very much recommend you to look at https://mmstick.github.io/gtkrs-tutorials/ if you don't
+//! I can very much recommend you to look at [the following tutorial](https://mmstick.github.io/gtkrs-tutorials/) if you don't
 //! know gtk-rs yet!
 
 #![recursion_limit = "128"]
@@ -147,7 +147,7 @@ fn main() {
 
         let mut xi_config_dir = xi_config.path.clone();
         // Remove the file name from the config dir string (e.g. /home/rasmus/.config/gxi/preferences.xiconfig -> /home/rasmus/.config/gxi)
-        xi_config_dir.truncate(xi_config_dir.rfind("/").unwrap_or_else(|| panic!("{}", gettext("Failed to set config dir!"))));
+        xi_config_dir.truncate(xi_config_dir.rfind('/').unwrap_or_else(|| panic!("{}", gettext("Failed to set config dir!"))));
         core.client_started(&xi_config_dir, include_str!(concat!(env!("OUT_DIR"), "/plugin-dir.in")));
 
         MainWin::new(

@@ -17,14 +17,15 @@ use std::cmp::{max, min};
 use std::rc::Rc;
 use std::u32;
 
-/// The EvReplace struct holds the find+replace elements of the EditView.
+/// The `EVReplace` struct holds the find+replace elements of the EditView.
 pub struct EVReplace {
     replace_expander: Expander,
     replace_revealer: Revealer,
     replace_entry: Entry,
 }
 
-/// The EvFont struct holds all information about the font used in the EditView.
+/// The `Font` Struct holds all information about the font used in the `EditView` for the editing area
+/// or the interface font (used for the linecount)
 pub struct Font {
     font_height: f64,
     font_width: f64,
@@ -107,7 +108,7 @@ impl EditView {
         core: &Rc<RefCell<Core>>,
         file_name: Option<String>,
         view_id: &str,
-    ) -> Rc<RefCell<EditView>> {
+    ) -> Rc<RefCell<Self>> {
         let da = DrawingArea::new();
         let linecount_da = DrawingArea::new();
         let hscrollbar = Scrollbar::new(Orientation::Horizontal, None::<&gtk::Adjustment>);
@@ -180,7 +181,11 @@ impl EditView {
 
         let edit_font = Font::new(
             pango_ctx.clone(),
-            FontDescription::from_string(&format!("{} {}", &config.borrow().config.font_face, &config.borrow().config.font_size)),
+            FontDescription::from_string(&format!(
+                "{} {}",
+                &config.borrow().config.font_face,
+                &config.borrow().config.font_size
+            )),
         );
         let interface_font = Font::new(
             pango_ctx,
@@ -428,7 +433,7 @@ impl EditView {
         // update scrollbars to the new text width and height
         let (_, text_height) = self.get_text_size();
         let vadj = self.vscrollbar.get_adjustment();
-        vadj.set_lower(0f64);
+        vadj.set_lower(0_f64);
         vadj.set_upper(text_height as f64);
         if vadj.get_value() + vadj.get_page_size() > vadj.get_upper() {
             vadj.set_value(vadj.get_upper() - vadj.get_page_size())
@@ -583,6 +588,8 @@ impl EditView {
     /// Handles the drawing of the EditView. This is called when we get a update from xi-editor or if
     /// gtk requests us to draw the EditView. This draws the background, all lines and the cursor.
     pub fn handle_da_draw(&mut self, cr: &Context) -> Inhibit {
+        const CURSOR_WIDTH: f64 = 2.0;
+
         // let foreground = self.main_state.borrow().theme.foreground;
         let theme = &self.main_state.borrow().theme;
 
@@ -641,8 +648,6 @@ impl EditView {
         //         }
         //     }
         // }
-
-        const CURSOR_WIDTH: f64 = 2.0;
 
         let mut max_width = 0;
 
@@ -827,7 +832,7 @@ impl EditView {
                 start: 0,
                 end: spaces.len(),
             };
-            let highlighted_spaces: String = space_range.into_iter().map(|_| "·").collect();
+            let highlighted_spaces: String = space_range.map(|_| "·").collect();
 
             format!("{}{}", line_view_without_space, highlighted_spaces)
         } else {
@@ -1017,13 +1022,13 @@ impl EditView {
         let hadj = self.hscrollbar.get_adjustment();
         match es.get_direction() {
             ScrollDirection::Smooth => {
-                let (scroll_change_hori, scroll_change_vert) = match es.get_scroll_deltas() {
-                    Some(v) => v,
-                    None => {
+                let (scroll_change_hori, scroll_change_vert) =
+                    if let Some(v) = es.get_scroll_deltas() {
+                        v
+                    } else {
                         error!("{}", gettext("Smooth scrolling failed"));
                         (0.0, 0.0)
-                    }
-                };
+                    };
 
                 vadj.set_value(vadj.get_value() + (scroll_change_vert * amt));
                 hadj.set_value(hadj.get_value() + (scroll_change_hori * amt));

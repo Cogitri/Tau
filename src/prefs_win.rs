@@ -18,7 +18,7 @@ impl PrefsWin {
         parent: &ApplicationWindow,
         main_state: &Rc<RefCell<MainState>>,
         core: &Rc<RefCell<Core>>,
-    ) -> Rc<RefCell<PrefsWin>> {
+    ) -> Rc<RefCell<Self>> {
         let glade_src = include_str!("ui/prefs_win.glade");
         let builder = Builder::new_from_string(glade_src);
 
@@ -41,7 +41,7 @@ impl PrefsWin {
         {
             let mut font_desc = FontDescription::new();
             let font_face = &xi_config.borrow().config.font_face;
-            font_desc.set_size(*&xi_config.borrow().config.font_size as i32 * pango::SCALE);
+            font_desc.set_size(xi_config.borrow().config.font_size as i32 * pango::SCALE);
             font_desc.set_family(font_face);
 
             trace!("{}: {}", gettext("Setting font description"), font_face);
@@ -149,7 +149,7 @@ impl PrefsWin {
             });
         }
 
-        let prefs_win = Rc::new(RefCell::new(PrefsWin {
+        let prefs_win = Rc::new(RefCell::new(Self {
             core: core.clone(),
             window: window.clone(),
         }));

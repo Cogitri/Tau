@@ -12,10 +12,10 @@ pub struct StyleSpan {
 
 /// A Struct representing _one_ line which xi has sent us.
 /// # Fields:
-/// * text: Contains the text of that line
-/// * line_num: The number of the line. Multiple lines may have the same num due to word wrapping.
-/// * cursor: What position the cursor is at
-/// * styles: What style this is (e.g. italic, underlined)
+/// * `text`: Contains the text of that line
+/// * `line_num`: The number of the line. Multiple lines may have the same num due to word wrapping.
+/// * `cursor`: What position the cursor is at
+/// * `styles`: What style this is (e.g. italic, underlined)
 #[derive(Clone, Debug)]
 pub struct Line {
     text: String,
@@ -25,7 +25,7 @@ pub struct Line {
 }
 
 impl Line {
-    pub fn from_json(v: &Value, line_num: Option<u64>) -> Line {
+    pub fn from_json(v: &Value, line_num: Option<u64>) -> Self {
         let text = v["text"].as_str().unwrap().to_owned();
         let cursor = if let Some(arr) = v["cursor"].as_array() {
             arr.iter().map(|c| c.as_u64().unwrap()).collect::<Vec<_>>()
@@ -89,8 +89,8 @@ pub struct LineCache {
 }
 
 impl LineCache {
-    pub fn new() -> LineCache {
-        LineCache {
+    pub fn new() -> Self {
+        Self {
             map: HashMap::new(),
             n_invalid_before: 0,
             lines: Vec::new(),
@@ -156,7 +156,7 @@ impl LineCache {
         let mut new_lines: Vec<Option<Line>> = Vec::new();
         let mut new_invalid_after = 0;
 
-        let mut old_ix = 0u64;
+        let mut old_ix = 0_u64;
 
         for op in update["ops"].as_array().unwrap() {
             let op_type = &op["op"];

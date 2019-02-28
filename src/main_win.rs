@@ -64,7 +64,7 @@ impl MainWin {
         shared_queue: SharedQueue,
         core: Rc<RefCell<Core>>,
         config: Rc<RefCell<Config>>,
-    ) -> Rc<RefCell<MainWin>> {
+    ) -> Rc<RefCell<Self>> {
         let glade_src = include_str!("ui/gxi.glade");
         let builder = Builder::new_from_string(glade_src);
 
@@ -75,7 +75,7 @@ impl MainWin {
         let theme_name = crate::pref_storage::get_theme_schema();
         debug!("{}: {}", gettext("Theme name"), &theme_name);
 
-        let main_win = Rc::new(RefCell::new(MainWin {
+        let main_win = Rc::new(RefCell::new(Self {
             core: core.clone(),
             shared_queue: shared_queue.clone(),
             window: window.clone(),
@@ -92,7 +92,7 @@ impl MainWin {
                 fonts: Default::default(),
                 avail_languages: Default::default(),
                 selected_language: Default::default(),
-                config: config.clone()
+                config: config.clone(),
             })),
         }));
 
@@ -125,7 +125,7 @@ impl MainWin {
             &main_context,
             clone!(main_win => move |msg| {
                 trace!("{}", gettext("Found a message from xi"));
-                MainWin::handle_msg(main_win.clone(), msg);
+                Self::handle_msg(main_win.clone(), msg);
                 glib::source::Continue(true)
             }),
         );
@@ -135,11 +135,11 @@ impl MainWin {
         //This is called when the window is closed with the 'X' or via the application menu, etc.
         window.connect_delete_event(clone!(main_win, window => move |_, _| {
             // Only destroy the window when the user has saved the changes or closes without saving
-            if MainWin::close_all(main_win.clone()) != SaveAction::Cancel {
+            if Self::close_all(main_win.clone()) == SaveAction::Cancel {
+                Inhibit(true)
+            } else {
                 window.destroy();
                 Inhibit(false)
-            } else {
-                Inhibit(true)
             }
         }));
 
@@ -160,14 +160,14 @@ impl MainWin {
                     };
                     let ev = main_win.borrow().get_current_edit_view();
                     let core = &main_win.borrow().core;
-                    MainWin::set_language(&core, &ev.borrow().view_id, &lang);
+                    Self::set_language(&core, &ev.borrow().view_id, &lang);
                 }
             });
         }
         {
             let open_action = SimpleAction::new("open", None);
             open_action.connect_activate(clone!(main_win => move |_,_| {
-                MainWin::handle_open_button(&main_win);
+                Self::handle_open_button(&main_win);
             }));
             application.add_action(&open_action);
         }
@@ -181,56 +181,56 @@ impl MainWin {
         {
             let prefs_action = SimpleAction::new("prefs", None);
             prefs_action.connect_activate(clone!(main_win => move |_,_| {
-                MainWin::prefs(main_win.clone())
+                Self::prefs(main_win.clone())
             }));
             application.add_action(&prefs_action);
         }
         {
             let about_action = SimpleAction::new("about", None);
             about_action.connect_activate(clone!(main_win => move |_,_| {
-                MainWin::about(main_win.clone())
+                Self::about(main_win.clone())
             }));
             application.add_action(&about_action);
         }
         {
             let find_action = SimpleAction::new("find", None);
             find_action.connect_activate(clone!(main_win => move |_,_| {
-                MainWin::find(&main_win);
+                Self::find(&main_win);
             }));
             application.add_action(&find_action);
         }
         {
             let replace_action = SimpleAction::new("replace", None);
             replace_action.connect_activate(clone!(main_win => move |_,_| {
-                MainWin::replace(&main_win);
+                Self::replace(&main_win);
             }));
             application.add_action(&replace_action);
         }
         {
             let save_action = SimpleAction::new("save", None);
             save_action.connect_activate(clone!(main_win => move |_,_| {
-                MainWin::handle_save_button(&main_win.clone());
+                Self::handle_save_button(&main_win.clone());
             }));
             application.add_action(&save_action);
         }
         {
             let save_as_action = SimpleAction::new("save_as", None);
             save_as_action.connect_activate(clone!(main_win => move |_,_| {
-                MainWin::current_save_as(&main_win.clone());
+                Self::current_save_as(&main_win.clone());
             }));
             application.add_action(&save_as_action);
         }
         {
             let close_action = SimpleAction::new("close", None);
             close_action.connect_activate(clone!(main_win => move |_,_| {
-                MainWin::close(&main_win.clone());
+                Self::close(&main_win.clone());
             }));
             application.add_action(&close_action);
         }
         {
             let close_all_action = SimpleAction::new("close_all", None);
             close_all_action.connect_activate(clone!(main_win => move |_,_| {
-                MainWin::close_all(main_win.clone());
+                Self::close_all(main_win.clone());
             }));
             application.add_action(&close_all_action);
         }
@@ -239,7 +239,7 @@ impl MainWin {
             let quit_action = SimpleAction::new("quit", None);
             quit_action.connect_activate(clone!(main_win => move |_,_| {
                 // Same as in connect_destroy, only quit if the user saves or wants to close without saving
-                if MainWin::close_all(main_win.clone()) != SaveAction::Cancel {
+                if Self::close_all(main_win.clone()) != SaveAction::Cancel {
                     main_win.borrow().window.destroy();
                 }
             }));
@@ -314,11 +314,11 @@ impl MainWin {
 }
 
 impl MainWin {
-    pub fn handle_msg(main_win: Rc<RefCell<MainWin>>, msg: CoreMsg) {
+    pub fn handle_msg(main_win: Rc<RefCell<Self>>, msg: CoreMsg) {
         trace!("{}: {:?}", gettext("Handling CoreMsg"), msg);
         match msg {
             CoreMsg::NewViewReply { file_name, value } => {
-                MainWin::new_view_response(&main_win, file_name, &value)
+                Self::new_view_response(&main_win, file_name, &value)
             }
             CoreMsg::Notification { method, params, id } => {
                 match method.as_ref() {
@@ -647,7 +647,7 @@ impl MainWin {
     /// Don't use FileChooserDialog here, it doesn't work for Flatpaks.
     /// This may call the GTK main loop.  There must not be any RefCell borrows out while this
     /// function runs.
-    pub fn handle_open_button(main_win: &Rc<RefCell<MainWin>>) {
+    pub fn handle_open_button(main_win: &Rc<RefCell<Self>>) {
         let fcn = FileChooserNative::new(
             Some(gettext("Open a file to edit").as_str()),
             Some(&main_win.borrow().window),
@@ -665,7 +665,7 @@ impl MainWin {
                 res
             );
 
-            if ResponseType::from(res) == ResponseType::Accept {
+            if res == ResponseType::Accept {
                 let win = main_win.borrow();
                 for file in fcd.get_filenames() {
                     let file_str = &file.to_string_lossy().into_owned();
@@ -683,7 +683,7 @@ impl MainWin {
         fcn.run();
     }
 
-    pub fn handle_save_button(main_win: &Rc<RefCell<MainWin>>) {
+    pub fn handle_save_button(main_win: &Rc<RefCell<Self>>) {
         let edit_view = main_win.borrow().get_current_edit_view().clone();
         if edit_view.borrow().file_name.is_some() {
             let ev = edit_view.borrow_mut();
@@ -691,20 +691,20 @@ impl MainWin {
             core.borrow()
                 .save(&ev.view_id, ev.file_name.as_ref().unwrap());
         } else {
-            MainWin::save_as(main_win, &edit_view);
+            Self::save_as(main_win, &edit_view);
         }
     }
 
-    fn current_save_as(main_win: &Rc<RefCell<MainWin>>) {
+    fn current_save_as(main_win: &Rc<RefCell<Self>>) {
         let edit_view = main_win.borrow().get_current_edit_view().clone();
-        MainWin::save_as(main_win, &edit_view);
+        Self::save_as(main_win, &edit_view);
     }
 
     /// Display the FileChooserNative, send the result to the Xi core.
     /// Don't use FileChooserDialog here, it doesn't work for Flatpaks.
     /// This may call the GTK main loop.  There must not be any RefCell borrows out while this
     /// function runs.
-    fn save_as(main_win: &Rc<RefCell<MainWin>>, edit_view: &Rc<RefCell<EditView>>) {
+    fn save_as(main_win: &Rc<RefCell<Self>>, edit_view: &Rc<RefCell<EditView>>) {
         let fcn = FileChooserNative::new(
             Some(gettext("Save file").as_str()),
             Some(&main_win.borrow().window),
@@ -722,7 +722,7 @@ impl MainWin {
                 res
             );
 
-            if ResponseType::from(res) == ResponseType::Accept {
+            if res == ResponseType::Accept {
                 let win = main_win.borrow();
                 for file in fcd.get_filenames() {
                     let file_str = &file.to_string_lossy().into_owned();
@@ -748,7 +748,7 @@ impl MainWin {
         fcn.run();
     }
 
-    fn prefs(main_win: Rc<RefCell<MainWin>>) {
+    fn prefs(main_win: Rc<RefCell<Self>>) {
         // let (main_state, core) = {
         //     let main_win = main_win.borrow();
         //     (main_win.state.clone(), main_win.core.clone())
@@ -761,16 +761,16 @@ impl MainWin {
         //prefs_win.run();
     }
 
-    fn about(main_win: Rc<RefCell<MainWin>>) {
+    fn about(main_win: Rc<RefCell<Self>>) {
         AboutWin::new(&main_win.borrow().window);
     }
 
-    fn find(main_win: &Rc<RefCell<MainWin>>) {
+    fn find(main_win: &Rc<RefCell<Self>>) {
         let edit_view = main_win.borrow().get_current_edit_view().clone();
         edit_view.borrow().start_search();
     }
 
-    fn replace(main_win: &Rc<RefCell<MainWin>>) {
+    fn replace(main_win: &Rc<RefCell<Self>>) {
         let edit_view = main_win.borrow().get_current_edit_view().clone();
         edit_view.borrow().start_replace();
     }
@@ -805,11 +805,7 @@ impl MainWin {
             });
     }
 
-    fn new_view_response(
-        main_win: &Rc<RefCell<MainWin>>,
-        file_name: Option<String>,
-        value: &Value,
-    ) {
+    fn new_view_response(main_win: &Rc<RefCell<Self>>, file_name: Option<String>, value: &Value) {
         let mut win = main_win.borrow_mut();
 
         // Add all available langs to the syntax_combo_box for the user to select it. We're doing
@@ -837,7 +833,7 @@ impl MainWin {
 
                 ev.close_button
                     .connect_clicked(clone!(main_win, edit_view => move |_| {
-                        MainWin::close_view(&main_win, &edit_view);
+                        Self::close_view(&main_win, &edit_view);
                     }));
             }
 
@@ -845,7 +841,7 @@ impl MainWin {
         }
     }
 
-    fn close_all(main_win: Rc<RefCell<MainWin>>) -> SaveAction {
+    fn close_all(main_win: Rc<RefCell<Self>>) -> SaveAction {
         // Get all views that we currently have opened
         let views = {
             let main_win = main_win.borrow();
@@ -854,7 +850,7 @@ impl MainWin {
         // Close each one of them
         let actions: Vec<SaveAction> = views
             .iter()
-            .map(|(_, ev)| MainWin::close_view(&main_win.clone(), &ev))
+            .map(|(_, ev)| Self::close_view(&main_win.clone(), &ev))
             .collect();
 
         // We've removed all EditViews, so this has to be empty
@@ -866,10 +862,9 @@ impl MainWin {
         let mut cancel = false;
 
         actions.iter().for_each(|action| {
-            match action {
-                SaveAction::Cancel => cancel = true,
-                _ => {}
-            };
+            if let SaveAction::Cancel = action {
+                cancel = true
+            }
         });
 
         if cancel {
@@ -879,37 +874,32 @@ impl MainWin {
         }
     }
 
-    fn close(main_win: &Rc<RefCell<MainWin>>) -> SaveAction {
+    fn close(main_win: &Rc<RefCell<Self>>) -> SaveAction {
         let edit_view = main_win.borrow().get_current_edit_view();
-        MainWin::close_view(&main_win, &edit_view)
+        Self::close_view(&main_win, &edit_view)
     }
 
-    fn close_view(
-        main_win: &Rc<RefCell<MainWin>>,
-        edit_view: &Rc<RefCell<EditView>>,
-    ) -> SaveAction {
+    fn close_view(main_win: &Rc<RefCell<Self>>, edit_view: &Rc<RefCell<EditView>>) -> SaveAction {
         let pristine = edit_view.borrow().pristine;
-        let save_action = if !pristine {
+        let save_action = if pristine {
+            // If it's pristine we don't ask the user if he really wants to quit because everything
+            // is saved already and as such always close without saving
+            SaveAction::CloseWithoutSave
+        } else {
             let builder = Builder::new_from_string(&GLADE_SRC);
             let ask_save_dialog: Dialog = builder.get_object("ask_save_dialog").unwrap();
-            ask_save_dialog.set_title(&format!("{}", gettext("Save unsaved changes")));
+            ask_save_dialog.set_title(&gettext("Save unsaved changes"));
             let ret = ask_save_dialog.run();
             ask_save_dialog.destroy();
             match ret {
                 1 => {
-                    MainWin::save_as(main_win, edit_view);
+                    Self::save_as(main_win, edit_view);
                     SaveAction::Save
                 }
-                2 => SaveAction::Cancel,
                 3 => SaveAction::CloseWithoutSave,
                 _ => SaveAction::Cancel,
             }
-        // If it's not pristine we don't ask the user if he really wants to quit
-        // and as such always close without saving
-        } else {
-            SaveAction::CloseWithoutSave
         };
-
         debug!("SaveAction: {:?}", save_action);
 
         if save_action != SaveAction::Cancel {

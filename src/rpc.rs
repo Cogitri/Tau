@@ -44,13 +44,13 @@ impl Core {
         xi_rx: Receiver<Value>,
         err_tx: glib::Sender<ErrMsg>,
         shared_queue: SharedQueue,
-    ) -> Core {
+    ) -> Self {
         let state = CoreState {
             xi_peer,
             id: 0,
             pending: BTreeMap::new(),
         };
-        let core = Core {
+        let core = Self {
             state: Arc::new(Mutex::new(state)),
         };
 
