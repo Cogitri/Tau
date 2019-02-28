@@ -18,7 +18,6 @@ impl PrefsWin {
         parent: &ApplicationWindow,
         main_state: &Rc<RefCell<MainState>>,
         core: &Rc<RefCell<Core>>,
-        xi_config: Rc<RefCell<Config>>,
     ) -> Rc<RefCell<PrefsWin>> {
         let glade_src = include_str!("ui/prefs_win.glade");
         let builder = Builder::new_from_string(glade_src);
@@ -36,6 +35,8 @@ impl PrefsWin {
         let draw_trailing_spaces_checkbutton: ToggleButton = builder
             .get_object("draw_trailing_spaces_checkbutton")
             .unwrap();
+
+        let xi_config = &main_state.borrow().config;
 
         {
             let mut font_desc = FontDescription::new();

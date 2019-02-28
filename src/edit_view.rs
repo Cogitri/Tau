@@ -176,9 +176,11 @@ impl EditView {
             .collect();
         main_state.borrow_mut().fonts = font_list;
 
+        let config = &main_state.borrow().config;
+
         let edit_font = Font::new(
             pango_ctx.clone(),
-            FontDescription::from_string("Inconsolata 16"),
+            FontDescription::from_string(&format!("{} {}", &config.borrow().config.font_face, &config.borrow().config.font_size)),
         );
         let interface_font = Font::new(
             pango_ctx,

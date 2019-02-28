@@ -41,6 +41,7 @@ pub struct MainState {
     pub fonts: Vec<String>,
     pub avail_languages: Vec<String>,
     pub selected_language: String,
+    pub config: Rc<RefCell<Config>>,
 }
 
 pub struct MainWin {
@@ -91,6 +92,7 @@ impl MainWin {
                 fonts: Default::default(),
                 avail_languages: Default::default(),
                 selected_language: Default::default(),
+                config: config.clone()
             })),
         }));
 
@@ -178,9 +180,8 @@ impl MainWin {
         }
         {
             let prefs_action = SimpleAction::new("prefs", None);
-            let xi_config = config.clone();
             prefs_action.connect_activate(clone!(main_win => move |_,_| {
-                MainWin::prefs(main_win.clone(), xi_config.clone())
+                MainWin::prefs(main_win.clone())
             }));
             application.add_action(&prefs_action);
         }
@@ -747,7 +748,7 @@ impl MainWin {
         fcn.run();
     }
 
-    fn prefs(main_win: Rc<RefCell<MainWin>>, config: Rc<RefCell<Config>>) {
+    fn prefs(main_win: Rc<RefCell<MainWin>>) {
         // let (main_state, core) = {
         //     let main_win = main_win.borrow();
         //     (main_win.state.clone(), main_win.core.clone())
@@ -755,7 +756,7 @@ impl MainWin {
         let main_win = main_win.borrow();
         let main_state = main_win.state.clone();
         let core = main_win.core.clone();
-        PrefsWin::new(&main_win.window, &main_state, &core, config);
+        PrefsWin::new(&main_win.window, &main_state, &core);
 
         //prefs_win.run();
     }
