@@ -268,11 +268,7 @@ impl MainWin {
             let space_indent_action = SimpleAction::new_stateful(
                 "insert_spaces",
                 None,
-                &config
-                    .borrow()
-                    .config
-                    .translate_tabs_to_spaces
-                    .to_variant(),
+                &config.borrow().config.translate_tabs_to_spaces.to_variant(),
             );;
             space_indent_action.connect_change_state(move |action, value| {
                 if let Some(value) = value.as_ref() {
@@ -280,7 +276,9 @@ impl MainWin {
                     let value: bool = value.get().unwrap();
                     debug!("{}: {}", gettext("Space indent"), value);
                     config.borrow_mut().config.translate_tabs_to_spaces = value;
-                    config.borrow().save()
+                    config
+                        .borrow()
+                        .save()
                         .map_err(|e| error!("{}", e.to_string()))
                         .unwrap();
                 }
