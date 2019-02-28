@@ -64,6 +64,7 @@
 #![recursion_limit = "128"]
 //Just for now...
 #![allow(dead_code)]
+#![deny(clippy::all)]
 
 #[macro_use]
 mod macros;
