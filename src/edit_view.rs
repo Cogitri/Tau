@@ -368,6 +368,7 @@ impl EditView {
                             self.edit_font
                                 .font_desc
                                 .set_size(font_size as i32 * pango::SCALE);
+                            // We've set the new fontsize previously, now we have to regenerate the font height/width etc.
                             self.edit_font = Font::new(pango_ctx, self.edit_font.font_desc.clone());
                             self.da.queue_draw();
                         }
