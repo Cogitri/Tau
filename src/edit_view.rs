@@ -25,7 +25,7 @@ pub struct EVReplace {
 }
 
 /// The EvFont struct holds all information about the font used in the EditView.
-pub struct EVFont {
+pub struct Font {
     font_height: f64,
     font_width: f64,
     font_ascent: f64,
@@ -33,12 +33,48 @@ pub struct EVFont {
     font_desc: FontDescription,
 }
 
-pub struct EVInterfaceFont {
-    font_height: f64,
-    font_width: f64,
-    font_ascent: f64,
-    font_descent: f64,
-    font_desc: FontDescription,
+impl Font {
+    fn new(pango_ctx: pango::Context, font_desc: &str) -> Self {
+        let font_desc = FontDescription::from_string(font_desc);
+        pango_ctx.set_font_description(&font_desc);
+        let language = pango_ctx
+            .get_language()
+            .unwrap_or_else(|| panic!("{}", &gettext("Failed to get Pango language")));
+        let fontset = pango_ctx
+            .load_fontset(&font_desc, &language)
+            .unwrap_or_else(|| panic!("{}", &gettext("Failed to load Pango font set")));
+        let metrics = fontset
+            .get_metrics()
+            .unwrap_or_else(|| panic!("{}", &gettext("Failed to load Pango font metrics")));
+
+        let layout = pango::Layout::new(&pango_ctx);
+        layout.set_text("a");
+        let (_, log_extents) = layout.get_extents();
+        debug!("{}: {:?}", gettext("Pango font size"), log_extents);
+
+        let font_height = f64::from(log_extents.height) / f64::from(pango::SCALE);
+        let font_width = f64::from(log_extents.width) / f64::from(pango::SCALE);
+        let font_ascent = f64::from(metrics.get_ascent()) / f64::from(pango::SCALE);
+        let font_descent = f64::from(metrics.get_descent()) / f64::from(pango::SCALE);
+
+        debug!(
+            "{}: {} {} {} {}",
+            gettext("Font metrics"),
+            font_width,
+            font_height,
+            font_ascent,
+            font_descent
+        );
+
+        // The font used for editing
+        Self {
+            font_height,
+            font_width,
+            font_ascent,
+            font_descent,
+            font_desc,
+        }
+    }
 }
 
 /// The EditView is the part of gxi that does the actual editing. This is where you edit documents.
@@ -61,8 +97,8 @@ pub struct EditView {
     vscrollbar: Scrollbar,
     line_cache: LineCache,
     replace: EVReplace,
-    edit_font: EVFont,
-    interface_font: EVInterfaceFont,
+    edit_font: Font,
+    interface_font: Font,
 }
 
 impl EditView {
@@ -142,95 +178,8 @@ impl EditView {
             .collect();
         main_state.borrow_mut().fonts = font_list;
 
-        let font_desc = FontDescription::from_string("Inconsolata 16");
-        // font_desc.set_size(14 * pango::SCALE);
-        pango_ctx.set_font_description(&font_desc);
-        let language = pango_ctx
-            .get_language()
-            .unwrap_or_else(|| panic!("{}", &gettext("Failed to get Pango language")));
-        let fontset = pango_ctx
-            .load_fontset(&font_desc, &language)
-            .unwrap_or_else(|| panic!("{}", &gettext("Failed to load Pango font set")));
-        let metrics = fontset
-            .get_metrics()
-            .unwrap_or_else(|| panic!("{}", &gettext("Failed to load Pango font metrics")));
-
-        // cr.select_font_face("Inconsolata", ::cairo::enums::FontSlant::Normal, ::cairo::enums::FontWeight::Normal);
-        // cr.set_font_size(16.0);
-        // let font_extents = cr.font_extents();
-
-        let layout = pango::Layout::new(&pango_ctx);
-        layout.set_text("a");
-        let (_, log_extents) = layout.get_extents();
-        debug!("{}: {:?}", gettext("Pango edit font size"), log_extents);
-
-        let font_height = f64::from(log_extents.height) / f64::from(pango::SCALE);
-        let font_width = f64::from(log_extents.width) / f64::from(pango::SCALE);
-        let font_ascent = f64::from(metrics.get_ascent()) / f64::from(pango::SCALE);
-        let font_descent = f64::from(metrics.get_descent()) / f64::from(pango::SCALE);
-
-        debug!(
-            "{}: {} {} {} {}",
-            gettext("Edit font metrics"),
-            font_width,
-            font_height,
-            font_ascent,
-            font_descent
-        );
-
-        // The font used for editing
-        let edit_font = EVFont {
-            font_height,
-            font_width,
-            font_ascent,
-            font_descent,
-            font_desc,
-        };
-
-        let interface_font = FontDescription::from_string(&get_default_interface_font_schema());
-
-        pango_ctx.set_font_description(&interface_font);
-        let if_language = pango_ctx
-            .get_language()
-            .unwrap_or_else(|| panic!("{}", &gettext("Failed to get Pango language")));
-        let if_fontset = pango_ctx
-            .load_fontset(&interface_font, &if_language)
-            .unwrap_or_else(|| panic!("{}", &gettext("Failed to load Pango font set")));
-        let if_metrics = if_fontset
-            .get_metrics()
-            .unwrap_or_else(|| panic!("{}", &gettext("Failed to load Pango font metrics")));
-
-        let if_layout = pango::Layout::new(&pango_ctx);
-        if_layout.set_text("a");
-        let (_, if_log_extents) = layout.get_extents();
-        debug!(
-            "{}: {:?}",
-            gettext("Pango interface font size"),
-            log_extents
-        );
-
-        let interface_font_height = f64::from(if_log_extents.height) / f64::from(pango::SCALE);
-        let interface_font_width = f64::from(if_log_extents.width) / f64::from(pango::SCALE);
-        let interface_font_ascent = f64::from(if_metrics.get_ascent()) / f64::from(pango::SCALE);
-        let interface_font_descent = f64::from(if_metrics.get_descent()) / f64::from(pango::SCALE);
-
-        debug!(
-            "{}: {} {} {} {}",
-            gettext("Interface font metrics"),
-            interface_font_width,
-            interface_font_height,
-            interface_font_ascent,
-            interface_font_descent
-        );
-
-        // The font used for the interface (the linecount)
-        let interface_font = EVInterfaceFont {
-            font_height: interface_font_height,
-            font_width: interface_font_width,
-            font_ascent: interface_font_ascent,
-            font_descent: interface_font_descent,
-            font_desc: interface_font,
-        };
+        let edit_font = Font::new(pango_ctx.clone(), "Inconsolata 16");
+        let interface_font = Font::new(pango_ctx, &get_default_interface_font_schema());
 
         let edit_view = Rc::new(RefCell::new(EditView {
             core: core.clone(),
