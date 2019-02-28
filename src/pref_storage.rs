@@ -7,7 +7,7 @@ use std::fs::OpenOptions;
 use std::io::prelude::*;
 use tempfile::tempdir;
 
-/// Generic wrapper struct around XiConfig
+/// Wrapper struct around `XiConfig`, it's annoying to pass around path otherwise
 #[derive(Debug)]
 pub struct Config {
     pub path: String,
@@ -35,7 +35,7 @@ pub struct XiConfig {
 }
 
 impl Default for XiConfig {
-    fn default() -> XiConfig {
+    fn default() -> Self {
         #[cfg(windows)]
         const LINE_ENDING: &str = "\r\n";
         #[cfg(not(windows))]
@@ -49,7 +49,7 @@ impl Default for XiConfig {
         ];
 
         // Default valuess as dictated by https://github.com/xi-editor/xi-editor/blob/master/rust/core-lib/assets/client_example.toml
-        XiConfig {
+        Self {
             tab_size: 4,
             translate_tabs_to_spaces: false,
             use_tab_stops: true,
@@ -69,8 +69,8 @@ impl Default for XiConfig {
 }
 
 impl Config {
-    pub fn new() -> Config {
-        let xi_config = if let Some(user_config_dir) = dirs::config_dir() {
+    pub fn new() -> Self {
+        if let Some(user_config_dir) = dirs::config_dir() {
             let config_dir = user_config_dir.join("gxi");
             std::fs::create_dir_all(&config_dir)
                 .map_err(|e| {
@@ -82,7 +82,7 @@ impl Config {
                 })
                 .unwrap();
 
-            let mut xi_config = Config {
+            let mut xi_config = Self {
                 config: XiConfig::default(),
                 path: config_dir
                     .join("preferences.xiconfig")
@@ -101,7 +101,7 @@ impl Config {
                     .save()
                     .unwrap_or_else(|e| error!("{}", e.to_string()));
 
-                Config {
+                Self {
                     path: xi_config.path.to_string(),
                     config: XiConfig {
                         tab_size: xi_config.config.tab_size,
@@ -164,12 +164,10 @@ impl Config {
                 .unwrap_or_else(|e| error!("{}", e.to_string()));
 
             xi_config
-        };
-
-        xi_config
+        }
     }
 
-    pub fn open(&mut self) -> Result<&mut Config, Error> {
+    pub fn open(&mut self) -> Result<&mut Self, Error> {
         trace!("{}", gettext("Opening config file"));
         let mut config_file = OpenOptions::new().read(true).open(&self.path)?;
         let mut config_string = String::new();
@@ -218,8 +216,9 @@ pub fn get_theme_schema() -> String {
 }
 
 pub fn set_theme_schema(theme_name: &str) {
-    if let Some(_) = SettingsSchemaSource::get_default()
+    if SettingsSchemaSource::get_default()
         .and_then(|settings_source| settings_source.lookup("com.github.Cogitri.gxi", true))
+        .is_some()
     {
         Settings::new(crate::globals::APP_ID.unwrap_or("com.github.Cogitri.gxi"))
             .set_string("theme-name", theme_name);
@@ -232,40 +231,47 @@ pub fn get_default_monospace_font_schema() -> String {
         .and_then(|_| {
             Settings::new("org.gnome.desktop.interface").get_string("monospace-font-name")
         })
-        .map(|s| s.to_string())
-        .unwrap_or_else(|| {
-            warn!("Couldn't find GSchema! Defaulting to default monospace font.");
-            "Monospace".to_string()
-        })
+        .map_or_else(
+            || {
+                warn!("Couldn't find GSchema! Defaulting to default monospace font.");
+                "Monospace".to_string()
+            },
+            |s| s.to_string(),
+        )
 }
 
 pub fn get_default_interface_font_schema() -> String {
     SettingsSchemaSource::get_default()
         .and_then(|settings_source| settings_source.lookup("org.gnome.desktop.interface", true))
         .and_then(|_| Settings::new("org.gnome.desktop.interface").get_string("font-name"))
-        .map(|s| s.to_string())
-        .unwrap_or_else(|| {
-            warn!("Couldn't find GSchema! Defaulting to default interface font.");
-            "Cantarell 11".to_string()
-        })
+        .map_or_else(
+            || {
+                warn!("Couldn't find GSchema! Defaulting to default interface font.");
+                "Cantarell 11".to_string()
+            },
+            |s| s.to_string(),
+        )
 }
 
 pub fn get_draw_trailing_spaces_schema() -> bool {
     SettingsSchemaSource::get_default()
         .and_then(|settings_source| settings_source.lookup("com.github.Cogitri.gxi", true))
-        .map(|_| {
-            Settings::new(crate::globals::APP_ID.unwrap_or("com.github.Cogitri.gxi"))
-                .get_boolean("draw-trailing-spaces")
-        })
-        .unwrap_or_else(|| {
-            warn!("Couldn't find GSchema! Defaulting to not drawing tabs!");
-            false
-        })
+        .map_or_else(
+            || {
+                warn!("Couldn't find GSchema! Defaulting to not drawing tabs!");
+                false
+            },
+            |_| {
+                Settings::new(crate::globals::APP_ID.unwrap_or("com.github.Cogitri.gxi"))
+                    .get_boolean("draw-trailing-spaces")
+            },
+        )
 }
 
 pub fn set_draw_trailing_spaces_schema(val: bool) {
-    if let Some(_) = SettingsSchemaSource::get_default()
+    if SettingsSchemaSource::get_default()
         .and_then(|settings_source| settings_source.lookup("com.github.Cogitri.gxi", true))
+        .is_some()
     {
         Settings::new(crate::globals::APP_ID.unwrap_or("com.github.Cogitri.gxi"))
             .set_boolean("draw-trailing-spaces", val);

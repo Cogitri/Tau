@@ -10,11 +10,11 @@ pub struct AboutWin {
 }
 
 impl AboutWin {
-    pub fn new(parent: &ApplicationWindow) -> Rc<RefCell<AboutWin>> {
+    pub fn new(parent: &ApplicationWindow) -> Rc<RefCell<Self>> {
         let about_dialog = gtk::AboutDialog::new();
         about_dialog
             .set_comments(gettext("GTK frontend for the xi text editor, written in Rust").as_str());
-        about_dialog.set_copyright("© 2017 Brian Vincent, 2019 Rasmus Thomsen.");
+        about_dialog.set_copyright("\u{a9} 2017 Brian Vincent, 2019 Rasmus Thomsen.");
         about_dialog.set_license_type(gtk::License::MitX11);
         about_dialog.set_modal(true);
         about_dialog.set_version(crate::globals::VERSION.unwrap_or("0.0.0"));

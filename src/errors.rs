@@ -34,11 +34,11 @@ impl From<toml::ser::Error> for Error {
     }
 }
 
-/// A simple ErrorDialog used for if stuff goes south.
+/// A simple `ErrorDialog` used for if stuff goes south.
 pub struct ErrorDialog {}
 
 impl ErrorDialog {
-    /// Creates a new ErrorDialog containing the err_msg. Quits the application if fatal is true.
+    /// Creates a new `ErrorDialog` containing the `err_msg`. Quits the application if `fatal` is true.
     pub fn new(err_msg: ErrMsg) {
         let application = gio::Application::get_default()
             .unwrap_or_else(|| panic!("{}", &gettext("No default application")))

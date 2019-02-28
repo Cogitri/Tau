@@ -10,27 +10,27 @@ pub struct Color {
 }
 
 impl Color {
-    pub const WHITE: Color = Color {
+    pub const WHITE: Self = Self {
         r: 255,
         g: 255,
         b: 255,
         a: 255,
     };
-    pub const BLACK: Color = Color {
+    pub const BLACK: Self = Self {
         r: 0,
         g: 0,
         b: 0,
         a: 255,
     };
 
-    pub fn from_u8s(r: u8, g: u8, b: u8, a: u8) -> Color {
-        Color { r, g, b, a }
+    pub fn from_u8s(r: u8, g: u8, b: u8, a: u8) -> Self {
+        Self { r, g, b, a }
     }
-    pub fn from_ts_proto(c: proto::Color) -> Color {
-        Color::from_u8s(c.r, c.g, c.b, c.a)
+    pub fn from_ts_proto(c: proto::Color) -> Self {
+        Self::from_u8s(c.r, c.g, c.b, c.a)
     }
-    pub fn from_u32_argb(c: u32) -> Color {
-        Color::from_u8s((c >> 16) as u8, (c >> 8) as u8, c as u8, (c >> 24) as u8)
+    pub fn from_u32_argb(c: u32) -> Self {
+        Self::from_u8s((c >> 16) as u8, (c >> 8) as u8, c as u8, (c >> 24) as u8)
     }
 
     pub fn r_u16(self) -> u16 {
@@ -69,8 +69,8 @@ pub struct Style {
 }
 
 impl Style {
-    pub fn from_proto(style: &proto::Style) -> Style {
-        Style {
+    pub fn from_proto(style: &proto::Style) -> Self {
+        Self {
             fg_color: style.fg_color.map(Color::from_u32_argb),
             bg_color: style.bg_color.map(Color::from_u32_argb),
             weight: style.weight,
@@ -114,8 +114,8 @@ pub struct Theme {
 }
 
 impl Default for Theme {
-    fn default() -> Theme {
-        Theme {
+    fn default() -> Self {
+        Self {
             foreground: Color::from_u8s(50, 50, 50, 255),
             background: Color::WHITE,
             caret: Color::from_u8s(50, 50, 50, 255),
@@ -135,8 +135,8 @@ impl Default for Theme {
 }
 
 impl Theme {
-    pub fn from_proto(theme_settings: &proto::ThemeSettings) -> Theme {
-        let mut theme: Theme = Default::default();
+    pub fn from_proto(theme_settings: &proto::ThemeSettings) -> Self {
+        let mut theme: Self = Default::default();
 
         if let Some(foreground) = theme_settings.foreground {
             theme.foreground = Color::from_ts_proto(foreground);

@@ -29,8 +29,8 @@ pub struct SharedQueue {
 }
 
 impl SharedQueue {
-    pub fn new() -> SharedQueue {
-        SharedQueue {
+    pub fn new() -> Self {
+        Self {
             queue_rx: Arc::new(Mutex::new(Injector::<CoreMsg>::new())),
             queue_tx: Arc::new(Mutex::new(Injector::<CoreMsg>::new())),
         }
