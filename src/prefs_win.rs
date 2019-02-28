@@ -43,11 +43,7 @@ impl PrefsWin {
             font_desc.set_size(*&xi_config.borrow().config.font_size as i32 * pango::SCALE);
             font_desc.set_family(font_face);
 
-            trace!(
-                "{}: {}",
-                gettext("Setting font description"),
-                font_face
-            );
+            trace!("{}: {}", gettext("Setting font description"), font_face);
 
             font_chooser_widget.set_font_desc(&font_desc);
         }
