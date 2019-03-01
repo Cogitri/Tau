@@ -147,15 +147,18 @@ impl EditView {
         let go_down_button: Button = find_rep_builder.get_object("go_down_button").unwrap();
         let go_up_button: Button = find_rep_builder.get_object("go_up_button").unwrap();
 
+        let root_box = Box::new(Orientation::Vertical, 0);
         let hbox = Box::new(Orientation::Horizontal, 0);
         let vbox = Box::new(Orientation::Vertical, 0);
+        root_box.pack_start(&search_bar, false, false, 0);
+        root_box.pack_start(&hbox, true, true, 0);
         hbox.pack_start(&linecount_da, false, false, 0);
         hbox.pack_start(&vbox, true, true, 0);
         hbox.pack_start(&vscrollbar, false, false, 0);
         vbox.pack_start(&search_bar, false, false, 0);
         vbox.pack_start(&da, true, true, 0);
         vbox.pack_start(&hscrollbar, false, false, 0);
-        hbox.show_all();
+        root_box.show_all();
 
         // Make the widgets for the tab
         let tab_hbox = gtk::Box::new(Orientation::Horizontal, 5);
@@ -200,7 +203,7 @@ impl EditView {
             view_id: view_id.to_string(),
             linecount_da: linecount_da.clone(),
             da: da.clone(),
-            root_widget: hbox.clone(),
+            root_widget: root_box.clone(),
             tab_widget: tab_hbox.clone(),
             label: label.clone(),
             close_button: close_button.clone(),
