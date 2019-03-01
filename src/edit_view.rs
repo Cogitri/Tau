@@ -653,7 +653,8 @@ impl EditView {
         //     }
         // }
 
-        let mut max_width = 0;
+        // This can't be 0, otherwise our Scrollbar bugs out
+        let mut max_width = 1 * pango::SCALE;
 
         let main_state = self.main_state.borrow();
 
