@@ -13,11 +13,14 @@ env:
 deploy:
   provider: script
   script: bash scripts/deploy-docs.sh
+  skip-cleanup: true
+  keep-history: true
+  verbose: true
   on:
     branch: master
 addons:
   ssh_known_hosts:
-  - 207.180.196.127
+  - $DEPLOY_SERVER_IP
 before_install:
 - openssl aes-256-cbc -K $encrypted_63d4c9a7115b_key -iv $encrypted_63d4c9a7115b_iv
   -in .travis/id_ed25519.enc -out .travis/id_ed25519 -d
