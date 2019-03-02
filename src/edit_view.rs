@@ -1241,27 +1241,37 @@ impl EditView {
 
     /// Opens the find dialog (Ctrl+F)
     pub fn start_search(&self) {
-        self.search_bar.set_search_mode(true);
-        self.replace.replace_expander.set_expanded(false);
-        self.replace.replace_revealer.set_reveal_child(false);
-        self.search_entry.grab_focus();
-        let needle = self.search_entry.get_text().unwrap();
-        self.core
-            .borrow()
-            .find(&self.view_id, &needle, false, Some(false));
+        if self.search_bar.get_search_mode() {
+            self.stop_search();
+        } else {
+            self.search_bar.set_search_mode(true);
+            self.replace.replace_expander.set_expanded(false);
+            self.replace.replace_revealer.set_reveal_child(false);
+            self.search_entry.grab_focus();
+            let needle = self.search_entry.get_text().unwrap();
+            self.core
+                .borrow()
+                .find(&self.view_id, &needle, false, Some(false));
+        }
     }
 
     /// Opens the replace dialog (Ctrl+R)
     pub fn start_replace(&self) {
-        self.search_bar.set_search_mode(true);
-        self.replace.replace_expander.set_expanded(true);
-        self.replace.replace_revealer.set_reveal_child(true);
-        self.search_entry.grab_focus();
+        if self.replace.replace_revealer.get_child_revealed() {
+            self.stop_search()
+        } else {
+            self.search_bar.set_search_mode(true);
+            self.replace.replace_expander.set_expanded(true);
+            self.replace.replace_revealer.set_reveal_child(true);
+            self.search_entry.grab_focus();
+        }
     }
 
     /// Closes the find/replace dialog
     pub fn stop_search(&self) {
         self.search_bar.set_search_mode(false);
+        self.replace.replace_expander.set_expanded(false);
+        self.replace.replace_revealer.set_reveal_child(false);
         self.da.grab_focus();
     }
 
