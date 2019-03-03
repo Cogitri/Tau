@@ -7,7 +7,11 @@ ssh-add .travis/id_ed25519 &&
 git clone $DEPLOY_SERVER-deploy
 cd gxi.cogitri.dev-deploy
 cp -r ../target/doc/* . &&
-git remote add deploy $DEPLOY_SERVER-deploy &&
-git add . &&
-git commit -av -m "Automated docs deploy" &&
-git push deploy -f
+if [ -n "$(git status --porcelain)" ]; then
+	git remote add deploy $DEPLOY_SERVER-deploy &&
+	git add . &&
+	git commit -av -m "Automated docs deploy" &&
+	git push deploy -f
+else
+	exit 0
+fi
