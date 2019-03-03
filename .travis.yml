@@ -33,3 +33,7 @@ script:
 - travis_wait 45 docker exec -t ubuntu-test bash -c "(curl https://sh.rustup.rs -sSf
   | sh -s -- -y) && source \$HOME/.cargo/env && cd /travis && rustup install $RUST_VER
   && rustc --version && meson _build && ninja -C _build test && cargo rustdoc -- --document-private-items"
+after_success: |
+  [ $TRAVIS_BRANCH = master ] &&
+  [ $TRAVIS_PULL_REQUEST = false ] &&
+  sudo chown -R travis:travis ../*
