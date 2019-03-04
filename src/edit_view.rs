@@ -626,7 +626,7 @@ impl EditView {
             ((vadj.get_value() + f64::from(da_height)) / self.edit_font.font_height) as u64 + 1;
         let last_line = min(last_line, num_lines);
 
-        let pango_ctx = self.da.get_pango_context().unwrap();
+        let pango_ctx = self.da.get_pango_context().unwrap_or_else(|| panic!("{}", &gettext("Failed to get Pango context")));
         pango_ctx.set_font_description(&self.edit_font.font_desc);
 
         // Draw editing background
@@ -728,7 +728,7 @@ impl EditView {
             + 1;
         let last_line = min(last_line, num_lines);
 
-        let pango_ctx = self.linecount_da.get_pango_context().unwrap();
+        let pango_ctx = self.linecount_da.get_pango_context().unwrap_or_else(|| panic!("{}", &gettext("Failed to get Pango context")));
 
         // Make the linecount at least 4 chars big
         let linecount_width = if format!(" {} ", last_line).len() > 4 {
@@ -808,7 +808,7 @@ impl EditView {
             None,
         );
         let main_state = self.main_state.borrow();
-        let pango_ctx = self.da.get_pango_context().unwrap();
+        let pango_ctx = self.da.get_pango_context().unwrap_or_else(|| panic!("{}", &gettext("Failed to get Pango context")));
         let linecount_layout = self.create_layout_for_line(&pango_ctx, &main_state, &line);
 
         f64::from(linecount_layout.get_extents().1.width / pango::SCALE)
@@ -1248,10 +1248,11 @@ impl EditView {
             self.replace.replace_expander.set_expanded(false);
             self.replace.replace_revealer.set_reveal_child(false);
             self.search_entry.grab_focus();
-            let needle = self.search_entry.get_text().unwrap();
-            self.core
-                .borrow()
-                .find(&self.view_id, &needle, false, Some(false));
+            if let Some(needle) = self.search_entry.get_text() {
+                self.core
+                    .borrow()
+                    .find(&self.view_id, &needle, false, Some(false));
+            }
         }
     }
 

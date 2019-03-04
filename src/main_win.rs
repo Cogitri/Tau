@@ -441,45 +441,21 @@ impl MainWin {
     }
 
     pub fn config_changed(&mut self, params: &Value) {
-        let view_id = {
-            let view_id = params["view_id"].as_str();
-            if view_id.is_none() {
-                return;
-            }
-            view_id.unwrap().to_string()
-        };
-
-        if let Some(ev) = self.views.get(&view_id) {
-            ev.borrow_mut().config_changed(&params["changes"]);
-        }
+        params["view_id"].as_str()
+            .and_then(|id| self.views.get(id))
+            .map(|ev| ev.borrow_mut().config_changed(&params["changes"]));
     }
 
     pub fn find_status(&mut self, params: &Value) {
-        let view_id = {
-            let view_id = params["view_id"].as_str();
-            if view_id.is_none() {
-                return;
-            }
-            view_id.unwrap().to_string()
-        };
-
-        if let Some(ev) = self.views.get(&view_id) {
-            ev.borrow_mut().find_status(&params["queries"]);
-        }
+        params["view_id"].as_str()
+            .and_then(|id| self.views.get(id))
+            .map(|ev| ev.borrow_mut().find_status(&params["queries"]));
     }
 
     pub fn replace_status(&mut self, params: &Value) {
-        let view_id = {
-            let view_id = params["view_id"].as_str();
-            if view_id.is_none() {
-                return;
-            }
-            view_id.unwrap().to_string()
-        };
-
-        if let Some(ev) = self.views.get(&view_id) {
-            ev.borrow_mut().replace_status(&params["status"]);
-        }
+        params["view_id"].as_str()
+            .and_then(|id| self.views.get(id))
+            .map(|ev| ev.borrow_mut().replace_status(&params["status"]));
     }
 
     pub fn def_style(&mut self, params: &Value) {
@@ -487,9 +463,7 @@ impl MainWin {
         let style = Style::from_proto(&style);
 
         if let Some(id) = params["id"].as_u64() {
-            let id = id as usize;
-
-            self.set_style(id, style);
+            self.set_style(id as usize, style);
         }
     }
 
@@ -515,28 +489,13 @@ impl MainWin {
     pub fn update(&mut self, params: &Value) {
         trace!("{} 'update': {:?}", gettext("Handling"), params);
 
-        let view_id = {
-            let view_id = params["view_id"].as_str();
-            if view_id.is_none() {
-                return;
-            }
-            view_id.unwrap().to_string()
-        };
-
-        if let Some(ev) = self.views.get(&view_id) {
-            ev.borrow_mut().update(params)
-        }
+        params["view_id"].as_str()
+            .and_then(|id| self.views.get(id))
+            .map(|ev| ev.borrow_mut().update(params));
     }
 
     pub fn scroll_to(&mut self, params: &Value) {
         trace!("{} 'scroll_to' {:?}", gettext("Handling"), params);
-        let view_id = {
-            let view_id = params["view_id"].as_str();
-            if view_id.is_none() {
-                return;
-            }
-            view_id.unwrap().to_string()
-        };
 
         let line = {
             match params["line"].as_u64() {
@@ -552,14 +511,13 @@ impl MainWin {
             }
         };
 
-        match self.views.get(&view_id) {
-            None => debug!("{} '{}'", gettext("Failed to find View"), view_id),
-            Some(edit_view) => {
-                let idx = self.notebook.page_num(&edit_view.borrow().root_widget);
+        params["view_id"].as_str()
+            .and_then(|id| self.views.get(id))
+            .map(|ev|{
+                let idx = self.notebook.page_num(&ev.borrow().root_widget);
                 self.notebook.set_current_page(idx);
-                edit_view.borrow_mut().scroll_to(line, col)
-            }
-        }
+                ev.borrow_mut().scroll_to(line, col)
+            });
     }
 
     fn plugin_started(&self, _params: &Value) {}
@@ -610,10 +568,12 @@ impl MainWin {
         }
         //let widths: Vec<f64> = request.iter().map(|x| x.strings.iter().map(|v| edit_view.borrow().line_width(&v)).collect::<Vec<f64>>()).collect();
 
-        self.core.borrow().send_result(
-            id.unwrap_or(0),
-            &serde_json::to_value(vec![widths]).unwrap(),
-        );
+        if let Some(id) = id {
+            self.core.borrow().send_result(
+                id,
+                &serde_json::to_value(vec![widths]).unwrap(),
+            );
+        }
     }
 
     pub fn available_languages(&mut self, params: &Value) {

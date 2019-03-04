@@ -179,23 +179,22 @@ fn main() {
         debug!("{}", gettext("Opening new file"));
 
         for file in files {
-            let path = file.get_path();
-            if path.is_none() { continue; }
-            let path = path.unwrap();
-            let path = path.to_string_lossy().into_owned();
+            if let Some(path) = file.get_path() {
+                let path = path.to_string_lossy().into_owned();
 
-            let mut params = json!({});
-            params["file_path"] = json!(path);
+                let mut params = json!({});
+                params["file_path"] = json!(path);
 
-            let shared_queue = shared_queue.clone();
-            core.send_request("new_view", &params,
-                move |value| {
-                    shared_queue.add_core_msg(CoreMsg::NewViewReply{
-                        file_name: Some(path),
-                    value: value.clone(),
-                    })
-                }
-            );
+                let shared_queue = shared_queue.clone();
+                core.send_request("new_view", &params,
+                    move |value| {
+                        shared_queue.add_core_msg(CoreMsg::NewViewReply{
+                            file_name: Some(path),
+                        value: value.clone(),
+                        })
+                    }
+                );
+            }
         }
     }));
 
