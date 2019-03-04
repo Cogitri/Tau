@@ -831,7 +831,8 @@ impl EditView {
         // Replace spaces with '·'. Do this here since we only want
         // to draw this, we don't want to save the file like that.
         let line_view = if get_draw_trailing_spaces_schema() && line_view.ends_with(' ') {
-            let last_char = line_view.trim_end().len();
+            // Replace tabs here to make sure trim_end doesn't remove them
+            let last_char = line_view.replace("\t", "a").trim_end().len();
             let (line_view_without_space, spaces) = line_view.split_at(last_char);
             let space_range = std::ops::Range {
                 start: 0,
