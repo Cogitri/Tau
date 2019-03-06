@@ -126,14 +126,6 @@ impl EditView {
 
         let fr = FindReplace::new();
 
-        let replace = EVReplace {
-            replace_expander: fr.replace_expander.clone(),
-            replace_revealer: fr.replace_revealer.clone(),
-            replace_entry: fr.replace_entry.clone(),
-        };
-
-        
-
         let root_box = Box::new(Orientation::Vertical, 0);
         let hbox = Box::new(Orientation::Horizontal, 0);
         let vbox = Box::new(Orientation::Vertical, 0);
@@ -201,7 +193,7 @@ impl EditView {
             find_status_label: fr.find_status_label.clone(),
             edit_font,
             interface_font,
-            replace,
+            replace: fr.replace,
         }));
 
         edit_view.borrow_mut().update_title();
@@ -216,48 +208,12 @@ impl EditView {
             edit_view.borrow_mut().handle_da_draw(&ctx)
         }));
 
-        linecount_da.connect_draw(clone!(edit_view => move |_,ctx| {
-            edit_view.borrow_mut().handle_linecount_draw(&ctx)
-        }));
-
         da.connect_key_press_event(clone!(edit_view => move |_, ek| {
             edit_view.borrow_mut().handle_key_press_event(ek)
         }));
 
         da.connect_motion_notify_event(clone!(edit_view => move |_,em| {
             edit_view.borrow_mut().handle_drag(em)
-        }));
-
-        fr.search_entry.connect_search_changed(clone!(edit_view => move |w| {
-            if let Some(text) = w.get_text() {
-                edit_view.borrow_mut().search_changed(Some(text.to_string()));
-            } else {
-                edit_view.borrow_mut().search_changed(None);
-            }
-        }));
-
-        fr.search_entry.connect_activate(clone!(edit_view => move |_| {
-            edit_view.borrow_mut().find_next();
-        }));
-
-        fr.search_entry.connect_stop_search(clone!(edit_view => move |_| {
-            edit_view.borrow().stop_search();
-        }));
-
-        fr.replace_button.connect_clicked(clone!(edit_view => move |_| {
-            edit_view.borrow().replace();
-        }));
-
-        fr.replace_all_button.connect_clicked(clone!(edit_view => move |_| {
-            edit_view.borrow().replace_all();
-        }));
-
-        fr.go_down_button.connect_clicked(clone!(edit_view => move |_| {
-            edit_view.borrow_mut().find_next();
-        }));
-
-        fr.go_up_button.connect_clicked(clone!(edit_view => move |_| {
-            edit_view.borrow_mut().find_prev();
         }));
 
         da.connect_realize(|w| {
@@ -281,6 +237,49 @@ impl EditView {
             edit_view.borrow().do_resize(&edit_view.borrow().view_id,alloc.width, alloc.height);
         }));
 
+        linecount_da.connect_draw(clone!(edit_view => move |_,ctx| {
+            edit_view.borrow_mut().handle_linecount_draw(&ctx)
+        }));
+
+        fr.search_entry
+            .connect_search_changed(clone!(edit_view => move |w| {
+                if let Some(text) = w.get_text() {
+                    edit_view.borrow_mut().search_changed(Some(text.to_string()));
+                } else {
+                    edit_view.borrow_mut().search_changed(None);
+                }
+            }));
+
+        fr.search_entry
+            .connect_activate(clone!(edit_view => move |_| {
+                edit_view.borrow_mut().find_next();
+            }));
+
+        fr.search_entry
+            .connect_stop_search(clone!(edit_view => move |_| {
+                edit_view.borrow().stop_search();
+            }));
+
+        fr.replace_button
+            .connect_clicked(clone!(edit_view => move |_| {
+                edit_view.borrow().replace();
+            }));
+
+        fr.replace_all_button
+            .connect_clicked(clone!(edit_view => move |_| {
+                edit_view.borrow().replace_all();
+            }));
+
+        fr.go_down_button
+            .connect_clicked(clone!(edit_view => move |_| {
+                edit_view.borrow_mut().find_next();
+            }));
+
+        fr.go_up_button
+            .connect_clicked(clone!(edit_view => move |_| {
+                edit_view.borrow_mut().find_prev();
+            }));
+
         vscrollbar.connect_change_value(clone!(edit_view => move |_,_,value| {
             edit_view.borrow_mut().vscrollbar_change_value(value)
         }));
@@ -292,6 +291,7 @@ impl EditView {
 }
 
 struct FindReplace {
+    replace: EVReplace,
     search_bar: SearchBar,
     replace_expander: Expander,
     replace_revealer: Revealer,
@@ -311,7 +311,7 @@ impl FindReplace {
         let search_bar = builder.get_object("search_bar").unwrap();
         let replace_expander: Expander = builder.get_object("replace_expander").unwrap();
         let replace_revealer: Revealer = builder.get_object("replace_revealer").unwrap();
-        let replace_entry = builder.get_object("replace_entry").unwrap();
+        let replace_entry: Entry = builder.get_object("replace_entry").unwrap();
         let replace_button = builder.get_object("replace_button").unwrap();
         let replace_all_button = builder.get_object("replace_all_button").unwrap();
         let find_status_label = builder.get_object("find_status_label").unwrap();
@@ -330,7 +330,14 @@ impl FindReplace {
             }
         }));
 
+        let replace = EVReplace {
+            replace_expander: replace_expander.clone(),
+            replace_revealer: replace_revealer.clone(),
+            replace_entry: replace_entry.clone(),
+        };
+
         FindReplace {
+            replace,
             search_bar,
             replace_expander,
             replace_revealer,
