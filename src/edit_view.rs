@@ -124,33 +124,20 @@ impl EditView {
         debug!("{}: {:?}", gettext("Events"), da.get_events());
         da.set_can_focus(true);
 
-        let find_rep_src = include_str!("ui/find_replace.glade");
-        let find_rep_builder = Builder::new_from_string(find_rep_src);
-        let search_bar: SearchBar = find_rep_builder.get_object("search_bar").unwrap();
-        let replace_expander: Expander = find_rep_builder.get_object("replace_expander").unwrap();
-        let replace_revealer: Revealer = find_rep_builder.get_object("replace_revealer").unwrap();
-        let replace_entry: Entry = find_rep_builder.get_object("replace_entry").unwrap();
-        let replace_button: Button = find_rep_builder.get_object("replace_button").unwrap();
-        let replace_all_button: Button = find_rep_builder.get_object("replace_all_button").unwrap();
-        let find_status_label: Label = find_rep_builder.get_object("find_status_label").unwrap();
+        let fr = FindReplace::new();
 
         let replace = EVReplace {
-            replace_expander: replace_expander.clone(),
-            replace_revealer: replace_revealer.clone(),
-            replace_entry: replace_entry.clone(),
+            replace_expander: fr.replace_expander.clone(),
+            replace_revealer: fr.replace_revealer.clone(),
+            replace_entry: fr.replace_entry.clone(),
         };
 
-        // let overlay: Overlay = frame_builder.get_object("overlay").unwrap();
-        // let search_revealer: Revealer = frame_builder.get_object("revealer").unwrap();
-        // let frame: Frame = frame_builder.get_object("frame").unwrap();
-        let search_entry: SearchEntry = find_rep_builder.get_object("search_entry").unwrap();
-        let go_down_button: Button = find_rep_builder.get_object("go_down_button").unwrap();
-        let go_up_button: Button = find_rep_builder.get_object("go_up_button").unwrap();
+        
 
         let root_box = Box::new(Orientation::Vertical, 0);
         let hbox = Box::new(Orientation::Horizontal, 0);
         let vbox = Box::new(Orientation::Vertical, 0);
-        root_box.pack_start(&search_bar, false, false, 0);
+        root_box.pack_start(&fr.search_bar, false, false, 0);
         root_box.pack_start(&hbox, true, true, 0);
         hbox.pack_start(&linecount_da, false, false, 0);
         hbox.pack_start(&vbox, true, true, 0);
@@ -209,9 +196,9 @@ impl EditView {
             hscrollbar: hscrollbar.clone(),
             vscrollbar: vscrollbar.clone(),
             line_cache: LineCache::new(),
-            search_bar: search_bar.clone(),
-            search_entry: search_entry.clone(),
-            find_status_label: find_status_label.clone(),
+            search_bar: fr.search_bar.clone(),
+            search_entry: fr.search_entry.clone(),
+            find_status_label: fr.find_status_label.clone(),
             edit_font,
             interface_font,
             replace,
@@ -241,7 +228,7 @@ impl EditView {
             edit_view.borrow_mut().handle_drag(em)
         }));
 
-        search_entry.connect_search_changed(clone!(edit_view => move |w| {
+        fr.search_entry.connect_search_changed(clone!(edit_view => move |w| {
             if let Some(text) = w.get_text() {
                 edit_view.borrow_mut().search_changed(Some(text.to_string()));
             } else {
@@ -249,35 +236,27 @@ impl EditView {
             }
         }));
 
-        search_entry.connect_activate(clone!(edit_view => move |_| {
+        fr.search_entry.connect_activate(clone!(edit_view => move |_| {
             edit_view.borrow_mut().find_next();
         }));
 
-        search_entry.connect_stop_search(clone!(edit_view => move |_| {
+        fr.search_entry.connect_stop_search(clone!(edit_view => move |_| {
             edit_view.borrow().stop_search();
         }));
 
-        replace_expander.connect_property_expanded_notify(clone!(replace_revealer => move|w| {
-            if w.get_expanded() {
-                replace_revealer.set_reveal_child(true);
-            } else {
-                replace_revealer.set_reveal_child(false);
-            }
-        }));
-
-        replace_button.connect_clicked(clone!(edit_view => move |_| {
+        fr.replace_button.connect_clicked(clone!(edit_view => move |_| {
             edit_view.borrow().replace();
         }));
 
-        replace_all_button.connect_clicked(clone!(edit_view => move |_| {
+        fr.replace_all_button.connect_clicked(clone!(edit_view => move |_| {
             edit_view.borrow().replace_all();
         }));
 
-        go_down_button.connect_clicked(clone!(edit_view => move |_| {
+        fr.go_down_button.connect_clicked(clone!(edit_view => move |_| {
             edit_view.borrow_mut().find_next();
         }));
 
-        go_up_button.connect_clicked(clone!(edit_view => move |_| {
+        fr.go_up_button.connect_clicked(clone!(edit_view => move |_| {
             edit_view.borrow_mut().find_prev();
         }));
 
@@ -309,6 +288,60 @@ impl EditView {
         crate::MainWin::set_language(&core, view_id, "Plain Text");
 
         edit_view
+    }
+}
+
+struct FindReplace {
+    search_bar: SearchBar,
+    replace_expander: Expander,
+    replace_revealer: Revealer,
+    replace_entry: Entry,
+    replace_button: Button,
+    replace_all_button: Button,
+    find_status_label: Label,
+    search_entry: SearchEntry,
+    go_down_button: Button,
+    go_up_button: Button,
+}
+
+impl FindReplace {
+    fn new() -> FindReplace {
+        let src = include_str!("ui/find_replace.glade");
+        let builder = Builder::new_from_string(src);
+        let search_bar = builder.get_object("search_bar").unwrap();
+        let replace_expander: Expander = builder.get_object("replace_expander").unwrap();
+        let replace_revealer: Revealer = builder.get_object("replace_revealer").unwrap();
+        let replace_entry = builder.get_object("replace_entry").unwrap();
+        let replace_button = builder.get_object("replace_button").unwrap();
+        let replace_all_button = builder.get_object("replace_all_button").unwrap();
+        let find_status_label = builder.get_object("find_status_label").unwrap();
+        // let overlay: Overlay = builder.get_object("overlay").unwrap();
+        // let search_revealer: Revealer = builder.get_object("revealer").unwrap();
+        // let frame: Frame = builder.get_object("frame").unwrap();
+        let search_entry = builder.get_object("search_entry").unwrap();
+        let go_down_button = builder.get_object("go_down_button").unwrap();
+        let go_up_button = builder.get_object("go_up_button").unwrap();
+
+        replace_expander.connect_property_expanded_notify(clone!(replace_revealer => move|w| {
+            if w.get_expanded() {
+                replace_revealer.set_reveal_child(true);
+            } else {
+                replace_revealer.set_reveal_child(false);
+            }
+        }));
+
+        FindReplace {
+            search_bar,
+            replace_expander,
+            replace_revealer,
+            replace_entry,
+            replace_button,
+            replace_all_button,
+            find_status_label,
+            search_entry,
+            go_down_button,
+            go_up_button,
+        }
     }
 }
 
