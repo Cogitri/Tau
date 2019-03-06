@@ -8,596 +8,647 @@ msgstr ""
 "Project-Id-Version: gxi\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-03-04 18:34+0100\n"
-"PO-Revision-Date: 2019-03-06 19:40+0100\n"
-"Language-Team: \n"
+"PO-Revision-Date: 2019-03-07 14:43+0000\n"
+"Last-Translator: Allan Nordhøy <epost@anotheragency.no>\n"
+"Language-Team: Norwegian Bokmål <https://hosted.weblate.org/projects/gxi/"
+"translation/nb_NO/>\n"
+"Language: nb_NO\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.2.1\n"
-"Last-Translator: \n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"Language: nb_NO\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 3.5.1-dev\n"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:7
 #: data/com.github.Cogitri.gxi.desktop.in:3
 msgid "gxi"
-msgstr ""
+msgstr "gxi"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:8
 msgid "GTK frontend for the xi text editor"
-msgstr ""
+msgstr "GTK-grenseflate for xi-tekstbehandleren"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:12
 msgid ""
 "gxi is a GTK frontend for the xi text editor written in Rust. It's a very "
 "fast plain text editor."
 msgstr ""
+"GTK-grenseflate for xi-tekstbehandleren skrevet i Rust. Det er en veldig "
+"rask klartekstbehandler."
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:27
 msgid "Rasmus \"Cogitri\" Thomsen"
-msgstr ""
+msgstr "Rasmus \"Cogitri\" Thomsen"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:37
 msgid ""
 "Ask user if changes should be saved upon closing. Also makes panics more "
 "readable."
 msgstr ""
+"Spør bruker om endringer skal lagres ved lukking. Gjør også panikk-fall mer "
+"lesbare."
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:42
 msgid ""
 "This release fixes the linecount upon deleting lines and fixes some crashes. "
 "It also adds a new icon."
 msgstr ""
+"Denne utgaven fikser linjeantall ved sletting av linjer og noen kræsj. Nytt "
+"ikon også."
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:50
 msgid "This release fixes the build without appstream-util."
-msgstr ""
+msgstr "Denne utgaven fikser bygging uten appstream-util."
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:55
 msgid "This release contains the following feature changes:"
-msgstr ""
+msgstr "Denne utgaven inneholder følgende fremtidige endringer:"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:57
 msgid "(shared_queue): more verbose trace logging"
-msgstr ""
+msgstr "(shared_queue): Mer ordrik sporingslogging"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:58
 msgid "(main_win): use a thread to handle CoreMsgs instead of add_idle"
-msgstr ""
+msgstr "(main_win): Bruker en tråd til å håndtere CoreMsgs istedenfor add_idle"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:59
 msgid "(main): display error window if xi-editor crashes"
-msgstr ""
+msgstr "(main): Vis feilvindu hvis xi-editor kræsjer"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:60
 msgid ""
 "(edit_view): add newline to end of the file if it doesn't terminate with one"
 msgstr ""
+"(edit_view): Legg til linjeskift på slutten av filen hvis den ikke er "
+"avsluttet med det allerede"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:61
+#, fuzzy
 msgid "edit_view): only draw trailing spaces"
-msgstr ""
+msgstr "edit_view): Kun tegn etterfølgende blanktegn"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:62
 msgid "(shared_queue): also use for sending stuff to xi"
-msgstr ""
+msgstr "(shared_queue): Brukt også for forsendelse av ting til xi"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:63
 msgid "(gettext): build against system gettext"
-msgstr ""
+msgstr "(gettext): Bygg mot systemets gettext"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:69
+#, fuzzy
 msgid ""
 "Fix hangs during startup, add 'Replace...' button and shortcut. Adds an "
 "option to visually draw spaces/tabs"
 msgstr ""
+"Fikser fryst adferd under oppstart, legger til \"Erstatt…\"-knapp og "
+"snarvei. Mulighet for visuell opptegning av mellomrom/tabulator"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:74
+#, fuzzy
 msgid ""
 "Use FileChooserNative instead of FileChooserDialog, fixes file opening/"
 "saving in flatpaks."
 msgstr ""
+"Bruk av FileChooserNative istedenfor FileChooserDialog, fikser åpning/"
+"lagring i Flatpak-filer."
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:79
 msgid "Use GSettings to determine the default font."
-msgstr ""
+msgstr "Bruk GSettings for å bestemme forvalgt skrift."
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:84
+#, fuzzy
 msgid "Use GSettings for GXI config instead of a TOML file, add appdata."
 msgstr ""
+"Bruk av GSettings for GXI-oppsett, istedenfor TOML-fil, legger til appdata."
 
 #: data/com.github.Cogitri.gxi.desktop.in:5
 msgid "The gxi text editor"
-msgstr ""
+msgstr "Tekstbehandleren gxi"
 
 #: data/com.github.Cogitri.gxi.desktop.in:8
 msgid "com.github.Cogitri.gxi"
-msgstr ""
+msgstr "com.github.Cogitri.gxi"
 
 #: data/com.github.Cogitri.gxi.gschema.xml:9
+#, fuzzy
 msgid "Xi-Editor's theme"
-msgstr ""
+msgstr "Drakt for xi-tekstbehandleren"
 
 #: data/com.github.Cogitri.gxi.gschema.xml:10
 msgid "Sets the theme used for the editing area"
-msgstr ""
+msgstr "Velger drakt for redigeringsområdet"
 
 #: data/com.github.Cogitri.gxi.gschema.xml:17 src/ui/prefs_win.glade:160
 msgid "Draw trailing spaces"
-msgstr ""
+msgstr "Tegn etterfølgende blanktegn"
 
 #: data/com.github.Cogitri.gxi.gschema.xml:18
 msgid "Draw spaces which are at the end of a line"
-msgstr ""
+msgstr "Tegn blanktegn som er på slutten av en linje"
 
 #: src/about_win.rs:16
 msgid "GTK frontend for the xi text editor, written in Rust"
-msgstr ""
+msgstr "GTK-grenseflate for xi-tekstbehandleren, skrevet i Rust"
 
 #: src/about_win.rs:23
+#, fuzzy
 msgid "gxi's Github Repo"
-msgstr ""
+msgstr "gxi sitt GitHub-kodelager"
 
 #: src/about_win.rs:30
+#, fuzzy
 msgid "Showing about window"
-msgstr ""
+msgstr "Viser \\\"Om\\\"-vindu"
 
 #: src/main.rs:129
 msgid "Starting gxi"
-msgstr ""
+msgstr "Starter gxi"
 
 #. Remove the file name from the config dir string (e.g. /home/rasmus/.config/gxi/preferences.xiconfig -> /home/rasmus/.config/gxi)
 #: src/main.rs:150
+#, fuzzy
 msgid "Failed to set config dir!"
-msgstr ""
+msgstr "Klarte ikke å sette oppsettsmappe."
 
 #: src/main.rs:162
 msgid "Activating new view"
-msgstr ""
+msgstr "Aktiverer ny visning"
 
 #: src/main.rs:179
 msgid "Opening new file"
-msgstr ""
+msgstr "Åpner ny fil"
 
 #: src/main.rs:203
+#, fuzzy
 msgid "Shutting down..."
-msgstr ""
+msgstr "Lukker programmet…"
 
 #: src/main_win.rs:76
 msgid "Theme name"
-msgstr ""
+msgstr "Draktnavn"
 
 #: src/main_win.rs:118
 msgid "Found message in queue"
-msgstr ""
+msgstr "Fant melding i kø"
 
 #: src/main_win.rs:127
 msgid "Found a message from xi"
-msgstr ""
+msgstr "Fant en melding fra xi"
 
 #. xi-editor doesn't know about the translations
 #: src/main_win.rs:149 src/main_win.rs:156
 msgid "Plain Text"
-msgstr ""
+msgstr "Klartekst"
 
 #: src/main_win.rs:259
+#, fuzzy
 msgid "Auto indent"
-msgstr ""
+msgstr "Automatisk innrykk"
 
 #: src/main_win.rs:278
+#, fuzzy
 msgid "Space indent"
-msgstr ""
+msgstr "Mellomromsinnrykk"
 
 #: src/main_win.rs:318
 msgid "Handling CoreMsg"
-msgstr ""
+msgstr "Håndtering av CoreMsg"
 
 #: src/main_win.rs:343
 msgid "!!! UNHANDLED NOTIFICATION, PLEASE OPEN A BUGREPORT!"
-msgstr ""
+msgstr "!!! UHÅNDTERT MERKNAD, INNRAPPORTER SOM FEIL!"
 
 #: src/main_win.rs:375 src/ui/prefs_win.glade:32
 msgid "Theme"
-msgstr ""
+msgstr "Drakt"
 
 #: src/main_win.rs:377
 msgid "isn't available, setting to default"
-msgstr ""
+msgstr "Er ikke tilgjengelig, setter til forvalg"
 
 #: src/main_win.rs:396
 msgid "Failed to convert theme settings"
-msgstr ""
+msgstr "Klarte ikke å konvertere draktinnstillinger"
 
 #: src/main_win.rs:438
+#, fuzzy
 msgid "Couldn't find syntect plugin, functionality will be limited!"
-msgstr ""
+msgstr "Fant ikke syntect-programtillegg, funksjonaliteten vil begrenses."
 
 #: src/main_win.rs:517 src/main_win.rs:533 src/main_win.rs:598
 #: src/main_win.rs:621 src/main_win.rs:634
 msgid "Handling"
-msgstr ""
+msgstr "Håndtering"
 
 #: src/main_win.rs:557
+#, fuzzy
 msgid "Failed to find View"
-msgstr ""
+msgstr "Klarte ikke å finne visning"
 
 #: src/main_win.rs:573
+#, fuzzy
 msgid "has stopped due to an user-initiated exit"
-msgstr ""
+msgstr "har stoppet som følge av en brukerforespurt avslutting"
 
 #: src/main_win.rs:576
+#, fuzzy
 msgid "has crashed with error code"
-msgstr ""
+msgstr "har kræsjet med feilkode"
 
 #: src/main_win.rs:579
 msgid "has crashed"
-msgstr ""
+msgstr "har kræsjet"
 
 #: src/main_win.rs:585
 msgid "Plugin"
-msgstr ""
+msgstr "Programtillegg"
 
 #: src/main_win.rs:588
 msgid "functionality will be limited"
-msgstr ""
+msgstr "funksjonaliteten vil begrenses"
 
 #: src/main_win.rs:643
 msgid "Changing language to"
-msgstr ""
+msgstr "Endrer språk til"
 
 #: src/main_win.rs:653
 msgid "Open a file to edit"
-msgstr ""
+msgstr "Åpne en fil å redigere"
 
 #: src/main_win.rs:656 src/ui/gxi.glade:266
 msgid "Open"
-msgstr ""
+msgstr "Åpne"
 
 #: src/main_win.rs:657 src/main_win.rs:714
 msgid "Cancel"
-msgstr ""
+msgstr "Avbryt"
 
 #: src/main_win.rs:665
+#, fuzzy
 msgid "FileChooserNative open response"
-msgstr ""
+msgstr "FileChooserNative-åpningssvar"
 
 #: src/main_win.rs:676
 msgid "Couldn't open file"
-msgstr ""
+msgstr "Kunne ikke åpne fil"
 
 #: src/main_win.rs:710
 msgid "Save file"
-msgstr ""
+msgstr "Lagre fil"
 
 #: src/main_win.rs:713 src/ui/gxi.glade:307
 msgid "Save"
-msgstr ""
+msgstr "Lagre"
 
 #: src/main_win.rs:722
+#, fuzzy
 msgid "FileChooserNative save response"
-msgstr ""
+msgstr "FileChooserNative-lagringssvar"
 
 #: src/main_win.rs:733
 msgid "Saving file"
-msgstr ""
+msgstr "Lagrer fil"
 
 #: src/main_win.rs:740
 msgid "Couldn't save file"
-msgstr ""
+msgstr "Kunne ikke lagre fil"
 
 #: src/main_win.rs:787
+#, fuzzy
 msgid "Failed to get the current EditView"
-msgstr ""
+msgstr "Klarte ikke å hente nåværende EditView"
 
 #: src/main_win.rs:892
 msgid "Save unsaved changes"
-msgstr ""
+msgstr "Lagre ulagrede endringer"
 
 #: src/errors.rs:44
 msgid "No default application"
-msgstr ""
+msgstr "Inget forvalgt program"
 
 #: src/errors.rs:46
+#, fuzzy
 msgid "Default application has wrong type"
-msgstr ""
+msgstr "Forvalgt program har feil type"
 
 #: src/xi_thread.rs:45
 msgid "Didn't expect xi-rpc to call read()"
-msgstr ""
+msgstr "Forventet ikke at xi-rpc skulle kalle read()"
 
 #: src/xi_thread.rs:53
 msgid "Didn't expect xi-rpc to call fill_buf()"
-msgstr ""
+msgstr "Forventet ikke at xi-rpc skulle kalle fill_buf()"
 
 #: src/xi_thread.rs:57
 msgid "Didn't expect xi-rpc to call consume()"
-msgstr ""
+msgstr "Forventet ikke at xi-rpc skulle kalle consume()"
 
 #: src/xi_thread.rs:77
 msgid "Didn't expect xi-rpc to call write()"
-msgstr ""
+msgstr "Forventet ikke at xi-rpc skulle kalle write()"
 
 #: src/xi_thread.rs:81
 msgid "Didn't expect xi-rpc to call flush()"
-msgstr ""
+msgstr "Forventet ikke at xi-rpc skulle kalle flush()"
 
 #: src/xi_thread.rs:88
+#, fuzzy
 msgid "RPC rx thread lost"
-msgstr ""
+msgstr "RPC RX-tråd tapt"
 
 #: src/ui/gxi.glade:22
+#, fuzzy
 msgid "Save As..."
-msgstr ""
+msgstr "Lagre som…"
 
 #: src/ui/gxi.glade:36
 msgid "Save All"
-msgstr ""
+msgstr "Lagre alle"
 
 #: src/ui/gxi.glade:61
+#, fuzzy
 msgid "Find..."
-msgstr ""
+msgstr "Finn…"
 
 #: src/ui/gxi.glade:75
+#, fuzzy
 msgid "Replace..."
-msgstr ""
+msgstr "Erstatt…"
 
 #: src/ui/gxi.glade:100
+#, fuzzy
 msgid "Auto Indent"
-msgstr ""
+msgstr "Automatisk innrykk"
 
 #: src/ui/gxi.glade:114
+#, fuzzy
 msgid "Insert Spaces"
-msgstr ""
+msgstr "Sett inn mellomrom"
 
 #: src/ui/gxi.glade:139 src/ui/prefs_win.glade:7
 msgid "Preferences"
-msgstr ""
+msgstr "Innstillinger"
 
 #: src/ui/gxi.glade:164
 msgid "Help"
-msgstr ""
+msgstr "Hjelp"
 
 #: src/ui/gxi.glade:178
 msgid "About"
-msgstr ""
+msgstr "Om"
 
 #: src/ui/gxi.glade:203
 msgid "Close All"
-msgstr ""
+msgstr "Lukk alle"
 
 #: src/ui/gxi.glade:217
 msgid "Close"
-msgstr ""
+msgstr "Lukk"
 
 #: src/ui/gxi.glade:231
 msgid "Quit"
-msgstr ""
+msgstr "Avslutt"
 
 #: src/ui/gxi.glade:322
 msgid "Syntax Selection"
-msgstr ""
+msgstr "Syntaks-utvalg"
 
 #: src/ui/gxi.glade:457
 msgid "Save changes to document \"Untitled\" before closing?"
-msgstr ""
+msgstr "Lagre endringer til dokumentet \"Uten tittel\" før lukking?"
 
 #: src/ui/prefs_win.glade:54
 msgid "Font"
-msgstr ""
+msgstr "Skrift"
 
 #: src/ui/prefs_win.glade:102
 msgid "Appearance"
-msgstr ""
+msgstr "Utseende"
 
 #: src/ui/prefs_win.glade:115
+#, fuzzy
 msgid "Treat spaces like tabs"
-msgstr ""
+msgstr "Håndter blanktegn som tabulator"
 
 #: src/ui/prefs_win.glade:130
 msgid "Scroll past the end of documents"
-msgstr ""
+msgstr "Rull forbi slutten på dokumenter"
 
 #: src/ui/prefs_win.glade:145
 msgid "Wrap lines at the end of the view instead of offering scrolling"
-msgstr ""
+msgstr "Linjebryt på slutten av visning istedenfor å tilby rulling"
 
 #: src/ui/prefs_win.glade:181
 msgid "Editing"
-msgstr ""
+msgstr "Redigering"
 
 #: src/ui/find_replace.glade:59
 msgid "Find"
-msgstr ""
+msgstr "Finn"
 
 #: src/ui/find_replace.glade:121
 msgid "No Results"
-msgstr ""
+msgstr "Resultatløst"
 
 #: src/ui/find_replace.glade:153 src/ui/find_replace.glade:163
 msgid "Replace"
-msgstr ""
+msgstr "Erstatt"
 
 #: src/ui/find_replace.glade:176
 msgid "Replace All"
-msgstr ""
+msgstr "Erstatt alle"
 
 #: src/edit_view.rs:42
 msgid "Failed to get Pango language"
-msgstr ""
+msgstr "Klarte ikke å hente Pango-språk"
 
 #: src/edit_view.rs:45
 msgid "Failed to load Pango font set"
-msgstr ""
+msgstr "Klarte ikke å laste Pango-skriftsett"
 
 #: src/edit_view.rs:48
+#, fuzzy
 msgid "Failed to load Pango font metrics"
-msgstr ""
+msgstr "Klarte ikke å laste Pango-skriftsegenskaper"
 
 #: src/edit_view.rs:53
 msgid "Pango font size"
-msgstr ""
+msgstr "Pango-skriftstørrelse"
 
 #: src/edit_view.rs:62
+#, fuzzy
 msgid "Font metrics"
-msgstr ""
+msgstr "Skriftegenskaper"
 
 #: src/edit_view.rs:124
+#, fuzzy
 msgid "Events"
-msgstr ""
+msgstr "Hendelser"
 
 #: src/edit_view.rs:173 src/edit_view.rs:369 src/edit_view.rs:383
 #: src/edit_view.rs:510 src/edit_view.rs:672
 msgid "Failed to get Pango context"
-msgstr ""
+msgstr "Klarte ikke å hente Pango-bindeleddsinfo"
 
 #: src/edit_view.rs:301
 msgid "Size changed to"
-msgstr ""
+msgstr "Størrelse endret til"
 
 #: src/edit_view.rs:301
 msgid "width"
-msgstr ""
+msgstr "bredde"
 
 #: src/edit_view.rs:301
 msgid "height"
-msgstr ""
+msgstr "høyde"
 
 #: src/edit_view.rs:344 src/edit_view.rs:346
 msgid "Untitled"
-msgstr ""
+msgstr "Uten tittel"
 
 #: src/edit_view.rs:355
 msgid "Setting title to"
-msgstr ""
+msgstr "Setter tittel til"
 
 #: src/edit_view.rs:381
 msgid "Setting edit font to"
-msgstr ""
+msgstr "Setter redigeringsskrift til"
 
 #: src/edit_view.rs:412
 msgid "Unhandled config option, open a bug report!"
-msgstr ""
+msgstr "Uhåndtert oppsettsvalg, innrapporter som feil."
 
 #: src/edit_view.rs:529
 msgid "Allocating DrawingArea size"
-msgstr ""
+msgstr "Tildeler DrawingArea-størrelse"
 
 #: src/edit_view.rs:540
 msgid "Vertical scrollbar changed value"
-msgstr ""
+msgstr "Loddrett rullefelt endret verdi"
 
 #: src/edit_view.rs:559
 msgid "Updating visible scroll region"
-msgstr ""
+msgstr "Oppdater synlig rullefelt"
 
 #: src/edit_view.rs:616
 msgid "Drawing EditView"
-msgstr ""
+msgstr "Tegner EditView"
 
 #: src/edit_view.rs:617
 msgid "vertical adjustment"
-msgstr ""
+msgstr "loddrett justering"
 
 #: src/edit_view.rs:620
 msgid "horizontal adjustment"
-msgstr ""
+msgstr "vannrett justering"
 
 #: src/edit_view.rs:1035
 msgid "Smooth scrolling failed"
-msgstr ""
+msgstr "Myk rulling mislyktes"
 
 #: src/edit_view.rs:1058
 msgid "Processing key press"
-msgstr ""
+msgstr "Behandler tastetrykk"
 
 #: src/edit_view.rs:1059
 msgid "value"
-msgstr ""
+msgstr "verdi"
 
 #: src/edit_view.rs:1061
 msgid "state"
-msgstr ""
+msgstr "status"
 
 #: src/edit_view.rs:1063
 msgid "length"
-msgstr ""
+msgstr "lengde"
 
 #: src/edit_view.rs:1065
 msgid "group"
-msgstr ""
+msgstr "gruppe"
 
 #: src/edit_view.rs:1067
+#, fuzzy
 msgid "unicode"
-msgstr ""
+msgstr "Unicode"
 
 #: src/pref_storage.rs:79
 msgid "Failed to create the config dir"
-msgstr ""
+msgstr "Klarte ikke å opprette oppsettsmappen"
 
 #: src/pref_storage.rs:126
+#, fuzzy
 msgid "Couldn't read config, falling back to the default XI-Editor config"
-msgstr ""
+msgstr "Kunne ikke lese oppsett, faller tilbake til forvalgt xi-editor -oppsett"
 
 #: src/pref_storage.rs:138
+#, fuzzy
 msgid "Couldn't determine home dir! Settings will be temporary"
-msgstr ""
+msgstr "Kunne ikke bestemme hjemmemappe. Endringer vil forbli midlertidige"
 
 #: src/pref_storage.rs:147
 msgid "Failed to create temporary config dir"
-msgstr ""
+msgstr "Klarte ikke å opprette midlertidig oppsettsmappe"
 
 #: src/pref_storage.rs:171
 msgid "Opening config file"
-msgstr ""
+msgstr "Åpner oppsettsfil"
 
 #: src/pref_storage.rs:175
 msgid "Reading config file"
-msgstr ""
+msgstr "Leser oppsettsfil"
 
 #: src/pref_storage.rs:179
+#, fuzzy
 msgid "Xi-Config"
-msgstr ""
+msgstr "Oppsett av xi"
 
 #: src/prefs_win.rs:47
 msgid "Setting font description"
-msgstr ""
+msgstr "Beskrivelse av skriftsinnstilling"
 
 #: src/prefs_win.rs:60
 msgid "Setting font to"
-msgstr ""
+msgstr "Setter skrift til"
 
 #: src/prefs_win.rs:61
 msgid "Setting font size to"
-msgstr ""
+msgstr "Setter skriftstørrelse til"
 
 #: src/prefs_win.rs:79
 msgid "Setting active theme"
-msgstr ""
+msgstr "Setter iført drakt"
 
 #: src/prefs_win.rs:87
 msgid "Theme changed to"
-msgstr ""
+msgstr "Drakt endret til"
 
 #: src/prefs_win.rs:105
+#, fuzzy
 msgid "Scrolling past end"
-msgstr ""
+msgstr "Rulling forbi slutten"
 
 #: src/prefs_win.rs:120
 msgid "Word wrapping"
-msgstr ""
+msgstr "Linjebryting"
 
 #: src/prefs_win.rs:135
+#, fuzzy
 msgid "Tab stops"
-msgstr ""
+msgstr "Tabulatorstopp"
 
 #: src/rpc.rs:79
 msgid "unexpected result"
-msgstr ""
+msgstr "uventet resultat"
 
 #: src/rpc.rs:82
+#, fuzzy
 msgid "Got"
-msgstr ""
+msgstr "Fikk"
 
 #: src/rpc.rs:82
+#, fuzzy
 msgid "at RPC level"
-msgstr ""
+msgstr "på RPC-nivå"
