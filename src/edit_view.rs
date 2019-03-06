@@ -17,13 +17,6 @@ use std::cmp::{max, min};
 use std::rc::Rc;
 use std::u32;
 
-/// The `EVReplace` struct holds the find+replace elements of the EditView.
-pub struct EVReplace {
-    replace_expander: Expander,
-    replace_revealer: Revealer,
-    replace_entry: Entry,
-}
-
 /// The `Font` Struct holds all information about the font used in the `EditView` for the editing area
 /// or the interface font (used for the linecount)
 pub struct Font {
@@ -87,15 +80,12 @@ pub struct EditView {
     linecount_da: DrawingArea,
     pub root_widget: gtk::Box,
     pub tab_widget: gtk::Box,
-    search_bar: SearchBar,
-    search_entry: SearchEntry,
-    find_status_label: Label,
     pub label: Label,
     pub close_button: Button,
     hscrollbar: Scrollbar,
     vscrollbar: Scrollbar,
     line_cache: LineCache,
-    replace: EVReplace,
+    find_replace: FindReplace,
     edit_font: Font,
     interface_font: Font,
 }
@@ -188,12 +178,9 @@ impl EditView {
             hscrollbar: hscrollbar.clone(),
             vscrollbar: vscrollbar.clone(),
             line_cache: LineCache::new(),
-            search_bar: fr.search_bar.clone(),
-            search_entry: fr.search_entry.clone(),
-            find_status_label: fr.find_status_label.clone(),
             edit_font,
             interface_font,
-            replace: fr.replace,
+            find_replace: fr.clone(),
         }));
 
         edit_view.borrow_mut().update_title();
@@ -241,44 +228,7 @@ impl EditView {
             edit_view.borrow_mut().handle_linecount_draw(&ctx)
         }));
 
-        fr.search_entry
-            .connect_search_changed(clone!(edit_view => move |w| {
-                if let Some(text) = w.get_text() {
-                    edit_view.borrow_mut().search_changed(Some(text.to_string()));
-                } else {
-                    edit_view.borrow_mut().search_changed(None);
-                }
-            }));
-
-        fr.search_entry
-            .connect_activate(clone!(edit_view => move |_| {
-                edit_view.borrow_mut().find_next();
-            }));
-
-        fr.search_entry
-            .connect_stop_search(clone!(edit_view => move |_| {
-                edit_view.borrow().stop_search();
-            }));
-
-        fr.replace_button
-            .connect_clicked(clone!(edit_view => move |_| {
-                edit_view.borrow().replace();
-            }));
-
-        fr.replace_all_button
-            .connect_clicked(clone!(edit_view => move |_| {
-                edit_view.borrow().replace_all();
-            }));
-
-        fr.go_down_button
-            .connect_clicked(clone!(edit_view => move |_| {
-                edit_view.borrow_mut().find_next();
-            }));
-
-        fr.go_up_button
-            .connect_clicked(clone!(edit_view => move |_| {
-                edit_view.borrow_mut().find_prev();
-            }));
+        fr.connect_events(&edit_view);
 
         vscrollbar.connect_change_value(clone!(edit_view => move |_,_,value| {
             edit_view.borrow_mut().vscrollbar_change_value(value)
@@ -290,8 +240,8 @@ impl EditView {
     }
 }
 
+#[derive(Clone)]
 struct FindReplace {
-    replace: EVReplace,
     search_bar: SearchBar,
     replace_expander: Expander,
     replace_revealer: Revealer,
@@ -330,14 +280,7 @@ impl FindReplace {
             }
         }));
 
-        let replace = EVReplace {
-            replace_expander: replace_expander.clone(),
-            replace_revealer: replace_revealer.clone(),
-            replace_entry: replace_entry.clone(),
-        };
-
         FindReplace {
-            replace,
             search_bar,
             replace_expander,
             replace_revealer,
@@ -349,6 +292,42 @@ impl FindReplace {
             go_down_button,
             go_up_button,
         }
+    }
+
+    fn connect_events(&self, ev: &Rc<RefCell<EditView>>) {
+        self.search_entry
+            .connect_search_changed(clone!(ev => move |w| {
+                if let Some(text) = w.get_text() {
+                    ev.borrow_mut().search_changed(Some(text.to_string()));
+                } else {
+                    ev.borrow_mut().search_changed(None);
+                }
+            }));
+        self.search_entry.connect_activate(clone!(ev => move |_| {
+            ev.borrow_mut().find_next();
+        }));
+
+        self.search_entry
+            .connect_stop_search(clone!(ev => move |_| {
+                ev.borrow().stop_search();
+            }));
+
+        self.replace_button.connect_clicked(clone!(ev => move |_| {
+            ev.borrow().replace();
+        }));
+
+        self.replace_all_button
+            .connect_clicked(clone!(ev => move |_| {
+                ev.borrow().replace_all();
+            }));
+
+        self.go_down_button.connect_clicked(clone!(ev => move |_| {
+            ev.borrow_mut().find_next();
+        }));
+
+        self.go_up_button.connect_clicked(clone!(ev => move |_| {
+            ev.borrow_mut().find_prev();
+        }));
     }
 }
 
@@ -1290,14 +1269,14 @@ impl EditView {
 
     /// Opens the find dialog (Ctrl+F)
     pub fn start_search(&self) {
-        if self.search_bar.get_search_mode() {
+        if self.find_replace.search_bar.get_search_mode() {
             self.stop_search();
         } else {
-            self.search_bar.set_search_mode(true);
-            self.replace.replace_expander.set_expanded(false);
-            self.replace.replace_revealer.set_reveal_child(false);
-            self.search_entry.grab_focus();
-            if let Some(needle) = self.search_entry.get_text() {
+            self.find_replace.search_bar.set_search_mode(true);
+            self.find_replace.replace_expander.set_expanded(false);
+            self.find_replace.replace_revealer.set_reveal_child(false);
+            self.find_replace.search_entry.grab_focus();
+            if let Some(needle) = self.find_replace.search_entry.get_text() {
                 self.core
                     .borrow()
                     .find(&self.view_id, &needle, false, Some(false));
@@ -1307,21 +1286,21 @@ impl EditView {
 
     /// Opens the replace dialog (Ctrl+R)
     pub fn start_replace(&self) {
-        if self.replace.replace_revealer.get_child_revealed() {
+        if self.find_replace.replace_revealer.get_child_revealed() {
             self.stop_search()
         } else {
-            self.search_bar.set_search_mode(true);
-            self.replace.replace_expander.set_expanded(true);
-            self.replace.replace_revealer.set_reveal_child(true);
-            self.search_entry.grab_focus();
+            self.find_replace.search_bar.set_search_mode(true);
+            self.find_replace.replace_expander.set_expanded(true);
+            self.find_replace.replace_revealer.set_reveal_child(true);
+            self.find_replace.search_entry.grab_focus();
         }
     }
 
     /// Closes the find/replace dialog
     pub fn stop_search(&self) {
-        self.search_bar.set_search_mode(false);
-        self.replace.replace_expander.set_expanded(false);
-        self.replace.replace_revealer.set_reveal_child(false);
+        self.find_replace.search_bar.set_search_mode(false);
+        self.find_replace.replace_expander.set_expanded(false);
+        self.find_replace.replace_revealer.set_reveal_child(false);
         self.da.grab_focus();
     }
 
@@ -1331,7 +1310,8 @@ impl EditView {
             for query in queries {
                 if let Some(query_obj) = query.as_object() {
                     if let Some(matches) = query_obj["matches"].as_u64() {
-                        self.find_status_label
+                        self.find_replace
+                            .find_status_label
                             .set_text(&format!("{} Results", matches));
                     }
                 }
@@ -1344,7 +1324,7 @@ impl EditView {
     //TODO: Handle preserve_case
     pub fn replace_status(&self, status: &Value) {
         if let Some(chars) = status["chars"].as_str() {
-            self.replace.replace_entry.set_text(chars);
+            self.find_replace.replace_entry.set_text(chars);
         }
     }
 
@@ -1370,7 +1350,7 @@ impl EditView {
 
     /// Replace _one_ match with the replacement string
     pub fn replace(&self) {
-        if let Some(replace_chars) = self.replace.replace_entry.get_text() {
+        if let Some(replace_chars) = self.find_replace.replace_entry.get_text() {
             self.core
                 .borrow()
                 .replace(&self.view_id, replace_chars.as_str(), false);
@@ -1380,7 +1360,7 @@ impl EditView {
 
     /// Replace _all_ matches with the replacement string
     pub fn replace_all(&self) {
-        if let Some(replace_chars) = self.replace.replace_entry.get_text() {
+        if let Some(replace_chars) = self.find_replace.replace_entry.get_text() {
             self.core
                 .borrow()
                 .replace(&self.view_id, replace_chars.as_str(), false);
