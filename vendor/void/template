@@ -1,0 +1,23 @@
+# Template file for 'gxi'
+pkgname=gxi
+version=git
+revision=1
+build_style=meson
+build_helper="rust"
+hostmakedepends="cargo pkg-config rust gettext git"
+makedepends="gtk+3-devel rust-std gettext-devel"
+checkdepends="appstream-glib desktop-file-utils"
+short_desc="GTK frontend for the xi text editor, written in Rust"
+maintainer="Rasmus Thomsen <rasmus.thomsen@protonmail.com>"
+license="MIT"
+homepage="https://github.com/Cogitri/gxi"
+
+do_fetch() {
+	# We do git clone instead of adding master to the distfiles=
+	# because checksum is actually useless here.
+	git clone https://github.com/Cogitri/gxi.git ${pkgname}-${version}
+}
+
+post_install() {
+	vlicense LICENSE
+}
