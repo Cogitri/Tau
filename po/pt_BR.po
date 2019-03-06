@@ -8,135 +8,154 @@ msgstr ""
 "Project-Id-Version: gxi\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-03-04 18:34+0100\n"
-"PO-Revision-Date: 2019-01-21 12:14-0200\n"
-"Last-Translator: \n"
-"Language-Team: \n"
+"PO-Revision-Date: 2019-03-07 05:49+0000\n"
+"Last-Translator: maxice8 <thinkabit.ukim@gmail.com>\n"
+"Language-Team: Portuguese (Brazil) <https://hosted.weblate.org/projects/gxi/"
+"translation/pt_BR/>\n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.2.1\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: Weblate 3.5.1-dev\n"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:7
 #: data/com.github.Cogitri.gxi.desktop.in:3
 msgid "gxi"
-msgstr ""
+msgstr "gxi"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:8
 msgid "GTK frontend for the xi text editor"
-msgstr ""
+msgstr "Frontend GTK para o editor de texto xi"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:12
 msgid ""
 "gxi is a GTK frontend for the xi text editor written in Rust. It's a very "
 "fast plain text editor."
 msgstr ""
+"gxi é um frontend GTK para o editor de texti xi, escrito em Rust. Um rapido "
+"e simples editor de texto."
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:27
 msgid "Rasmus \"Cogitri\" Thomsen"
-msgstr ""
+msgstr "Rasmus \"Cogitri\" Thomsen"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:37
 msgid ""
 "Ask user if changes should be saved upon closing. Also makes panics more "
 "readable."
 msgstr ""
+"Perguntar se mudanças devem ser salvas antes. Também faz pânicos serem mais "
+"legíveis."
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:42
 msgid ""
 "This release fixes the linecount upon deleting lines and fixes some crashes. "
 "It also adds a new icon."
 msgstr ""
+"Essa versão corrige a contagem de linhas quando são deletadas e também "
+"elimina certas terminações abruptas do programa. Um novo ícone também é "
+"adicionado."
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:50
 msgid "This release fixes the build without appstream-util."
-msgstr ""
+msgstr "Essa versão corrige a construção sem appstream-util."
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:55
 msgid "This release contains the following feature changes:"
-msgstr ""
+msgstr "Essa versão possui as seguintes mudanças de funções:"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:57
 msgid "(shared_queue): more verbose trace logging"
-msgstr ""
+msgstr "(shared_queue): maior verbosidade no logging"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:58
 msgid "(main_win): use a thread to handle CoreMsgs instead of add_idle"
-msgstr ""
+msgstr "(main_win): use uma thread para responde CoreMsgs ao invés de add_idle"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:59
 msgid "(main): display error window if xi-editor crashes"
 msgstr ""
+"(main): Mostre mensagem de erro se xi-editor terminar execução de forma "
+"abrupta"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:60
 msgid ""
 "(edit_view): add newline to end of the file if it doesn't terminate with one"
 msgstr ""
+"(edit_view): adicione uma nova linha no fim do arquivo se o mesmo já não "
+"possui uma"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:61
 msgid "edit_view): only draw trailing spaces"
-msgstr ""
+msgstr "edit_view): só mostre espaços desnecessários à direita do texto"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:62
 msgid "(shared_queue): also use for sending stuff to xi"
-msgstr ""
+msgstr "(shared_queue): também use para enviar conteúdo para xi"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:63
 msgid "(gettext): build against system gettext"
-msgstr ""
+msgstr "(gettext): construa contra o gettext do sistema"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:69
 msgid ""
 "Fix hangs during startup, add 'Replace...' button and shortcut. Adds an "
 "option to visually draw spaces/tabs"
 msgstr ""
+"Corrige travamentos na inicialização do programa, botão e atalho de  "
+"'Substituir…' adicionado. Adiciona uma opção para mostrar espaçamento por "
+"espaços e por tabs"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:74
 msgid ""
 "Use FileChooserNative instead of FileChooserDialog, fixes file opening/"
 "saving in flatpaks."
 msgstr ""
+"Use FileChooserNative em vez de FileChooserDialog, corrige abrir e salvar "
+"arquivos em flatpaks."
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:79
 msgid "Use GSettings to determine the default font."
-msgstr ""
+msgstr "Use GSettings para determinar a fonte padrão."
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:84
 msgid "Use GSettings for GXI config instead of a TOML file, add appdata."
 msgstr ""
+"Use GSettings para configuração do GXI em vez de arquivo em TOML, adiciona "
+"appdata."
 
 #: data/com.github.Cogitri.gxi.desktop.in:5
 msgid "The gxi text editor"
-msgstr ""
+msgstr "O editor de texto gxi"
 
 #: data/com.github.Cogitri.gxi.desktop.in:8
 msgid "com.github.Cogitri.gxi"
-msgstr ""
+msgstr "com.github.Cogitri.gxi"
 
 #: data/com.github.Cogitri.gxi.gschema.xml:9
 msgid "Xi-Editor's theme"
-msgstr ""
+msgstr "Tema do editor de texto xi"
 
 #: data/com.github.Cogitri.gxi.gschema.xml:10
 msgid "Sets the theme used for the editing area"
-msgstr ""
+msgstr "Seleciona o tema para ser usado na área de edição"
 
 #: data/com.github.Cogitri.gxi.gschema.xml:17 src/ui/prefs_win.glade:160
 msgid "Draw trailing spaces"
-msgstr ""
+msgstr "Mostrar espaços desnecessários à direita do texto"
 
 #: data/com.github.Cogitri.gxi.gschema.xml:18
 msgid "Draw spaces which are at the end of a line"
-msgstr ""
+msgstr "Mostrar espaços que estão no final de uma linha"
 
 #: src/about_win.rs:16
 msgid "GTK frontend for the xi text editor, written in Rust"
-msgstr ""
+msgstr "Frontend em GTK para o editor de texto xi, escrito em Rust"
 
 #: src/about_win.rs:23
 msgid "gxi's Github Repo"
-msgstr ""
+msgstr "Repositorio do gxi no Github"
 
 #: src/about_win.rs:30
 msgid "Showing about window"
@@ -148,13 +167,12 @@ msgstr "Iniciando gxi"
 
 #. Remove the file name from the config dir string (e.g. /home/rasmus/.config/gxi/preferences.xiconfig -> /home/rasmus/.config/gxi)
 #: src/main.rs:150
-#, fuzzy
 msgid "Failed to set config dir!"
-msgstr "Falha em configurar diretório de fontes"
+msgstr "Falha em configurar diretório de fontes!"
 
 #: src/main.rs:162
 msgid "Activating new view"
-msgstr ""
+msgstr "Ativando nova taba"
 
 #: src/main.rs:179
 msgid "Opening new file"
@@ -162,7 +180,7 @@ msgstr "Abrindo novo arquivo"
 
 #: src/main.rs:203
 msgid "Shutting down..."
-msgstr "Desligando"
+msgstr "Desligando..."
 
 #: src/main_win.rs:76
 msgid "Theme name"
@@ -170,16 +188,16 @@ msgstr "Nome do Tema"
 
 #: src/main_win.rs:118
 msgid "Found message in queue"
-msgstr ""
+msgstr "Mensagem encontrada na fila"
 
 #: src/main_win.rs:127
 msgid "Found a message from xi"
-msgstr ""
+msgstr "Mensagem encontrada do xi"
 
 #. xi-editor doesn't know about the translations
 #: src/main_win.rs:149 src/main_win.rs:156
 msgid "Plain Text"
-msgstr ""
+msgstr "Texto Simples"
 
 #: src/main_win.rs:259
 msgid "Auto indent"
@@ -191,11 +209,11 @@ msgstr "Indentar com espaços"
 
 #: src/main_win.rs:318
 msgid "Handling CoreMsg"
-msgstr ""
+msgstr "Manejando CoreMsg"
 
 #: src/main_win.rs:343
 msgid "!!! UNHANDLED NOTIFICATION, PLEASE OPEN A BUGREPORT!"
-msgstr ""
+msgstr "!!! NOTIFICAÇÃO NÃO MANEJADA, POR FAVOR ABRIR RELATÓRIO DE ERRO!"
 
 #: src/main_win.rs:375 src/ui/prefs_win.glade:32
 msgid "Theme"
@@ -207,40 +225,40 @@ msgstr "indisponivel, configurando como padrão"
 
 #: src/main_win.rs:396
 msgid "Failed to convert theme settings"
-msgstr ""
+msgstr "Falha ao converter configuração de tema"
 
 #: src/main_win.rs:438
 msgid "Couldn't find syntect plugin, functionality will be limited!"
-msgstr ""
+msgstr "Plugin syntect não pode ser encontrado, funcionalidade será limitada!"
 
 #: src/main_win.rs:517 src/main_win.rs:533 src/main_win.rs:598
 #: src/main_win.rs:621 src/main_win.rs:634
 msgid "Handling"
-msgstr ""
+msgstr "Manejo"
 
 #: src/main_win.rs:557
 msgid "Failed to find View"
-msgstr ""
+msgstr "Falha ao encontrar taba"
 
 #: src/main_win.rs:573
 msgid "has stopped due to an user-initiated exit"
-msgstr ""
+msgstr "parou devido a uma saída iniciada pelo usuário"
 
 #: src/main_win.rs:576
 msgid "has crashed with error code"
-msgstr ""
+msgstr "terminou execução com um código de erro"
 
 #: src/main_win.rs:579
 msgid "has crashed"
-msgstr ""
+msgstr "terminou execução abruptamente"
 
 #: src/main_win.rs:585
 msgid "Plugin"
-msgstr ""
+msgstr "Plugin"
 
 #: src/main_win.rs:588
 msgid "functionality will be limited"
-msgstr ""
+msgstr "funcionalidade será limitada"
 
 #: src/main_win.rs:643
 msgid "Changing language to"
@@ -248,7 +266,7 @@ msgstr "Mudando Língua para"
 
 #: src/main_win.rs:653
 msgid "Open a file to edit"
-msgstr ""
+msgstr "Abrir um arquivo para edição"
 
 #: src/main_win.rs:656 src/ui/gxi.glade:266
 msgid "Open"
@@ -256,7 +274,7 @@ msgstr "Abrir"
 
 #: src/main_win.rs:657 src/main_win.rs:714
 msgid "Cancel"
-msgstr ""
+msgstr "Cancelar"
 
 #: src/main_win.rs:665
 msgid "FileChooserNative open response"
@@ -264,12 +282,11 @@ msgstr ""
 
 #: src/main_win.rs:676
 msgid "Couldn't open file"
-msgstr ""
+msgstr "Não foi possível abrir o arquivo"
 
 #: src/main_win.rs:710
-#, fuzzy
 msgid "Save file"
-msgstr "Salvar Todos"
+msgstr "Salvar arquivo"
 
 #: src/main_win.rs:713 src/ui/gxi.glade:307
 msgid "Save"
@@ -280,53 +297,52 @@ msgid "FileChooserNative save response"
 msgstr ""
 
 #: src/main_win.rs:733
-#, fuzzy
 msgid "Saving file"
-msgstr "Iniciando gxi"
+msgstr "Salvando arquivo"
 
 #: src/main_win.rs:740
 msgid "Couldn't save file"
-msgstr ""
+msgstr "Não foi possível salvar arquivo"
 
 #: src/main_win.rs:787
 msgid "Failed to get the current EditView"
-msgstr ""
+msgstr "Não foi possível adquirir área de edição atual"
 
 #: src/main_win.rs:892
 msgid "Save unsaved changes"
-msgstr ""
+msgstr "Salvar mudanças não salvas"
 
 #: src/errors.rs:44
 msgid "No default application"
-msgstr ""
+msgstr "Sem aplicação padrão"
 
 #: src/errors.rs:46
 msgid "Default application has wrong type"
-msgstr ""
+msgstr "Aplicação padrão é incompatível"
 
 #: src/xi_thread.rs:45
 msgid "Didn't expect xi-rpc to call read()"
-msgstr ""
+msgstr "Não foi esperado chamada read() pelo xi-rpc"
 
 #: src/xi_thread.rs:53
 msgid "Didn't expect xi-rpc to call fill_buf()"
-msgstr ""
+msgstr "Não foi esperado chamada fill_buf() pelo xi-rpc"
 
 #: src/xi_thread.rs:57
 msgid "Didn't expect xi-rpc to call consume()"
-msgstr ""
+msgstr "Não foi esperado chamada consume() pelo xi-rpc"
 
 #: src/xi_thread.rs:77
 msgid "Didn't expect xi-rpc to call write()"
-msgstr ""
+msgstr "Não foi esperado chamada write() pelo xi-rpc"
 
 #: src/xi_thread.rs:81
 msgid "Didn't expect xi-rpc to call flush()"
-msgstr ""
+msgstr "Não foi esperado chamada flush() pelo xi-rpc"
 
 #: src/xi_thread.rs:88
 msgid "RPC rx thread lost"
-msgstr ""
+msgstr "Thread de resposta a chamada de procedimento remoto perdida"
 
 #: src/ui/gxi.glade:22
 msgid "Save As..."
@@ -341,9 +357,8 @@ msgid "Find..."
 msgstr "Achar..."
 
 #: src/ui/gxi.glade:75
-#, fuzzy
 msgid "Replace..."
-msgstr "Substituir"
+msgstr "Substituir..."
 
 #: src/ui/gxi.glade:100
 msgid "Auto Indent"
@@ -379,11 +394,11 @@ msgstr "Sair"
 
 #: src/ui/gxi.glade:322
 msgid "Syntax Selection"
-msgstr ""
+msgstr "Seleção de sintaxe"
 
 #: src/ui/gxi.glade:457
 msgid "Save changes to document \"Untitled\" before closing?"
-msgstr ""
+msgstr "Salvar mudanças em documento “Sem Titulo” antes de fechar?"
 
 #: src/ui/prefs_win.glade:54
 msgid "Font"
@@ -403,7 +418,7 @@ msgstr "Continuar após final do documento"
 
 #: src/ui/prefs_win.glade:145
 msgid "Wrap lines at the end of the view instead of offering scrolling"
-msgstr ""
+msgstr "Quebrar linhas em vez de oferecer rolagem"
 
 #: src/ui/prefs_win.glade:181
 msgid "Editing"
@@ -428,24 +443,23 @@ msgstr "Substituir Todas"
 
 #: src/edit_view.rs:42
 msgid "Failed to get Pango language"
-msgstr ""
+msgstr "Não foi possível adquirir linguagem através do Pango"
 
 #: src/edit_view.rs:45
 msgid "Failed to load Pango font set"
-msgstr ""
+msgstr "Não foi possível carregar fontes através do Pango"
 
 #: src/edit_view.rs:48
 msgid "Failed to load Pango font metrics"
-msgstr ""
+msgstr "Não foi possível carregar tamanho da fonte através do Pango"
 
 #: src/edit_view.rs:53
-#, fuzzy
 msgid "Pango font size"
-msgstr "Configurando tamanho da fonte para"
+msgstr "Tamanho da fonte do Pango"
 
 #: src/edit_view.rs:62
 msgid "Font metrics"
-msgstr ""
+msgstr "Métricas da fonte"
 
 #: src/edit_view.rs:124
 msgid "Events"
@@ -454,7 +468,7 @@ msgstr "Eventos"
 #: src/edit_view.rs:173 src/edit_view.rs:369 src/edit_view.rs:383
 #: src/edit_view.rs:510 src/edit_view.rs:672
 msgid "Failed to get Pango context"
-msgstr ""
+msgstr "Falhar em adquirir contexto do Pango"
 
 #: src/edit_view.rs:301
 msgid "Size changed to"
@@ -477,41 +491,40 @@ msgid "Setting title to"
 msgstr "Configurando titulo para"
 
 #: src/edit_view.rs:381
-#, fuzzy
 msgid "Setting edit font to"
 msgstr "Configurando fonte para"
 
 #: src/edit_view.rs:412
 msgid "Unhandled config option, open a bug report!"
-msgstr ""
+msgstr "Opção de configuração não manejada, abra um relatório de erro!"
 
 #: src/edit_view.rs:529
 msgid "Allocating DrawingArea size"
-msgstr ""
+msgstr "Alocando tamanho da DrawingArea"
 
 #: src/edit_view.rs:540
 msgid "Vertical scrollbar changed value"
-msgstr ""
+msgstr "Barra de rolamento vertical mudou valor"
 
 #: src/edit_view.rs:559
 msgid "Updating visible scroll region"
-msgstr ""
+msgstr "Atualizado região visível para rolamento"
 
 #: src/edit_view.rs:616
 msgid "Drawing EditView"
-msgstr ""
+msgstr "Desenhando área de edição"
 
 #: src/edit_view.rs:617
 msgid "vertical adjustment"
-msgstr ""
+msgstr "Ajustamento vertical"
 
 #: src/edit_view.rs:620
 msgid "horizontal adjustment"
-msgstr ""
+msgstr "Ajustamento horizontal"
 
 #: src/edit_view.rs:1035
 msgid "Smooth scrolling failed"
-msgstr ""
+msgstr "Rolagem suave falhou"
 
 #: src/edit_view.rs:1058
 msgid "Processing key press"
@@ -535,11 +548,11 @@ msgstr "grupo"
 
 #: src/edit_view.rs:1067
 msgid "unicode"
-msgstr ""
+msgstr "unicode"
 
 #: src/pref_storage.rs:79
 msgid "Failed to create the config dir"
-msgstr ""
+msgstr "Não foi possível criar diretório de configuração"
 
 #: src/pref_storage.rs:126
 msgid "Couldn't read config, falling back to the default XI-Editor config"
@@ -549,6 +562,8 @@ msgstr ""
 #: src/pref_storage.rs:138
 msgid "Couldn't determine home dir! Settings will be temporary"
 msgstr ""
+"Não foi possível determinar diretório de usuário! Configurações serão "
+"temporárias"
 
 #: src/pref_storage.rs:147
 msgid "Failed to create temporary config dir"
@@ -588,15 +603,15 @@ msgstr "Tema trocado para"
 
 #: src/prefs_win.rs:105
 msgid "Scrolling past end"
-msgstr ""
+msgstr "Rolando além do final"
 
 #: src/prefs_win.rs:120
 msgid "Word wrapping"
-msgstr ""
+msgstr "Quebramento de linhas"
 
 #: src/prefs_win.rs:135
 msgid "Tab stops"
-msgstr ""
+msgstr "Tabulação"
 
 #: src/rpc.rs:79
 msgid "unexpected result"
@@ -604,11 +619,11 @@ msgstr "resultado inesperado"
 
 #: src/rpc.rs:82
 msgid "Got"
-msgstr ""
+msgstr "Got"
 
 #: src/rpc.rs:82
 msgid "at RPC level"
-msgstr ""
+msgstr "na camada de procedimento remoto"
 
 #~ msgid "Sucessfully set fontdir"
 #~ msgstr "Diretório de fontes configurado com sucesso"
