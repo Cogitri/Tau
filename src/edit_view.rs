@@ -69,6 +69,97 @@ impl Font {
     }
 }
 
+#[derive(Clone)]
+pub struct ViewItem {
+    pub main_area: DrawingArea,
+    linecount: DrawingArea,
+    horiz_bar: Scrollbar,
+    verti_bar: Scrollbar,
+}
+
+impl ViewItem {
+    fn new() -> ViewItem {
+        let main_area = DrawingArea::new();
+        let linecount = DrawingArea::new();
+        let horiz_bar = Scrollbar::new(Orientation::Horizontal, None::<&gtk::Adjustment>);
+        let verti_bar = Scrollbar::new(Orientation::Vertical, None::<&gtk::Adjustment>);
+
+        main_area.set_events(
+            EventMask::BUTTON_PRESS_MASK
+                | EventMask::BUTTON_RELEASE_MASK
+                | EventMask::BUTTON_MOTION_MASK
+                | EventMask::SCROLL_MASK
+                | EventMask::SMOOTH_SCROLL_MASK,
+        );
+        debug!("{}: {:?}", gettext("Events"), main_area.get_events());
+        main_area.set_can_focus(true);
+
+        ViewItem {
+            main_area,
+            linecount,
+            horiz_bar,
+            verti_bar,
+        }
+    }
+
+    fn connect_events(&self, edit_view: &Rc<RefCell<EditView>>) {
+        self.main_area
+            .connect_button_press_event(clone!(edit_view => move |_,eb| {
+                edit_view.borrow().handle_button_press(eb)
+            }));
+
+        let linecount = &self.linecount;
+        self.main_area
+            .connect_draw(clone!(edit_view, linecount => move |_,ctx| {
+                //FIXME: Hack to make sure the linecount is in sync with the text. This should be done more effeciently!
+                linecount.queue_draw();
+                edit_view.borrow_mut().handle_da_draw(&ctx)
+            }));
+
+        self.main_area
+            .connect_key_press_event(clone!(edit_view => move |_, ek| {
+                edit_view.borrow_mut().handle_key_press_event(ek)
+            }));
+
+        self.main_area
+            .connect_motion_notify_event(clone!(edit_view => move |_,em| {
+                edit_view.borrow_mut().handle_drag(em)
+            }));
+
+        self.main_area.connect_realize(|w| {
+            // Set the text cursor
+            if let Some(disp) = DisplayManager::get().get_default_display() {
+                let cur = Cursor::new_for_display(&disp, CursorType::Xterm);
+                if let Some(win) = w.get_window() {
+                    win.set_cursor(&cur)
+                }
+            }
+            w.grab_focus();
+        });
+
+        self.main_area
+            .connect_scroll_event(clone!(edit_view => move |_,es| {
+                edit_view.borrow_mut().handle_scroll(es)
+            }));
+
+        self.main_area.connect_size_allocate(clone!(edit_view => move |_,alloc| {
+            debug!("{}: {}={} {}={}", gettext("Size changed to"), gettext("width"), alloc.width, gettext("height"), alloc.height);
+            edit_view.borrow_mut().da_size_allocate(alloc.width, alloc.height);
+            edit_view.borrow().do_resize(&edit_view.borrow().view_id,alloc.width, alloc.height);
+        }));
+
+        self.linecount
+            .connect_draw(clone!(edit_view => move |_,ctx| {
+                edit_view.borrow_mut().handle_linecount_draw(&ctx)
+            }));
+
+        self.verti_bar
+            .connect_change_value(clone!(edit_view => move |_,_,value| {
+                edit_view.borrow_mut().vscrollbar_change_value(value)
+            }));
+    }
+}
+
 /// The EditView is the part of gxi that does the actual editing. This is where you edit documents.
 pub struct EditView {
     core: Rc<RefCell<Core>>,
@@ -76,14 +167,11 @@ pub struct EditView {
     pub view_id: String,
     pub file_name: Option<String>,
     pub pristine: bool,
-    pub da: DrawingArea,
-    linecount_da: DrawingArea,
     pub root_widget: gtk::Box,
     pub tab_widget: gtk::Box,
     pub label: Label,
     pub close_button: Button,
-    hscrollbar: Scrollbar,
-    vscrollbar: Scrollbar,
+    pub view_item: ViewItem,
     line_cache: LineCache,
     find_replace: FindReplace,
     edit_font: Font,
@@ -99,33 +187,19 @@ impl EditView {
         file_name: Option<String>,
         view_id: &str,
     ) -> Rc<RefCell<Self>> {
-        let da = DrawingArea::new();
-        let linecount_da = DrawingArea::new();
-        let hscrollbar = Scrollbar::new(Orientation::Horizontal, None::<&gtk::Adjustment>);
-        let vscrollbar = Scrollbar::new(Orientation::Vertical, None::<&gtk::Adjustment>);
-
-        da.set_events(
-            EventMask::BUTTON_PRESS_MASK
-                | EventMask::BUTTON_RELEASE_MASK
-                | EventMask::BUTTON_MOTION_MASK
-                | EventMask::SCROLL_MASK
-                | EventMask::SMOOTH_SCROLL_MASK,
-        );
-        debug!("{}: {:?}", gettext("Events"), da.get_events());
-        da.set_can_focus(true);
-
-        let fr = FindReplace::new();
+        let view_item = ViewItem::new();
+        let find_replace = FindReplace::new();
 
         let root_box = Box::new(Orientation::Vertical, 0);
         let hbox = Box::new(Orientation::Horizontal, 0);
         let vbox = Box::new(Orientation::Vertical, 0);
-        root_box.pack_start(&fr.search_bar, false, false, 0);
+        root_box.pack_start(&find_replace.search_bar, false, false, 0);
         root_box.pack_start(&hbox, true, true, 0);
-        hbox.pack_start(&linecount_da, false, false, 0);
+        hbox.pack_start(&view_item.linecount, false, false, 0);
         hbox.pack_start(&vbox, true, true, 0);
-        hbox.pack_start(&vscrollbar, false, false, 0);
-        vbox.pack_start(&da, true, true, 0);
-        vbox.pack_start(&hscrollbar, false, false, 0);
+        hbox.pack_start(&view_item.verti_bar, false, false, 0);
+        vbox.pack_start(&view_item.main_area, true, true, 0);
+        vbox.pack_start(&view_item.horiz_bar, false, false, 0);
         root_box.show_all();
 
         // Make the widgets for the tab
@@ -136,7 +210,8 @@ impl EditView {
         tab_hbox.add(&close_button);
         tab_hbox.show_all();
 
-        let pango_ctx = da
+        let pango_ctx = view_item
+            .main_area
             .get_pango_context()
             .unwrap_or_else(|| panic!("{}", &gettext("Failed to get Pango context")));
         let font_list: Vec<String> = pango_ctx
@@ -148,95 +223,48 @@ impl EditView {
             .collect();
         main_state.borrow_mut().fonts = font_list;
 
-        let config = &main_state.borrow().config;
-
-        let edit_font = Font::new(
-            pango_ctx.clone(),
-            FontDescription::from_string(&format!(
-                "{} {}",
-                &config.borrow().config.font_face,
-                &config.borrow().config.font_size
-            )),
-        );
-        let interface_font = Font::new(
-            pango_ctx,
-            FontDescription::from_string(&get_default_interface_font_schema()),
-        );
-
         let edit_view = Rc::new(RefCell::new(EditView {
             core: core.clone(),
             main_state: main_state.clone(),
             file_name,
             pristine: true,
             view_id: view_id.to_string(),
-            linecount_da: linecount_da.clone(),
-            da: da.clone(),
             root_widget: root_box.clone(),
             tab_widget: tab_hbox.clone(),
             label: label.clone(),
             close_button: close_button.clone(),
-            hscrollbar: hscrollbar.clone(),
-            vscrollbar: vscrollbar.clone(),
+            view_item: view_item.clone(),
             line_cache: LineCache::new(),
-            edit_font,
-            interface_font,
-            find_replace: fr.clone(),
+            edit_font: EditView::get_edit_font(&pango_ctx, &main_state.borrow().config),
+            interface_font: EditView::get_interface_font(&pango_ctx),
+            find_replace: find_replace.clone(),
         }));
 
         edit_view.borrow_mut().update_title();
-
-        da.connect_button_press_event(clone!(edit_view => move |_,eb| {
-            edit_view.borrow().handle_button_press(eb)
-        }));
-
-        da.connect_draw(clone!(edit_view, linecount_da => move |_,ctx| {
-            //FIXME: Hack to make sure the linecount is in sync with the text. This should be done more effeciently!
-            linecount_da.queue_draw();
-            edit_view.borrow_mut().handle_da_draw(&ctx)
-        }));
-
-        da.connect_key_press_event(clone!(edit_view => move |_, ek| {
-            edit_view.borrow_mut().handle_key_press_event(ek)
-        }));
-
-        da.connect_motion_notify_event(clone!(edit_view => move |_,em| {
-            edit_view.borrow_mut().handle_drag(em)
-        }));
-
-        da.connect_realize(|w| {
-            // Set the text cursor
-            if let Some(disp) = DisplayManager::get().get_default_display() {
-                let cur = Cursor::new_for_display(&disp, CursorType::Xterm);
-                if let Some(win) = w.get_window() {
-                    win.set_cursor(&cur)
-                }
-            }
-            w.grab_focus();
-        });
-
-        da.connect_scroll_event(clone!(edit_view => move |_,es| {
-            edit_view.borrow_mut().handle_scroll(es)
-        }));
-
-        da.connect_size_allocate(clone!(edit_view => move |_,alloc| {
-            debug!("{}: {}={} {}={}", gettext("Size changed to"), gettext("width"), alloc.width, gettext("height"), alloc.height);
-            edit_view.borrow_mut().da_size_allocate(alloc.width, alloc.height);
-            edit_view.borrow().do_resize(&edit_view.borrow().view_id,alloc.width, alloc.height);
-        }));
-
-        linecount_da.connect_draw(clone!(edit_view => move |_,ctx| {
-            edit_view.borrow_mut().handle_linecount_draw(&ctx)
-        }));
-
-        fr.connect_events(&edit_view);
-
-        vscrollbar.connect_change_value(clone!(edit_view => move |_,_,value| {
-            edit_view.borrow_mut().vscrollbar_change_value(value)
-        }));
-
         crate::MainWin::set_language(&core, view_id, "Plain Text");
 
+        view_item.connect_events(&edit_view);
+        find_replace.connect_events(&edit_view);
+
         edit_view
+    }
+
+    fn get_interface_font(pango_ctx: &pango::Context) -> Font {
+        Font::new(
+            pango_ctx.clone(),
+            FontDescription::from_string(&get_default_interface_font_schema()),
+        )
+    }
+
+    fn get_edit_font(pango_ctx: &pango::Context, config: &Rc<RefCell<Config>>) -> Font {
+        Font::new(
+            pango_ctx.clone(),
+            FontDescription::from_string(&format!(
+                "{} {}",
+                &config.borrow().config.font_face,
+                &config.borrow().config.font_size,
+            )),
+        )
     }
 }
 
@@ -383,23 +411,31 @@ impl EditView {
                 match name.as_ref() {
                     "font_size" => {
                         if let Some(font_size) = value.as_u64() {
-                            let pango_ctx = self.da.get_pango_context().unwrap_or_else(|| {
-                                panic!("{}", &gettext("Failed to get Pango context"))
-                            });
+                            let pango_ctx = self
+                                .view_item
+                                .main_area
+                                .get_pango_context()
+                                .unwrap_or_else(|| {
+                                    panic!("{}", &gettext("Failed to get Pango context"))
+                                });
                             self.edit_font
                                 .font_desc
                                 .set_size(font_size as i32 * pango::SCALE);
                             // We've set the new fontsize previously, now we have to regenerate the font height/width etc.
                             self.edit_font = Font::new(pango_ctx, self.edit_font.font_desc.clone());
-                            self.da.queue_draw();
+                            self.view_item.main_area.queue_draw();
                         }
                     }
                     "font_face" => {
                         if let Some(font_face) = value.as_str() {
                             debug!("{}: {}", gettext("Setting edit font to"), font_face);
-                            let pango_ctx = self.da.get_pango_context().unwrap_or_else(|| {
-                                panic!("{}", &gettext("Failed to get Pango context"))
-                            });
+                            let pango_ctx = self
+                                .view_item
+                                .main_area
+                                .get_pango_context()
+                                .unwrap_or_else(|| {
+                                    panic!("{}", &gettext("Failed to get Pango context"))
+                                });
                             self.edit_font = Font::new(
                                 pango_ctx,
                                 FontDescription::from_string(&format!(
@@ -408,7 +444,7 @@ impl EditView {
                                     self.edit_font.font_desc.get_size() / pango::SCALE
                                 )),
                             );
-                            self.da.queue_draw();
+                            self.view_item.main_area.queue_draw();
                         }
                     }
                     // These are handled in main_win via XiConfig
@@ -454,14 +490,14 @@ impl EditView {
 
         // update scrollbars to the new text width and height
         let (_, text_height) = self.get_text_size();
-        let vadj = self.vscrollbar.get_adjustment();
+        let vadj = self.view_item.verti_bar.get_adjustment();
         vadj.set_lower(0_f64);
         vadj.set_upper(text_height as f64);
         if vadj.get_value() + vadj.get_page_size() > vadj.get_upper() {
             vadj.set_value(vadj.get_upper() - vadj.get_page_size())
         }
 
-        // let hadj = self.hscrollbar.get_adjustment();
+        // let hadj = self.view_item.horiz_bar.get_adjustment();
         // hadj.set_lower(0f64);
         // hadj.set_upper(text_width as f64);
         // if hadj.get_value() + hadj.get_page_size() > hadj.get_upper() {
@@ -477,25 +513,25 @@ impl EditView {
 
         // self.change_scrollbar_visibility();
 
-        self.da.queue_draw();
+        self.view_item.main_area.queue_draw();
     }
 
     fn change_scrollbar_visibility(&self) {
-        let vadj = self.vscrollbar.get_adjustment();
-        let hadj = self.hscrollbar.get_adjustment();
+        let vadj = self.view_item.verti_bar.get_adjustment();
+        let hadj = self.view_item.horiz_bar.get_adjustment();
 
         if vadj.get_value() <= vadj.get_lower()
             && vadj.get_value() + vadj.get_page_size() >= vadj.get_upper()
         {
-            self.vscrollbar.hide();
+            self.view_item.verti_bar.hide();
         } else {
-            self.vscrollbar.show();
+            self.view_item.verti_bar.show();
         }
 
         if hadj.get_value() <= hadj.get_lower()
             && hadj.get_value() + hadj.get_page_size() >= hadj.get_upper()
         {
-            self.hscrollbar.hide();
+            self.view_item.horiz_bar.hide();
         } else {
             debug!(
                 "SHOWING HSCROLLBAR: {} {}-{} {}",
@@ -504,7 +540,7 @@ impl EditView {
                 hadj.get_upper(),
                 hadj.get_page_size()
             );
-            self.hscrollbar.show();
+            self.view_item.horiz_bar.show();
         }
     }
 
@@ -513,8 +549,8 @@ impl EditView {
     /// last pixel.
     pub fn da_px_to_cell(&self, main_state: &MainState, x: f64, y: f64) -> (u64, u64) {
         // let first_line = (vadj.get_value() / font_extents.height) as usize;
-        let x = x + self.hscrollbar.get_adjustment().get_value();
-        let y = y + self.vscrollbar.get_adjustment().get_value();
+        let x = x + self.view_item.horiz_bar.get_adjustment().get_value();
+        let y = y + self.view_item.verti_bar.get_adjustment().get_value();
 
         let mut y = y - self.edit_font.font_descent;
         if y < 0.0 {
@@ -523,7 +559,8 @@ impl EditView {
         let line_num = (y / self.edit_font.font_height) as u64;
         let index = if let Some(line) = self.line_cache.get_line(line_num) {
             let pango_ctx = self
-                .da
+                .view_item
+                .main_area
                 .get_pango_context()
                 .unwrap_or_else(|| panic!("{}", &gettext("Failed to get Pango context")));
 
@@ -545,9 +582,9 @@ impl EditView {
     /// Allocate the space our DrawingArea needs.
     fn da_size_allocate(&mut self, da_width: i32, da_height: i32) {
         debug!("{}", gettext("Allocating DrawingArea size"));
-        let vadj = self.vscrollbar.get_adjustment();
+        let vadj = self.view_item.verti_bar.get_adjustment();
         vadj.set_page_size(f64::from(da_height));
-        let hadj = self.hscrollbar.get_adjustment();
+        let hadj = self.view_item.horiz_bar.get_adjustment();
         hadj.set_page_size(f64::from(da_width));
 
         self.update_visible_scroll_region();
@@ -567,7 +604,7 @@ impl EditView {
     /// adjusts the scrolling to the visible region.
     fn update_visible_scroll_region(&self) {
         let main_state = self.main_state.borrow();
-        let da_height = self.da.get_allocated_height();
+        let da_height = self.view_item.main_area.get_allocated_height();
         let (_, first_line) = self.da_px_to_cell(&main_state, 0.0, 0.0);
         let (_, last_line) = self.da_px_to_cell(&main_state, 0.0, f64::from(da_height));
         let last_line = last_line + 1;
@@ -586,8 +623,8 @@ impl EditView {
 
     /// Returns the width&height of the entire document
     fn get_text_size(&self) -> (f64, f64) {
-        let da_width = f64::from(self.da.get_allocated_width());
-        let da_height = f64::from(self.da.get_allocated_height());
+        let da_width = f64::from(self.view_item.main_area.get_allocated_width());
+        let da_height = f64::from(self.view_item.main_area.get_allocated_height());
         let num_lines = self.line_cache.height();
 
         let all_text_height =
@@ -615,8 +652,8 @@ impl EditView {
         // let foreground = self.main_state.borrow().theme.foreground;
         let theme = &self.main_state.borrow().theme;
 
-        let da_width = self.da.get_allocated_width();
-        let da_height = self.da.get_allocated_height();
+        let da_width = self.view_item.main_area.get_allocated_width();
+        let da_height = self.view_item.main_area.get_allocated_height();
 
         //debug!("Drawing");
         // cr.select_font_face("Mono", ::cairo::enums::FontSlant::Normal, ::cairo::enums::FontWeight::Normal);
@@ -627,8 +664,8 @@ impl EditView {
         // let (text_width, text_height) = self.get_text_size();
         let num_lines = self.line_cache.height();
 
-        let vadj = self.vscrollbar.get_adjustment();
-        let hadj = self.hscrollbar.get_adjustment();
+        let vadj = self.view_item.verti_bar.get_adjustment();
+        let hadj = self.view_item.horiz_bar.get_adjustment();
         trace!(
             "{}  {}: {}/{}; {}: {}/{}",
             gettext("Drawing EditView"),
@@ -646,7 +683,8 @@ impl EditView {
         let last_line = min(last_line, num_lines);
 
         let pango_ctx = self
-            .da
+            .view_item
+            .main_area
             .get_pango_context()
             .unwrap_or_else(|| panic!("{}", &gettext("Failed to get Pango context")));
         pango_ctx.set_font_description(&self.edit_font.font_desc);
@@ -688,7 +726,8 @@ impl EditView {
                 );
 
                 let pango_ctx = self
-                    .da
+                    .view_item
+                    .main_area
                     .get_pango_context()
                     .unwrap_or_else(|| panic!("{}", &gettext("Failed to get Pango context")));
 
@@ -738,11 +777,11 @@ impl EditView {
     /// selection etc.
     pub fn handle_linecount_draw(&mut self, cr: &Context) -> Inhibit {
         let theme = &self.main_state.borrow().theme;
-        let linecount_height = self.linecount_da.get_allocated_height();
+        let linecount_height = self.view_item.linecount.get_allocated_height();
 
         let num_lines = self.line_cache.height();
 
-        let vadj = self.vscrollbar.get_adjustment();
+        let vadj = self.view_item.verti_bar.get_adjustment();
 
         let first_line = (vadj.get_value() / self.edit_font.font_height) as u64;
         let last_line = ((vadj.get_value() + f64::from(linecount_height))
@@ -751,7 +790,8 @@ impl EditView {
         let last_line = min(last_line, num_lines);
 
         let pango_ctx = self
-            .linecount_da
+            .view_item
+            .linecount
             .get_pango_context()
             .unwrap_or_else(|| panic!("{}", &gettext("Failed to get Pango context")));
 
@@ -800,7 +840,8 @@ impl EditView {
         }
 
         // Set the appropriate size for the linecount DrawingArea, otherwise it's only 1 px wide.
-        self.linecount_da
+        self.view_item
+            .linecount
             .set_size_request(linecount_width as i32, linecount_height);
         Inhibit(false)
     }
@@ -834,7 +875,8 @@ impl EditView {
         );
         let main_state = self.main_state.borrow();
         let pango_ctx = self
-            .da
+            .view_item
+            .main_area
             .get_pango_context()
             .unwrap_or_else(|| panic!("{}", &gettext("Failed to get Pango context")));
         let linecount_layout = self.create_layout_for_line(&pango_ctx, &main_state, &line);
@@ -955,7 +997,7 @@ impl EditView {
             let cur_top =
                 self.edit_font.font_height * ((line + 1) as f64) - self.edit_font.font_ascent;
             let cur_bottom = cur_top + self.edit_font.font_ascent + self.edit_font.font_descent;
-            let vadj = self.vscrollbar.get_adjustment();
+            let vadj = self.view_item.verti_bar.get_adjustment();
             if cur_top < vadj.get_value() {
                 vadj.set_value(cur_top);
             } else if cur_bottom > vadj.get_value() + vadj.get_page_size()
@@ -968,7 +1010,7 @@ impl EditView {
         {
             let cur_left = self.edit_font.font_width * (col as f64) - self.edit_font.font_ascent;
             let cur_right = cur_left + self.edit_font.font_width * 2.0;
-            let hadj = self.hscrollbar.get_adjustment();
+            let hadj = self.view_item.horiz_bar.get_adjustment();
             if cur_left < hadj.get_value() {
                 hadj.set_value(cur_left);
             } else if cur_right > hadj.get_value() + hadj.get_page_size()
@@ -986,7 +1028,7 @@ impl EditView {
     /// Handles button presses such as Shift, Ctrl etc. and primary pasting (i.e. via Ctrl+V, not
     /// via middle mouse click).
     pub fn handle_button_press(&self, eb: &EventButton) -> Inhibit {
-        self.da.grab_focus();
+        self.view_item.main_area.grab_focus();
 
         let (x, y) = eb.get_position();
         let (col, line) = {
@@ -1047,12 +1089,12 @@ impl EditView {
     /// or via a touchpad/drawing tablet (which use SmoothScrolling, which may scroll vertically
     /// and horizontally at the same time).
     pub fn handle_scroll(&mut self, es: &EventScroll) -> Inhibit {
-        self.da.grab_focus();
+        self.view_item.main_area.grab_focus();
         // TODO: Make this user configurable!
         let amt = self.edit_font.font_height;
 
-        let vadj = self.vscrollbar.get_adjustment();
-        let hadj = self.hscrollbar.get_adjustment();
+        let vadj = self.view_item.verti_bar.get_adjustment();
+        let hadj = self.view_item.horiz_bar.get_adjustment();
         match es.get_direction() {
             ScrollDirection::Smooth => {
                 let (scroll_change_hori, scroll_change_vert) =
@@ -1301,7 +1343,7 @@ impl EditView {
         self.find_replace.search_bar.set_search_mode(false);
         self.find_replace.replace_expander.set_expanded(false);
         self.find_replace.replace_revealer.set_reveal_child(false);
-        self.da.grab_focus();
+        self.view_item.main_area.grab_focus();
     }
 
     /// Displays how many matches have been found in the find/replace dialog.
