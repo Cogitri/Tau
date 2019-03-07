@@ -34,6 +34,7 @@ toml = "0.4"
 tempfile = "3"
 gettext-rs = { version="0.4", features=["gettext-system"] }
 crossbeam-deque = "0.7"
+crossbeam-channel = "0.3"
 human-panic = "1"
 
 [profile.release]

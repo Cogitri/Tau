@@ -1,6 +1,6 @@
+use crossbeam_channel::{unbounded, Receiver, Sender};
 use gettextrs::gettext;
 use std::io::{self, BufRead, ErrorKind, Read, Write};
-use std::sync::mpsc::{channel, Receiver, Sender};
 use std::thread;
 #[allow(unused_imports)]
 use std::time::Duration;
@@ -25,9 +25,9 @@ impl XiPeer {
 }
 
 pub fn start_xi_thread() -> (XiPeer, Receiver<Value>) {
-    let (to_core_tx, to_core_rx) = channel();
+    let (to_core_tx, to_core_rx) = unbounded();
     let to_core_rx = ChanReader(to_core_rx);
-    let (from_core_tx, from_core_rx) = channel();
+    let (from_core_tx, from_core_rx) = unbounded();
     let from_core_tx = ChanWriter {
         sender: from_core_tx,
     };

@@ -1,10 +1,10 @@
 use crate::shared_queue::{CoreMsg, ErrMsg, SharedQueue};
 use crate::xi_thread::XiPeer;
+use crossbeam_channel::{unbounded, Receiver};
 use gettextrs::gettext;
 use log::{debug, error};
 use serde_json::{json, Value};
 use std::collections::BTreeMap;
-use std::sync::mpsc::{channel, Receiver};
 use std::sync::{Arc, Mutex};
 use std::thread;
 
@@ -409,7 +409,7 @@ impl Core {
     }
 
     pub fn cut(&mut self, view_id: &str) -> Option<String> {
-        let (sender, receiver) = channel();
+        let (sender, receiver) = unbounded();
 
         self.send_request(
             "edit",
@@ -431,7 +431,7 @@ impl Core {
     }
 
     pub fn copy(&mut self, view_id: &str) -> Option<String> {
-        let (sender, receiver) = channel();
+        let (sender, receiver) = unbounded();
 
         self.send_request(
             "edit",
