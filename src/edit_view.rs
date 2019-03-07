@@ -662,10 +662,28 @@ impl EditView {
         let pango_ctx = self.view_item.get_pango_ctx();
         pango_ctx.set_font_description(&self.edit_font.font_desc);
 
-        // Draw editing background
-        set_source_color(cr, theme.background);
-        cr.rectangle(0.0, 0.0, f64::from(da_width), f64::from(da_height));
-        cr.fill();
+        // Draw a line at x chars
+        if get_draw_right_margin() {
+            let until_margin_width = self.edit_font.font_width * get_column_right_margin() as f64;
+            // Draw editing background
+            set_source_color(cr, theme.background);
+            cr.rectangle(0.0, 0.0, until_margin_width, f64::from(da_height));
+            cr.fill();
+
+            set_source_color(cr, theme.gutter);
+            cr.rectangle(
+                until_margin_width - self.view_item.horiz_bar.get_value(),
+                0.0,
+                f64::from(da_width) + self.view_item.horiz_bar.get_value(),
+                f64::from(da_height),
+            );
+            cr.fill();
+        } else {
+            // Draw editing background
+            set_source_color(cr, theme.background);
+            cr.rectangle(0.0, 0.0, f64::from(da_width), f64::from(da_height));
+            cr.fill();
+        }
 
         set_source_color(cr, theme.foreground);
 

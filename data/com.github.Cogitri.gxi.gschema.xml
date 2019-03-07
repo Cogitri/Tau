@@ -20,6 +20,21 @@
             </description>
         </key>
 
+        <key name="draw-right-margin" type="b">
+            <default>false</default>
+            <summary>Draw a right hand margin</summary>
+            <description>
+                Draw a right hand margin to limit the text width
+            </description>
+        </key>
+
+        <key name="column-right-margin" type="u">
+            <default>80</default>
+            <summary>At what column to display the margin</summary>
+            <description>
+                Sets the column at which the margin should be drawn
+            </description>
+        </key>
     </schema>
 
 </schemalist>

@@ -283,3 +283,55 @@ pub fn set_draw_trailing_spaces_schema(val: bool) {
             .set_boolean("draw-trailing-spaces", val);
     };
 }
+
+pub fn get_draw_right_margin() -> bool {
+    SettingsSchemaSource::get_default()
+        .and_then(|settings_source| settings_source.lookup("com.github.Cogitri.gxi", true))
+        .map_or_else(
+            || {
+                warn!("Couldn't find GSchema! Defaulting to not drawing a right hand margin!");
+                false
+            },
+            |_| {
+                Settings::new(crate::globals::APP_ID.unwrap_or("com.github.Cogitri.gxi"))
+                    .get_boolean("draw-right-margin")
+            },
+        )
+}
+
+pub fn set_draw_right_margin(val: bool) {
+    if SettingsSchemaSource::get_default()
+        .and_then(|settings_source| settings_source.lookup("com.github.Cogitri.gxi", true))
+        .is_some()
+    {
+        Settings::new(crate::globals::APP_ID.unwrap_or("com.github.Cogitri.gxi"))
+            .set_boolean("draw-right-margin", val);
+    };
+}
+
+pub fn set_column_right_margin(val: u32) {
+    if SettingsSchemaSource::get_default()
+        .and_then(|settings_source| settings_source.lookup("com.github.Cogitri.gxi", true))
+        .is_some()
+    {
+        Settings::new(crate::globals::APP_ID.unwrap_or("com.github.Cogitri.gxi"))
+            .set_uint("column-right-margin", val);
+    };
+}
+
+pub fn get_column_right_margin() -> u32 {
+    SettingsSchemaSource::get_default()
+        .and_then(|settings_source| settings_source.lookup("com.github.Cogitri.gxi", true))
+        .map_or_else(
+            || {
+                warn!(
+                    "Couldn't find GSchema! Defaulting to drawing right hand marging at column 80"
+                );
+                80
+            },
+            |_| {
+                Settings::new(crate::globals::APP_ID.unwrap_or("com.github.Cogitri.gxi"))
+                    .get_uint("column-right-margin")
+            },
+        )
+}
