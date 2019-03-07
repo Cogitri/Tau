@@ -111,11 +111,8 @@ impl ViewItem {
                 edit_view.borrow().handle_button_press(eb)
             }));
 
-        let linecount = &self.linecount;
         self.edit_area
-            .connect_draw(clone!(edit_view, linecount => move |_,ctx| {
-                //FIXME: Hack to make sure the linecount is in sync with the text. This should be done more effeciently!
-                linecount.queue_draw();
+            .connect_draw(clone!(edit_view => move |_,ctx| {
                 edit_view.borrow_mut().handle_da_draw(&ctx)
             }));
 
@@ -503,6 +500,7 @@ impl EditView {
         // self.change_scrollbar_visibility();
 
         self.view_item.edit_area.queue_draw();
+        self.view_item.linecount.queue_draw();
     }
 
     fn change_scrollbar_visibility(&self) {
