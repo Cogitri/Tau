@@ -5,6 +5,7 @@
 # gxi
 [![Drone CI Build Status](https://drone.exqa.de/api/badges/Cogitri/gxi/status.svg)](https://drone.exqa.de/Cogitri/gxi)
 [![Travis CI Build Status](https://travis-ci.com/Cogitri/gxi.svg?branch=master)](https://travis-ci.com/Cogitri/gxi)
+[![Translation Progress](https://hosted.weblate.org/widgets/gxi/-/translation/svg-badge.svg)](https://hosted.weblate.org/engage/gxi/?utm_source=widget)
 
 GTK frontend, written in Rust, for the [xi editor](https://github.com/google/xi-editor).
 
@@ -14,6 +15,8 @@ GTK frontend, written in Rust, for the [xi editor](https://github.com/google/xi-
 
 Please see the docs on https://cogitri.github.io/gxi to learn more about gxi's inner workings. 
 [gtk-rs' site](https://gtk-rs.org/) offers documentation and examples about how gtk-rs works.
+
+Visit [Weblate](https://hosted.weblate.org/engage/gxi/) to translate gxi.
 
 ## Installing
 
