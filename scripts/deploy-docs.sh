@@ -1,9 +1,9 @@
 #!/bin/bash
 echo '<meta http-equiv="refresh" content="0;url=https://gxi.cogitri.dev/docs">' > target/doc/index.html &&
 mv target/doc/gxi target/doc/docs &&
-chmod 600 .travis/id_ed25519 &&
+chmod 600 .ci/id_ed25519 &&
 eval "$(ssh-agent -s)" &&
-ssh-add .travis/id_ed25519 &&
+ssh-add .ci/id_ed25519 &&
 git clone $DEPLOY_SERVER-deploy
 cd gxi.cogitri.dev-deploy
 cp -r ../target/doc/* . &&
