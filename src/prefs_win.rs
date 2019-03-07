@@ -19,8 +19,8 @@ impl PrefsWin {
         main_state: &Rc<RefCell<MainState>>,
         core: &Rc<RefCell<Core>>,
     ) -> Rc<RefCell<Self>> {
-        let glade_src = include_str!("ui/prefs_win.glade");
-        let builder = Builder::new_from_string(glade_src);
+        const SRC: &'static str = include_str!("ui/prefs_win.glade");
+        let builder = Builder::new_from_string(SRC);
 
         let window: Window = builder.get_object("prefs_win").unwrap();
         let font_chooser_widget: FontChooserWidget =
@@ -35,6 +35,8 @@ impl PrefsWin {
         let draw_trailing_spaces_checkbutton: ToggleButton = builder
             .get_object("draw_trailing_spaces_checkbutton")
             .unwrap();
+        let margin_checkbutton: ToggleButton = builder.get_object("margin_checkbutton").unwrap();
+        let margin_spinbutton: SpinButton = builder.get_object("margin_spinbutton").unwrap();
 
         let xi_config = &main_state.borrow().config;
 
@@ -146,6 +148,25 @@ impl PrefsWin {
             draw_trailing_spaces_checkbutton.connect_toggled(move |toggle_btn| {
                 let value = toggle_btn.get_active();
                 set_draw_trailing_spaces_schema(value);
+            });
+        }
+
+        {
+            margin_checkbutton.set_active(get_draw_right_margin());
+
+            margin_checkbutton.connect_toggled(clone!(margin_spinbutton => move |toggle_btn| {
+                let value = toggle_btn.get_active();
+                set_draw_right_margin(value);
+                margin_spinbutton.set_sensitive(value);
+            }));
+        }
+
+        {
+            margin_spinbutton.set_sensitive(get_draw_right_margin());
+            margin_spinbutton.set_value(get_column_right_margin() as f64);
+
+            margin_spinbutton.connect_value_changed(move |spin_btn| {
+                set_column_right_margin(spin_btn.get_value() as u32)
             });
         }
 
