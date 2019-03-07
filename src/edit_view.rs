@@ -189,19 +189,7 @@ impl EditView {
     ) -> Rc<RefCell<Self>> {
         let view_item = ViewItem::new();
         let find_replace = FindReplace::new();
-
-        let root_box = Box::new(Orientation::Vertical, 0);
-        let hbox = Box::new(Orientation::Horizontal, 0);
-        let vbox = Box::new(Orientation::Vertical, 0);
-        root_box.pack_start(&find_replace.search_bar, false, false, 0);
-        root_box.pack_start(&hbox, true, true, 0);
-        hbox.pack_start(&view_item.linecount, false, false, 0);
-        hbox.pack_start(&vbox, true, true, 0);
-        hbox.pack_start(&view_item.verti_bar, false, false, 0);
-        vbox.pack_start(&view_item.main_area, true, true, 0);
-        vbox.pack_start(&view_item.horiz_bar, false, false, 0);
-        root_box.show_all();
-
+        
         // Make the widgets for the tab
         let tab_hbox = gtk::Box::new(Orientation::Horizontal, 5);
         let label = Label::new(Some(""));
@@ -229,7 +217,7 @@ impl EditView {
             file_name,
             pristine: true,
             view_id: view_id.to_string(),
-            root_widget: root_box.clone(),
+            root_widget: EditView::get_root_box(&view_item, &find_replace),
             tab_widget: tab_hbox.clone(),
             label: label.clone(),
             close_button: close_button.clone(),
@@ -247,6 +235,22 @@ impl EditView {
         find_replace.connect_events(&edit_view);
 
         edit_view
+    }
+
+    fn get_root_box(view_item: &ViewItem, find_replace: &FindReplace) -> Box {
+        let root_box = Box::new(Orientation::Vertical, 0);
+        let hbox = Box::new(Orientation::Horizontal, 0);
+        let vbox = Box::new(Orientation::Vertical, 0);
+        root_box.pack_start(&find_replace.search_bar, false, false, 0);
+        root_box.pack_start(&hbox, true, true, 0);
+        hbox.pack_start(&view_item.linecount, false, false, 0);
+        hbox.pack_start(&vbox, true, true, 0);
+        hbox.pack_start(&view_item.verti_bar, false, false, 0);
+        vbox.pack_start(&view_item.main_area, true, true, 0);
+        vbox.pack_start(&view_item.horiz_bar, false, false, 0);
+        root_box.show_all();
+
+        root_box
     }
 
     fn get_interface_font(pango_ctx: &pango::Context) -> Font {
