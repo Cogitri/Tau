@@ -69,64 +69,67 @@ impl Font {
     }
 }
 
+/// The ViewItem contains the drawing areas and scrollbars of the EditView.
 #[derive(Clone)]
 pub struct ViewItem {
-    pub main_area: DrawingArea,
+    pub edit_area: DrawingArea,
     linecount: DrawingArea,
     horiz_bar: Scrollbar,
     verti_bar: Scrollbar,
 }
 
 impl ViewItem {
+    /// Sets up the drawing areas and scrollbars.
     fn new() -> ViewItem {
-        let main_area = DrawingArea::new();
+        let edit_area = DrawingArea::new();
         let linecount = DrawingArea::new();
         let horiz_bar = Scrollbar::new(Orientation::Horizontal, None::<&gtk::Adjustment>);
         let verti_bar = Scrollbar::new(Orientation::Vertical, None::<&gtk::Adjustment>);
 
-        main_area.set_events(
+        edit_area.set_events(
             EventMask::BUTTON_PRESS_MASK
                 | EventMask::BUTTON_RELEASE_MASK
                 | EventMask::BUTTON_MOTION_MASK
                 | EventMask::SCROLL_MASK
                 | EventMask::SMOOTH_SCROLL_MASK,
         );
-        debug!("{}: {:?}", gettext("Events"), main_area.get_events());
-        main_area.set_can_focus(true);
+        debug!("{}: {:?}", gettext("Events"), edit_area.get_events());
+        edit_area.set_can_focus(true);
 
         ViewItem {
-            main_area,
+            edit_area,
             linecount,
             horiz_bar,
             verti_bar,
         }
     }
 
+    /// Sets up event listeners for the ViewItem
     fn connect_events(&self, edit_view: &Rc<RefCell<EditView>>) {
-        self.main_area
+        self.edit_area
             .connect_button_press_event(clone!(edit_view => move |_,eb| {
                 edit_view.borrow().handle_button_press(eb)
             }));
 
         let linecount = &self.linecount;
-        self.main_area
+        self.edit_area
             .connect_draw(clone!(edit_view, linecount => move |_,ctx| {
                 //FIXME: Hack to make sure the linecount is in sync with the text. This should be done more effeciently!
                 linecount.queue_draw();
                 edit_view.borrow_mut().handle_da_draw(&ctx)
             }));
 
-        self.main_area
+        self.edit_area
             .connect_key_press_event(clone!(edit_view => move |_, ek| {
                 edit_view.borrow_mut().handle_key_press_event(ek)
             }));
 
-        self.main_area
+        self.edit_area
             .connect_motion_notify_event(clone!(edit_view => move |_,em| {
                 edit_view.borrow_mut().handle_drag(em)
             }));
 
-        self.main_area.connect_realize(|w| {
+        self.edit_area.connect_realize(|w| {
             // Set the text cursor
             if let Some(disp) = DisplayManager::get().get_default_display() {
                 let cur = Cursor::new_for_display(&disp, CursorType::Xterm);
@@ -137,12 +140,12 @@ impl ViewItem {
             w.grab_focus();
         });
 
-        self.main_area
+        self.edit_area
             .connect_scroll_event(clone!(edit_view => move |_,es| {
                 edit_view.borrow_mut().handle_scroll(es)
             }));
 
-        self.main_area.connect_size_allocate(clone!(edit_view => move |_,alloc| {
+        self.edit_area.connect_size_allocate(clone!(edit_view => move |_,alloc| {
             debug!("{}: {}={} {}={}", gettext("Size changed to"), gettext("width"), alloc.width, gettext("height"), alloc.height);
             edit_view.borrow_mut().da_size_allocate(alloc.width, alloc.height);
             edit_view.borrow().do_resize(&edit_view.borrow().view_id,alloc.width, alloc.height);
@@ -159,8 +162,9 @@ impl ViewItem {
             }));
     }
 
+    /// Gets the pango Context from the main drawing area.
     fn get_pango_ctx(&self) -> pango::Context {
-        self.main_area
+        self.edit_area
             .get_pango_context()
             .unwrap_or_else(|| panic!("{}", &gettext("Failed to get Pango context")))
     }
@@ -195,15 +199,13 @@ impl EditView {
         let find_replace = FindReplace::new();
         let pango_ctx = view_item.get_pango_ctx();
 
-        main_state.borrow_mut().fonts = EditView::get_font_list(&pango_ctx);
-
         let edit_view = Rc::new(RefCell::new(EditView {
             core: core.clone(),
             main_state: main_state.clone(),
             file_name,
             pristine: true,
             view_id: view_id.to_string(),
-            root_widget: EditView::get_root_box(&view_item, &find_replace),
+            root_widget: EditView::setup_root_box(&view_item, &find_replace),
             top_bar: TopBar::new(),
             view_item: view_item.clone(),
             line_cache: LineCache::new(),
@@ -221,17 +223,7 @@ impl EditView {
         edit_view
     }
 
-    fn get_font_list(pango_ctx: &pango::Context) -> Vec<String> {
-        pango_ctx
-            .list_families()
-            .iter()
-            .filter(|f| f.is_monospace())
-            .filter_map(|f| f.get_name())
-            .map(|f| f.to_string())
-            .collect()
-    }
-
-    fn get_root_box(view_item: &ViewItem, find_replace: &FindReplace) -> Box {
+    fn setup_root_box(view_item: &ViewItem, find_replace: &FindReplace) -> Box {
         let root_box = Box::new(Orientation::Vertical, 0);
         let hbox = Box::new(Orientation::Horizontal, 0);
         let vbox = Box::new(Orientation::Vertical, 0);
@@ -240,7 +232,7 @@ impl EditView {
         hbox.pack_start(&view_item.linecount, false, false, 0);
         hbox.pack_start(&vbox, true, true, 0);
         hbox.pack_start(&view_item.verti_bar, false, false, 0);
-        vbox.pack_start(&view_item.main_area, true, true, 0);
+        vbox.pack_start(&view_item.edit_area, true, true, 0);
         vbox.pack_start(&view_item.horiz_bar, false, false, 0);
         root_box.show_all();
 
@@ -266,6 +258,7 @@ impl EditView {
     }
 }
 
+/// Contains the top part of the EditView, tab widget and top bar.
 pub struct TopBar {
     pub tab_widget: gtk::Box,
     pub label: Label,
@@ -273,8 +266,8 @@ pub struct TopBar {
 }
 
 impl TopBar {
+    /// Make the widgets for the tab
     fn new() -> TopBar {
-        // Make the widgets for the tab
         let tab_widget = gtk::Box::new(Orientation::Horizontal, 5);
         let label = Label::new(Some(""));
         tab_widget.add(&label);
@@ -290,6 +283,7 @@ impl TopBar {
     }
 }
 
+/// Contains the Find & Replace elements
 #[derive(Clone)]
 struct FindReplace {
     search_bar: SearchBar,
@@ -305,9 +299,11 @@ struct FindReplace {
 }
 
 impl FindReplace {
+    /// Loads the glade description of the window, and builds gtk-rs objects.
     fn new() -> FindReplace {
-        let src = include_str!("ui/find_replace.glade");
-        let builder = Builder::new_from_string(src);
+        const SRC: &'static str = include_str!("ui/find_replace.glade");
+
+        let builder = Builder::new_from_string(SRC);
         let search_bar = builder.get_object("search_bar").unwrap();
         let replace_expander: Expander = builder.get_object("replace_expander").unwrap();
         let replace_revealer: Revealer = builder.get_object("replace_revealer").unwrap();
@@ -315,9 +311,6 @@ impl FindReplace {
         let replace_button = builder.get_object("replace_button").unwrap();
         let replace_all_button = builder.get_object("replace_all_button").unwrap();
         let find_status_label = builder.get_object("find_status_label").unwrap();
-        // let overlay: Overlay = builder.get_object("overlay").unwrap();
-        // let search_revealer: Revealer = builder.get_object("revealer").unwrap();
-        // let frame: Frame = builder.get_object("frame").unwrap();
         let search_entry = builder.get_object("search_entry").unwrap();
         let go_down_button = builder.get_object("go_down_button").unwrap();
         let go_up_button = builder.get_object("go_up_button").unwrap();
@@ -344,6 +337,7 @@ impl FindReplace {
         }
     }
 
+    /// Sets up event listeners
     fn connect_events(&self, ev: &Rc<RefCell<EditView>>) {
         self.search_entry
             .connect_search_changed(clone!(ev => move |w| {
@@ -435,7 +429,7 @@ impl EditView {
                         if let Some(font_size) = value.as_u64() {
                             let pango_ctx = self
                                 .view_item
-                                .main_area
+                                .edit_area
                                 .get_pango_context()
                                 .unwrap_or_else(|| {
                                     panic!("{}", &gettext("Failed to get Pango context"))
@@ -445,7 +439,7 @@ impl EditView {
                                 .set_size(font_size as i32 * pango::SCALE);
                             // We've set the new fontsize previously, now we have to regenerate the font height/width etc.
                             self.edit_font = Font::new(pango_ctx, self.edit_font.font_desc.clone());
-                            self.view_item.main_area.queue_draw();
+                            self.view_item.edit_area.queue_draw();
                         }
                     }
                     "font_face" => {
@@ -453,7 +447,7 @@ impl EditView {
                             debug!("{}: {}", gettext("Setting edit font to"), font_face);
                             let pango_ctx = self
                                 .view_item
-                                .main_area
+                                .edit_area
                                 .get_pango_context()
                                 .unwrap_or_else(|| {
                                     panic!("{}", &gettext("Failed to get Pango context"))
@@ -466,7 +460,7 @@ impl EditView {
                                     self.edit_font.font_desc.get_size() / pango::SCALE
                                 )),
                             );
-                            self.view_item.main_area.queue_draw();
+                            self.view_item.edit_area.queue_draw();
                         }
                     }
                     // These are handled in main_win via XiConfig
@@ -535,7 +529,7 @@ impl EditView {
 
         // self.change_scrollbar_visibility();
 
-        self.view_item.main_area.queue_draw();
+        self.view_item.edit_area.queue_draw();
     }
 
     fn change_scrollbar_visibility(&self) {
@@ -582,7 +576,7 @@ impl EditView {
         let index = if let Some(line) = self.line_cache.get_line(line_num) {
             let pango_ctx = self
                 .view_item
-                .main_area
+                .edit_area
                 .get_pango_context()
                 .unwrap_or_else(|| panic!("{}", &gettext("Failed to get Pango context")));
 
@@ -626,7 +620,7 @@ impl EditView {
     /// adjusts the scrolling to the visible region.
     fn update_visible_scroll_region(&self) {
         let main_state = self.main_state.borrow();
-        let da_height = self.view_item.main_area.get_allocated_height();
+        let da_height = self.view_item.edit_area.get_allocated_height();
         let (_, first_line) = self.da_px_to_cell(&main_state, 0.0, 0.0);
         let (_, last_line) = self.da_px_to_cell(&main_state, 0.0, f64::from(da_height));
         let last_line = last_line + 1;
@@ -645,8 +639,8 @@ impl EditView {
 
     /// Returns the width&height of the entire document
     fn get_text_size(&self) -> (f64, f64) {
-        let da_width = f64::from(self.view_item.main_area.get_allocated_width());
-        let da_height = f64::from(self.view_item.main_area.get_allocated_height());
+        let da_width = f64::from(self.view_item.edit_area.get_allocated_width());
+        let da_height = f64::from(self.view_item.edit_area.get_allocated_height());
         let num_lines = self.line_cache.height();
 
         let all_text_height =
@@ -674,8 +668,8 @@ impl EditView {
         // let foreground = self.main_state.borrow().theme.foreground;
         let theme = &self.main_state.borrow().theme;
 
-        let da_width = self.view_item.main_area.get_allocated_width();
-        let da_height = self.view_item.main_area.get_allocated_height();
+        let da_width = self.view_item.edit_area.get_allocated_width();
+        let da_height = self.view_item.edit_area.get_allocated_height();
 
         //debug!("Drawing");
         // cr.select_font_face("Mono", ::cairo::enums::FontSlant::Normal, ::cairo::enums::FontWeight::Normal);
@@ -706,7 +700,7 @@ impl EditView {
 
         let pango_ctx = self
             .view_item
-            .main_area
+            .edit_area
             .get_pango_context()
             .unwrap_or_else(|| panic!("{}", &gettext("Failed to get Pango context")));
         pango_ctx.set_font_description(&self.edit_font.font_desc);
@@ -749,7 +743,7 @@ impl EditView {
 
                 let pango_ctx = self
                     .view_item
-                    .main_area
+                    .edit_area
                     .get_pango_context()
                     .unwrap_or_else(|| panic!("{}", &gettext("Failed to get Pango context")));
 
@@ -898,7 +892,7 @@ impl EditView {
         let main_state = self.main_state.borrow();
         let pango_ctx = self
             .view_item
-            .main_area
+            .edit_area
             .get_pango_context()
             .unwrap_or_else(|| panic!("{}", &gettext("Failed to get Pango context")));
         let linecount_layout = self.create_layout_for_line(&pango_ctx, &main_state, &line);
@@ -1050,7 +1044,7 @@ impl EditView {
     /// Handles button presses such as Shift, Ctrl etc. and primary pasting (i.e. via Ctrl+V, not
     /// via middle mouse click).
     pub fn handle_button_press(&self, eb: &EventButton) -> Inhibit {
-        self.view_item.main_area.grab_focus();
+        self.view_item.edit_area.grab_focus();
 
         let (x, y) = eb.get_position();
         let (col, line) = {
@@ -1111,7 +1105,7 @@ impl EditView {
     /// or via a touchpad/drawing tablet (which use SmoothScrolling, which may scroll vertically
     /// and horizontally at the same time).
     pub fn handle_scroll(&mut self, es: &EventScroll) -> Inhibit {
-        self.view_item.main_area.grab_focus();
+        self.view_item.edit_area.grab_focus();
         // TODO: Make this user configurable!
         let amt = self.edit_font.font_height;
 
@@ -1365,7 +1359,7 @@ impl EditView {
         self.find_replace.search_bar.set_search_mode(false);
         self.find_replace.replace_expander.set_expanded(false);
         self.find_replace.replace_revealer.set_reveal_child(false);
-        self.view_item.main_area.grab_focus();
+        self.view_item.edit_area.grab_focus();
     }
 
     /// Displays how many matches have been found in the find/replace dialog.
