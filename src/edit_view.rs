@@ -174,9 +174,7 @@ pub struct EditView {
     pub file_name: Option<String>,
     pub pristine: bool,
     pub root_widget: gtk::Box,
-    pub tab_widget: gtk::Box,
-    pub label: Label,
-    pub close_button: Button,
+    pub top_bar: TopBar,
     pub view_item: ViewItem,
     line_cache: LineCache,
     find_replace: FindReplace,
@@ -195,16 +193,8 @@ impl EditView {
     ) -> Rc<RefCell<Self>> {
         let view_item = ViewItem::new();
         let find_replace = FindReplace::new();
-
-        // Make the widgets for the tab
-        let tab_hbox = gtk::Box::new(Orientation::Horizontal, 5);
-        let label = Label::new(Some(""));
-        tab_hbox.add(&label);
-        let close_button = Button::new_from_icon_name("window-close", IconSize::Button);
-        tab_hbox.add(&close_button);
-        tab_hbox.show_all();
-
         let pango_ctx = view_item.get_pango_ctx();
+
         main_state.borrow_mut().fonts = EditView::get_font_list(&pango_ctx);
 
         let edit_view = Rc::new(RefCell::new(EditView {
@@ -214,9 +204,7 @@ impl EditView {
             pristine: true,
             view_id: view_id.to_string(),
             root_widget: EditView::get_root_box(&view_item, &find_replace),
-            tab_widget: tab_hbox.clone(),
-            label: label.clone(),
-            close_button: close_button.clone(),
+            top_bar: TopBar::new(),
             view_item: view_item.clone(),
             line_cache: LineCache::new(),
             edit_font: EditView::get_edit_font(&pango_ctx, &main_state.borrow().config),
@@ -275,6 +263,30 @@ impl EditView {
                 &config.borrow().config.font_size,
             )),
         )
+    }
+}
+
+pub struct TopBar {
+    pub tab_widget: gtk::Box,
+    pub label: Label,
+    pub close_button: Button,
+}
+
+impl TopBar {
+    fn new() -> TopBar {
+        // Make the widgets for the tab
+        let tab_widget = gtk::Box::new(Orientation::Horizontal, 5);
+        let label = Label::new(Some(""));
+        tab_widget.add(&label);
+        let close_button = Button::new_from_icon_name("window-close", IconSize::Button);
+        tab_widget.add(&close_button);
+        tab_widget.show_all();
+
+        TopBar {
+            tab_widget,
+            label,
+            close_button,
+        }
     }
 }
 
@@ -409,7 +421,7 @@ impl EditView {
         full_title.push_str(&title);
 
         trace!("{} {}", gettext("Setting title to"), full_title);
-        self.label.set_text(&full_title);
+        self.top_bar.label.set_text(&full_title);
     }
 
     /// If xi-editor sends us a [config_changed](https://xi-editor.io/docs/frontend-protocol.html#config_changed)

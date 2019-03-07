@@ -789,13 +789,14 @@ impl MainWin {
                 let ev = edit_view.borrow();
                 let page_num =
                     win.notebook
-                        .insert_page(&ev.root_widget, Some(&ev.tab_widget), None);
+                        .insert_page(&ev.root_widget, Some(&ev.top_bar.tab_widget), None);
                 if let Some(w) = win.notebook.get_nth_page(Some(page_num)) {
                     win.w_to_ev.insert(w.clone(), edit_view.clone());
                     win.view_id_to_w.insert(view_id.to_string(), w);
                 }
 
-                ev.close_button
+                ev.top_bar
+                    .close_button
                     .connect_clicked(clone!(main_win, edit_view => move |_| {
                         Self::close_view(&main_win, &edit_view);
                     }));
