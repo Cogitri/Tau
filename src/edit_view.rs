@@ -158,6 +158,12 @@ impl ViewItem {
                 edit_view.borrow_mut().vscrollbar_change_value(value)
             }));
     }
+
+    fn get_pango_ctx(&self) -> pango::Context {
+        self.main_area
+            .get_pango_context()
+            .unwrap_or_else(|| panic!("{}", &gettext("Failed to get Pango context")))
+    }
 }
 
 /// The EditView is the part of gxi that does the actual editing. This is where you edit documents.
@@ -189,7 +195,7 @@ impl EditView {
     ) -> Rc<RefCell<Self>> {
         let view_item = ViewItem::new();
         let find_replace = FindReplace::new();
-        
+
         // Make the widgets for the tab
         let tab_hbox = gtk::Box::new(Orientation::Horizontal, 5);
         let label = Label::new(Some(""));
@@ -198,18 +204,8 @@ impl EditView {
         tab_hbox.add(&close_button);
         tab_hbox.show_all();
 
-        let pango_ctx = view_item
-            .main_area
-            .get_pango_context()
-            .unwrap_or_else(|| panic!("{}", &gettext("Failed to get Pango context")));
-        let font_list: Vec<String> = pango_ctx
-            .list_families()
-            .iter()
-            .filter(|f| f.is_monospace())
-            .filter_map(|f| f.get_name())
-            .map(|f| f.to_string())
-            .collect();
-        main_state.borrow_mut().fonts = font_list;
+        let pango_ctx = view_item.get_pango_ctx();
+        main_state.borrow_mut().fonts = EditView::get_font_list(&pango_ctx);
 
         let edit_view = Rc::new(RefCell::new(EditView {
             core: core.clone(),
@@ -235,6 +231,16 @@ impl EditView {
         find_replace.connect_events(&edit_view);
 
         edit_view
+    }
+
+    fn get_font_list(pango_ctx: &pango::Context) -> Vec<String> {
+        pango_ctx
+            .list_families()
+            .iter()
+            .filter(|f| f.is_monospace())
+            .filter_map(|f| f.get_name())
+            .map(|f| f.to_string())
+            .collect()
     }
 
     fn get_root_box(view_item: &ViewItem, find_replace: &FindReplace) -> Box {
