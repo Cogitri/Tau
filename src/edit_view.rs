@@ -427,13 +427,7 @@ impl EditView {
                 match name.as_ref() {
                     "font_size" => {
                         if let Some(font_size) = value.as_u64() {
-                            let pango_ctx = self
-                                .view_item
-                                .edit_area
-                                .get_pango_context()
-                                .unwrap_or_else(|| {
-                                    panic!("{}", &gettext("Failed to get Pango context"))
-                                });
+                            let pango_ctx = self.view_item.get_pango_ctx();
                             self.edit_font
                                 .font_desc
                                 .set_size(font_size as i32 * pango::SCALE);
@@ -445,13 +439,7 @@ impl EditView {
                     "font_face" => {
                         if let Some(font_face) = value.as_str() {
                             debug!("{}: {}", gettext("Setting edit font to"), font_face);
-                            let pango_ctx = self
-                                .view_item
-                                .edit_area
-                                .get_pango_context()
-                                .unwrap_or_else(|| {
-                                    panic!("{}", &gettext("Failed to get Pango context"))
-                                });
+                            let pango_ctx = self.view_item.get_pango_ctx();
                             self.edit_font = Font::new(
                                 pango_ctx,
                                 FontDescription::from_string(&format!(
@@ -574,11 +562,7 @@ impl EditView {
         }
         let line_num = (y / self.edit_font.font_height) as u64;
         let index = if let Some(line) = self.line_cache.get_line(line_num) {
-            let pango_ctx = self
-                .view_item
-                .edit_area
-                .get_pango_context()
-                .unwrap_or_else(|| panic!("{}", &gettext("Failed to get Pango context")));
+            let pango_ctx = self.view_item.get_pango_ctx();
 
             let padding: usize = format!("{}", self.line_cache.height().saturating_sub(1)).len();
             let linecount_layout =
@@ -698,11 +682,7 @@ impl EditView {
             ((vadj.get_value() + f64::from(da_height)) / self.edit_font.font_height) as u64 + 1;
         let last_line = min(last_line, num_lines);
 
-        let pango_ctx = self
-            .view_item
-            .edit_area
-            .get_pango_context()
-            .unwrap_or_else(|| panic!("{}", &gettext("Failed to get Pango context")));
+        let pango_ctx = self.view_item.get_pango_ctx();
         pango_ctx.set_font_description(&self.edit_font.font_desc);
 
         // Draw editing background
@@ -741,11 +721,7 @@ impl EditView {
                     self.edit_font.font_height * (i as f64) - vadj.get_value(),
                 );
 
-                let pango_ctx = self
-                    .view_item
-                    .edit_area
-                    .get_pango_context()
-                    .unwrap_or_else(|| panic!("{}", &gettext("Failed to get Pango context")));
+                let pango_ctx = self.view_item.get_pango_ctx();
 
                 let layout = self.create_layout_for_line(&pango_ctx, &main_state, line);
                 max_width = max(max_width, layout.get_extents().1.width);
@@ -805,11 +781,7 @@ impl EditView {
             + 1;
         let last_line = min(last_line, num_lines);
 
-        let pango_ctx = self
-            .view_item
-            .linecount
-            .get_pango_context()
-            .unwrap_or_else(|| panic!("{}", &gettext("Failed to get Pango context")));
+        let pango_ctx = self.view_item.get_pango_ctx();
 
         // Make the linecount at least 4 chars big
         let linecount_width = if format!(" {} ", last_line).len() > 4 {
@@ -890,11 +862,7 @@ impl EditView {
             None,
         );
         let main_state = self.main_state.borrow();
-        let pango_ctx = self
-            .view_item
-            .edit_area
-            .get_pango_context()
-            .unwrap_or_else(|| panic!("{}", &gettext("Failed to get Pango context")));
+        let pango_ctx = self.view_item.get_pango_ctx();
         let linecount_layout = self.create_layout_for_line(&pango_ctx, &main_state, &line);
 
         f64::from(linecount_layout.get_extents().1.width / pango::SCALE)
