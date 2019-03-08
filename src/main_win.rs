@@ -44,6 +44,24 @@ pub struct MainState {
     pub config: Rc<RefCell<Config>>,
 }
 
+impl MainState {
+    fn new(config: &Rc<RefCell<Config>>) -> MainState {
+        let theme_name = crate::pref_storage::get_theme_schema();
+        debug!("{}: {}", gettext("Theme name"), &theme_name);
+
+        MainState {
+            themes: Default::default(),
+            theme_name,
+            theme: Default::default(),
+            styles: Default::default(),
+            fonts: Default::default(),
+            avail_languages: Default::default(),
+            selected_language: Default::default(),
+            config: config.clone(),
+        }
+    }
+}
+
 pub struct MainWin {
     core: Rc<RefCell<Core>>,
     shared_queue: SharedQueue,
@@ -56,8 +74,7 @@ pub struct MainWin {
     state: Rc<RefCell<MainState>>,
 }
 
-const GLADE_SRC: &str = include_str!("ui/gxi.glade");
-
+const GXI_SRC: &str = include_str!("ui/gxi.glade");
 impl MainWin {
     pub fn new(
         application: &Application,
@@ -65,15 +82,17 @@ impl MainWin {
         core: Rc<RefCell<Core>>,
         config: Rc<RefCell<Config>>,
     ) -> Rc<RefCell<Self>> {
-        let glade_src = include_str!("ui/gxi.glade");
-        let builder = Builder::new_from_string(glade_src);
+        let builder = Builder::new_from_string(GXI_SRC);
 
-        let window: ApplicationWindow = builder.get_object("appwindow").unwrap();
-        let notebook: Notebook = builder.get_object("notebook").unwrap();
-        let syntax_combo_box: ComboBoxText = builder.get_object("syntax_combo_box").unwrap();
-
-        let theme_name = crate::pref_storage::get_theme_schema();
-        debug!("{}: {}", gettext("Theme name"), &theme_name);
+        let window: ApplicationWindow = builder
+            .get_object("appwindow")
+            .unwrap_or_else(|| panic!("{}", &gettext("Building AppWindow failed")));
+        let notebook: Notebook = builder
+            .get_object("notebook")
+            .unwrap_or_else(|| panic!("{}", &gettext("Building Notebook failed")));
+        let syntax_combo_box: ComboBoxText = builder
+            .get_object("syntax_combo_box")
+            .unwrap_or_else(|| panic!("{}", &gettext("Building Syntax Combo Box failed")));
 
         let main_win = Rc::new(RefCell::new(Self {
             core: core.clone(),
@@ -84,16 +103,7 @@ impl MainWin {
             views: Default::default(),
             w_to_ev: Default::default(),
             view_id_to_w: Default::default(),
-            state: Rc::new(RefCell::new(MainState {
-                themes: Default::default(),
-                theme_name,
-                theme: Default::default(),
-                styles: Default::default(),
-                fonts: Default::default(),
-                avail_languages: Default::default(),
-                selected_language: Default::default(),
-                config: config.clone(),
-            })),
+            state: Rc::new(RefCell::new(MainState::new(&config))),
         }));
 
         let (msg_tx, msg_rx) = MainContext::channel::<CoreMsg>(glib::PRIORITY_HIGH);
@@ -851,7 +861,7 @@ impl MainWin {
             // is saved already and as such always close without saving
             SaveAction::CloseWithoutSave
         } else {
-            let builder = Builder::new_from_string(&GLADE_SRC);
+            let builder = Builder::new_from_string(&GXI_SRC);
             let ask_save_dialog: Dialog = builder.get_object("ask_save_dialog").unwrap();
             ask_save_dialog.set_title(&gettext("Save unsaved changes"));
             let ret = ask_save_dialog.run();
