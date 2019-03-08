@@ -345,3 +345,14 @@ pub fn get_column_right_margin() -> u32 {
             },
         )
 }
+
+pub fn get_highlight_line() -> bool {
+    GSchema::get(APP_ID, "highlight-line").unwrap_or_else(|| {
+        warn!("Couldn't find GSchema! Defaulting to not highlighting the current line");
+        false
+    })
+}
+
+pub fn set_highlight_line(val: bool) {
+    GSchema::set(APP_ID, "highlight-line", val);
+}

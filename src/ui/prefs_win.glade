@@ -216,6 +216,21 @@
                 <property name="position">4</property>
               </packing>
             </child>
+            <child>
+              <object class="GtkCheckButton" id="highlight_line_checkbutton">
+                <property name="label" translatable="yes">Highlight the current line</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">False</property>
+                <property name="draw_indicator">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="padding">6</property>
+                <property name="position">5</property>
+              </packing>
+            </child>
           </object>
           <packing>
             <property name="position">1</property>

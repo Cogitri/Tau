@@ -39,6 +39,8 @@ impl PrefsWin {
             .unwrap();
         let margin_checkbutton: ToggleButton = builder.get_object("margin_checkbutton").unwrap();
         let margin_spinbutton: SpinButton = builder.get_object("margin_spinbutton").unwrap();
+        let highlight_line_checkbutton: ToggleButton =
+            builder.get_object("highlight_line_checkbutton").unwrap();
 
         let xi_config = &main_state.borrow().config;
 
@@ -175,6 +177,16 @@ impl PrefsWin {
                 let value = spin_btn.get_value();
                 debug!("{}: {}", gettext("Right hand margin width"), value);
                 set_column_right_margin(value as u32);
+                edit_view.borrow().view_item.edit_area.queue_draw();
+            }));
+        }
+
+        {
+            highlight_line_checkbutton.set_active(get_highlight_line());
+
+            highlight_line_checkbutton.connect_toggled(clone!(edit_view => move |toggle_btn| {
+                let value = toggle_btn.get_active();
+                set_highlight_line(value);
                 edit_view.borrow().view_item.edit_area.queue_draw();
             }));
         }
