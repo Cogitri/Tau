@@ -745,22 +745,6 @@ impl EditView {
 
         set_source_color(cr, theme.foreground);
 
-        // Highlight cursor lines
-        // for i in first_line..last_line {
-        //     cr.set_source_rgba(0.8, 0.8, 0.8, 1.0);
-        //     if let Some(line) = self.line_cache.get_line(i) {
-
-        //         if !line.cursor().is_empty() {
-        //             cr.set_source_rgba(0.23, 0.23, 0.23, 1.0);
-        //             cr.rectangle(0f64,
-        //                 font_extents.height*((i+1) as f64) - font_extents.ascent - vadj.get_value(),
-        //                 da_width as f64,
-        //                 font_extents.ascent + font_extents.descent);
-        //             cr.fill();
-        //         }
-        //     }
-        // }
-
         // This can't be 0, otherwise our Scrollbar bugs out. pango::SCALE is the smallest number it accepts
         let mut max_width = pango::SCALE;
 
@@ -769,6 +753,18 @@ impl EditView {
         for i in first_line..last_line {
             // Keep track of the starting x position
             if let Some(line) = self.line_cache.get_line(i) {
+                if get_highlight_line() && !line.cursor().is_empty() {
+                    set_source_color(cr, theme.line_highlight);
+                    cr.rectangle(
+                        0.0,
+                        self.edit_font.font_height * i as f64 - vadj.get_value(),
+                        f64::from(da_width),
+                        self.edit_font.font_height,
+                    );
+                    cr.fill();
+                    set_source_color(cr, theme.foreground);
+                }
+
                 cr.move_to(
                     -hadj.get_value(),
                     self.edit_font.font_height * (i as f64) - vadj.get_value(),

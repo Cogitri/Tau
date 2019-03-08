@@ -35,6 +35,14 @@
                 Sets the column at which the margin should be drawn
             </description>
         </key>
+
+        <key name="highlight-line" type="b">
+            <default>false</default>
+            <summary>Whether the current line should be highlighted</summary>
+            <description>
+                Sets if the current line should be highlighted, which eases navigation through the document
+            </description>
+        </key>
     </schema>
 
 </schemalist>
