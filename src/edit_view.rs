@@ -565,8 +565,7 @@ impl EditView {
             let pango_ctx = self.view_item.get_pango_ctx();
 
             let layout = self.create_layout_for_line(&pango_ctx, &main_state, line);
-            let (_, index, trailing) =
-                layout.xy_to_index(x as i32 * pango::SCALE, 0);
+            let (_, index, trailing) = layout.xy_to_index(x as i32 * pango::SCALE, 0);
             index + trailing
         } else {
             0
