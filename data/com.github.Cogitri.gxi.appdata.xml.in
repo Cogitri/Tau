@@ -58,7 +58,7 @@
  						 <li>(main_win): use a thread to handle CoreMsgs instead of add_idle</li>
  						 <li>(main): display error window if xi-editor crashes</li>
  						 <li>(edit_view): add newline to end of the file if it doesn't terminate with one</li>
- 						 <li>edit_view): only draw trailing spaces</li>
+ 						 <li>(edit_view): only draw trailing spaces</li>
  						 <li>(shared_queue): also use for sending stuff to xi</li>
  						 <li>(gettext): build against system gettext</li>
 					</ul>
