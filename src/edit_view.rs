@@ -564,14 +564,9 @@ impl EditView {
         let index = if let Some(line) = self.line_cache.get_line(line_num) {
             let pango_ctx = self.view_item.get_pango_ctx();
 
-            let padding: usize = format!("{}", self.line_cache.height().saturating_sub(1)).len();
-            let linecount_layout =
-                self.create_layout_for_linecount(&pango_ctx, &main_state, line_num, padding);
-            let linecount_offset = f64::from(linecount_layout.get_extents().1.width / pango::SCALE);
-
             let layout = self.create_layout_for_line(&pango_ctx, &main_state, line);
             let (_, index, trailing) =
-                layout.xy_to_index((x - linecount_offset) as i32 * pango::SCALE, 0);
+                layout.xy_to_index(x as i32 * pango::SCALE, 0);
             index + trailing
         } else {
             0
