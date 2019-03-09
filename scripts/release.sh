@@ -22,7 +22,6 @@ ginst build.rs \
 	Cargo.toml \
 	Cargo.lock \
 	meson.build \
-	meson_options.txt \
 	meson_post_install.py \
 	LICENSE \
 	README.md \
