@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright 2019 Rasmus Thomsen <rasmus.thomsen@protonmail.com> -->
+<!-- Copyright 2019 Rasmus Thomsen <oss@cogitri.dev> -->
 <component type="desktop-application">
 	<id>com.github.Cogitri.gxi</id>
 	<metadata_license>CC0-1.0</metadata_license>
@@ -25,7 +25,7 @@
 
 	<url type="homepage">https://github.com/Cogitri/gxi</url>
 	<developer_name>Rasmus "Cogitri" Thomsen</developer_name>
-	<update_contact>rasmus.thomsen@protonmail.com</update_contact>
+	<update_contact>oss@cogitri.dev</update_contact>
 
 	<provides>
 		<binary>gxi</binary>
