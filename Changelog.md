@@ -1,3 +1,32 @@
+## Changes in v0.5.4
+
+### Feature changes
+
+ - (i18n): create nb_NO translation
+ - (edit_view): open/close find&replace dialog upon triggering action again
+ - (about_win): display icon and translator credit
+ - (edit_view): make linecount more consistent
+
+### Bugfixes
+
+ - (appdata): fix typo in 0.5.0 changelog
+ - (*): use ellipsis (…) instead of three dots (...)
+ - (i18n): update lang Norwegian Bokmål
+ - (i18n): update lang Portuguese (Brazil)
+ - (edit_view): linecount is its own widget; don't include it in x/y -> cell calculations
+ - (edit_view): don't try to add Searchbar to two boxes
+ - (i18n): update translations
+ - (edit_view): fix drawing spaces after tabs
+ - (edit_view): fix horizotal scrollbar width on empty document
+ - (edit_view): fix linecount placement upon opening search/replace
+ - (edit_view): intialize EditView with font set by Config
+ - (edit_view): fix font size calculation on font changed
+ - (prefs_win): Remove unsupported properties
+ - (data): resize icons to 128x128
+ - (build): remove rust-target option
+ - (edit_view): redraw upon font changes
+ - (edit_view): fix width of linecount for numbers >=100
+
 ## Changes in v0.5.3
 
 ### Feature changes

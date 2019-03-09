@@ -32,6 +32,11 @@
 	</provides>
 
 	<releases>
+		<release version="0.5.4" date="2019-03-09">
+			<description>
+				<p>This release made the linecount nicer (as in more visible/readable). gxi also offers a Norwegian Bokmål translation.</p>
+			</description>
+		</release>
 		<release version="0.5.3" date="2019-02-21">
 			<description>
 				<p> Ask user if changes should be saved upon closing. Also makes panics more readable.</p>
