@@ -19,7 +19,7 @@
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
             <property name="action_name">app.save_as</property>
-            <property name="text" translatable="yes">Save As...</property>
+            <property name="text" translatable="yes">Save As…</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -58,7 +58,7 @@
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
             <property name="action_name">app.find</property>
-            <property name="text" translatable="yes">Find...</property>
+            <property name="text" translatable="yes">Find…</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -72,7 +72,7 @@
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
             <property name="action_name">app.replace</property>
-            <property name="text" translatable="yes">Replace...</property>
+            <property name="text" translatable="yes">Replace…</property>
           </object>
           <packing>
             <property name="expand">False</property>

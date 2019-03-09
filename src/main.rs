@@ -199,7 +199,7 @@ fn main() {
     }));
 
     application.connect_shutdown(move |_| {
-        debug!("{}", gettext("Shutting down..."));
+        debug!("{}", gettext("Shutting down…"));
     });
 
     application.run(&args().collect::<Vec<_>>());
