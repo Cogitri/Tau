@@ -37,6 +37,8 @@ else
 endif
 
 custom_target('cargo-build-gxi',
+                        build_by_default: true,
+                        build_always_stale: true,
                         input: sources,
                         output: ['gxi'],
                         install: true,
@@ -77,6 +79,8 @@ if subdir_check.returncode() != 0
 endif
 
 custom_target('cargo-build-syntect',
+                        build_by_default: true,
+                        build_always_stale: true,
                         input: sources,
                         output: ['xi-syntect-plugin'],
                         install: true,
