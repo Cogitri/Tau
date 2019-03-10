@@ -796,16 +796,17 @@ impl EditView {
         cr.rectangle(0.0, 0.0, linecount_width, f64::from(linecount_height));
         cr.fill();
 
-        set_source_color(cr, theme.foreground);
         //FIXME: Xi sends us the 'ln' (logical linenumber) param for this, but that isn't updated on every draw!
         let mut current_line = first_line;
+        let center_diff = (self.edit_font.font_height - self.interface_font.font_height) / 2.0;
 
+        set_source_color(cr, theme.foreground);
         for i in first_line..last_line {
             // Keep track of the starting x position
             if let Some(line) = self.line_cache.get_line(i) {
                 cr.move_to(
                     0.0,
-                    self.edit_font.font_height * (i as f64) - vadj.get_value(),
+                    self.edit_font.font_height * (i as f64) - vadj.get_value() + center_diff,
                 );
                 if line.line_num().is_some() {
                     current_line += 1
@@ -843,6 +844,7 @@ impl EditView {
             offset = padding / self.interface_font.font_width as usize + 1
         );
         let layout = pango::Layout::new(pango_ctx);
+        layout.set_alignment(pango::Alignment::Center);
         layout.set_font_description(&self.interface_font.font_desc);
         layout.set_text(line_view.as_str());
         layout
