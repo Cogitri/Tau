@@ -778,9 +778,9 @@ impl EditView {
 
         let pango_ctx = self.view_item.get_pango_ctx();
 
-        // Make the linecount at least 4 chars big
-        let linecount_width = if format!(" {} ", last_line).len() > 4 {
-            let width = self.interface_font.font_width * format!(" {} ", last_line).len() as f64;
+        // Make the linecount at least 6 chars big
+        let linecount_width = if format!("  {}  ", last_line).len() > 6 {
+            let width = self.interface_font.font_width * format!("  {}  ", last_line).len() as f64;
             // Make sure the linecount_width is even to properly center the line number
             if width % 2.0 == 0.0 {
                 width
@@ -788,11 +788,11 @@ impl EditView {
                 width + 1.0
             }
         } else {
-            self.interface_font.font_width * 4.0
+            self.interface_font.font_width * 6.0
         };
 
         // Draw linecount background
-        set_source_color(cr, theme.gutter);
+        set_source_color(cr, theme.background);
         cr.rectangle(0.0, 0.0, linecount_width, f64::from(linecount_height));
         cr.fill();
 
