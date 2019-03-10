@@ -11,7 +11,7 @@ use gettextrs::gettext;
 use gio::{ActionMapExt, SimpleAction};
 use glib::MainContext;
 use gtk::*;
-use log::{debug, error, trace};
+use log::{debug, error, trace, warn};
 use serde_derive::*;
 use serde_json::{self, json, Value};
 use std::cell::RefCell;
@@ -20,11 +20,26 @@ use std::rc::Rc;
 use std::thread;
 use syntect::highlighting::ThemeSettings;
 
+/// Returned by an `ask_save_dialog` when we ask the user if he wants to either:
+/// - `Save`(save unsaved changes and close view)
+/// - `CloseWithoutSave` (discard pending changes and close view)
+/// - `Cancel` (cancel the action and return to editing)
 #[derive(Debug, PartialEq)]
 enum SaveAction {
-    Save,
-    CloseWithoutSave,
-    Cancel,
+    Save = 100,
+    CloseWithoutSave = 101,
+    Cancel = 102,
+}
+
+impl SaveAction {
+    fn from_i32(value: i32) -> Option<Self> {
+        match value {
+            100 => Some(SaveAction::Save),
+            101 => Some(SaveAction::CloseWithoutSave),
+            102 => Some(SaveAction::Cancel),
+            _ => None,
+        }
+    }
 }
 
 #[derive(Deserialize)]
@@ -823,17 +838,41 @@ impl MainWin {
             // is saved already and as such always close without saving
             SaveAction::CloseWithoutSave
         } else {
-            let builder = Builder::new_from_string(&GLADE_SRC);
-            let ask_save_dialog: Dialog = builder.get_object("ask_save_dialog").unwrap();
-            ask_save_dialog.set_title(&gettext("Save unsaved changes"));
+            let ask_save_dialog = MessageDialog::new(
+                Some(&main_win.borrow().window),
+                DialogFlags::all(),
+                MessageType::Question,
+                ButtonsType::None,
+                gettext("Save unsaved changes").as_str(),
+            );
+            ask_save_dialog.add_button(
+                &gettext("Close Without Saving"),
+                ResponseType::Other(SaveAction::CloseWithoutSave as u16),
+            );
+            ask_save_dialog.add_button(
+                &gettext("Cancel"),
+                ResponseType::Other(SaveAction::Cancel as u16),
+            );
+            ask_save_dialog.add_button(
+                &gettext("Save"),
+                ResponseType::Other(SaveAction::Save as u16),
+            );
+            ask_save_dialog.set_default_response(ResponseType::Other(SaveAction::Cancel as u16));
             let ret = ask_save_dialog.run();
             ask_save_dialog.destroy();
-            match ret {
-                1 => {
-                    Self::save_as(main_win, edit_view);
+            match SaveAction::from_i32(ret) {
+                Some(SaveAction::Save) => {
+                    Self::handle_save_button(main_win);
                     SaveAction::Save
                 }
-                3 => SaveAction::CloseWithoutSave,
+                Some(SaveAction::CloseWithoutSave) => SaveAction::CloseWithoutSave,
+                None => {
+                    warn!(
+                        "{}",
+                        &gettext("Save dialog has been destroyed before the user clicked a button")
+                    );
+                    SaveAction::Cancel
+                }
                 _ => SaveAction::Cancel,
             }
         };
