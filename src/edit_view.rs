@@ -2,7 +2,7 @@ use crate::linecache::{Line, LineCache};
 use crate::main_win::MainState;
 use crate::pref_storage::*;
 use crate::rpc::{self, Core};
-use crate::theme::set_source_color;
+use crate::theme::{color_from_u32, set_source_color, PangoColor};
 use cairo::Context;
 use gdk::enums::key;
 use gdk::*;
@@ -905,12 +905,9 @@ impl EditView {
 
             let foreground = main_state.styles.get(style.id).and_then(|s| s.fg_color);
             if let Some(foreground) = foreground {
-                let mut attr = Attribute::new_foreground(
-                    foreground.r_u16(),
-                    foreground.g_u16(),
-                    foreground.b_u16(),
-                )
-                .unwrap();
+                let pango_color = PangoColor::from_color(color_from_u32(foreground));
+                let mut attr =
+                    Attribute::new_foreground(pango_color.r, pango_color.g, pango_color.b).unwrap();
                 attr.set_start_index(start_index);
                 attr.set_end_index(end_index);
                 attr_list.insert(attr);
@@ -918,12 +915,9 @@ impl EditView {
 
             let background = main_state.styles.get(style.id).and_then(|s| s.bg_color);
             if let Some(background) = background {
-                let mut attr = Attribute::new_background(
-                    background.r_u16(),
-                    background.g_u16(),
-                    background.b_u16(),
-                )
-                .unwrap();
+                let pango_color = PangoColor::from_color(color_from_u32(background));
+                let mut attr =
+                    Attribute::new_background(pango_color.r, pango_color.g, pango_color.b).unwrap();
                 attr.set_start_index(start_index);
                 attr.set_end_index(end_index);
                 attr_list.insert(attr);

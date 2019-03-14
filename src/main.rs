@@ -76,7 +76,6 @@ mod linecache;
 mod main_win;
 mod pref_storage;
 mod prefs_win;
-mod proto;
 mod rpc;
 mod shared_queue;
 mod theme;
