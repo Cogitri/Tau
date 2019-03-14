@@ -3,10 +3,9 @@ use crate::edit_view::EditView;
 use crate::errors::ErrorDialog;
 use crate::pref_storage::Config;
 use crate::prefs_win::PrefsWin;
-use crate::proto::{self, ThemeSettings};
 use crate::rpc::Core;
 use crate::shared_queue::{CoreMsg, ErrMsg, SharedQueue};
-use crate::theme::{Color, Style, Theme};
+use crate::theme::{u32_from_color, LineStyle};
 use crossbeam_deque::Worker;
 use gettextrs::gettext;
 use gio::{ActionMapExt, SimpleAction};
@@ -19,6 +18,7 @@ use std::cell::RefCell;
 use std::collections::{BTreeMap, HashMap};
 use std::rc::Rc;
 use std::thread;
+use syntect::highlighting::ThemeSettings;
 
 #[derive(Debug, PartialEq)]
 enum SaveAction {
@@ -36,8 +36,8 @@ pub struct MeasureWidth {
 pub struct MainState {
     pub themes: Vec<String>,
     pub theme_name: String,
-    pub theme: Theme,
-    pub styles: Vec<Style>,
+    pub theme: ThemeSettings,
+    pub styles: Vec<LineStyle>,
     pub fonts: Vec<String>,
     pub avail_languages: Vec<String>,
     pub selected_language: String,
@@ -391,7 +391,7 @@ impl MainWin {
 
     pub fn theme_changed(&mut self, params: &Value) {
         let theme_settings = params["theme"].clone();
-        let theme_settings: ThemeSettings = match serde_json::from_value(theme_settings) {
+        let theme: ThemeSettings = match serde_json::from_value(theme_settings) {
             Err(e) => {
                 error!("{}: {}", gettext("Failed to convert theme settings"), e);
                 return;
@@ -399,26 +399,19 @@ impl MainWin {
             Ok(ts) => ts,
         };
 
-        let selection_foreground = theme_settings
-            .selection_foreground
-            .map(Color::from_ts_proto);
-        let selection = theme_settings.selection.map(Color::from_ts_proto);
-
-        let theme = Theme::from_proto(&theme_settings);
-        {
-            let mut state = self.state.borrow_mut();
-            state.theme = theme;
-        }
-
-        let selection_sytle = Style {
-            fg_color: selection_foreground,
-            bg_color: selection,
+        let selection_style = LineStyle {
+            fg_color: theme
+                .selection_foreground
+                .and_then(|s| Some(u32_from_color(s))),
+            bg_color: theme.selection.and_then(|s| Some(u32_from_color(s))),
             weight: None,
             italic: None,
             underline: None,
         };
 
-        self.set_style(0, selection_sytle);
+        let mut state = self.state.borrow_mut();
+        state.theme = theme;
+        state.styles.insert(0, selection_style);
     }
 
     pub fn available_plugins(&mut self, params: &Value) {
@@ -434,7 +427,7 @@ impl MainWin {
 
         if !has_syntect {
             ErrorDialog::new(ErrMsg {
-                msg: gettext("Couldn't find syntect plugin, functionality will be limited!"),
+                msg: format!("{}: {:?}", gettext("Couldn't find syntect plugin, functionality will be limited! Only found the following plugins"), params["plugins"].as_array()),
                 fatal: false,
             });
         }
@@ -462,30 +455,11 @@ impl MainWin {
     }
 
     pub fn def_style(&mut self, params: &Value) {
-        let style: proto::Style = serde_json::from_value(params.clone()).unwrap();
-        let style = Style::from_proto(&style);
+        let style: LineStyle = serde_json::from_value(params.clone()).unwrap();
 
         if let Some(id) = params["id"].as_u64() {
-            self.set_style(id as usize, style);
-        }
-    }
-
-    pub fn set_style(&self, id: usize, style: Style) {
-        let mut state = self.state.borrow_mut();
-        // bump the array size up if needed
-        while state.styles.len() < id {
-            state.styles.push(Style {
-                fg_color: None,
-                bg_color: None,
-                weight: None,
-                italic: None,
-                underline: None,
-            })
-        }
-        if state.styles.len() == id {
-            state.styles.push(style);
-        } else {
-            state.styles[id] = style;
+            let mut state = self.state.borrow_mut();
+            state.styles.insert(id as usize, style);
         }
     }
 
