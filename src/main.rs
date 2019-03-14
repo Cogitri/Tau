@@ -128,7 +128,7 @@ fn main() {
     application.connect_startup(clone!(shared_queue, core => move |application| {
         debug!("{}", gettext("Starting gxi"));
 
-        let xi_config = Config::new();
+        let (config_dir, xi_config) = Config::new();
 
         // No need to gettext this, gettext doesn't work yet
         match TextDomain::new("gxi")
@@ -145,10 +145,7 @@ fn main() {
             Err(TextDomainError::InvalidLocale(locale)) => warn!("Invalid locale {}", locale),
         }
 
-        let mut xi_config_dir = xi_config.path.clone();
-        // Remove the file name from the config dir string (e.g. /home/rasmus/.config/gxi/preferences.xiconfig -> /home/rasmus/.config/gxi)
-        xi_config_dir.truncate(xi_config_dir.rfind('/').unwrap_or_else(|| panic!("{}", gettext("Failed to set config dir!"))));
-        core.client_started(&xi_config_dir, include_str!(concat!(env!("OUT_DIR"), "/plugin-dir.in")));
+        core.client_started(&config_dir, include_str!(concat!(env!("OUT_DIR"), "/plugin-dir.in")));
 
         MainWin::new(
             application,

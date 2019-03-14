@@ -69,7 +69,7 @@ impl Default for XiConfig {
 }
 
 impl Config {
-    pub fn new() -> Self {
+    pub fn new() -> (String, Self) {
         if let Some(user_config_dir) = dirs::config_dir() {
             let config_dir = user_config_dir.join("gxi");
             std::fs::create_dir_all(&config_dir)
@@ -131,7 +131,10 @@ impl Config {
                 xi_config
             };
 
-            xi_config
+            (
+                config_dir.into_os_string().into_string().unwrap(),
+                xi_config,
+            )
         } else {
             error!(
                 "{}",
@@ -163,7 +166,10 @@ impl Config {
                 .save()
                 .unwrap_or_else(|e| error!("{}", e.to_string()));
 
-            xi_config
+            (
+                config_dir.into_os_string().into_string().unwrap(),
+                xi_config,
+            )
         }
     }
 
