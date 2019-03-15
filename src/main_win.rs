@@ -37,7 +37,7 @@ pub struct MainState {
     pub themes: Vec<String>,
     pub theme_name: String,
     pub theme: ThemeSettings,
-    pub styles: Vec<LineStyle>,
+    pub styles: HashMap<usize, LineStyle>,
     pub fonts: Vec<String>,
     pub avail_languages: Vec<String>,
     pub selected_language: String,
@@ -399,6 +399,7 @@ impl MainWin {
             Ok(ts) => ts,
         };
 
+        // FIXME: Use annotations instead of constructing the selection style here
         let selection_style = LineStyle {
             fg_color: theme
                 .selection_foreground
