@@ -902,9 +902,9 @@ impl EditView {
         for style in &line.styles {
             let start_index = (ix + style.start) as u32;
             let end_index = (ix + style.start + style.len as i64) as u32;
+            let line_style = main_state.styles.get(&style.id);
 
-            let foreground = main_state.styles.get(style.id).and_then(|s| s.fg_color);
-            if let Some(foreground) = foreground {
+            if let Some(foreground) = line_style.and_then(|s| s.fg_color) {
                 let pango_color = PangoColor::from_color(color_from_u32(foreground));
                 let mut attr =
                     Attribute::new_foreground(pango_color.r, pango_color.g, pango_color.b).unwrap();
@@ -913,8 +913,7 @@ impl EditView {
                 attr_list.insert(attr);
             }
 
-            let background = main_state.styles.get(style.id).and_then(|s| s.bg_color);
-            if let Some(background) = background {
+            if let Some(background) = line_style.and_then(|s| s.bg_color) {
                 let pango_color = PangoColor::from_color(color_from_u32(background));
                 let mut attr =
                     Attribute::new_background(pango_color.r, pango_color.g, pango_color.b).unwrap();
@@ -923,8 +922,7 @@ impl EditView {
                 attr_list.insert(attr);
             }
 
-            let weight = main_state.styles.get(style.id).and_then(|s| s.weight);
-            if let Some(weight) = weight {
+            if let Some(weight) = line_style.and_then(|s| s.weight) {
                 let mut attr =
                     Attribute::new_weight(pango::Weight::__Unknown(weight as i32)).unwrap();
                 attr.set_start_index(start_index);
@@ -932,8 +930,7 @@ impl EditView {
                 attr_list.insert(attr);
             }
 
-            let italic = main_state.styles.get(style.id).and_then(|s| s.italic);
-            if let Some(italic) = italic {
+            if let Some(italic) = line_style.and_then(|s| s.italic) {
                 let mut attr = if italic {
                     Attribute::new_style(pango::Style::Italic).unwrap()
                 } else {
@@ -944,8 +941,7 @@ impl EditView {
                 attr_list.insert(attr);
             }
 
-            let underline = main_state.styles.get(style.id).and_then(|s| s.underline);
-            if let Some(underline) = underline {
+            if let Some(underline) = line_style.and_then(|s| s.underline) {
                 let mut attr = if underline {
                     Attribute::new_underline(pango::Underline::Single).unwrap()
                 } else {
