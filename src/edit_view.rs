@@ -1,7 +1,7 @@
 use crate::linecache::{Line, LineCache};
 use crate::main_win::MainState;
 use crate::pref_storage::*;
-use crate::rpc::{self, Core};
+use crate::rpc::Core;
 use crate::theme::{color_from_u32, set_source_color, PangoColor};
 use cairo::Context;
 use gdk::enums::key;
@@ -373,21 +373,6 @@ impl FindReplace {
             ev.borrow_mut().find_prev();
         }));
     }
-}
-
-/// Convert gtk modifiers to xi ones
-fn convert_gtk_modifier(mt: ModifierType) -> u32 {
-    let mut ret = 0;
-    if mt.contains(ModifierType::SHIFT_MASK) {
-        ret |= rpc::XI_SHIFT_KEY_MASK;
-    }
-    if mt.contains(ModifierType::CONTROL_MASK) {
-        ret |= rpc::XI_CONTROL_KEY_MASK;
-    }
-    if mt.contains(ModifierType::MOD1_MASK) {
-        ret |= rpc::XI_ALT_KEY_MASK;
-    }
-    ret
 }
 
 impl EditView {
@@ -1048,7 +1033,6 @@ impl EditView {
             &self.view_id,
             line,
             col,
-            convert_gtk_modifier(em.get_state()),
         );
         Inhibit(false)
     }

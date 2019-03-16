@@ -312,7 +312,12 @@ impl Core {
             &json!({
                 "line": line,
                 "col": col,
-                "ty": "point_select",
+                "ty": {
+                    "select": {
+                        "granularity": "point",
+                        "multi": false,
+                    },
+                },
             }),
         )
     }
@@ -324,7 +329,11 @@ impl Core {
             &json!({
                 "line": line,
                 "col": col,
-                "ty": "toggle_sel",
+                "ty": {
+                    "select_extend": {
+                        "granularity": "point",
+                    },
+                },
             }),
         )
     }
@@ -397,8 +406,16 @@ impl Core {
         self.send_edit_cmd(view_id, "scroll", &json!([first, last]))
     }
 
-    pub fn drag(&self, view_id: &str, line: u64, col: u64, modifier: u32) {
-        self.send_edit_cmd(view_id, "drag", &json!([line, col, modifier]))
+    pub fn drag(&self, view_id: &str, line: u64, col: u64) {
+        self.send_edit_cmd(
+            view_id,
+            "gesture",
+            &json!({
+                "line": line,
+                "col": col,
+                "ty": "drag",
+            }),
+        )
     }
 
     pub fn undo(&self, view_id: &str) {
