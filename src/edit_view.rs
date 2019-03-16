@@ -1029,11 +1029,7 @@ impl EditView {
             let main_state = self.main_state.borrow();
             self.da_px_to_cell(&main_state, x, y)
         };
-        self.core.borrow().drag(
-            &self.view_id,
-            line,
-            col,
-        );
+        self.core.borrow().drag(&self.view_id, line, col);
         Inhibit(false)
     }
 
