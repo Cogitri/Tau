@@ -9,9 +9,9 @@ pub struct PangoColor {
     pub b: u16,
 }
 
-impl PangoColor {
+impl From<Color> for PangoColor {
     /// Convert rgb's 0-255 values to Pango's 0-65535
-    pub fn from_color(c: Color) -> Self {
+    fn from(c: Color) -> Self {
         Self {
             r: u16::from(c.r) << 8,
             g: u16::from(c.g) << 8,

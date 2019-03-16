@@ -890,7 +890,7 @@ impl EditView {
             let line_style = main_state.styles.get(&style.id);
 
             if let Some(foreground) = line_style.and_then(|s| s.fg_color) {
-                let pango_color = PangoColor::from_color(color_from_u32(foreground));
+                let pango_color = PangoColor::from(color_from_u32(foreground));
                 let mut attr =
                     Attribute::new_foreground(pango_color.r, pango_color.g, pango_color.b).unwrap();
                 attr.set_start_index(start_index);
@@ -899,7 +899,7 @@ impl EditView {
             }
 
             if let Some(background) = line_style.and_then(|s| s.bg_color) {
-                let pango_color = PangoColor::from_color(color_from_u32(background));
+                let pango_color = PangoColor::from(color_from_u32(background));
                 let mut attr =
                     Attribute::new_background(pango_color.r, pango_color.g, pango_color.b).unwrap();
                 attr.set_start_index(start_index);
