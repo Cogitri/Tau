@@ -664,7 +664,8 @@ impl EditView {
 
         // Draw a line at x chars
         if get_draw_right_margin() {
-            let until_margin_width = self.edit_font.font_width * get_column_right_margin() as f64;
+            let until_margin_width =
+                self.edit_font.font_width * f64::from(get_column_right_margin());
             // Draw editing background
             set_source_color(cr, theme.background);
             cr.rectangle(0.0, 0.0, until_margin_width, f64::from(da_height));

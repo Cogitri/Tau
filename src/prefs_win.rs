@@ -19,7 +19,7 @@ impl PrefsWin {
         main_state: &Rc<RefCell<MainState>>,
         core: &Rc<RefCell<Core>>,
     ) -> Rc<RefCell<Self>> {
-        const SRC: &'static str = include_str!("ui/prefs_win.glade");
+        const SRC: &str = include_str!("ui/prefs_win.glade");
         let builder = Builder::new_from_string(SRC);
 
         let window: Window = builder.get_object("prefs_win").unwrap();
@@ -163,7 +163,7 @@ impl PrefsWin {
 
         {
             margin_spinbutton.set_sensitive(get_draw_right_margin());
-            margin_spinbutton.set_value(get_column_right_margin() as f64);
+            margin_spinbutton.set_value(f64::from(get_column_right_margin()));
 
             margin_spinbutton.connect_value_changed(move |spin_btn| {
                 set_column_right_margin(spin_btn.get_value() as u32)
