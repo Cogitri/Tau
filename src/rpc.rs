@@ -1,4 +1,4 @@
-use crate::errors::ErrMsg;
+use crate::errors::ErrorMsg;
 use crate::shared_queue::{CoreMsg, SharedQueue};
 use crate::xi_thread::XiPeer;
 use crossbeam_channel::{unbounded, Receiver};
@@ -43,7 +43,7 @@ impl Core {
     pub fn new(
         xi_peer: XiPeer,
         xi_rx: Receiver<Value>,
-        err_tx: glib::Sender<ErrMsg>,
+        err_tx: glib::Sender<ErrorMsg>,
         shared_queue: SharedQueue,
     ) -> Self {
         let state = CoreState {
@@ -86,7 +86,7 @@ impl Core {
 
             //TODO: Gracefully handle xi-editor crashes
             err_tx
-                .send(ErrMsg {
+                .send(ErrorMsg {
                     msg: "Xi-Editor has crashed!".to_string(),
                     fatal: true,
                 })

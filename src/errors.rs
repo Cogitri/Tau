@@ -34,7 +34,7 @@ impl From<toml::ser::Error> for Error {
 }
 
 #[derive(Clone, Debug)]
-pub struct ErrMsg {
+pub struct ErrorMsg {
     pub msg: String,
     pub fatal: bool,
 }
@@ -42,12 +42,12 @@ pub struct ErrMsg {
 /// A simple `ErrorDialog` used for if stuff goes south.
 pub struct ErrorDialog {
     dialog: MessageDialog,
-    msg: ErrMsg,
+    msg: ErrorMsg,
 }
 
 impl ErrorDialog {
     /// Creates a new `ErrorDialog` containing the `err_msg`. Quits the application if `fatal` is true.
-    pub fn new(err_msg: ErrMsg) -> Self {
+    pub fn new(err_msg: ErrorMsg) -> Self {
         let application = gio::Application::get_default()
             .unwrap_or_else(|| panic!("{}", &gettext("No default application")))
             .downcast::<gtk::Application>()

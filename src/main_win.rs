@@ -1,6 +1,6 @@
 use crate::about_win::AboutWin;
 use crate::edit_view::EditView;
-use crate::errors::{ErrorDialog, ErrMsg};
+use crate::errors::{ErrorDialog, ErrorMsg};
 use crate::pref_storage::Config;
 use crate::prefs_win::PrefsWin;
 use crate::rpc::Core;
@@ -351,7 +351,7 @@ impl MainWin {
 
     pub fn alert(&self, params: &Value) {
         if let Some(msg) = params["msg"].as_str() {
-            ErrorDialog::new(ErrMsg {
+            ErrorDialog::new(ErrorMsg {
                 msg: msg.to_string(),
                 fatal: false,
             });
@@ -427,7 +427,7 @@ impl MainWin {
         }
 
         if !has_syntect {
-            ErrorDialog::new(ErrMsg {
+            ErrorDialog::new(ErrorMsg {
                 msg: format!("{}: {:?}", gettext("Couldn't find syntect plugin, functionality will be limited! Only found the following plugins"), params["plugins"].as_array()),
                 fatal: false,
             });
@@ -516,7 +516,7 @@ impl MainWin {
                 None => gettext("has crashed"),
             };
 
-            ErrorDialog::new(ErrMsg {
+            ErrorDialog::new(ErrorMsg {
                 msg: format!(
                     "{} {} {} {}",
                     gettext("Plugin"),
@@ -613,7 +613,7 @@ impl MainWin {
                         Ok(_) => win.req_new_view(Some(&file_str)),
                         Err(e) => {
                             let err_msg = format!("{} '{}': {}", &gettext("Couldn't open file"), &file_str, &e.to_string());
-                            ErrorDialog::new(ErrMsg{msg: err_msg, fatal: false}).show_all();
+                            ErrorDialog::new(ErrorMsg{msg: err_msg, fatal: false}).show_all();
                         }
                     }
                 }
@@ -677,7 +677,7 @@ impl MainWin {
                             }
                         Err(e) => {
                             let err_msg = format!("{} '{}': {}", &gettext("Couldn't save file"), &file_str, &e.to_string());
-                            ErrorDialog::new(ErrMsg {msg: err_msg, fatal: false}).show_all();
+                            ErrorDialog::new(ErrorMsg {msg: err_msg, fatal: false}).show_all();
                         }
                     }
                 }
