@@ -81,8 +81,8 @@ mod shared_queue;
 mod theme;
 mod xi_thread;
 
-use crate::main_win::MainWin;
 use crate::errors::ErrorMsg;
+use crate::main_win::MainWin;
 use crate::pref_storage::Config;
 use crate::rpc::Core;
 use crate::shared_queue::{CoreMsg, SharedQueue};
