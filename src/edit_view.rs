@@ -2,7 +2,7 @@ use crate::linecache::{Line, LineCache};
 use crate::main_win::MainState;
 use crate::pref_storage::*;
 use crate::rpc::Core;
-use crate::theme::{color_from_u32, set_source_color, PangoColor};
+use crate::theme::{color_from_u32, set_margin_source_color, set_source_color, PangoColor};
 use cairo::Context;
 use gdk::enums::key;
 use gdk::*;
@@ -670,7 +670,7 @@ impl EditView {
             cr.rectangle(0.0, 0.0, until_margin_width, f64::from(da_height));
             cr.fill();
 
-            set_source_color(cr, theme.gutter);
+            set_margin_source_color(cr, theme.background);
             cr.rectangle(
                 until_margin_width - self.view_item.horiz_bar.get_value(),
                 0.0,

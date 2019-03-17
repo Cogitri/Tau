@@ -50,6 +50,35 @@ pub fn set_source_color(cr: &cairo::Context, color: Option<Color>) {
     }
 }
 
+/// Used for the right hand margin to make the margin a bit darker than the original background
+pub fn set_margin_source_color(cr: &cairo::Context, color: Option<Color>) {
+    let source_color = if let Some(c) = color {
+        // Primitive check to see if the theme is light (if so, subtract more for an actually
+        // noticeable different) or dark (then subtract less to not get too dark).
+        // FIXME: This should be handled in Xi, see https://github.com/xi-editor/xi-editor/issues/1125
+        if (c.r > 200) && (c.g > 200) & (c.b > 200) {
+            Some(Color {
+                r: c.r - 10,
+                g: c.g - 10,
+                b: c.b - 10,
+                a: c.a,
+            })
+        } else {
+            // Use saturating_sub here to make sure we don't overflow
+            Some(Color {
+                r: c.r.saturating_sub(5),
+                g: c.g.saturating_sub(5),
+                b: c.b.saturating_sub(5),
+                a: c.a,
+            })
+        }
+    } else {
+        None
+    };
+
+    set_source_color(cr, source_color);
+}
+
 /// Explode an u32 into its individual RGBA values
 pub fn color_from_u32(c: u32) -> Color {
     Color {
