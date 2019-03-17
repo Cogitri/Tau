@@ -435,24 +435,21 @@ impl MainWin {
     }
 
     pub fn config_changed(&mut self, params: &Value) {
-        params["view_id"]
+        if let Some(ev) = params["view_id"]
             .as_str()
-            .and_then(|id| self.views.get(id))
-            .map(|ev| ev.borrow_mut().config_changed(&params["changes"]));
+            .and_then(|id| self.views.get(id)) { ev.borrow_mut().config_changed(&params["changes"]) }
     }
 
     pub fn find_status(&mut self, params: &Value) {
-        params["view_id"]
+        if let Some(ev) = params["view_id"]
             .as_str()
-            .and_then(|id| self.views.get(id))
-            .map(|ev| ev.borrow_mut().find_status(&params["queries"]));
+            .and_then(|id| self.views.get(id)) { ev.borrow_mut().find_status(&params["queries"]) }
     }
 
     pub fn replace_status(&mut self, params: &Value) {
-        params["view_id"]
+        if let Some(ev) = params["view_id"]
             .as_str()
-            .and_then(|id| self.views.get(id))
-            .map(|ev| ev.borrow_mut().replace_status(&params["status"]));
+            .and_then(|id| self.views.get(id)) { ev.borrow_mut().replace_status(&params["status"]) }
     }
 
     pub fn def_style(&mut self, params: &Value) {
@@ -467,10 +464,9 @@ impl MainWin {
     pub fn update(&mut self, params: &Value) {
         trace!("{} 'update': {:?}", gettext("Handling"), params);
 
-        params["view_id"]
+        if let Some(ev) = params["view_id"]
             .as_str()
-            .and_then(|id| self.views.get(id))
-            .map(|ev| ev.borrow_mut().update(params));
+            .and_then(|id| self.views.get(id)) { ev.borrow_mut().update(params) }
     }
 
     pub fn scroll_to(&mut self, params: &Value) {
@@ -490,14 +486,13 @@ impl MainWin {
             }
         };
 
-        params["view_id"]
+        if let Some(ev) = params["view_id"]
             .as_str()
-            .and_then(|id| self.views.get(id))
-            .map(|ev| {
+            .and_then(|id| self.views.get(id)) {
                 let idx = self.notebook.page_num(&ev.borrow().root_widget);
                 self.notebook.set_current_page(idx);
-                ev.borrow_mut().scroll_to(line, col)
-            });
+                ev.borrow_mut().scroll_to(line, col);
+            }
     }
 
     fn plugin_started(&self, _params: &Value) {}
