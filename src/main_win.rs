@@ -689,9 +689,12 @@ impl MainWin {
         let main_win = main_win.borrow();
         let main_state = main_win.state.clone();
         let core = main_win.core.clone();
-        PrefsWin::new(&main_win.window, &main_state, &core);
-
-        //prefs_win.run();
+        PrefsWin::new(
+            &main_win.window,
+            &main_state,
+            &core,
+            &main_win.get_current_edit_view(),
+        );
     }
 
     fn about(main_win: Rc<RefCell<Self>>) {

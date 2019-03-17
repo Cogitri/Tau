@@ -1,3 +1,4 @@
+use crate::edit_view::EditView;
 use crate::main_win::MainState;
 use crate::pref_storage::*;
 use crate::rpc::Core;
@@ -18,6 +19,7 @@ impl PrefsWin {
         parent: &ApplicationWindow,
         main_state: &Rc<RefCell<MainState>>,
         core: &Rc<RefCell<Core>>,
+        edit_view: &Rc<RefCell<EditView>>,
     ) -> Rc<RefCell<Self>> {
         const SRC: &str = include_str!("ui/prefs_win.glade");
         let builder = Builder::new_from_string(SRC);
@@ -154,20 +156,24 @@ impl PrefsWin {
         {
             margin_checkbutton.set_active(get_draw_right_margin());
 
-            margin_checkbutton.connect_toggled(clone!(margin_spinbutton => move |toggle_btn| {
-                let value = toggle_btn.get_active();
-                set_draw_right_margin(value);
-                margin_spinbutton.set_sensitive(value);
-            }));
+            margin_checkbutton.connect_toggled(
+                clone!(edit_view, margin_spinbutton => move |toggle_btn| {
+                    let value = toggle_btn.get_active();
+                    set_draw_right_margin(value);
+                    edit_view.borrow().view_item.edit_area.queue_draw();
+                    margin_spinbutton.set_sensitive(value);
+                }),
+            );
         }
 
         {
             margin_spinbutton.set_sensitive(get_draw_right_margin());
             margin_spinbutton.set_value(f64::from(get_column_right_margin()));
 
-            margin_spinbutton.connect_value_changed(move |spin_btn| {
-                set_column_right_margin(spin_btn.get_value() as u32)
-            });
+            margin_spinbutton.connect_value_changed(clone!(edit_view => move |spin_btn| {
+                set_column_right_margin(spin_btn.get_value() as u32);
+                edit_view.borrow().view_item.edit_area.queue_draw();
+            }));
         }
 
         let prefs_win = Rc::new(RefCell::new(Self {
