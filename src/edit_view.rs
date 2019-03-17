@@ -301,7 +301,7 @@ struct FindReplace {
 impl FindReplace {
     /// Loads the glade description of the window, and builds gtk-rs objects.
     fn new() -> FindReplace {
-        const SRC: &'static str = include_str!("ui/find_replace.glade");
+        const SRC: &str = include_str!("ui/find_replace.glade");
 
         let builder = Builder::new_from_string(SRC);
         let search_bar = builder.get_object("search_bar").unwrap();
@@ -687,8 +687,8 @@ impl EditView {
         //     }
         // }
 
-        // This can't be 0, otherwise our Scrollbar bugs out
-        let mut max_width = 1 * pango::SCALE;
+        // This can't be 0, otherwise our Scrollbar bugs out. pango::SCALE is the smallest number it accepts
+        let mut max_width = pango::SCALE;
 
         let main_state = self.main_state.borrow();
 
@@ -1069,6 +1069,9 @@ impl EditView {
     }
 
     /// Handles all (special) key press events, e.g. copy, pasting, PgUp/Down etc.
+    // Allow this to be a long function since splitting up the matching into multiple functions
+    // would be a pain
+    #[allow(clippy::cyclomatic_complexity)]
     fn handle_key_press_event(&mut self, ek: &EventKey) -> Inhibit {
         debug!(
             "{}: {}={:?}, {}={:?}, {}={:?} {}={:?} {}={:?}",
