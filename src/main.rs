@@ -82,9 +82,10 @@ mod theme;
 mod xi_thread;
 
 use crate::main_win::MainWin;
+use crate::errors::ErrMsg;
 use crate::pref_storage::Config;
 use crate::rpc::Core;
-use crate::shared_queue::{CoreMsg, ErrMsg, SharedQueue};
+use crate::shared_queue::{CoreMsg, SharedQueue};
 use gettextrs::{gettext, TextDomain, TextDomainError};
 use gio::{ApplicationExt, ApplicationExtManual, ApplicationFlags, FileExt};
 use glib::MainContext;

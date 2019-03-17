@@ -1,4 +1,5 @@
-use crate::shared_queue::{CoreMsg, ErrMsg, SharedQueue};
+use crate::errors::ErrMsg;
+use crate::shared_queue::{CoreMsg, SharedQueue};
 use crate::xi_thread::XiPeer;
 use crossbeam_channel::{unbounded, Receiver};
 use gettextrs::gettext;

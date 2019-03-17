@@ -17,11 +17,6 @@ pub enum CoreMsg {
     },
 }
 
-pub struct ErrMsg {
-    pub msg: String,
-    pub fatal: bool,
-}
-
 #[derive(Clone)]
 pub struct SharedQueue {
     pub queue_rx: Arc<Mutex<Injector<CoreMsg>>>,

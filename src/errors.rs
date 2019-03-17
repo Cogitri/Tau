@@ -1,4 +1,3 @@
-use crate::shared_queue::ErrMsg;
 use failure::Fail;
 use gettextrs::gettext;
 use gio::prelude::*;
@@ -34,12 +33,21 @@ impl From<toml::ser::Error> for Error {
     }
 }
 
+#[derive(Clone, Debug)]
+pub struct ErrMsg {
+    pub msg: String,
+    pub fatal: bool,
+}
+
 /// A simple `ErrorDialog` used for if stuff goes south.
-pub struct ErrorDialog {}
+pub struct ErrorDialog {
+    dialog: MessageDialog,
+    msg: ErrMsg,
+}
 
 impl ErrorDialog {
     /// Creates a new `ErrorDialog` containing the `err_msg`. Quits the application if `fatal` is true.
-    pub fn new(err_msg: ErrMsg) {
+    pub fn new(err_msg: ErrMsg) -> Self {
         let application = gio::Application::get_default()
             .unwrap_or_else(|| panic!("{}", &gettext("No default application")))
             .downcast::<gtk::Application>()
@@ -53,14 +61,21 @@ impl ErrorDialog {
             &err_msg.msg,
         );
 
-        err_dialog.connect_response(move |err_dialog, _| {
+        err_dialog.connect_response(clone!(err_msg => move |err_dialog, _| {
             err_dialog.destroy();
 
             if err_msg.fatal {
                 application.quit();
             }
-        });
+        }));
 
-        err_dialog.show_all();
+        Self {
+            dialog: err_dialog,
+            msg: err_msg,
+        }
+    }
+
+    pub fn show_all(&self) {
+        self.dialog.show_all();
     }
 }

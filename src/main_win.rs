@@ -1,10 +1,10 @@
 use crate::about_win::AboutWin;
 use crate::edit_view::EditView;
-use crate::errors::ErrorDialog;
+use crate::errors::{ErrorDialog, ErrMsg};
 use crate::pref_storage::Config;
 use crate::prefs_win::PrefsWin;
 use crate::rpc::Core;
-use crate::shared_queue::{CoreMsg, ErrMsg, SharedQueue};
+use crate::shared_queue::{CoreMsg, SharedQueue};
 use crate::theme::{u32_from_color, LineStyle};
 use crossbeam_deque::Worker;
 use gettextrs::gettext;
@@ -526,6 +526,7 @@ impl MainWin {
                 ),
                 fatal: false,
             })
+            .show_all();
         }
     }
 
@@ -612,7 +613,7 @@ impl MainWin {
                         Ok(_) => win.req_new_view(Some(&file_str)),
                         Err(e) => {
                             let err_msg = format!("{} '{}': {}", &gettext("Couldn't open file"), &file_str, &e.to_string());
-                            ErrorDialog::new(ErrMsg{msg: err_msg, fatal: false})
+                            ErrorDialog::new(ErrMsg{msg: err_msg, fatal: false}).show_all();
                         }
                     }
                 }
@@ -676,7 +677,7 @@ impl MainWin {
                             }
                         Err(e) => {
                             let err_msg = format!("{} '{}': {}", &gettext("Couldn't save file"), &file_str, &e.to_string());
-                            ErrorDialog::new(ErrMsg {msg: err_msg, fatal: false})
+                            ErrorDialog::new(ErrMsg {msg: err_msg, fatal: false}).show_all();
                         }
                     }
                 }
