@@ -105,7 +105,7 @@ foreach a: synctect_assets
     )
 endforeach
 
-meson.add_install_script('meson_post_install.py')
+meson.add_install_script('meson_post_install.sh')
 
 run_target(
   'release',
