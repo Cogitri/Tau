@@ -32,6 +32,11 @@
 	</provides>
 
 	<releases>
+		<release version="0.5.5" date="2019-03-18">
+			<description>
+				<p>This release adds an option for creating a right hand margin, uses a different save dialog and fixes pressing 'Cancel' on thesave dialog.</p>
+			</description>
+		</release>
 		<release version="0.5.4" date="2019-03-09">
 			<description>
 				<p>This release made the linecount nicer (as in more visible/readable). gxi also offers a Norwegian Bokmål translation.</p>

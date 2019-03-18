@@ -1,3 +1,23 @@
+## Changes in v0.5.5
+
+### Feature changes
+
+ - (main_win): switch to respective EditView upon asking if it should be saved
+ - (main_win): use different Dialog style for ask_save_dialog
+ - (theme): use darker version of ThemeSettings::background for right hand margin
+ - (edit_view|pref_{storage,view}): implement right hand margin
+
+### Bugfixes
+
+ - (i18n): update translations
+ - (po): add nb_NO to LINGUAS
+ - (main_win): fix pressing the cancel button on the ask_save_dialog
+ - (prefs_win): redraw EditView's edit_area when changing right hand margin
+ - (edit_view): center linecount's font
+ - (edit_view): instead of a different color for linecount add more padding
+ - (edit_view): only queue linecount draw if actually necessary
+ - (pref_storage): return config_dir as String in Config::new()
+
 ## Changes in v0.5.4
 
 ### Feature changes
