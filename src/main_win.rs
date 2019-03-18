@@ -841,6 +841,22 @@ impl MainWin {
             // is saved already and as such always close without saving
             SaveAction::CloseWithoutSave
         } else {
+            // Change the tab to the EditView we want to ask the user about saving to give him a
+            // change to review that action
+            if let Some(w) = main_win
+                .borrow()
+                .view_id_to_w
+                .get(&edit_view.borrow().view_id)
+                .map(Clone::clone)
+            {
+                if let Some(page_num) = main_win.borrow().notebook.page_num(&w) {
+                    main_win
+                        .borrow()
+                        .notebook
+                        .set_property_page(page_num as i32);
+                }
+            }
+
             let ask_save_dialog = MessageDialog::new(
                 Some(&main_win.borrow().window),
                 DialogFlags::all(),
