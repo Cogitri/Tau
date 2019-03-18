@@ -802,11 +802,14 @@ impl MainWin {
         // Close each one of them
         let actions: Vec<SaveAction> = views
             .iter()
-            .map(|(_, ev)| Self::close_view(&main_win.clone(), &ev))
+            .map(|(_, ev)| {
+                let save_action = Self::close_view(&main_win.clone(), &ev);
+                if save_action != SaveAction::Cancel {
+                    main_win.borrow_mut().views.remove(&ev.borrow().view_id);
+                }
+                save_action
+            })
             .collect();
-
-        // We've removed all EditViews, so this has to be empty
-        main_win.borrow_mut().views = Default::default();
 
         // If the user _doesn't_ want us to close one of the Views (because its not pristine he chose
         // 'cancel' we want to return SaveAction::Cancel, so that connect_destroy and quit do
