@@ -3,7 +3,7 @@ use crate::shared_queue::{CoreMsg, SharedQueue};
 use crate::xi_thread::XiPeer;
 use crossbeam_channel::{unbounded, Receiver};
 use gettextrs::gettext;
-use log::{debug, error};
+use log::{debug, error, trace};
 use serde_json::{json, Value};
 use std::collections::BTreeMap;
 use std::sync::{Arc, Mutex};
@@ -75,6 +75,7 @@ impl Core {
                         state.pending.remove(&id)
                     };
                     if let Some(callback) = callback {
+                        trace!("{}", gettext("Calling callback"));
                         callback.call(&msg["result"]);
                     } else {
                         error!("{}: {:?}", gettext("unexpected result"), msg);

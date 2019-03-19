@@ -159,6 +159,7 @@ impl PrefsWin {
             margin_checkbutton.connect_toggled(
                 clone!(edit_view, margin_spinbutton => move |toggle_btn| {
                     let value = toggle_btn.get_active();
+                    debug!("{}: {}", gettext("Right hand margin"), value);
                     set_draw_right_margin(value);
                     edit_view.borrow().view_item.edit_area.queue_draw();
                     margin_spinbutton.set_sensitive(value);
@@ -171,7 +172,9 @@ impl PrefsWin {
             margin_spinbutton.set_value(f64::from(get_column_right_margin()));
 
             margin_spinbutton.connect_value_changed(clone!(edit_view => move |spin_btn| {
-                set_column_right_margin(spin_btn.get_value() as u32);
+                let value = spin_btn.get_value();
+                debug!("{}: {}", gettext("Right hand margin width"), value);
+                set_column_right_margin(value as u32);
                 edit_view.borrow().view_item.edit_area.queue_draw();
             }));
         }

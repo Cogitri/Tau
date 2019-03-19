@@ -106,6 +106,11 @@ impl ViewItem {
 
     /// Sets up event listeners for the ViewItem
     fn connect_events(&self, edit_view: &Rc<RefCell<EditView>>) {
+        trace!(
+            "{} '{}'",
+            edit_view.borrow().view_id,
+            gettext("Connecting events of EditView")
+        );
         self.edit_area
             .connect_button_press_event(clone!(edit_view => move |_,eb| {
                 edit_view.borrow().handle_button_press(eb)
@@ -192,6 +197,7 @@ impl EditView {
         file_name: Option<String>,
         view_id: &str,
     ) -> Rc<RefCell<Self>> {
+        trace!("{}, '{}'", gettext("Creating new EditView"), view_id);
         let view_item = ViewItem::new();
         let find_replace = FindReplace::new();
         let pango_ctx = view_item.get_pango_ctx();
@@ -336,6 +342,11 @@ impl FindReplace {
 
     /// Sets up event listeners
     fn connect_events(&self, ev: &Rc<RefCell<EditView>>) {
+        trace!(
+            "{} '{}'",
+            gettext("Connecting FindReplace events for EditView"),
+            ev.borrow().view_id
+        );
         self.search_entry
             .connect_search_changed(clone!(ev => move |w| {
                 if let Some(text) = w.get_text() {
@@ -375,6 +386,12 @@ impl FindReplace {
 impl EditView {
     /// Set the name of the file the EditView is currently editing and calls [update_title](struct.EditView.html#method.update_title)
     pub fn set_file(&mut self, file_name: &str) {
+        trace!(
+            "{} 'FindReplace' {} '{}'",
+            gettext("Connecting"),
+            gettext("events for EditView"),
+            self.view_id
+        );
         self.file_name = Some(file_name.to_string());
         self.update_title();
     }
@@ -396,7 +413,12 @@ impl EditView {
         }
         full_title.push_str(&title);
 
-        trace!("{} {}", gettext("Setting title to"), full_title);
+        trace!(
+            "{} '{}': {}",
+            gettext("Setting title for EditView"),
+            self.view_id,
+            full_title
+        );
         self.top_bar.label.set_text(&full_title);
     }
 
@@ -404,6 +426,13 @@ impl EditView {
     /// msg we process it here, e.g. setting the font face/size xi-editor tells us. Most configs don't
     /// need special handling by us though.
     pub fn config_changed(&mut self, changes: &Value) {
+        trace!(
+            "{} 'config_changed' {} '{}': {:?}",
+            gettext("Handling"),
+            gettext("for EditView"),
+            self.view_id,
+            changes
+        );
         if let Some(map) = changes.as_object() {
             for (name, value) in map {
                 match name.as_ref() {
@@ -462,6 +491,13 @@ impl EditView {
     /// msg we process it here, setting the scrollbars upper limit accordingly, checking if the EditView
     /// is pristine (_does not_ has unsaved changes) and queue a new draw of the EditView.
     pub fn update(&mut self, params: &Value) {
+        trace!(
+            "{} 'update' {} '{}': {:?}",
+            gettext("Handling"),
+            gettext("for EditView"),
+            self.view_id,
+            params
+        );
         let update = &params["update"];
         self.line_cache.apply_update(update);
 
@@ -535,6 +571,14 @@ impl EditView {
     /// determining the firt and last time, but setting the y coordinate to 0 and the
     /// last pixel.
     pub fn da_px_to_cell(&self, main_state: &MainState, x: f64, y: f64) -> (u64, u64) {
+        trace!(
+            "{} 'da_px_to_cell' {} '{}': x: {} y: {}",
+            gettext("Handling"),
+            gettext("for EditView"),
+            self.view_id,
+            x,
+            y
+        );
         // let first_line = (vadj.get_value() / font_extents.height) as usize;
         let x = x + self.view_item.horiz_bar.get_adjustment().get_value();
         let y = y + self.view_item.verti_bar.get_adjustment().get_value();
@@ -580,6 +624,12 @@ impl EditView {
     /// This requests the required lines from xi-editor to add them to the line cache and then
     /// adjusts the scrolling to the visible region.
     fn update_visible_scroll_region(&self) {
+        trace!(
+            "{} 'update_visible_scroll_region' {} '{}'",
+            gettext("Handling"),
+            gettext("for EditView"),
+            self.view_id
+        );
         let main_state = self.main_state.borrow();
         let da_height = self.view_item.edit_area.get_allocated_height();
         let (_, first_line) = self.da_px_to_cell(&main_state, 0.0, 0.0);
@@ -600,6 +650,12 @@ impl EditView {
 
     /// Returns the width&height of the entire document
     fn get_text_size(&self) -> (f64, f64) {
+        trace!(
+            "{} 'get_text_size' {} '{}'",
+            gettext("Handling"),
+            gettext("for EditView"),
+            self.view_id
+        );
         let da_width = f64::from(self.view_item.edit_area.get_allocated_width());
         let da_height = f64::from(self.view_item.edit_area.get_allocated_height());
         let num_lines = self.line_cache.height();
@@ -764,6 +820,12 @@ impl EditView {
     /// This draws the linecount. We have this as our own widget to make sure we don't mess up text
     /// selection etc.
     pub fn handle_linecount_draw(&mut self, cr: &Context) -> Inhibit {
+        trace!(
+            "{} 'linecount_draw' {} '{}'",
+            gettext("Handling"),
+            gettext("for EditView"),
+            self.view_id
+        );
         let theme = &self.main_state.borrow().theme;
         let linecount_height = self.view_item.linecount.get_allocated_height();
 
@@ -965,6 +1027,14 @@ impl EditView {
 
     /// Scrolls vertically to the line specified and horizontally to the column specified.
     pub fn scroll_to(&mut self, line: u64, col: u64) {
+        trace!(
+            "{} 'scroll_to' {} '{}': l: {} c: {}",
+            gettext("Handling"),
+            gettext("for EditView"),
+            self.view_id,
+            line,
+            col
+        );
         {
             let cur_top =
                 self.edit_font.font_height * ((line + 1) as f64) - self.edit_font.font_ascent;
@@ -1000,6 +1070,13 @@ impl EditView {
     /// Handles button presses such as Shift, Ctrl etc. and primary pasting (i.e. via Ctrl+V, not
     /// via middle mouse click).
     pub fn handle_button_press(&self, eb: &EventButton) -> Inhibit {
+        trace!(
+            "{} 'button_press' {} '{}': {:?}",
+            gettext("Handling"),
+            gettext("for EditView"),
+            self.view_id,
+            eb
+        );
         self.view_item.edit_area.grab_focus();
 
         let (x, y) = eb.get_position();
@@ -1056,6 +1133,13 @@ impl EditView {
     /// or via a touchpad/drawing tablet (which use SmoothScrolling, which may scroll vertically
     /// and horizontally at the same time).
     pub fn handle_scroll(&mut self, es: &EventScroll) -> Inhibit {
+        trace!(
+            "{} 'scroll' {} '{}': {:?}",
+            gettext("Handling"),
+            gettext("for EditView"),
+            self.view_id,
+            es
+        );
         self.view_item.edit_area.grab_focus();
         // TODO: Make this user configurable!
         let amt = self.edit_font.font_height;
@@ -1092,6 +1176,13 @@ impl EditView {
     // would be a pain
     #[allow(clippy::cyclomatic_complexity)]
     fn handle_key_press_event(&mut self, ek: &EventKey) -> Inhibit {
+        trace!(
+            "{} 'key_press_event' {} '{}': {:?}",
+            gettext("Handling"),
+            gettext("for EditView"),
+            self.view_id,
+            ek
+        );
         debug!(
             "{}: {}={:?}, {}={:?}, {}={:?} {}={:?} {}={:?}",
             gettext("Processing key press"),
@@ -1238,6 +1329,7 @@ impl EditView {
 
     /// Copies text to the clipboard
     fn do_cut(&self, view_id: &str) {
+        debug!("{}", gettext("Cutting text"));
         if let Some(text) = self.core.borrow_mut().cut(view_id) {
             Clipboard::get(&SELECTION_CLIPBOARD).set_text(&text);
         }
@@ -1245,6 +1337,7 @@ impl EditView {
 
     /// Copies text to the clipboard
     fn do_copy(&self, view_id: &str) {
+        debug!("{}", gettext("Copying text"));
         if let Some(text) = self.core.borrow_mut().copy(view_id) {
             Clipboard::get(&SELECTION_CLIPBOARD).set_text(&text);
         }
@@ -1255,6 +1348,7 @@ impl EditView {
         // if let Some(text) = Clipboard::get(&SELECTION_CLIPBOARD).wait_for_text() {
         //     self.core.borrow().insert(view_id, &text);
         // }
+        debug!("{}", gettext("Pasting text"));
         let view_id2 = view_id.to_string().clone();
         let core = self.core.clone();
         Clipboard::get(&SELECTION_CLIPBOARD).request_text(move |_, text| {
@@ -1266,6 +1360,7 @@ impl EditView {
         // if let Some(text) = Clipboard::get(&SELECTION_PRIMARY).wait_for_text() {
         //     self.core.borrow().insert(view_id, &text);
         // }
+        debug!("{}", gettext("Pasting primary text"));
         let view_id2 = view_id.to_string().clone();
         let core = self.core.clone();
         Clipboard::get(&SELECTION_PRIMARY).request_text(move |_, text| {
@@ -1276,6 +1371,7 @@ impl EditView {
 
     /// Resize the EditView
     fn do_resize(&self, view_id: &str, width: i32, height: i32) {
+        trace!("{} '{}'", gettext("Resizing EditView"), view_id);
         self.core.borrow().resize(view_id, width, height);
     }
 

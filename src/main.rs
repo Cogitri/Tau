@@ -107,7 +107,7 @@ fn main() {
 
     let shared_queue = SharedQueue::new();
 
-    let (err_tx, err_rx) = MainContext::channel::<ErrorMsg>(glib::PRIORITY_DEFAULT);
+    let (err_tx, err_rx) = MainContext::channel::<ErrorMsg>(glib::PRIORITY_DEFAULT_IDLE);
 
     let (xi_peer, xi_rx) = xi_thread::start_xi_thread();
     let core = Core::new(xi_peer, xi_rx, err_tx, shared_queue.clone());

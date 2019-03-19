@@ -131,10 +131,14 @@ impl Config {
                 xi_config
             };
 
-            (
-                config_dir.into_os_string().into_string().unwrap(),
-                xi_config,
-            )
+            let config_dir = config_dir.into_os_string().into_string().unwrap();
+            debug!(
+                "{}: '{}'",
+                gettext("Discovered config dir in home dir"),
+                &config_dir
+            );
+
+            (config_dir, xi_config)
         } else {
             error!(
                 "{}",
@@ -166,10 +170,15 @@ impl Config {
                 .save()
                 .unwrap_or_else(|e| error!("{}", e.to_string()));
 
-            (
-                config_dir.into_os_string().into_string().unwrap(),
-                xi_config,
-            )
+            let config_dir = config_dir.into_os_string().into_string().unwrap();
+
+            debug!(
+                "{}: '{}'",
+                gettext("Discovered config dir in temporary dir"),
+                &config_dir
+            );
+
+            (config_dir, xi_config)
         }
     }
 
@@ -192,6 +201,7 @@ impl Config {
     /// Atomically write the config. First writes the config to a tmp_file (non-atomic) and then
     /// copies that (atomically). This ensures that the config files stay valid
     pub fn save(&self) -> Result<(), Error> {
+        trace!("{} '{}'", gettext("Saving config to"), &self.path);
         let tmp_dir = tempdir()?;
         let tmp_file_path = tmp_dir.path().join(".gxi-atomic");
         let mut tmp_file = OpenOptions::new()
