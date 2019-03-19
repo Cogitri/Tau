@@ -34,7 +34,7 @@
 	<releases>
 		<release version="0.5.5" date="2019-03-18">
 			<description>
-				<p>This release adds an option for creating a right hand margin, uses a different save dialog and fixes pressing 'Cancel' on thesave dialog.</p>
+				<p>This release adds an option for creating a right hand margin. It uses a different save dialog, and fixes pressing 'Cancel' in it.</p>
 			</description>
 		</release>
 		<release version="0.5.4" date="2019-03-09">
