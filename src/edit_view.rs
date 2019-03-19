@@ -7,6 +7,7 @@ use cairo::Context;
 use gdk::enums::key;
 use gdk::*;
 use gettextrs::gettext;
+use glib::{source, MainContext};
 use gtk::{self, *};
 use log::{debug, error, trace};
 use pango::{self, ContextExt, LayoutExt, *};
@@ -1330,17 +1331,36 @@ impl EditView {
     /// Copies text to the clipboard
     fn do_cut(&self, view_id: &str) {
         debug!("{}", gettext("Cutting text"));
-        if let Some(text) = self.core.borrow_mut().cut(view_id) {
-            Clipboard::get(&SELECTION_CLIPBOARD).set_text(&text);
-        }
+
+        let (clipboard_tx, clipboard_rx) =
+            MainContext::channel::<Option<String>>(glib::PRIORITY_HIGH);
+        let main_context = MainContext::default();
+
+        clipboard_rx.attach(&main_context, move |text_opt| {
+            if let Some(text) = text_opt {
+                Clipboard::get(&SELECTION_CLIPBOARD).set_text(&text);
+            }
+            source::Continue(false)
+        });
+
+        self.core.borrow_mut().cut(view_id, clipboard_tx);
     }
 
     /// Copies text to the clipboard
     fn do_copy(&self, view_id: &str) {
         debug!("{}", gettext("Copying text"));
-        if let Some(text) = self.core.borrow_mut().copy(view_id) {
-            Clipboard::get(&SELECTION_CLIPBOARD).set_text(&text);
-        }
+        let (clipboard_tx, clipboard_rx) =
+            MainContext::channel::<Option<String>>(glib::PRIORITY_HIGH);
+        let main_context = MainContext::default();
+
+        clipboard_rx.attach(&main_context, move |text_opt| {
+            if let Some(text) = text_opt {
+                Clipboard::get(&SELECTION_CLIPBOARD).set_text(&text);
+            }
+            source::Continue(false)
+        });
+
+        self.core.borrow_mut().copy(view_id, clipboard_tx);
     }
 
     /// Pastes text from the clipboard into the EditView

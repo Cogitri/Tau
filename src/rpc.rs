@@ -1,7 +1,7 @@
 use crate::errors::ErrorMsg;
 use crate::shared_queue::{CoreMsg, SharedQueue};
 use crate::xi_thread::XiPeer;
-use crossbeam_channel::{unbounded, Receiver};
+use crossbeam_channel::Receiver;
 use gettextrs::gettext;
 use log::{debug, error, trace};
 use serde_json::{json, Value};
@@ -427,9 +427,7 @@ impl Core {
         self.send_edit_cmd(view_id, "redo", &json!({}))
     }
 
-    pub fn cut(&mut self, view_id: &str) -> Option<String> {
-        let (sender, receiver) = unbounded();
-
+    pub fn cut(&mut self, view_id: &str, clipboard_rx: glib::Sender<Option<String>>) {
         self.send_request(
             "edit",
             &json!({
@@ -439,19 +437,15 @@ impl Core {
             }),
             move |value| {
                 if let Some(selection) = value.as_str() {
-                    sender.send(Some(selection.to_string())).unwrap();
+                    clipboard_rx.send(Some(selection.to_string())).unwrap();
                 } else {
-                    sender.send(None).unwrap();
+                    clipboard_rx.send(None).unwrap();
                 }
             },
         );
-
-        receiver.recv().unwrap()
     }
 
-    pub fn copy(&mut self, view_id: &str) -> Option<String> {
-        let (sender, receiver) = unbounded();
-
+    pub fn copy(&mut self, view_id: &str, clipboard_rx: glib::Sender<Option<String>>) {
         self.send_request(
             "edit",
             &json!({
@@ -461,14 +455,12 @@ impl Core {
             }),
             move |value| {
                 if let Some(selection) = value.as_str() {
-                    sender.send(Some(selection.to_string())).unwrap();
+                    clipboard_rx.send(Some(selection.to_string())).unwrap();
                 } else {
-                    sender.send(None).unwrap();
+                    clipboard_rx.send(None).unwrap();
                 }
             },
         );
-
-        receiver.recv().unwrap()
     }
 
     pub fn paste(&self, view_id: &str, chars: &str) {
