@@ -3,6 +3,7 @@ use gettextrs::gettext;
 use gio::prelude::*;
 use gtk::prelude::*;
 use gtk::*;
+use log::error;
 
 #[derive(Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Fail)]
 pub enum Error {
@@ -48,6 +49,7 @@ pub struct ErrorDialog {
 impl ErrorDialog {
     /// Creates a new `ErrorDialog` containing the `err_msg`. Quits the application if `fatal` is true.
     pub fn new(err_msg: ErrorMsg) -> Self {
+        error!("{}", err_msg.msg);
         let application = gio::Application::get_default()
             .unwrap_or_else(|| panic!("{}", &gettext("No default application")))
             .downcast::<gtk::Application>()
