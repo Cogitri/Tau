@@ -185,7 +185,7 @@ impl MainWin {
         {
             let open_action = SimpleAction::new("open", None);
             open_action.connect_activate(clone!(main_win => move |_,_| {
-                trace!("{}", gettext("Handling 'open' action"));
+                trace!("{} 'open' {}", gettext("Handling"), gettext("action"));
                 Self::handle_open_button(&main_win);
             }));
             application.add_action(&open_action);
@@ -193,7 +193,7 @@ impl MainWin {
         {
             let new_action = SimpleAction::new("new", None);
             new_action.connect_activate(clone!(main_win => move |_,_| {
-                trace!("{}", gettext("Handling 'new' action"));
+                trace!("{} 'new' {}", gettext("Handling"), gettext("action"));
                 main_win.borrow_mut().req_new_view(None);
             }));
             application.add_action(&new_action);
@@ -201,7 +201,7 @@ impl MainWin {
         {
             let prefs_action = SimpleAction::new("prefs", None);
             prefs_action.connect_activate(clone!(main_win => move |_,_| {
-                trace!("{}", gettext("Handling 'prefs' action"));
+                trace!("{} 'prefs' {}", gettext("Handling"), gettext("action"));
                 Self::prefs(main_win.clone())
             }));
             application.add_action(&prefs_action);
@@ -209,7 +209,7 @@ impl MainWin {
         {
             let about_action = SimpleAction::new("about", None);
             about_action.connect_activate(clone!(main_win => move |_,_| {
-                trace!("{}", gettext("Handling 'about' action"));
+                trace!("{} 'about' {}", gettext("Handling"), gettext("action"));
                 Self::about(main_win.clone())
             }));
             application.add_action(&about_action);
@@ -217,7 +217,7 @@ impl MainWin {
         {
             let find_action = SimpleAction::new("find", None);
             find_action.connect_activate(clone!(main_win => move |_,_| {
-                trace!("{}", gettext("Handling 'find' action"));
+                trace!("{} 'find' {}", gettext("Handling"), gettext("action"));
                 Self::find(&main_win);
             }));
             application.add_action(&find_action);
@@ -225,7 +225,7 @@ impl MainWin {
         {
             let replace_action = SimpleAction::new("replace", None);
             replace_action.connect_activate(clone!(main_win => move |_,_| {
-                trace!("{}", gettext("Handling 'replace' action"));
+                trace!("{} 'replace' {}", gettext("Handling"), gettext("action"));
                 Self::replace(&main_win);
             }));
             application.add_action(&replace_action);
@@ -233,7 +233,7 @@ impl MainWin {
         {
             let save_action = SimpleAction::new("save", None);
             save_action.connect_activate(clone!(main_win => move |_,_| {
-                trace!("{}", gettext("Handling 'save' action"));
+                trace!("{} 'save' {}", gettext("Handling"), gettext("action"));
                 Self::handle_save_button(&main_win.clone());
             }));
             application.add_action(&save_action);
@@ -241,7 +241,7 @@ impl MainWin {
         {
             let save_as_action = SimpleAction::new("save_as", None);
             save_as_action.connect_activate(clone!(main_win => move |_,_| {
-                trace!("{}", gettext("Handling 'save_as' action"));
+                trace!("{} 'save_as' {}", gettext("Handling"), gettext("action"));
                 Self::current_save_as(&main_win.clone());
             }));
             application.add_action(&save_as_action);
@@ -249,7 +249,7 @@ impl MainWin {
         {
             let close_action = SimpleAction::new("close", None);
             close_action.connect_activate(clone!(main_win => move |_,_| {
-                trace!("{}", gettext("Handling 'close' action"));
+                trace!("{} 'close' {}", gettext("Handling"), gettext("action"));
                 Self::close(&main_win.clone());
             }));
             application.add_action(&close_action);
@@ -257,7 +257,7 @@ impl MainWin {
         {
             let close_all_action = SimpleAction::new("close_all", None);
             close_all_action.connect_activate(clone!(main_win => move |_,_| {
-                trace!("{}", gettext("Handling 'close_all' action"));
+                trace!("{} 'close_all' {}", gettext("Handling"), gettext("action"));
                 Self::close_all(main_win.clone());
             }));
             application.add_action(&close_all_action);
@@ -266,7 +266,7 @@ impl MainWin {
             // This is called when we run app.quit, e.g. via Ctrl+Q
             let quit_action = SimpleAction::new("quit", None);
             quit_action.connect_activate(clone!(main_win => move |_,_| {
-                trace!("{}", gettext("Handling 'quit' action"));
+                trace!("{} 'quit' {}", gettext("Handling"), gettext("action"));
                 // Same as in connect_destroy, only quit if the user saves or wants to close without saving
                 if Self::close_all(main_win.clone()) != SaveAction::Cancel {
                     debug!("{}", gettext("User chose to quit application"));
@@ -851,13 +851,17 @@ impl MainWin {
     }
 
     fn close(main_win: &Rc<RefCell<Self>>) -> SaveAction {
-        trace!("{}", gettext("Closing current view"));
+        trace!("{}", gettext("Closing current Editview"));
         let edit_view = main_win.borrow().get_current_edit_view();
         Self::close_view(&main_win, &edit_view)
     }
 
     fn close_view(main_win: &Rc<RefCell<Self>>, edit_view: &Rc<RefCell<EditView>>) -> SaveAction {
-        trace!("{} {}", gettext("Closing view"), edit_view.borrow().view_id);
+        trace!(
+            "{} {}",
+            gettext("Closing Editview"),
+            edit_view.borrow().view_id
+        );
         let pristine = edit_view.borrow().pristine;
         let save_action = if pristine {
             // If it's pristine we don't ask the user if he really wants to quit because everything
