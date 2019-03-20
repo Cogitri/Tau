@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gxi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-18 19:30+0100\n"
-"PO-Revision-Date: 2019-03-07 05:49+0000\n"
+"POT-Creation-Date: 2019-03-20 12:42+0100\n"
+"PO-Revision-Date: 2019-03-20 12:43+0100\n"
 "Last-Translator: maxice8 <thinkabit.ukim@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://hosted.weblate.org/projects/gxi/"
 "translation/pt_BR/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 3.5.1-dev\n"
+"X-Generator: Poedit 2.2.1\n"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:7
 #: data/com.github.Cogitri.gxi.desktop.in:3
@@ -187,6 +187,10 @@ msgstr "Frontend em GTK para o editor de texto xi, escrito em Rust"
 msgid "gxi's Github Repo"
 msgstr "Repositorio do gxi no Github"
 
+#: src/about_win.rs:24
+msgid "translator-credits"
+msgstr "maxice8"
+
 #: src/about_win.rs:30
 msgid "Showing about window"
 msgstr ""
@@ -220,138 +224,208 @@ msgstr "Mensagem encontrada na fila"
 msgid "Found a message from xi"
 msgstr "Mensagem encontrada do xi"
 
+#: src/main_win.rs:154
+msgid "User chose to cancel exiting"
+msgstr ""
+
+#: src/main_win.rs:157
+msgid "User chose to close the application"
+msgstr ""
+
 #. xi-editor doesn't know about the translations
-#: src/main_win.rs:164 src/main_win.rs:171
+#: src/main_win.rs:166 src/main_win.rs:173
 msgid "Plain Text"
 msgstr "Texto Simples"
 
-#: src/main_win.rs:274
+#: src/main_win.rs:180
+#, fuzzy
+msgid "Setting language to"
+msgstr "Mudando Língua para"
+
+#: src/main_win.rs:188 src/main_win.rs:196 src/main_win.rs:204
+#: src/main_win.rs:212 src/main_win.rs:220 src/main_win.rs:228
+#: src/main_win.rs:236 src/main_win.rs:244 src/main_win.rs:252
+#: src/main_win.rs:260 src/main_win.rs:269 src/main_win.rs:498
+#: src/main_win.rs:506 src/main_win.rs:562 src/main_win.rs:586
+#: src/main_win.rs:599 src/edit_view.rs:432 src/edit_view.rs:497
+#: src/edit_view.rs:577 src/edit_view.rs:630 src/edit_view.rs:656
+#: src/edit_view.rs:826 src/edit_view.rs:1033 src/edit_view.rs:1076
+#: src/edit_view.rs:1139 src/edit_view.rs:1182
+msgid "Handling"
+msgstr "Manejo"
+
+#: src/main_win.rs:188 src/main_win.rs:196 src/main_win.rs:204
+#: src/main_win.rs:212 src/main_win.rs:220 src/main_win.rs:228
+#: src/main_win.rs:236 src/main_win.rs:244 src/main_win.rs:252
+#: src/main_win.rs:260 src/main_win.rs:269
+msgid "action"
+msgstr ""
+
+#: src/main_win.rs:272
+#, fuzzy
+msgid "User chose to quit application"
+msgstr "Sem aplicação padrão"
+
+#: src/main_win.rs:275
+msgid "User chose to not quit application"
+msgstr ""
+
+#: src/main_win.rs:291
 msgid "Auto indent"
 msgstr "Indentar Automaticamente"
 
-#: src/main_win.rs:293
+#: src/main_win.rs:310
 msgid "Space indent"
 msgstr "Indentar com espaços"
 
-#: src/main_win.rs:333
+#: src/main_win.rs:332
+msgid "Showing main window"
+msgstr ""
+
+#: src/main_win.rs:351
 msgid "Handling CoreMsg"
 msgstr "Manejando CoreMsg"
 
-#: src/main_win.rs:358
+#: src/main_win.rs:376
 msgid "!!! UNHANDLED NOTIFICATION, PLEASE OPEN A BUGREPORT!"
 msgstr "!!! NOTIFICAÇÃO NÃO MANEJADA, POR FAVOR ABRIR RELATÓRIO DE ERRO!"
 
-#: src/main_win.rs:390 src/ui/prefs_win.glade:37
+#: src/main_win.rs:408 src/ui/prefs_win.glade:37
 msgid "Theme"
 msgstr "Tema"
 
-#: src/main_win.rs:392
+#: src/main_win.rs:410
 msgid "isn't available, setting to default"
 msgstr "indisponivel, configurando como padrão"
 
-#: src/main_win.rs:411
+#: src/main_win.rs:429
 msgid "Failed to convert theme settings"
 msgstr "Falha ao converter configuração de tema"
 
-#: src/main_win.rs:446
+#: src/main_win.rs:464
 #, fuzzy
 msgid ""
 "Couldn't find syntect plugin, functionality will be limited! Only found the "
 "following plugins"
 msgstr "Plugin syntect não pode ser encontrado, funcionalidade será limitada!"
 
-#: src/main_win.rs:480 src/main_win.rs:488 src/main_win.rs:544
-#: src/main_win.rs:568 src/main_win.rs:581
-msgid "Handling"
-msgstr "Manejo"
-
-#: src/main_win.rs:518
+#: src/main_win.rs:536
 msgid "has stopped due to an user-initiated exit"
 msgstr "parou devido a uma saída iniciada pelo usuário"
 
-#: src/main_win.rs:521
+#: src/main_win.rs:539
 msgid "has crashed with error code"
 msgstr "terminou execução com um código de erro"
 
-#: src/main_win.rs:524
+#: src/main_win.rs:542
 msgid "has crashed"
 msgstr "terminou execução abruptamente"
 
-#: src/main_win.rs:530
+#: src/main_win.rs:548
 msgid "Plugin"
 msgstr "Plugin"
 
-#: src/main_win.rs:533
+#: src/main_win.rs:551
 msgid "functionality will be limited"
 msgstr "funcionalidade será limitada"
 
-#: src/main_win.rs:590
+#: src/main_win.rs:608
 msgid "Changing language to"
 msgstr "Mudando Língua para"
 
-#: src/main_win.rs:600
+#: src/main_win.rs:618
 msgid "Open a file to edit"
 msgstr "Abrir um arquivo para edição"
 
-#: src/main_win.rs:603 src/ui/gxi.glade:266
+#: src/main_win.rs:621 src/ui/gxi.glade:266
 msgid "Open"
 msgstr "Abrir"
 
-#: src/main_win.rs:604 src/main_win.rs:661 src/main_win.rs:872
+#: src/main_win.rs:622 src/main_win.rs:679 src/main_win.rs:899
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: src/main_win.rs:612
+#: src/main_win.rs:630
 msgid "FileChooserNative open response"
 msgstr ""
 
-#: src/main_win.rs:623
+#: src/main_win.rs:641
 msgid "Couldn't open file"
 msgstr "Não foi possível abrir o arquivo"
 
-#: src/main_win.rs:657
+#: src/main_win.rs:675
 msgid "Save file"
 msgstr "Salvar arquivo"
 
-#: src/main_win.rs:660 src/main_win.rs:876 src/ui/gxi.glade:307
+#: src/main_win.rs:678 src/main_win.rs:903 src/ui/gxi.glade:307
 msgid "Save"
 msgstr "Salvar"
 
-#: src/main_win.rs:669
+#: src/main_win.rs:687
 msgid "FileChooserNative save response"
 msgstr ""
 
-#: src/main_win.rs:680
+#: src/main_win.rs:698
 msgid "Saving file"
 msgstr "Salvando arquivo"
 
-#: src/main_win.rs:687
+#: src/main_win.rs:705
 msgid "Couldn't save file"
 msgstr "Não foi possível salvar arquivo"
 
-#: src/main_win.rs:737
+#: src/main_win.rs:755
 msgid "Failed to get the current EditView"
 msgstr "Não foi possível adquirir área de edição atual"
 
-#: src/main_win.rs:865
+#: src/main_win.rs:759
+#, fuzzy
+msgid "Requesting new view"
+msgstr "Ativando nova taba"
+
+#: src/main_win.rs:779 src/edit_view.rs:201
+#, fuzzy
+msgid "Creating new EditView"
+msgstr "Desenhando área de edição"
+
+#: src/main_win.rs:817
+#, fuzzy
+msgid "Closing all EditViews"
+msgstr "Desenhando área de edição"
+
+#: src/main_win.rs:854
+#, fuzzy
+msgid "Closing current Editview"
+msgstr "Desenhando área de edição"
+
+#: src/main_win.rs:862
+#, fuzzy
+msgid "Closing Editview"
+msgstr "Desenhando área de edição"
+
+#: src/main_win.rs:892
 msgid "Save unsaved changes"
 msgstr "Salvar mudanças não salvas"
 
-#: src/main_win.rs:868
+#: src/main_win.rs:895
 msgid "Close Without Saving"
 msgstr ""
 
-#: src/main_win.rs:891
+#: src/main_win.rs:918
 msgid "Save dialog has been destroyed before the user clicked a button"
 msgstr ""
 
-#: src/errors.rs:52
+#: src/errors.rs:54
 msgid "No default application"
 msgstr "Sem aplicação padrão"
 
-#: src/errors.rs:54
+#: src/errors.rs:56
 msgid "Default application has wrong type"
 msgstr "Aplicação padrão é incompatível"
+
+#: src/xi_thread.rs:18
+#, fuzzy
+msgid "Failed to send msg to Xi"
+msgstr "Falha em configurar diretório de fontes!"
 
 #: src/xi_thread.rs:45
 msgid "Didn't expect xi-rpc to call read()"
@@ -481,113 +555,166 @@ msgstr "Substituir"
 msgid "Replace All"
 msgstr "Substituir Todas"
 
-#: src/edit_view.rs:35
+#: src/edit_view.rs:36
 msgid "Failed to get Pango language"
 msgstr "Não foi possível adquirir linguagem através do Pango"
 
-#: src/edit_view.rs:38
+#: src/edit_view.rs:39
 msgid "Failed to load Pango font set"
 msgstr "Não foi possível carregar fontes através do Pango"
 
-#: src/edit_view.rs:41
+#: src/edit_view.rs:42
 msgid "Failed to load Pango font metrics"
 msgstr "Não foi possível carregar tamanho da fonte através do Pango"
 
-#: src/edit_view.rs:46
+#: src/edit_view.rs:47
 msgid "Pango font size"
 msgstr "Tamanho da fonte do Pango"
 
-#: src/edit_view.rs:55
+#: src/edit_view.rs:56
 msgid "Font metrics"
 msgstr "Métricas da fonte"
 
-#: src/edit_view.rs:96
+#: src/edit_view.rs:97
 msgid "Events"
 msgstr "Eventos"
 
-#: src/edit_view.rs:146
+#: src/edit_view.rs:113
+msgid "Connecting events of EditView"
+msgstr ""
+
+#: src/edit_view.rs:152
 msgid "Size changed to"
 msgstr "Tamanho mudado para"
 
-#: src/edit_view.rs:146
+#: src/edit_view.rs:152
 msgid "width"
 msgstr "largura"
 
-#: src/edit_view.rs:146
+#: src/edit_view.rs:152
 msgid "height"
 msgstr "altura"
 
-#: src/edit_view.rs:166
+#: src/edit_view.rs:172
 msgid "Failed to get Pango context"
 msgstr "Falhar em adquirir contexto do Pango"
 
-#: src/edit_view.rs:388 src/edit_view.rs:390
+#: src/edit_view.rs:348
+msgid "Connecting FindReplace events for EditView"
+msgstr ""
+
+#: src/edit_view.rs:392
+msgid "Connecting"
+msgstr ""
+
+#: src/edit_view.rs:393
+msgid "events for EditView"
+msgstr ""
+
+#: src/edit_view.rs:406 src/edit_view.rs:408
 msgid "Untitled"
 msgstr "Sem Titulo"
 
-#: src/edit_view.rs:399
-msgid "Setting title to"
+#: src/edit_view.rs:419
+#, fuzzy
+msgid "Setting title for EditView"
 msgstr "Configurando titulo para"
 
-#: src/edit_view.rs:423
+#: src/edit_view.rs:433 src/edit_view.rs:498 src/edit_view.rs:578
+#: src/edit_view.rs:631 src/edit_view.rs:657 src/edit_view.rs:827
+#: src/edit_view.rs:1034 src/edit_view.rs:1077 src/edit_view.rs:1140
+#: src/edit_view.rs:1183
+#, fuzzy
+msgid "for EditView"
+msgstr "Desenhando área de edição"
+
+#: src/edit_view.rs:453
 msgid "Setting edit font to"
 msgstr "Configurando fonte para"
 
-#: src/edit_view.rs:452
+#: src/edit_view.rs:482
 msgid "Unhandled config option, open a bug report!"
 msgstr "Opção de configuração não manejada, abra um relatório de erro!"
 
-#: src/edit_view.rs:561
+#: src/edit_view.rs:606
 msgid "Allocating DrawingArea size"
 msgstr "Alocando tamanho da DrawingArea"
 
-#: src/edit_view.rs:572
+#: src/edit_view.rs:617
 msgid "Vertical scrollbar changed value"
 msgstr "Barra de rolamento vertical mudou valor"
 
-#: src/edit_view.rs:591
+#: src/edit_view.rs:642
 msgid "Updating visible scroll region"
 msgstr "Atualizado região visível para rolamento"
 
-#: src/edit_view.rs:648
+#: src/edit_view.rs:705
 msgid "Drawing EditView"
 msgstr "Desenhando área de edição"
 
-#: src/edit_view.rs:649
+#: src/edit_view.rs:706
 msgid "vertical adjustment"
 msgstr "Ajustamento vertical"
 
-#: src/edit_view.rs:652
+#: src/edit_view.rs:709
 msgid "horizontal adjustment"
 msgstr "Ajustamento horizontal"
 
-#: src/edit_view.rs:1071
+#: src/edit_view.rs:1156
 msgid "Smooth scrolling failed"
 msgstr "Rolagem suave falhou"
 
-#: src/edit_view.rs:1097
+#: src/edit_view.rs:1189
 msgid "Processing key press"
 msgstr "Processando pressionamento da tecla"
 
-#: src/edit_view.rs:1098
+#: src/edit_view.rs:1190
 msgid "value"
 msgstr "valor"
 
-#: src/edit_view.rs:1100
+#: src/edit_view.rs:1192
 msgid "state"
 msgstr "estado"
 
-#: src/edit_view.rs:1102
+#: src/edit_view.rs:1194
 msgid "length"
 msgstr "lagura"
 
-#: src/edit_view.rs:1104
+#: src/edit_view.rs:1196
 msgid "group"
 msgstr "grupo"
 
-#: src/edit_view.rs:1106
+#: src/edit_view.rs:1198
 msgid "unicode"
 msgstr "unicode"
+
+#: src/edit_view.rs:1333
+#, fuzzy
+msgid "Cutting text"
+msgstr "Configurando titulo para"
+
+#: src/edit_view.rs:1351
+msgid "Copying text"
+msgstr ""
+
+#. if let Some(text) = Clipboard::get(&SELECTION_CLIPBOARD).wait_for_text() {
+#. self.core.borrow().insert(view_id, &text);
+#. }
+#: src/edit_view.rs:1371
+msgid "Pasting text"
+msgstr ""
+
+#. if let Some(text) = Clipboard::get(&SELECTION_PRIMARY).wait_for_text() {
+#. self.core.borrow().insert(view_id, &text);
+#. }
+#: src/edit_view.rs:1383
+msgid "Pasting primary text"
+msgstr ""
+
+#: src/edit_view.rs:1394
+#, fuzzy
+msgid "Resizing EditView"
+msgstr "Desenhando área de edição"
 
 #: src/pref_storage.rs:79
 msgid "Failed to create the config dir"
@@ -598,27 +725,40 @@ msgid "Couldn't read config, falling back to the default XI-Editor config"
 msgstr ""
 "Leitura da configuração impossível. Usando configuração padrão do Editor XI"
 
-#: src/pref_storage.rs:141
+#: src/pref_storage.rs:137
+msgid "Discovered config dir in home dir"
+msgstr ""
+
+#: src/pref_storage.rs:145
 msgid "Couldn't determine home dir! Settings will be temporary"
 msgstr ""
 "Não foi possível determinar diretório de usuário! Configurações serão "
 "temporárias"
 
-#: src/pref_storage.rs:150
+#: src/pref_storage.rs:154
 msgid "Failed to create temporary config dir"
 msgstr "Falha ao criar diretório temporário de configuração"
 
 #: src/pref_storage.rs:177
+msgid "Discovered config dir in temporary dir"
+msgstr ""
+
+#: src/pref_storage.rs:186
 msgid "Opening config file"
 msgstr "Abrindo arquivo de configuração"
 
-#: src/pref_storage.rs:181
+#: src/pref_storage.rs:190
 msgid "Reading config file"
 msgstr "Lendo arquivo de configuração"
 
-#: src/pref_storage.rs:185
+#: src/pref_storage.rs:194
 msgid "Xi-Config"
 msgstr "Configuração do XI"
+
+#: src/pref_storage.rs:204
+#, fuzzy
+msgid "Saving config to"
+msgstr "Lendo arquivo de configuração"
 
 #: src/prefs_win.rs:51
 msgid "Setting font description"
@@ -652,20 +792,33 @@ msgstr "Quebramento de linhas"
 msgid "Tab stops"
 msgstr "Tabulação"
 
-#: src/rpc.rs:80
+#: src/prefs_win.rs:162
+msgid "Right hand margin"
+msgstr ""
+
+#: src/prefs_win.rs:176
+msgid "Right hand margin width"
+msgstr ""
+
+#: src/rpc.rs:78
+msgid "Calling callback"
+msgstr ""
+
+#: src/rpc.rs:81
 msgid "unexpected result"
 msgstr "resultado inesperado"
 
-#: src/rpc.rs:83
+#: src/rpc.rs:84
 msgid "Got"
 msgstr "Got"
 
-#: src/rpc.rs:83
+#: src/rpc.rs:84
 msgid "at RPC level"
 msgstr "na camada de procedimento remoto"
 
-#~ msgid "Failed to set config dir!"
-#~ msgstr "Falha em configurar diretório de fontes!"
+#, fuzzy
+#~ msgid "Handling 'prefs' action"
+#~ msgstr "Manejando CoreMsg"
 
 #~ msgid "Failed to find View"
 #~ msgstr "Falha ao encontrar taba"
