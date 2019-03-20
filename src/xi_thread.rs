@@ -1,12 +1,9 @@
 use crossbeam_channel::{unbounded, Receiver, Sender};
 use gettextrs::gettext;
+use log::error;
+use serde_json::{self, Value};
 use std::io::{self, BufRead, ErrorKind, Read, Write};
 use std::thread;
-#[allow(unused_imports)]
-use std::time::Duration;
-
-use serde_json::{self, Value};
-
 use xi_core_lib::XiCore;
 use xi_rpc::RpcLoop;
 
@@ -16,7 +13,10 @@ pub struct XiPeer {
 
 impl XiPeer {
     pub fn send(&self, s: String) {
-        let _ = self.tx.send(s);
+        self.tx
+            .send(s)
+            .map_err(|e| error!("{}, {}", gettext("Failed to send msg to Xi"), e))
+            .unwrap();
     }
 
     pub fn send_json(&self, v: &Value) {
