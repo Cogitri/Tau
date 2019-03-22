@@ -327,6 +327,7 @@ impl MainWin {
             app.set_accels_for_action("app.open", &["<Primary>o"]);
             app.set_accels_for_action("app.quit", &["<Primary>q"]);
             app.set_accels_for_action("app.replace", &["<Primary>r"]);
+            app.set_accels_for_action("app.close", &["<Primary>w"]);
         }
 
         debug!("{}", gettext("Showing main window"));
