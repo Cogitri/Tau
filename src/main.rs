@@ -101,9 +101,17 @@ use std::rc::Rc;
 fn main() {
     setup_panic!();
 
-    env_logger::Builder::from_default_env()
-        .default_format_timestamp(false)
-        .init();
+    // Only set Warn as loglevel if the user hasn't explicitly set something else
+    if std::env::var_os("RUST_LOG").is_none() {
+        env_logger::Builder::new()
+            .filter_level(log::LevelFilter::Warn)
+            .default_format_timestamp(false)
+            .init();
+    } else {
+        env_logger::Builder::from_default_env()
+            .default_format_timestamp(false)
+            .init();
+    }
 
     let shared_queue = SharedQueue::new();
 
