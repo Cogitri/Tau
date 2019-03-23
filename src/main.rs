@@ -103,8 +103,10 @@ fn main() {
 
     // Only set Warn as loglevel if the user hasn't explicitly set something else
     if std::env::var_os("RUST_LOG").is_none() {
+        // Xi likes to return some not-so-necessary Warnings (e.g. if the config
+        // hasn't changed), so let's only turn on warnings for gxi.
         env_logger::Builder::new()
-            .filter_level(log::LevelFilter::Warn)
+            .filter_module("gxi", log::LevelFilter::Warn)
             .default_format_timestamp(false)
             .init();
     } else {
