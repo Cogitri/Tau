@@ -300,6 +300,7 @@ struct FindReplace {
     search_entry: SearchEntry,
     go_down_button: Button,
     go_up_button: Button,
+    regex_togglebutton: ToggleButton,
 }
 
 impl FindReplace {
@@ -318,6 +319,7 @@ impl FindReplace {
         let search_entry = builder.get_object("search_entry").unwrap();
         let go_down_button = builder.get_object("go_down_button").unwrap();
         let go_up_button = builder.get_object("go_up_button").unwrap();
+        let regex_togglebutton = builder.get_object("regex_search_togglebutton").unwrap();
 
         replace_expander.connect_property_expanded_notify(clone!(replace_revealer => move|w| {
             if w.get_expanded() {
@@ -338,6 +340,7 @@ impl FindReplace {
             search_entry,
             go_down_button,
             go_up_button,
+            regex_togglebutton,
         }
     }
 
@@ -356,6 +359,17 @@ impl FindReplace {
                     ev.borrow_mut().search_changed(None);
                 }
             }));
+
+        self.regex_togglebutton
+            .connect_toggled(clone!(ev => move |_| {
+                let text_opt = { ev.borrow().find_replace.search_entry.get_text() };
+                if let Some(text) = text_opt {
+                    ev.borrow_mut().search_changed(Some(text.to_string()));
+                } else {
+                    ev.borrow_mut().search_changed(None);
+                }
+            }));
+
         self.search_entry.connect_activate(clone!(ev => move |_| {
             ev.borrow_mut().find_next();
         }));
@@ -1467,9 +1481,10 @@ impl EditView {
     /// Tells xi-editor that we're searching for a different string (or none) now
     pub fn search_changed(&self, s: Option<String>) {
         let needle = s.unwrap_or_default();
+        let regex = self.find_replace.regex_togglebutton.get_active();
         self.core
             .borrow()
-            .find(&self.view_id, &needle, false, Some(false));
+            .find(&self.view_id, &needle, false, Some(regex));
     }
 
     /// Replace _one_ match with the replacement string
