@@ -22,7 +22,7 @@ impl AboutWin {
         about_dialog.set_website("https://gxi.cogitri.dev");
         about_dialog.set_website_label(gettext("gxi's Github Repo").as_str());
         about_dialog.set_translator_credits(gettext("translator-credits").as_str());
-        about_dialog.set_logo_icon_name("com.github.Cogitri.gxi");
+        about_dialog.set_logo_icon_name(crate::globals::APP_ID);
 
         about_dialog.set_authors(&["Brian Vincent", "Rasmus Thomsen"]);
 

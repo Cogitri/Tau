@@ -122,11 +122,8 @@ fn main() {
     let (xi_peer, xi_rx) = xi_thread::start_xi_thread();
     let core = Core::new(xi_peer, xi_rx, err_tx, shared_queue.clone());
 
-    let application = Application::new(
-        crate::globals::APP_ID.unwrap_or("com.github.Cogitri.gxi"),
-        ApplicationFlags::HANDLES_OPEN,
-    )
-    .unwrap_or_else(|_| panic!("Failed to create the GTK+ application"));
+    let application = Application::new(crate::globals::APP_ID, ApplicationFlags::HANDLES_OPEN)
+        .unwrap_or_else(|_| panic!("Failed to create the GTK+ application"));
 
     let main_context = MainContext::default();
     main_context.acquire();
