@@ -1,4 +1,5 @@
 use crate::errors::Error;
+use crate::globals::APP_ID;
 use gettextrs::gettext;
 use gio::{Settings, SettingsExt, SettingsSchemaSource};
 use log::{debug, error, trace, warn};
@@ -217,133 +218,122 @@ impl Config {
     }
 }
 
-pub fn get_theme_schema() -> String {
-    SettingsSchemaSource::get_default()
-        .and_then(|settings_source| settings_source.lookup("com.github.Cogitri.gxi", true))
-        .and_then(|_| {
-            Settings::new(crate::globals::APP_ID.unwrap_or("com.github.Cogitri.gxi"))
-                .get_string("theme-name")
-        })
-        .map(|s| s.to_string())
-        .unwrap_or_else(|| {
-            warn!("Couldn't find GSchema! Defaulting to default theme.");
-            "InspiredGitHub".to_string()
-        })
+pub trait GSchemaExt<RHS = Self> {
+    fn get(schema_name: &str, field_name: &str) -> Option<RHS>;
+
+    fn set(schema_name: &str, field_name: &str, val: RHS);
 }
 
-pub fn set_theme_schema(theme_name: &str) {
-    if SettingsSchemaSource::get_default()
-        .and_then(|settings_source| settings_source.lookup("com.github.Cogitri.gxi", true))
-        .is_some()
-    {
-        Settings::new(crate::globals::APP_ID.unwrap_or("com.github.Cogitri.gxi"))
-            .set_string("theme-name", theme_name);
-    };
+pub struct GSchema {}
+
+impl GSchemaExt<String> for GSchema {
+    fn get(schema_name: &str, field_name: &str) -> Option<String> {
+        SettingsSchemaSource::get_default()
+            .and_then(|settings_source| settings_source.lookup(schema_name, true))
+            .and_then(|_| Settings::new(schema_name).get_string(field_name))
+            .map(|s| s.to_string())
+    }
+
+    fn set(schema_name: &str, field_name: &str, val: String) {
+        if SettingsSchemaSource::get_default()
+            .and_then(|settings_source| settings_source.lookup(schema_name, true))
+            .is_some()
+        {
+            Settings::new(schema_name).set_string(field_name, &val);
+        };
+    }
+}
+
+impl GSchemaExt<bool> for GSchema {
+    fn get(schema_name: &str, field_name: &str) -> Option<bool> {
+        SettingsSchemaSource::get_default()
+            .and_then(|settings_source| settings_source.lookup(schema_name, true))
+            .map(|_| Settings::new(schema_name).get_boolean(field_name))
+    }
+
+    fn set(schema_name: &str, field_name: &str, val: bool) {
+        if SettingsSchemaSource::get_default()
+            .and_then(|settings_source| settings_source.lookup(schema_name, true))
+            .is_some()
+        {
+            Settings::new(schema_name).set_boolean(field_name, val);
+        };
+    }
+}
+
+impl GSchemaExt<u32> for GSchema {
+    fn get(schema_name: &str, field_name: &str) -> Option<u32> {
+        SettingsSchemaSource::get_default()
+            .and_then(|settings_source| settings_source.lookup(schema_name, true))
+            .map(|_| Settings::new(schema_name).get_uint(field_name))
+    }
+
+    fn set(schema_name: &str, field_name: &str, val: u32) {
+        if SettingsSchemaSource::get_default()
+            .and_then(|settings_source| settings_source.lookup(schema_name, true))
+            .is_some()
+        {
+            Settings::new(schema_name).set_uint(field_name, val);
+        };
+    }
+}
+
+pub fn get_theme_schema() -> String {
+    GSchema::get(APP_ID, "theme-name").unwrap_or_else(|| {
+        warn!("Couldn't find GSchema! Defaulting to default theme.");
+        "InspiredGitHub".to_string()
+    })
+}
+
+pub fn set_theme_schema(theme_name: String) {
+    GSchema::set(APP_ID, "theme-name", theme_name);
 }
 
 pub fn get_default_monospace_font_schema() -> String {
-    SettingsSchemaSource::get_default()
-        .and_then(|settings_source| settings_source.lookup("org.gnome.desktop.interface", true))
-        .and_then(|_| {
-            Settings::new("org.gnome.desktop.interface").get_string("monospace-font-name")
-        })
-        .map_or_else(
-            || {
-                warn!("Couldn't find GSchema! Defaulting to default monospace font.");
-                "Monospace".to_string()
-            },
-            |s| s.to_string(),
-        )
+    GSchema::get("org.gnome.desktop.interface", "monospace-font-name").unwrap_or_else(|| {
+        warn!("Couldn't find GSchema! Defaulting to default monospace font.");
+        "Monospace".to_string()
+    })
 }
 
 pub fn get_default_interface_font_schema() -> String {
-    SettingsSchemaSource::get_default()
-        .and_then(|settings_source| settings_source.lookup("org.gnome.desktop.interface", true))
-        .and_then(|_| Settings::new("org.gnome.desktop.interface").get_string("font-name"))
-        .map_or_else(
-            || {
-                warn!("Couldn't find GSchema! Defaulting to default interface font.");
-                "Cantarell 11".to_string()
-            },
-            |s| s.to_string(),
-        )
+    GSchema::get("org.gnome.desktop.interface", "font-name").unwrap_or_else(|| {
+        warn!("Couldn't find GSchema! Defaulting to default interface font.");
+        "Cantarell 11".to_string()
+    })
 }
 
 pub fn get_draw_trailing_spaces_schema() -> bool {
-    SettingsSchemaSource::get_default()
-        .and_then(|settings_source| settings_source.lookup("com.github.Cogitri.gxi", true))
-        .map_or_else(
-            || {
-                warn!("Couldn't find GSchema! Defaulting to not drawing tabs!");
-                false
-            },
-            |_| {
-                Settings::new(crate::globals::APP_ID.unwrap_or("com.github.Cogitri.gxi"))
-                    .get_boolean("draw-trailing-spaces")
-            },
-        )
+    GSchema::get(APP_ID, "draw-trailing-spaces").unwrap_or_else(|| {
+        warn!("Couldn't find GSchema! Defaulting to not drawing tabs!");
+        false
+    })
 }
 
 pub fn set_draw_trailing_spaces_schema(val: bool) {
-    if SettingsSchemaSource::get_default()
-        .and_then(|settings_source| settings_source.lookup("com.github.Cogitri.gxi", true))
-        .is_some()
-    {
-        Settings::new(crate::globals::APP_ID.unwrap_or("com.github.Cogitri.gxi"))
-            .set_boolean("draw-trailing-spaces", val);
-    };
+    GSchema::set(APP_ID, "draw-trailing-spaces", val);
 }
 
 pub fn get_draw_right_margin() -> bool {
-    SettingsSchemaSource::get_default()
-        .and_then(|settings_source| settings_source.lookup("com.github.Cogitri.gxi", true))
-        .map_or_else(
-            || {
-                warn!("Couldn't find GSchema! Defaulting to not drawing a right hand margin!");
-                false
-            },
-            |_| {
-                Settings::new(crate::globals::APP_ID.unwrap_or("com.github.Cogitri.gxi"))
-                    .get_boolean("draw-right-margin")
-            },
-        )
+    GSchema::get(APP_ID, "draw-right-margin").unwrap_or_else(|| {
+        warn!("Couldn't find GSchema! Defaulting to not drawing a right hand margin!");
+        false
+    })
 }
 
 pub fn set_draw_right_margin(val: bool) {
-    if SettingsSchemaSource::get_default()
-        .and_then(|settings_source| settings_source.lookup("com.github.Cogitri.gxi", true))
-        .is_some()
-    {
-        Settings::new(crate::globals::APP_ID.unwrap_or("com.github.Cogitri.gxi"))
-            .set_boolean("draw-right-margin", val);
-    };
-}
-
-pub fn set_column_right_margin(val: u32) {
-    if SettingsSchemaSource::get_default()
-        .and_then(|settings_source| settings_source.lookup("com.github.Cogitri.gxi", true))
-        .is_some()
-    {
-        Settings::new(crate::globals::APP_ID.unwrap_or("com.github.Cogitri.gxi"))
-            .set_uint("column-right-margin", val);
-    };
+    GSchema::set(APP_ID, "draw-right-margin", val);
 }
 
 pub fn get_column_right_margin() -> u32 {
-    SettingsSchemaSource::get_default()
-        .and_then(|settings_source| settings_source.lookup("com.github.Cogitri.gxi", true))
-        .map_or_else(
-            || {
-                warn!(
-                    "Couldn't find GSchema! Defaulting to drawing right hand marging at column 80"
-                );
-                80
-            },
-            |_| {
-                Settings::new(crate::globals::APP_ID.unwrap_or("com.github.Cogitri.gxi"))
-                    .get_uint("column-right-margin")
-            },
-        )
+    GSchema::get(APP_ID, "column-right-margin").unwrap_or_else(|| {
+        warn!("Couldn't find GSchema! Defaulting to drawing right hand marging at column 80");
+        80
+    })
+}
+
+pub fn set_column_right_margin(val: u32) {
+    GSchema::set(APP_ID, "column-right-margin", val);
 }
 
 pub fn get_highlight_line() -> bool {
