@@ -94,7 +94,7 @@ impl PrefsWin {
                 let core = core.borrow();
                 core.set_theme(&theme_name);
 
-                crate::pref_storage::set_theme_schema(&theme_name);
+                crate::pref_storage::set_theme_schema(theme_name.to_string());
 
                 let mut main_state = main_state.borrow_mut();
                 main_state.theme_name = theme_name.to_string();
