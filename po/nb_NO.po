@@ -45,12 +45,17 @@ msgid ""
 "This release adds an option for creating a right hand margin, uses a "
 "different save dialog and fixes pressing 'Cancel' on thesave dialog."
 msgstr ""
+"Denne utgivelsen bringer muligheten til å ha en sidemarg på høyresiden, "
+"bruker forskjellig lagringsdialog, og fungerer når man trykker \"Avbryt\" i "
+"den."
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:42
 msgid ""
 "This release made the linecount nicer (as in more visible/readable). gxi "
 "also offers a Norwegian Bokmål translation."
 msgstr ""
+"Utgivelsen har forbedringer i linjetelleren (mer synlig/lesbar) gxi er også "
+"tilgjengelig på bokmål."
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:47
 msgid ""
@@ -163,19 +168,19 @@ msgstr "Tegn blanktegn som er på slutten av en linje"
 
 #: data/com.github.Cogitri.gxi.gschema.xml:25
 msgid "Draw a right hand margin"
-msgstr ""
+msgstr "Tegn sidemarg på høyresiden"
 
 #: data/com.github.Cogitri.gxi.gschema.xml:26
 msgid "Draw a right hand margin to limit the text width"
-msgstr ""
+msgstr "Tegner sidemarg på høyresiden for å begrense tekstbredden"
 
 #: data/com.github.Cogitri.gxi.gschema.xml:33
 msgid "At what column to display the margin"
-msgstr ""
+msgstr "Hvilken kolonne skal margen vises i"
 
 #: data/com.github.Cogitri.gxi.gschema.xml:34
 msgid "Sets the column at which the margin should be drawn"
-msgstr ""
+msgstr "Hvilken kolonne skal margen vises i"
 
 #: src/about_win.rs:16
 msgid "GTK frontend for the xi text editor, written in Rust"
@@ -416,11 +421,11 @@ msgstr "Lagre ulagrede endringer"
 
 #: src/main_win.rs:895
 msgid "Close Without Saving"
-msgstr ""
+msgstr "Lukk uten å lagre"
 
 #: src/main_win.rs:918
 msgid "Save dialog has been destroyed before the user clicked a button"
-msgstr ""
+msgstr "Lagringsdialoget har blitt ødelagt før brukeren klikket en knapp"
 
 #: src/errors.rs:54
 msgid "No default application"
@@ -545,7 +550,7 @@ msgstr "Linjebryt på slutten av visning istedenfor å tilby rulling"
 
 #: src/ui/prefs_win.glade:200
 msgid "Display right margin at the column:"
-msgstr ""
+msgstr "Tegn en sidemarg på høyresiden i kolonnen:"
 
 #: src/ui/prefs_win.glade:228
 msgid "Editing"
