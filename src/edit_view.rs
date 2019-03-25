@@ -195,12 +195,14 @@ impl EditView {
     pub fn new(
         main_state: &Rc<RefCell<MainState>>,
         core: &Rc<RefCell<Core>>,
+        // The FindReplace dialog is relative to this
+        hamburger_button: MenuButton,
         file_name: Option<String>,
         view_id: &str,
     ) -> Rc<RefCell<Self>> {
         trace!("{}, '{}'", gettext("Creating new EditView"), view_id);
         let view_item = ViewItem::new();
-        let find_replace = FindReplace::new();
+        let find_replace = FindReplace::new(&hamburger_button);
         let pango_ctx = view_item.get_pango_ctx();
 
         let edit_view = Rc::new(RefCell::new(EditView {
@@ -209,7 +211,7 @@ impl EditView {
             file_name,
             pristine: true,
             view_id: view_id.to_string(),
-            root_widget: EditView::setup_root_box(&view_item, &find_replace),
+            root_widget: Self::setup_root_box(&view_item),
             top_bar: TopBar::new(),
             view_item: view_item.clone(),
             line_cache: LineCache::new(),
@@ -227,11 +229,10 @@ impl EditView {
         edit_view
     }
 
-    fn setup_root_box(view_item: &ViewItem, find_replace: &FindReplace) -> Box {
+    fn setup_root_box(view_item: &ViewItem) -> Box {
         let root_box = Box::new(Orientation::Vertical, 0);
         let hbox = Box::new(Orientation::Horizontal, 0);
         let vbox = Box::new(Orientation::Vertical, 0);
-        root_box.pack_start(&find_replace.search_bar, false, false, 0);
         root_box.pack_start(&hbox, true, true, 0);
         hbox.pack_start(&view_item.linecount, false, false, 0);
         hbox.pack_start(&vbox, true, true, 0);
@@ -291,56 +292,67 @@ impl TopBar {
 #[derive(Clone)]
 struct FindReplace {
     search_bar: SearchBar,
-    replace_expander: Expander,
     replace_revealer: Revealer,
-    replace_entry: Entry,
+    replace_entry: SearchEntry,
     replace_button: Button,
     replace_all_button: Button,
     find_status_label: Label,
+    option_revealer: Revealer,
     search_entry: SearchEntry,
     go_down_button: Button,
     go_up_button: Button,
-    regex_togglebutton: ToggleButton,
+    popover: Popover,
+    show_replace_button: ToggleButton,
+    show_options_button: ToggleButton,
+    use_regex_button: CheckButton,
+    case_sensitive_button: CheckButton,
+    whole_word_button: CheckButton,
 }
 
 impl FindReplace {
     /// Loads the glade description of the window, and builds gtk-rs objects.
-    fn new() -> FindReplace {
+    fn new(btn: MenuButton) -> FindReplace {
         const SRC: &str = include_str!("ui/find_replace.glade");
 
         let builder = Builder::new_from_string(SRC);
         let search_bar = builder.get_object("search_bar").unwrap();
-        let replace_expander: Expander = builder.get_object("replace_expander").unwrap();
+        let popover: Popover = builder.get_object("search_popover").unwrap();
         let replace_revealer: Revealer = builder.get_object("replace_revealer").unwrap();
-        let replace_entry: Entry = builder.get_object("replace_entry").unwrap();
+        let option_revealer: Revealer = builder.get_object("option_revealer").unwrap();
+        let replace_entry: SearchEntry = builder.get_object("replace_entry").unwrap();
         let replace_button = builder.get_object("replace_button").unwrap();
         let replace_all_button = builder.get_object("replace_all_button").unwrap();
         let find_status_label = builder.get_object("find_status_label").unwrap();
         let search_entry = builder.get_object("search_entry").unwrap();
         let go_down_button = builder.get_object("go_down_button").unwrap();
         let go_up_button = builder.get_object("go_up_button").unwrap();
-        let regex_togglebutton = builder.get_object("regex_search_togglebutton").unwrap();
+        let use_regex_button = builder.get_object("use_regex_button").unwrap();
+        let case_sensitive_button = builder.get_object("case_sensitive_button").unwrap();
+        let whole_word_button = builder.get_object("whole_word_button").unwrap();
+        let show_replace_button = builder.get_object("show_replace_button").unwrap();
+        let show_options_button = builder.get_object("show_options_button").unwrap();
 
-        replace_expander.connect_property_expanded_notify(clone!(replace_revealer => move|w| {
-            if w.get_expanded() {
-                replace_revealer.set_reveal_child(true);
-            } else {
-                replace_revealer.set_reveal_child(false);
-            }
-        }));
+        popover.set_position(PositionType::Bottom);
+        popover.set_transitions_enabled(true);
+        popover.set_relative_to(&btn);
 
         FindReplace {
-            search_bar,
-            replace_expander,
             replace_revealer,
             replace_entry,
             replace_button,
             replace_all_button,
-            find_status_label,
             search_entry,
             go_down_button,
             go_up_button,
-            regex_togglebutton,
+            use_regex_button,
+            popover,
+            show_replace_button,
+            show_options_button,
+            case_sensitive_button,
+            whole_word_button,
+            option_revealer,
+            find_status_label,
+            search_bar,
         }
     }
 
@@ -351,24 +363,79 @@ impl FindReplace {
             gettext("Connecting FindReplace events for EditView"),
             ev.borrow().view_id
         );
-        self.search_entry
-            .connect_search_changed(clone!(ev => move |w| {
-                if let Some(text) = w.get_text() {
-                    ev.borrow_mut().search_changed(Some(text.to_string()));
+
+        self.popover.connect_event(clone!(ev => move |_, event| {
+            ev.borrow().find_replace.search_bar.handle_event(event);
+
+            Inhibit(false)
+        }));
+
+        self.popover.connect_closed(clone!(ev => move |_| {
+            ev.borrow().stop_search();
+            ev.borrow().stop_replace();
+        }));
+
+        self.show_replace_button
+            .connect_toggled(clone!(ev => move |toggle_btn| {
+                if toggle_btn.get_active() {
+                    ev.borrow().show_replace();
                 } else {
-                    ev.borrow_mut().search_changed(None);
+                    ev.borrow().hide_replace();
                 }
             }));
 
-        self.regex_togglebutton
-            .connect_toggled(clone!(ev => move |_| {
-                let text_opt = { ev.borrow().find_replace.search_entry.get_text() };
-                if let Some(text) = text_opt {
-                    ev.borrow_mut().search_changed(Some(text.to_string()));
+        self.show_options_button
+            .connect_toggled(clone!(ev => move |toggle_btn| {
+                if toggle_btn.get_active() {
+                    ev.borrow().show_findreplace_opts();
                 } else {
-                    ev.borrow_mut().search_changed(None);
+                    ev.borrow().hide_findreplace_opts();
                 }
             }));
+
+        self.search_bar.connect_entry(&self.search_entry);
+
+        self.search_entry
+            .connect_search_changed(clone!(ev => move |w| {
+                if let Some(text) = w.get_text() {
+                    ev.borrow().search_changed(Some(text.to_string()));
+                } else {
+                    ev.borrow().search_changed(None);
+                }
+            }));
+
+        self.replace_entry
+            .connect_next_match(clone!(ev => move |_| {
+                ev.borrow().find_next();
+            }));
+
+        self.replace_entry
+            .connect_previous_match(clone!(ev => move |_| {
+                ev.borrow().find_prev();
+            }));
+
+        self.replace_entry
+            .connect_stop_search(clone!(ev => move |_| {
+                ev.borrow().stop_replace();
+            }));
+
+        let restart_search = move |edit_view: Rc<RefCell<EditView>>| {
+            let text_opt = { edit_view.borrow().find_replace.search_entry.get_text() };
+            if let Some(text) = text_opt {
+                edit_view.borrow().search_changed(Some(text.to_string()));
+            } else {
+                edit_view.borrow_mut().search_changed(None);
+            }
+        };
+
+        self.use_regex_button
+            .connect_toggled(clone!(ev => move |_| restart_search(ev.clone())));
+
+        self.whole_word_button
+            .connect_toggled(clone!(ev => move |_| restart_search(ev.clone())));
+
+        self.case_sensitive_button
+            .connect_toggled(clone!(ev => move |_| restart_search(ev.clone())));
 
         self.search_entry.connect_activate(clone!(ev => move |_| {
             ev.borrow_mut().find_next();
@@ -1408,37 +1475,85 @@ impl EditView {
     /// Opens the find dialog (Ctrl+F)
     pub fn start_search(&self) {
         if self.find_replace.search_bar.get_search_mode() {
-            self.stop_search();
+            // If you've enabled the replace dialog, Ctrl+F brings back the find dialog (and as such
+            // collapses the replace dialog) instead of stopping the entire search
+            if self.find_replace.replace_revealer.get_reveal_child() {
+                self.find_replace.show_replace_button.set_active(false);
+            } else {
+                self.stop_search();
+            }
         } else {
             self.find_replace.search_bar.set_search_mode(true);
-            self.find_replace.replace_expander.set_expanded(false);
-            self.find_replace.replace_revealer.set_reveal_child(false);
+            self.find_replace.popover.show();
+            self.find_replace
+                .option_revealer
+                .set_reveal_child(self.find_replace.show_options_button.get_active());
+            self.find_replace
+                .replace_revealer
+                .set_reveal_child(self.find_replace.show_replace_button.get_active());
             self.find_replace.search_entry.grab_focus();
             if let Some(needle) = self.find_replace.search_entry.get_text() {
+                // No need to pass the actual values of case_sensitive etc. to Xi here, we as soon
+                // as we start typing something into the search box/flick one of the switches we call
+                // EditView::search_changed() anyway, which does that for us.
                 self.core
                     .borrow()
-                    .find(&self.view_id, &needle, false, Some(false));
+                    .find(&self.view_id, &needle, false, false, false);
             }
         }
     }
 
     /// Opens the replace dialog (Ctrl+R)
     pub fn start_replace(&self) {
-        if self.find_replace.replace_revealer.get_child_revealed() {
-            self.stop_search()
+        if self.find_replace.search_bar.get_search_mode() {
+            // If you've enabled the replace dialog, Ctrl+R will collapse the entire Popover, if the
+            // Popover is already open but the replace dialog is hidden (e.g. because Ctrl+F has been
+            // pressed before) we'll expand the replace dialog instead of closing the entire Popover
+            if self.find_replace.replace_revealer.get_reveal_child() {
+                self.stop_replace();
+            } else {
+                self.find_replace.show_replace_button.set_active(true);
+            }
         } else {
+            self.find_replace.show_replace_button.set_active(true);
             self.find_replace.search_bar.set_search_mode(true);
-            self.find_replace.replace_expander.set_expanded(true);
-            self.find_replace.replace_revealer.set_reveal_child(true);
+            self.find_replace.popover.show();
+            self.find_replace
+                .option_revealer
+                .set_reveal_child(self.find_replace.show_options_button.get_active());
+            self.show_replace();
             self.find_replace.search_entry.grab_focus();
         }
     }
 
+    pub fn show_replace(&self) {
+        self.find_replace.replace_revealer.set_reveal_child(true);
+    }
+
+    pub fn hide_replace(&self) {
+        self.find_replace.replace_revealer.set_reveal_child(false);
+    }
+
+    fn show_findreplace_opts(&self) {
+        self.find_replace.option_revealer.set_reveal_child(true);
+    }
+
+    fn hide_findreplace_opts(&self) {
+        self.find_replace.option_revealer.set_reveal_child(false);
+    }
+
+    pub fn stop_replace(&self) {
+        self.find_replace.show_replace_button.set_active(false);
+        self.hide_replace();
+        self.stop_search();
+    }
+
     /// Closes the find/replace dialog
     pub fn stop_search(&self) {
+        self.find_replace.popover.hide();
+        self.find_replace.show_replace_button.set_active(false);
+        self.find_replace.show_options_button.set_active(false);
         self.find_replace.search_bar.set_search_mode(false);
-        self.find_replace.replace_expander.set_expanded(false);
-        self.find_replace.replace_revealer.set_reveal_child(false);
         self.view_item.edit_area.grab_focus();
     }
 
@@ -1481,10 +1596,12 @@ impl EditView {
     /// Tells xi-editor that we're searching for a different string (or none) now
     pub fn search_changed(&self, s: Option<String>) {
         let needle = s.unwrap_or_default();
-        let regex = self.find_replace.regex_togglebutton.get_active();
+        let regex = self.find_replace.use_regex_button.get_active();
+        let whole_worlds = self.find_replace.whole_word_button.get_active();
+        let case_sensitive = self.find_replace.case_sensitive_button.get_active();
         self.core
             .borrow()
-            .find(&self.view_id, &needle, false, Some(regex));
+            .find(&self.view_id, &needle, case_sensitive, regex, whole_worlds);
     }
 
     /// Replace _one_ match with the replacement string

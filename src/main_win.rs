@@ -792,7 +792,9 @@ impl MainWin {
             .for_each(|lang| syntax_combo_box.append_text(lang));
 
         if let Some(view_id) = value.as_str() {
-            let edit_view = EditView::new(&win.state, &win.core, file_name, view_id);
+            let hamburger_button = win.builder.get_object("hamburger_button").unwrap();
+            let edit_view =
+                EditView::new(&win.state, &win.core, hamburger_button, file_name, view_id);
             {
                 let ev = edit_view.borrow();
                 let page_num =

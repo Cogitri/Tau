@@ -478,7 +478,14 @@ impl Core {
     ///
     /// If `chars` is `None` and there is an active selection, returns
     /// the string value used for the search, else returns `Null`.
-    pub fn find(&self, view_id: &str, chars: &str, case_sensitive: bool, regex: Option<bool>) {
+    pub fn find(
+        &self,
+        view_id: &str,
+        chars: &str,
+        case_sensitive: bool,
+        regex: bool,
+        whole_words: bool,
+    ) {
         self.send_edit_cmd(
             view_id,
             "find",
@@ -486,6 +493,7 @@ impl Core {
                 "chars": chars,
                 "case_sensitive": case_sensitive,
                 "regex": regex,
+                "whole_words": whole_words,
             }),
         )
     }
