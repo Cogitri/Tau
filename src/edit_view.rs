@@ -29,7 +29,7 @@ pub struct Font {
 }
 
 impl Font {
-    fn new(pango_ctx: pango::Context, font_desc: FontDescription) -> Self {
+    fn new(pango_ctx: &pango::Context, font_desc: FontDescription) -> Self {
         pango_ctx.set_font_description(&font_desc);
         let language = pango_ctx
             .get_language()
@@ -41,7 +41,7 @@ impl Font {
             .get_metrics()
             .unwrap_or_else(|| panic!("{}", &gettext("Failed to load Pango font metrics")));
 
-        let layout = pango::Layout::new(&pango_ctx);
+        let layout = pango::Layout::new(pango_ctx);
         layout.set_text("a");
         let (_, log_extents) = layout.get_extents();
         debug!("{}: {:?}", gettext("Pango font size"), log_extents);
@@ -81,7 +81,7 @@ pub struct ViewItem {
 
 impl ViewItem {
     /// Sets up the drawing areas and scrollbars.
-    fn new() -> ViewItem {
+    fn new() -> Self {
         let edit_area = DrawingArea::new();
         let linecount = DrawingArea::new();
         let horiz_bar = Scrollbar::new(Orientation::Horizontal, None::<&gtk::Adjustment>);
@@ -97,7 +97,7 @@ impl ViewItem {
         debug!("{}: {:?}", gettext("Events"), edit_area.get_events());
         edit_area.set_can_focus(true);
 
-        ViewItem {
+        Self {
             edit_area,
             linecount,
             horiz_bar,
@@ -196,7 +196,7 @@ impl EditView {
         main_state: &Rc<RefCell<MainState>>,
         core: &Rc<RefCell<Core>>,
         // The FindReplace dialog is relative to this
-        hamburger_button: MenuButton,
+        hamburger_button: &MenuButton,
         file_name: Option<String>,
         view_id: &str,
     ) -> Rc<RefCell<Self>> {
@@ -205,7 +205,7 @@ impl EditView {
         let find_replace = FindReplace::new(&hamburger_button);
         let pango_ctx = view_item.get_pango_ctx();
 
-        let edit_view = Rc::new(RefCell::new(EditView {
+        let edit_view = Rc::new(RefCell::new(Self {
             core: core.clone(),
             main_state: main_state.clone(),
             file_name,
@@ -215,8 +215,8 @@ impl EditView {
             top_bar: TopBar::new(),
             view_item: view_item.clone(),
             line_cache: LineCache::new(),
-            edit_font: EditView::get_edit_font(&pango_ctx, &main_state.borrow().config),
-            interface_font: EditView::get_interface_font(&pango_ctx),
+            edit_font: Self::get_edit_font(&pango_ctx, &main_state.borrow().config),
+            interface_font: Self::get_interface_font(&pango_ctx),
             find_replace: find_replace.clone(),
         }));
 
@@ -246,14 +246,14 @@ impl EditView {
 
     fn get_interface_font(pango_ctx: &pango::Context) -> Font {
         Font::new(
-            pango_ctx.clone(),
+            &pango_ctx,
             FontDescription::from_string(&get_default_interface_font_schema()),
         )
     }
 
     fn get_edit_font(pango_ctx: &pango::Context, config: &Rc<RefCell<Config>>) -> Font {
         Font::new(
-            pango_ctx.clone(),
+            pango_ctx,
             FontDescription::from_string(&format!(
                 "{} {}",
                 &config.borrow().config.font_face,
@@ -272,7 +272,7 @@ pub struct TopBar {
 
 impl TopBar {
     /// Make the widgets for the tab
-    fn new() -> TopBar {
+    fn new() -> Self {
         let tab_widget = gtk::Box::new(Orientation::Horizontal, 5);
         let label = Label::new(Some(""));
         tab_widget.add(&label);
@@ -280,7 +280,7 @@ impl TopBar {
         tab_widget.add(&close_button);
         tab_widget.show_all();
 
-        TopBar {
+        Self {
             tab_widget,
             label,
             close_button,
@@ -311,7 +311,7 @@ struct FindReplace {
 
 impl FindReplace {
     /// Loads the glade description of the window, and builds gtk-rs objects.
-    fn new(btn: MenuButton) -> FindReplace {
+    fn new(btn: &MenuButton) -> Self {
         const SRC: &str = include_str!("ui/find_replace.glade");
 
         let builder = Builder::new_from_string(SRC);
@@ -334,9 +334,9 @@ impl FindReplace {
 
         popover.set_position(PositionType::Bottom);
         popover.set_transitions_enabled(true);
-        popover.set_relative_to(&btn);
+        popover.set_relative_to(btn);
 
-        FindReplace {
+        Self {
             replace_revealer,
             replace_entry,
             replace_button,
@@ -525,7 +525,8 @@ impl EditView {
                                 .font_desc
                                 .set_size(font_size as i32 * pango::SCALE);
                             // We've set the new fontsize previously, now we have to regenerate the font height/width etc.
-                            self.edit_font = Font::new(pango_ctx, self.edit_font.font_desc.clone());
+                            self.edit_font =
+                                Font::new(&pango_ctx, self.edit_font.font_desc.clone());
                             self.view_item.edit_area.queue_draw();
                         }
                     }
@@ -534,7 +535,7 @@ impl EditView {
                             debug!("{}: {}", gettext("Setting edit font to"), font_face);
                             let pango_ctx = self.view_item.get_pango_ctx();
                             self.edit_font = Font::new(
-                                pango_ctx,
+                                &pango_ctx,
                                 FontDescription::from_string(&format!(
                                     "{} {}",
                                     font_face,
@@ -863,7 +864,7 @@ impl EditView {
                 // It only thinks that the width of that char is 5, when it actually is 10 (like all
                 // other chars. So we have to replace it with some other char here to trick Pango into
                 // drawing the cursor at the correct position later on
-                layout.set_text(&layout.get_text().unwrap().replace("·", " "));
+                layout.set_text(&layout.get_text().unwrap().replace("\u{b7}", " "));
 
                 let layout_line = layout.get_line(0);
                 if layout_line.is_none() {
@@ -1029,7 +1030,7 @@ impl EditView {
                 start: 0,
                 end: spaces.len(),
             };
-            let highlighted_spaces: String = space_range.map(|_| "·").collect();
+            let highlighted_spaces: String = space_range.map(|_| "\u{b7}").collect();
 
             format!("{}{}", line_view_without_space, highlighted_spaces)
         } else {

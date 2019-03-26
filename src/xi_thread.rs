@@ -22,20 +22,20 @@ impl XiPeer {
     pub fn send_json(&self, v: &Value) {
         self.send(serde_json::to_string(v).unwrap());
     }
-}
 
-pub fn start_xi_thread() -> (XiPeer, Receiver<Value>) {
-    let (to_core_tx, to_core_rx) = unbounded();
-    let to_core_rx = ChanReader(to_core_rx);
-    let (from_core_tx, from_core_rx) = unbounded();
-    let from_core_tx = ChanWriter {
-        sender: from_core_tx,
-    };
-    let mut state = XiCore::new();
-    let mut rpc_looper = RpcLoop::new(from_core_tx);
-    thread::spawn(move || rpc_looper.mainloop(|| to_core_rx, &mut state));
-    let peer = XiPeer { tx: to_core_tx };
-    (peer, from_core_rx)
+    pub fn new() -> (XiPeer, Receiver<Value>) {
+        let (to_core_tx, to_core_rx) = unbounded();
+        let to_core_rx = ChanReader(to_core_rx);
+        let (from_core_tx, from_core_rx) = unbounded();
+        let from_core_tx = ChanWriter {
+            sender: from_core_tx,
+        };
+        let mut state = XiCore::new();
+        let mut rpc_looper = RpcLoop::new(from_core_tx);
+        thread::spawn(move || rpc_looper.mainloop(|| to_core_rx, &mut state));
+        let peer = XiPeer { tx: to_core_tx };
+        (peer, from_core_rx)
+    }
 }
 
 struct ChanReader(Receiver<String>);

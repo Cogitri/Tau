@@ -29,7 +29,7 @@ pub trait Callback: Send {
 }
 
 impl<F: FnOnce(&Value) + Send> Callback for F {
-    fn call(self: Box<F>, result: &Value) {
+    fn call(self: Box<Self>, result: &Value) {
         (*self)(result)
     }
 }
