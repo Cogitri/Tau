@@ -55,8 +55,7 @@ impl Core {
             state: Arc::new(Mutex::new(state)),
         };
 
-        let rx_core = core.clone();
-        thread::spawn(move || {
+        thread::spawn(clone!(core => move || {
             while let Ok(msg) = xi_rx.recv() {
                 debug!("{:?}", msg);
                 if let Value::String(ref method) = msg["method"] {
@@ -65,13 +64,26 @@ impl Core {
                         params: msg["params"].clone(),
                         id: msg["id"].as_u64(),
                     });
+                } else if let Some(err_code) = msg["error"]["code"].as_u64()  {
+                    let msg = if let Some(err_msg) = msg["error"]["message"].as_str() {
+                        format!("{} {}: {}", gettext("Error code"), err_code, err_msg)
+                    } else {
+                        format!("{} {}", gettext("Error code"), err_code)
+                    };
+
+                    err_tx
+                        .send(ErrorMsg {
+                            msg: msg,
+                            fatal: false,
+                        })
+                        .unwrap();
                 } else if let Some(id) = msg["id"].as_u64() {
                     debug!(
                         "Xi-CORE --> {{\"method\": \"{}\", \"params\":{}}}",
                         &msg["method"], &msg["params"]
                     );
                     let callback = {
-                        let mut state = rx_core.state.lock().unwrap();
+                        let mut state = core.state.lock().unwrap();
                         state.pending.remove(&id)
                     };
                     if let Some(callback) = callback {
@@ -92,7 +104,7 @@ impl Core {
                     fatal: true,
                 })
                 .unwrap();
-        });
+        }));
 
         core
     }
