@@ -268,11 +268,11 @@ impl MainWin {
             quit_action.connect_activate(clone!(main_win => move |_,_| {
                 trace!("{} 'quit' {}", gettext("Handling"), gettext("action"));
                 // Same as in connect_destroy, only quit if the user saves or wants to close without saving
-                if Self::close_all(main_win.clone()) != SaveAction::Cancel {
+                if Self::close_all(main_win.clone()) == SaveAction::Cancel {
+                    debug!("{}", gettext("User chose to not quit application"));
+                } else {
                     debug!("{}", gettext("User chose to quit application"));
                     main_win.borrow().window.destroy();
-                } else {
-                    debug!("{}", gettext("User chose to not quit application"));
                 }
             }));
             application.add_action(&quit_action);
@@ -794,7 +794,7 @@ impl MainWin {
         if let Some(view_id) = value.as_str() {
             let hamburger_button = win.builder.get_object("hamburger_button").unwrap();
             let edit_view =
-                EditView::new(&win.state, &win.core, hamburger_button, file_name, view_id);
+                EditView::new(&win.state, &win.core, &hamburger_button, file_name, view_id);
             {
                 let ev = edit_view.borrow();
                 let page_num =

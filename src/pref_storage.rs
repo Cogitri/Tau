@@ -159,7 +159,7 @@ impl Config {
                 .unwrap()
                 .into_path();
 
-            let xi_config = Config {
+            let xi_config = Self {
                 config: XiConfig::default(),
                 path: config_dir
                     .join("preferences.xiconfig")

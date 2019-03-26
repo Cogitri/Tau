@@ -59,7 +59,7 @@ impl Line {
                 styles.push(style_span);
             }
         }
-        Line {
+        Self {
             text,
             cursor,
             styles,

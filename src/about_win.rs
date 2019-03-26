@@ -30,7 +30,7 @@ impl AboutWin {
         trace!("{}", gettext("Showing about window"));
         about_dialog.show_all();
 
-        Rc::new(RefCell::new(AboutWin {
+        Rc::new(RefCell::new(Self {
             about_dialog: about_dialog.clone(),
         }))
     }

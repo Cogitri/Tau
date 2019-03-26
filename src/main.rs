@@ -87,6 +87,7 @@ use crate::main_win::MainWin;
 use crate::pref_storage::Config;
 use crate::rpc::Core;
 use crate::shared_queue::{CoreMsg, SharedQueue};
+use crate::xi_thread::XiPeer;
 use gettextrs::{gettext, TextDomain, TextDomainError};
 use gio::{ApplicationExt, ApplicationExtManual, ApplicationFlags, FileExt};
 use glib::MainContext;
@@ -119,7 +120,7 @@ fn main() {
 
     let (err_tx, err_rx) = MainContext::channel::<ErrorMsg>(glib::PRIORITY_DEFAULT_IDLE);
 
-    let (xi_peer, xi_rx) = xi_thread::start_xi_thread();
+    let (xi_peer, xi_rx) = XiPeer::new();
     let core = Core::new(xi_peer, xi_rx, err_tx, shared_queue.clone());
 
     let application = Application::new(crate::globals::APP_ID, ApplicationFlags::HANDLES_OPEN)
