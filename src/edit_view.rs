@@ -333,6 +333,7 @@ impl FindReplace {
         let show_options_button = builder.get_object("show_options_button").unwrap();
 
         popover.set_position(PositionType::Bottom);
+        #[cfg(not(feature = "gtk_v3_22"))]
         popover.set_transitions_enabled(true);
         popover.set_relative_to(btn);
 
@@ -1485,6 +1486,9 @@ impl EditView {
             }
         } else {
             self.find_replace.search_bar.set_search_mode(true);
+            #[cfg(feature = "gtk_v3_22")]
+            self.find_replace.popover.popup();
+            #[cfg(not(feature = "gtk_v3_22"))]
             self.find_replace.popover.show();
             self.find_replace
                 .option_revealer
@@ -1518,6 +1522,9 @@ impl EditView {
         } else {
             self.find_replace.show_replace_button.set_active(true);
             self.find_replace.search_bar.set_search_mode(true);
+            #[cfg(feature = "gtk_v3_22")]
+            self.find_replace.popover.popup();
+            #[cfg(not(feature = "gtk_v3_22"))]
             self.find_replace.popover.show();
             self.find_replace
                 .option_revealer
@@ -1551,6 +1558,9 @@ impl EditView {
 
     /// Closes the find/replace dialog
     pub fn stop_search(&self) {
+        #[cfg(feature = "gtk_v3_22")]
+        self.find_replace.popover.popdown();
+        #[cfg(not(feature = "gtk_v3_22"))]
         self.find_replace.popover.hide();
         self.find_replace.show_replace_button.set_active(false);
         self.find_replace.show_options_button.set_active(false);
