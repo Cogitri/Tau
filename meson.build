@@ -9,6 +9,8 @@ dependency('gio-2.0', version: '>= 2.38')
 dependency('cairo', version: '>= 1')
 dependency('pango', version: '>=1.38')
 dependency('gtk+-3.0', version: '>= 3.20')
+# This is only used to decide what transition code to use for the search/replace Popover
+opt_gtk3_22_dep = dependency('gtk+-3.0', version: '>= 3.22', required: false)
 
 gxi_prefix = get_option('prefix')
 gxi_bindir = join_paths(gxi_prefix, get_option('bindir'))
@@ -36,6 +38,12 @@ else
   cross_build='false'
 endif
 
+if opt_gtk3_22_dep.found()
+  gtk3_22='true'
+else
+  gtk3_22='false'
+endif
+
 custom_target('cargo-build-gxi',
                         build_by_default: true,
                         build_always_stale: true,
@@ -51,6 +59,7 @@ custom_target('cargo-build-gxi',
                                   meson.current_build_dir(),
                                   'gxi',
                                   cross_build,
+                                  gtk3_22,
                                   gxi_plugin_dir,
                                   gxi_localedir,
                                   meson.project_version(),
@@ -93,6 +102,10 @@ custom_target('cargo-build-syntect',
                                   syntect_releasebin_path,
                                   'xi-syntect-plugin',
                                   cross_build,
+                                  '',
+                                  gxi_plugin_dir,
+                                  gxi_localedir,
+                                  meson.project_version(),
                                  ])
 
 synctect_assets = ['assets/Makefile.toml', 'assets/YAML.toml', 'manifest.toml']

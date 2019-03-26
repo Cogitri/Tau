@@ -11,6 +11,11 @@ license = "MIT"
 edition = "2018"
 readme = "README.md"
 
+[features]
+default = []
+
+gtk_v3_22 = ["gtk/v3_22"]
+
 [dependencies]
 cairo-rs = "0.6"
 env_logger = "0.6"
