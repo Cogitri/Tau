@@ -969,7 +969,7 @@ impl EditView {
         // Set the appropriate size for the linecount DrawingArea, otherwise it's only 1 px wide.
         self.view_item
             .linecount
-            .set_size_request(linecount_width as i32, linecount_height);
+            .set_size_request(linecount_width as i32, -1);
         Inhibit(false)
     }
 
