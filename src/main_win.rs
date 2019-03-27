@@ -552,8 +552,7 @@ impl MainWin {
                     gettext("functionality will be limited")
                 ),
                 fatal: false,
-            })
-            .show_all();
+            });
         }
     }
 
@@ -640,7 +639,7 @@ impl MainWin {
                         Ok(_) => win.req_new_view(Some(&file_str)),
                         Err(e) => {
                             let err_msg = format!("{} '{}': {}", &gettext("Couldn't open file"), &file_str, &e.to_string());
-                            ErrorDialog::new(ErrorMsg{msg: err_msg, fatal: false}).show_all();
+                            ErrorDialog::new(ErrorMsg{msg: err_msg, fatal: false});
                         }
                     }
                 }
@@ -704,7 +703,7 @@ impl MainWin {
                             }
                         Err(e) => {
                             let err_msg = format!("{} '{}': {}", &gettext("Couldn't save file"), &file_str, &e.to_string());
-                            ErrorDialog::new(ErrorMsg {msg: err_msg, fatal: false}).show_all();
+                            ErrorDialog::new(ErrorMsg {msg: err_msg, fatal: false});
                         }
                     }
                 }

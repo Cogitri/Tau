@@ -71,13 +71,11 @@ impl ErrorDialog {
             }
         }));
 
+        err_dialog.show_all();
+
         Self {
             dialog: err_dialog,
             msg: err_msg,
         }
-    }
-
-    pub fn show_all(&self) {
-        self.dialog.show_all();
     }
 }
