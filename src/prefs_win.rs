@@ -19,7 +19,7 @@ impl PrefsWin {
         parent: &ApplicationWindow,
         main_state: &Rc<RefCell<MainState>>,
         core: &Rc<RefCell<Core>>,
-        edit_view: &Rc<RefCell<EditView>>,
+        edit_view: Option<Rc<RefCell<EditView>>>,
     ) -> Rc<RefCell<Self>> {
         const SRC: &str = include_str!("ui/prefs_win.glade");
         let builder = Builder::new_from_string(SRC);
@@ -163,7 +163,9 @@ impl PrefsWin {
                     let value = toggle_btn.get_active();
                     debug!("{}: {}", gettext("Right hand margin"), value);
                     set_draw_right_margin(value);
-                    edit_view.borrow().view_item.edit_area.queue_draw();
+                    if let Some(ev) = edit_view.clone() {
+                        ev.borrow().view_item.edit_area.queue_draw();
+                    }
                     margin_spinbutton.set_sensitive(value);
                 }),
             );
@@ -177,7 +179,9 @@ impl PrefsWin {
                 let value = spin_btn.get_value();
                 debug!("{}: {}", gettext("Right hand margin width"), value);
                 set_column_right_margin(value as u32);
-                edit_view.borrow().view_item.edit_area.queue_draw();
+                if let Some(ev) = edit_view.clone() {
+                    ev.borrow().view_item.edit_area.queue_draw();
+                }
             }));
         }
 
@@ -187,7 +191,9 @@ impl PrefsWin {
             highlight_line_checkbutton.connect_toggled(clone!(edit_view => move |toggle_btn| {
                 let value = toggle_btn.get_active();
                 set_highlight_line(value);
-                edit_view.borrow().view_item.edit_area.queue_draw();
+                if let Some(ev) = edit_view.clone() {
+                    ev.borrow().view_item.edit_area.queue_draw();
+                }
             }));
         }
 
