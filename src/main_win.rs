@@ -175,10 +175,11 @@ impl MainWin {
                     } else {
                         lang
                     };
-                    let ev = main_win.borrow().get_current_edit_view();
-                    let core = &main_win.borrow().core;
-                    trace!("{} {}", gettext("Setting language to"), &lang);
-                    Self::set_language(&core, &ev.borrow().view_id, &lang);
+                    if let Some(ev) = main_win.borrow().get_current_edit_view() {
+                        let core = &main_win.borrow().core;
+                        trace!("{} {}", gettext("Setting language to"), &lang);
+                        Self::set_language(&core, &ev.borrow().view_id, &lang);
+                    }
                 }
             });
         }
@@ -563,22 +564,23 @@ impl MainWin {
             id,
             params
         );
-        let request: Vec<MeasureWidth> = serde_json::from_value(params).unwrap();
-        let edit_view = self.get_current_edit_view();
+        if let Some(ev) = self.get_current_edit_view() {
+            let request: Vec<MeasureWidth> = serde_json::from_value(params).unwrap();
 
-        let mut widths = Vec::new();
+            let mut widths = Vec::new();
 
-        for mes_width in &request {
-            for string in &mes_width.strings {
-                widths.push(edit_view.borrow().line_width(string))
+            for mes_width in &request {
+                for string in &mes_width.strings {
+                    widths.push(ev.borrow().line_width(string))
+                }
             }
-        }
-        //let widths: Vec<f64> = request.iter().map(|x| x.strings.iter().map(|v| edit_view.borrow().line_width(&v)).collect::<Vec<f64>>()).collect();
+            //let widths: Vec<f64> = request.iter().map(|x| x.strings.iter().map(|v| edit_view.borrow().line_width(&v)).collect::<Vec<f64>>()).collect();
 
-        if let Some(id) = id {
-            self.core
-                .borrow()
-                .send_result(id, &serde_json::to_value(vec![widths]).unwrap());
+            if let Some(id) = id {
+                self.core
+                    .borrow()
+                    .send_result(id, &serde_json::to_value(vec![widths]).unwrap());
+            }
         }
     }
 
@@ -650,20 +652,22 @@ impl MainWin {
     }
 
     pub fn handle_save_button(main_win: &Rc<RefCell<Self>>) {
-        let edit_view = main_win.borrow().get_current_edit_view().clone();
-        if edit_view.borrow().file_name.is_some() {
-            let ev = edit_view.borrow_mut();
-            let core = main_win.borrow().core.clone();
-            core.borrow()
-                .save(&ev.view_id, ev.file_name.as_ref().unwrap());
-        } else {
-            Self::save_as(main_win, &edit_view);
+        if let Some(edit_view) = main_win.borrow().get_current_edit_view() {
+            if edit_view.borrow().file_name.is_some() {
+                let ev = edit_view.borrow_mut();
+                let core = main_win.borrow().core.clone();
+                core.borrow()
+                    .save(&ev.view_id, ev.file_name.as_ref().unwrap());
+            } else {
+                Self::save_as(main_win, &edit_view);
+            }
         }
     }
 
     fn current_save_as(main_win: &Rc<RefCell<Self>>) {
-        let edit_view = main_win.borrow().get_current_edit_view().clone();
-        Self::save_as(main_win, &edit_view);
+        if let Some(edit_view) = main_win.borrow().get_current_edit_view() {
+            Self::save_as(main_win, &edit_view);
+        }
     }
 
     /// Display the FileChooserNative, send the result to the Xi core.
@@ -726,7 +730,7 @@ impl MainWin {
             &main_win.window,
             &main_state,
             &core,
-            &main_win.get_current_edit_view(),
+            main_win.get_current_edit_view(),
         );
     }
 
@@ -735,24 +739,27 @@ impl MainWin {
     }
 
     fn find(main_win: &Rc<RefCell<Self>>) {
-        let edit_view = main_win.borrow().get_current_edit_view().clone();
-        edit_view.borrow().start_search();
+        if let Some(edit_view) = main_win.borrow().get_current_edit_view() {
+            edit_view.borrow().start_search();
+        }
     }
 
     fn replace(main_win: &Rc<RefCell<Self>>) {
-        let edit_view = main_win.borrow().get_current_edit_view().clone();
-        edit_view.borrow().start_replace();
+        if let Some(edit_view) = main_win.borrow().get_current_edit_view() {
+            edit_view.borrow().start_replace();
+        }
     }
 
-    fn get_current_edit_view(&self) -> Rc<RefCell<EditView>> {
+    fn get_current_edit_view(&self) -> Option<Rc<RefCell<EditView>>> {
         if let Some(idx) = self.notebook.get_current_page() {
             if let Some(w) = self.notebook.get_nth_page(Some(idx)) {
                 if let Some(edit_view) = self.w_to_ev.get(&w) {
-                    return edit_view.clone();
+                    return Some(edit_view.clone());
                 }
             }
         }
-        unreachable!(gettext("Failed to get the current EditView"));
+        warn!("{}", gettext("Couldn't get current EditView. This may only mean that you don't have an editing tab open right now."));
+        None
     }
 
     fn req_new_view(&self, file_name: Option<&str>) {
@@ -854,8 +861,11 @@ impl MainWin {
 
     fn close(main_win: &Rc<RefCell<Self>>) -> SaveAction {
         trace!("{}", gettext("Closing current Editview"));
-        let edit_view = main_win.borrow().get_current_edit_view();
-        Self::close_view(&main_win, &edit_view)
+        if let Some(edit_view) = main_win.borrow().get_current_edit_view() {
+            Self::close_view(&main_win, &edit_view)
+        } else {
+            SaveAction::Cancel
+        }
     }
 
     fn close_view(main_win: &Rc<RefCell<Self>>, edit_view: &Rc<RefCell<EditView>>) -> SaveAction {
