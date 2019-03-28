@@ -9,7 +9,7 @@ use gdk::*;
 use gettextrs::gettext;
 use glib::{source, MainContext};
 use gtk::{self, *};
-use log::{debug, error, trace};
+use log::{debug, error, trace, warn};
 use pango::{self, ContextExt, LayoutExt, *};
 use pangocairo::functions::*;
 use serde_json::Value;
@@ -1130,19 +1130,22 @@ impl EditView {
         }
 
         {
-            let cur_left = self.edit_font.font_width * (col as f64) - self.edit_font.font_ascent;
-            let cur_right = cur_left + self.edit_font.font_width * 2.0;
-            let hadj = self.view_item.horiz_bar.get_adjustment();
-            if cur_left < hadj.get_value() {
-                hadj.set_value(cur_left);
-            } else if cur_right > hadj.get_value() + hadj.get_page_size()
-                && hadj.get_page_size() != 0.0
-            {
-                let new_value = hadj.get_page_size() - cur_right;
-                if new_value + hadj.get_page_size() > hadj.get_upper() {
-                    hadj.set_upper(new_value + hadj.get_page_size());
+            if let Some(line) = self.line_cache.get_line(line) {
+                let mut line_text = line.text().to_string();
+                line_text.truncate(col as usize);
+                let line_length = self.line_width(&line_text);
+                let hadj = self.view_item.horiz_bar.get_adjustment();
+                if line_length > hadj.get_value() + hadj.get_page_size()
+                    && hadj.get_page_size() != 0.0
+                {
+                    hadj.set_upper(line_length + 20.0);
+                    hadj.set_value(line_length - hadj.get_page_size());
+                } else if line_length != 0.0 {
+                    hadj.set_upper(line_length);
+                    hadj.set_value(line_length - hadj.get_page_size())
                 }
-                hadj.set_value(new_value);
+            } else {
+                warn!("{}", gettext("Couldn't update hscrollbar value because I couldn't get the line to scroll to!"));
             }
         }
     }
