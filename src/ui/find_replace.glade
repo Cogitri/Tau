@@ -4,6 +4,7 @@
   <requires lib="gtk+" version="3.20"/>
   <object class="GtkPopover" id="search_popover">
     <property name="can_focus">False</property>
+    <property name="modal">False</property>
     <child>
       <object class="GtkSearchBar" id="search_bar">
         <property name="visible">True</property>
