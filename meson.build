@@ -20,8 +20,6 @@ gxi_plugin_dir = join_paths(gxi_prefix, get_option('libdir'), 'gxi', 'plugins')
 gxi_podir = join_paths(meson.current_source_dir(), 'po')
 
 i18n = import('i18n')
-subdir('data')
-subdir('po')
 
 cargo = find_program('cargo', required: false)
 gresource = find_program('glib-compile-resources', required: false)
@@ -44,6 +42,27 @@ else
   gtk3_22='false'
 endif
 
+if get_option('profile') == 'development'
+  profile = 'devel'
+  name_suffix = ' (Development)'
+  vcs_tag = run_command('git', 'rev-parse', '--short', 'HEAD').stdout().strip()
+  if vcs_tag == ''
+    version_suffix = '-devel'
+  else
+    version_suffix = '-@0@'.format (vcs_tag)
+  endif
+else
+  profile = ''
+  name_suffix = ''
+  version_suffix = ''
+endif
+
+application_id = 'com.github.Cogitri.gxi'
+
+if profile != ''
+  application_id = application_id + '.@0@'.format(profile)
+endif
+
 custom_target('cargo-build-gxi',
                         build_by_default: true,
                         build_always_stale: true,
@@ -62,7 +81,10 @@ custom_target('cargo-build-gxi',
                                   gtk3_22,
                                   gxi_plugin_dir,
                                   gxi_localedir,
-                                  meson.project_version(),
+                                  meson.project_version() + version_suffix,
+                                  application_id,
+                                  get_option('profile'),
+                                  'gxi' + name_suffix,
                                  ])
 
 syntect_build_path = join_paths(meson.current_source_dir(), 'vendor', 'xi-editor', 'rust', 'syntect-plugin')
@@ -105,7 +127,10 @@ custom_target('cargo-build-syntect',
                                   '',
                                   gxi_plugin_dir,
                                   gxi_localedir,
-                                  meson.project_version(),
+                                  meson.project_version() + version_suffix,
+                                  application_id,
+                                  get_option('profile'),
+                                  'gxi' + name_suffix,
                                  ])
 
 synctect_assets = ['assets/Makefile.toml', 'assets/YAML.toml', 'manifest.toml']
@@ -124,6 +149,9 @@ run_target(
   'release',
   command: ['scripts/release.sh', meson.project_name(), meson.project_version()]
 )
+
+subdir('data')
+subdir('po')
 
 test(
   'cargo test',

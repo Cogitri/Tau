@@ -16,3 +16,13 @@ macro_rules! clone {
         }
     );
 }
+
+#[macro_export]
+macro_rules! app_id {
+    () => {
+        crate::globals::APP_ID.unwrap_or("com.github.Cogitri.gxi.devel")
+    };
+    (id => $e:expr) => {
+        crate::globals::APP_ID.unwrap_or(id)
+    };
+}

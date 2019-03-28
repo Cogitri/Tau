@@ -1,5 +1,4 @@
 use crate::errors::Error;
-use crate::globals::APP_ID;
 use gettextrs::gettext;
 use gio::{Settings, SettingsExt, SettingsSchemaSource};
 use log::{debug, error, trace, warn};
@@ -279,14 +278,14 @@ impl GSchemaExt<u32> for GSchema {
 }
 
 pub fn get_theme_schema() -> String {
-    GSchema::get(APP_ID, "theme-name").unwrap_or_else(|| {
+    GSchema::get(app_id!(), "theme-name").unwrap_or_else(|| {
         warn!("Couldn't find GSchema! Defaulting to default theme.");
         "InspiredGitHub".to_string()
     })
 }
 
 pub fn set_theme_schema(theme_name: String) {
-    GSchema::set(APP_ID, "theme-name", theme_name);
+    GSchema::set(app_id!(), "theme-name", theme_name);
 }
 
 pub fn get_default_monospace_font_schema() -> String {
@@ -304,45 +303,45 @@ pub fn get_default_interface_font_schema() -> String {
 }
 
 pub fn get_draw_trailing_spaces_schema() -> bool {
-    GSchema::get(APP_ID, "draw-trailing-spaces").unwrap_or_else(|| {
+    GSchema::get(app_id!(), "draw-trailing-spaces").unwrap_or_else(|| {
         warn!("Couldn't find GSchema! Defaulting to not drawing tabs!");
         false
     })
 }
 
 pub fn set_draw_trailing_spaces_schema(val: bool) {
-    GSchema::set(APP_ID, "draw-trailing-spaces", val);
+    GSchema::set(app_id!(), "draw-trailing-spaces", val);
 }
 
 pub fn get_draw_right_margin() -> bool {
-    GSchema::get(APP_ID, "draw-right-margin").unwrap_or_else(|| {
+    GSchema::get(app_id!(), "draw-right-margin").unwrap_or_else(|| {
         warn!("Couldn't find GSchema! Defaulting to not drawing a right hand margin!");
         false
     })
 }
 
 pub fn set_draw_right_margin(val: bool) {
-    GSchema::set(APP_ID, "draw-right-margin", val);
+    GSchema::set(app_id!(), "draw-right-margin", val);
 }
 
 pub fn get_column_right_margin() -> u32 {
-    GSchema::get(APP_ID, "column-right-margin").unwrap_or_else(|| {
+    GSchema::get(app_id!(), "column-right-margin").unwrap_or_else(|| {
         warn!("Couldn't find GSchema! Defaulting to drawing right hand marging at column 80");
         80
     })
 }
 
 pub fn set_column_right_margin(val: u32) {
-    GSchema::set(APP_ID, "column-right-margin", val);
+    GSchema::set(app_id!(), "column-right-margin", val);
 }
 
 pub fn get_highlight_line() -> bool {
-    GSchema::get(APP_ID, "highlight-line").unwrap_or_else(|| {
+    GSchema::get(app_id!(), "highlight-line").unwrap_or_else(|| {
         warn!("Couldn't find GSchema! Defaulting to not highlighting the current line");
         false
     })
 }
 
 pub fn set_highlight_line(val: bool) {
-    GSchema::set(APP_ID, "highlight-line", val);
+    GSchema::set(app_id!(), "highlight-line", val);
 }
