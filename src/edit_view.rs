@@ -892,7 +892,9 @@ impl EditView {
             }
         }
 
-        hadj.set_upper(f64::from(max_width / pango::SCALE));
+        let padding = self.edit_font.font_width * 4.0;
+
+        hadj.set_upper(f64::from(max_width / pango::SCALE) + padding);
 
         Inhibit(false)
     }
@@ -1134,15 +1136,16 @@ impl EditView {
                 let mut line_text = line.text().to_string();
                 line_text.truncate(col as usize);
                 let line_length = self.line_width(&line_text);
+                let padding = self.edit_font.font_width * 4.0;
                 let hadj = self.view_item.horiz_bar.get_adjustment();
                 if line_length > hadj.get_value() + hadj.get_page_size()
                     && hadj.get_page_size() != 0.0
                 {
-                    hadj.set_upper(line_length + 20.0);
-                    hadj.set_value(line_length - hadj.get_page_size());
+                    hadj.set_upper(line_length + padding);
+                    hadj.set_value(line_length - hadj.get_page_size() + padding);
                 } else if line_length != 0.0 {
-                    hadj.set_upper(line_length);
-                    hadj.set_value(line_length - hadj.get_page_size())
+                    hadj.set_upper(line_length + padding);
+                    hadj.set_value(line_length - hadj.get_page_size() + padding)
                 }
             } else {
                 warn!("{}", gettext("Couldn't update hscrollbar value because I couldn't get the line to scroll to!"));
