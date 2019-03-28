@@ -2,3 +2,6 @@
 	path = vendor/xi-editor
 	url = https://github.com/xi-editor/xi-editor
 	ignore = dirty
+[submodule "data/flatpak"]
+	path = data/flatpak
+	url = https://github.com/flathub/com.github.Cogitri.gxi/
