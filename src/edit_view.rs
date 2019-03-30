@@ -1,4 +1,4 @@
-use crate::linecache::{Line, LineCache};
+use crate::linecache::{Line, LineCache, StyleSpan};
 use crate::main_win::MainState;
 use crate::pref_storage::*;
 use crate::rpc::Core;
@@ -171,6 +171,18 @@ impl ViewItem {
             .get_pango_context()
             .unwrap_or_else(|| panic!("{}", &gettext("Failed to get Pango context")))
     }
+}
+
+/// Returned by `EditView::get_text_size()` and used to adjust the scrollbars.
+pub struct TextSize {
+    /// The height of the entire document
+    height: f64,
+    /// The width of the entire document
+    width: f64,
+    /// If the height of the document is contained within the edit_area (if it's smaller)
+    contained_height: bool,
+    /// If the width of the document is contained within the edit_area (if it's smaller)
+    contained_width: bool,
 }
 
 /// The EditView is the part of gxi that does the actual editing. This is where you edit documents.
@@ -585,17 +597,10 @@ impl EditView {
         let update = &params["update"];
         self.line_cache.apply_update(update);
 
-        // let (text_width, text_height) = self.get_text_size();
-        // debug!("{}{}", text_width, text_height);
-        // let (lwidth, lheight) = self.layout.get_size();
-        // debug!("{}{}", lwidth, lheight);
-        // if (lwidth as f64) < text_width || (lheight as f64) < text_height {
-        //     error!("hi");
-        //     self.layout.set_size(text_width as u32 * 2, text_height as u32 * 2);
-        // }
-
         // update scrollbars to the new text width and height
-        let (_, text_height) = self.get_text_size();
+        let text_size = self.get_text_size();
+        let text_height = text_size.height;
+        let text_width = text_size.width;
         let vadj = self.view_item.verti_bar.get_adjustment();
         vadj.set_lower(0_f64);
         vadj.set_upper(text_height as f64);
@@ -603,12 +608,17 @@ impl EditView {
             vadj.set_value(vadj.get_upper() - vadj.get_page_size())
         }
 
-        // let hadj = self.view_item.horiz_bar.get_adjustment();
-        // hadj.set_lower(0f64);
-        // hadj.set_upper(text_width as f64);
-        // if hadj.get_value() + hadj.get_page_size() > hadj.get_upper() {
-        //     hadj.set_value(hadj.get_upper() - hadj.get_page_size())
-        // }
+        let hadj = self.view_item.horiz_bar.get_adjustment();
+        hadj.set_lower(0f64);
+        let text_width = if text_size.contained_width {
+            text_width
+        } else {
+            text_width + self.edit_font.font_width * 4.0
+        };
+        hadj.set_upper(text_width);
+        if hadj.get_value() + hadj.get_page_size() > hadj.get_upper() {
+            hadj.set_value(hadj.get_upper() - hadj.get_page_size())
+        }
 
         if let Some(pristine) = update["pristine"].as_bool() {
             if self.pristine != pristine {
@@ -733,13 +743,17 @@ impl EditView {
     }
 
     /// Returns the width&height of the entire document
-    fn get_text_size(&self) -> (f64, f64) {
+    fn get_text_size(&self) -> TextSize {
         trace!(
             "{} 'get_text_size' {} '{}'",
             gettext("Handling"),
             gettext("for EditView"),
             self.view_id
         );
+
+        let mut contained_height = false;
+        let mut contained_width = false;
+
         let da_width = f64::from(self.view_item.edit_area.get_allocated_width());
         let da_height = f64::from(self.view_item.edit_area.get_allocated_height());
         let num_lines = self.line_cache.height();
@@ -747,18 +761,46 @@ impl EditView {
         let all_text_height =
             num_lines as f64 * self.edit_font.font_height + self.edit_font.font_descent;
         let height = if da_height > all_text_height {
+            contained_height = true;
             da_height
         } else {
             all_text_height
         };
 
-        let all_text_width = self.line_cache.width() as f64 * self.edit_font.font_width;
-        let width = if da_width > all_text_width {
+        let vadj = self.view_item.verti_bar.get_adjustment();
+        let first_line = (vadj.get_value() / self.edit_font.font_height) as u64;
+        let last_line = (vadj.get_value() + da_height / self.edit_font.font_height) as u64 + 1;
+        let last_line = min(last_line, num_lines);
+        // Set this to pango::SCALE, we divide by that later on.
+        let mut max_width = pango::SCALE;
+
+        let pango_ctx = self.view_item.get_pango_ctx();
+
+        // Determine the longest line as per Pango. Creating layouts with Pango here is kind of expensive
+        // here, but it's hard determining an accurate width otherwise.
+        for i in first_line..last_line {
+            if let Some(line) = self.line_cache.get_line(i) {
+                let layout =
+                    self.create_layout_for_line(&pango_ctx, &self.main_state.borrow(), line);
+                max_width = max(max_width, layout.get_extents().1.width);
+            }
+        }
+
+        let render_width = f64::from(max_width / pango::SCALE);
+
+        let width = if da_width > render_width {
+            contained_width = true;
             da_width
         } else {
-            all_text_width
+            render_width
         };
-        (width, height)
+
+        TextSize {
+            width,
+            height,
+            contained_height,
+            contained_width,
+        }
     }
 
     /// Handles the drawing of the EditView. This is called when we get a update from xi-editor or if
@@ -828,9 +870,6 @@ impl EditView {
 
         set_source_color(cr, theme.foreground);
 
-        // This can't be 0, otherwise our Scrollbar bugs out. pango::SCALE is the smallest number it accepts
-        let mut max_width = pango::SCALE;
-
         let main_state = self.main_state.borrow();
 
         for i in first_line..last_line {
@@ -854,9 +893,7 @@ impl EditView {
                 );
 
                 let pango_ctx = self.view_item.get_pango_ctx();
-
                 let layout = self.create_layout_for_line(&pango_ctx, &main_state, line);
-                max_width = max(max_width, layout.get_extents().1.width);
                 // debug!("width={}", layout.get_extents().1.width);
                 update_layout(cr, &layout);
                 show_layout(cr, &layout);
@@ -891,10 +928,6 @@ impl EditView {
                 }
             }
         }
-
-        let padding = self.edit_font.font_width * 4.0;
-
-        hadj.set_upper(f64::from(max_width / pango::SCALE) + padding);
 
         Inhibit(false)
     }
@@ -1117,35 +1150,87 @@ impl EditView {
             line,
             col
         );
+
         {
-            let cur_top =
-                self.edit_font.font_height * ((line + 1) as f64) - self.edit_font.font_ascent;
-            let cur_bottom = cur_top + self.edit_font.font_ascent + self.edit_font.font_descent;
+            // The new height is the current last line + 1
+            let new_height = self.edit_font.font_height * line as f64;
+            let padding = self.edit_font.font_height * 4.0;
+            // The font height doesn't include these, so we have to add them for the last line
             let vadj = self.view_item.verti_bar.get_adjustment();
-            if cur_top < vadj.get_value() {
-                vadj.set_value(cur_top);
-            } else if cur_bottom > vadj.get_value() + vadj.get_page_size()
+            // If the cursor above our current view, this is true. Scroll a bit higher than necessary
+            // to make sure that during find the text isn't right at the edge of the view.
+            if new_height < vadj.get_value() {
+                vadj.set_value(new_height - padding);
+            // If it's below out current view, this is true. Scroll a bit lower than neccessary
+            // for the same reasons cited above.
+            } else if new_height + padding > vadj.get_value() + vadj.get_page_size()
                 && vadj.get_page_size() != 0.0
             {
-                vadj.set_value(cur_bottom - vadj.get_page_size());
+                vadj.set_value(
+                    new_height
+                        + self.edit_font.font_height
+                        + padding
+                        // These two aren't included in the font height and we need them to line up with the line
+                        + self.edit_font.font_ascent
+                        + self.edit_font.font_descent
+                        - vadj.get_page_size(),
+                );
             }
         }
 
         {
+            // Collect all styles with id 0/1 (selections/find results) to make sure they're in the frame
             if let Some(line) = self.line_cache.get_line(line) {
+                let line_selections: Vec<&StyleSpan> = line
+                    .styles
+                    .iter()
+                    .filter(|s| s.id == 0 || s.id == 1)
+                    .collect();
+
+                let mut begin_selection = None;
+                let mut end_selection = None;
+
+                for x in line_selections {
+                    if let Some(cur) = begin_selection {
+                        // Make sure to use the lowest value of any selection so it's in the view
+                        begin_selection = Some(min(cur, x.start));
+                    } else {
+                        begin_selection = Some(x.start);
+                    }
+                    if let Some(cur) = end_selection {
+                        // Make sure to use the highest value of any selection so it's in the view
+                        end_selection = Some(max(cur, x.start + x.len as i64));
+                    } else {
+                        end_selection = Some(x.start + x.len as i64);
+                    }
+                }
+
                 let mut line_text = line.text().to_string();
+                // Only measure width up to the right column
                 line_text.truncate(col as usize);
                 let line_length = self.line_width(&line_text);
                 let padding = self.edit_font.font_width * 4.0;
                 let hadj = self.view_item.horiz_bar.get_adjustment();
-                if line_length > hadj.get_value() + hadj.get_page_size()
+
+                let min = min(
+                    begin_selection.unwrap_or(line_length as i64),
+                    line_length as i64,
+                ) as f64;
+                let max = max(
+                    end_selection.unwrap_or(line_length as i64),
+                    line_length as i64,
+                ) as f64;
+
+                trace!("Horizontal scrolling to min: {}; max: {}", min, max);
+
+                // If the cursor/selection is to the left of our current view, this is true
+                if min < hadj.get_value() {
+                    hadj.set_value(min - padding);
+                // If the cursor/selection is to the right of our current view, this is true
+                } else if max > hadj.get_value() + hadj.get_page_size()
                     && hadj.get_page_size() != 0.0
                 {
-                    hadj.set_upper(line_length + padding);
-                    hadj.set_value(line_length - hadj.get_page_size() + padding);
-                } else if line_length != 0.0 {
-                    hadj.set_upper(line_length + padding);
-                    hadj.set_value(line_length - hadj.get_page_size() + padding)
+                    hadj.set_value(max - hadj.get_page_size() + padding);
                 }
             } else {
                 warn!("{}", gettext("Couldn't update hscrollbar value because I couldn't get the line to scroll to!"));
