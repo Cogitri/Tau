@@ -23,6 +23,7 @@ ginst build.rs \
 	Cargo.lock \
 	meson.build \
 	meson_post_install.sh \
+	meson_options.txt \
 	LICENSE \
 	README.md \
 	scripts \
