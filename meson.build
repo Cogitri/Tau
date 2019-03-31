@@ -1,6 +1,6 @@
 project(
   'gxi', 'rust',
-  version: '0.5.5',
+  version: '0.6.0',
   license: 'MIT',
 )
 

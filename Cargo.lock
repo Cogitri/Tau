@@ -615,7 +615,7 @@ dependencies = [
 
 [[package]]
 name = "gxi"
-version = "0.5.5"
+version = "0.6.0"
 dependencies = [
  "cairo-rs 0.6.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "cargo-husky 1.3.0 (registry+https://github.com/rust-lang/crates.io-index)",

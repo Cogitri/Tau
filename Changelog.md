@@ -1,3 +1,35 @@
+## Changes in v0.6.0
+
+### Feature changes
+
+ - (rpc): display an ErrorDialog if Xi send 'error'
+ - (edit_view): use Popover to make the FindReplace Dialog smaller
+ - (edit_view): add regex search option
+ - (edit_view): highlight current line
+ - (main): if RUST_LOG isn't set, set default log level to Warn
+ - (main_win): set Ctrl+W as shortcut for closing the current tab
+ - (*): better trace logging
+
+### Bugfixes
+
+ - (edit_view): show close button of the search_bar
+ - (edit_view): don't set upper limits during draw/scroll but during update
+ - (edit_view): add padding to hadj when scrolling to the right
+ - (edit_view): fixup scrolling horizontally when the cursor moves out of the window
+ - (ui): don't make FindReplace popover modal
+ - (main_win): get_current_edit_view _can_ return no EditView
+ - (errors): partially revert 91b8da70556bfab2ccd1b3e4c3d295b5e0fb50e7
+ - (edit_view): don't request a specific size for the linecount height
+ - (appdata): spelling: on thesave -> in it, It
+ - (i18n): update lang (Norwegian Bokmål)
+ - (main): only enable Warn logging for gxi itself by default
+ - (i18n): update translations
+ - (main_win): make actions easier to translate
+ - (about_win): update website, fix translator_credits
+ - (xi_thread): log errors in sending messages to Xi
+ - (edit_view|rpc): use glib::MainContext::channel for cut&copy operations
+ - (errors): also display ErrorMsgs on console
+
 ## Changes in v0.5.5
 
 ### Feature changes

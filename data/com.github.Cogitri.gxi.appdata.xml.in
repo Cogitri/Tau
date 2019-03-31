@@ -32,6 +32,19 @@
 	</provides>
 
 	<releases>
+		<release version="0.6.0" date="2019-03-31">
+			<description>
+				<p>Changes in this release:</p>
+					<ul>
+						<li>display an ErrorDialog if Xi sends 'error'</li>
+						<li>Rework the FindReplace dialog to be more compact</li>
+						<li>Add a regex, case sensitive and whole word matching option to the find dialog</li>
+						<li>Set Ctrl+W as shortcut for closing the current tab</li>
+						<li>Makes cut/copy operations non-blocking (fixes copy/paste when word-wrap is enabled)</li>
+						<li>Rework how the value/upper of the scrollbars is determined. This fixes scrolling when the cursor gets out of the view.</li>
+					</ul>
+			</description>
+		</release>
 		<release version="0.5.5" date="2019-03-18">
 			<description>
 				<p>This release adds an option for creating a right hand margin. It uses a different save dialog, and fixes pressing 'Cancel' in it.</p>

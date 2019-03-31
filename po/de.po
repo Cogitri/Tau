@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gxi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-20 12:42+0100\n"
-"PO-Revision-Date: 2019-03-20 12:42+0100\n"
+"POT-Creation-Date: 2019-03-31 12:51+0200\n"
+"PO-Revision-Date: 2019-03-31 12:55+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -40,14 +40,53 @@ msgid "Rasmus \"Cogitri\" Thomsen"
 msgstr "Rasmus \"Cogitri\" Thomsen"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:37
+msgid "Changes in this release:"
+msgstr "Änderungen in diesem Release"
+
+#: data/com.github.Cogitri.gxi.appdata.xml.in:39
+msgid "display an ErrorDialog if Xi sends 'error'"
+msgstr "Zeige einen Fehlerdialog an, wenn uns Xi 'error' sendet"
+
+#: data/com.github.Cogitri.gxi.appdata.xml.in:40
+msgid "Rework the FindReplace dialog to be more compact"
+msgstr "Der Suchdialog wurde überarbeitet, um kleiner zu sein"
+
+#: data/com.github.Cogitri.gxi.appdata.xml.in:41
 msgid ""
-"This release adds an option for creating a right hand margin, uses a "
-"different save dialog and fixes pressing 'Cancel' on thesave dialog."
+"Add a regex, case sensitive and whole word matching option to the find dialog"
+msgstr ""
+"Es wurden die Optionen 'regexp', 'Groß- und Kleinschreibung' und 'ganze "
+"Wörter' zum Suchdialog hinzugefügt."
+
+#: data/com.github.Cogitri.gxi.appdata.xml.in:42
+msgid "Set Ctrl+W as shortcut for closing the current tab"
+msgstr "Strg+W ist jetzt das Shortcut, um den momentanen Tab zu schließen."
+
+#: data/com.github.Cogitri.gxi.appdata.xml.in:43
+msgid ""
+"Makes cut/copy operations non-blocking (fixes copy/paste when word-wrap is "
+"enabled)"
+msgstr ""
+"Ausschneiden/Kopieren blockiert nicht mehr die Applikation (das behebt das "
+"Ausschneiden/Kopieren wenn Linienumbruch aktiviert ist)"
+
+#: data/com.github.Cogitri.gxi.appdata.xml.in:44
+msgid ""
+"Rework how the value/upper of the scrollbars is determined. This fixes "
+"scrolling when the cursor gets out of the view."
+msgstr ""
+"Eine komplette Überarbeitung, wie die Scrollbars funktionieren. Dadurch "
+"folgt das Dokument jetzt dem Cursor, wenn dieser nicht mehr sichtbar ist."
+
+#: data/com.github.Cogitri.gxi.appdata.xml.in:50
+msgid ""
+"This release adds an option for creating a right hand margin. It uses a "
+"different save dialog, and fixes pressing 'Cancel' in it."
 msgstr ""
 "Dieses Release fügt eine Option hinzu, um rechts einen Rand anzuzeigen, "
 "ändert den Speicher-Dialog und behebt das pressen von 'Abbrechen' in diesem."
 
-#: data/com.github.Cogitri.gxi.appdata.xml.in:42
+#: data/com.github.Cogitri.gxi.appdata.xml.in:55
 msgid ""
 "This release made the linecount nicer (as in more visible/readable). gxi "
 "also offers a Norwegian Bokmål translation."
@@ -55,7 +94,7 @@ msgstr ""
 "Dieses Release macht die Zeilenangabe besser lesbar. gxi bietet jetzt auch "
 "eine Norwegische Übersetzung an."
 
-#: data/com.github.Cogitri.gxi.appdata.xml.in:47
+#: data/com.github.Cogitri.gxi.appdata.xml.in:60
 msgid ""
 "Ask user if changes should be saved upon closing. Also makes panics more "
 "readable."
@@ -63,7 +102,7 @@ msgstr ""
 "Fragt den Benutzer, ob Änderungen beim schließen gespeichert werden soll. "
 "Außerdem verbessert es die Lesbarkeit von panics."
 
-#: data/com.github.Cogitri.gxi.appdata.xml.in:52
+#: data/com.github.Cogitri.gxi.appdata.xml.in:65
 msgid ""
 "This release fixes the linecount upon deleting lines and fixes some crashes. "
 "It also adds a new icon."
@@ -71,46 +110,46 @@ msgstr ""
 "Mit diesem Release hat gxi ein neues Icon bekommen. Außerdem wird nun die "
 "richtige Linienzahl angezeigt, wenn eine Linie gelöscht wurde."
 
-#: data/com.github.Cogitri.gxi.appdata.xml.in:60
+#: data/com.github.Cogitri.gxi.appdata.xml.in:73
 msgid "This release fixes the build without appstream-util."
 msgstr "Dieses Releases behebt das bauen der Applikation ohne appstream-util."
 
-#: data/com.github.Cogitri.gxi.appdata.xml.in:65
+#: data/com.github.Cogitri.gxi.appdata.xml.in:78
 msgid "This release contains the following feature changes:"
 msgstr "Dieses Release beinhaltet die folgenden Verbesserungen:"
 
-#: data/com.github.Cogitri.gxi.appdata.xml.in:67
+#: data/com.github.Cogitri.gxi.appdata.xml.in:80
 msgid "(shared_queue): more verbose trace logging"
 msgstr "(shared_queue): Besseres trace logging"
 
-#: data/com.github.Cogitri.gxi.appdata.xml.in:68
+#: data/com.github.Cogitri.gxi.appdata.xml.in:81
 msgid "(main_win): use a thread to handle CoreMsgs instead of add_idle"
 msgstr "(main_win): Nutze einen thread um CoreMsg zu behandeln"
 
-#: data/com.github.Cogitri.gxi.appdata.xml.in:69
+#: data/com.github.Cogitri.gxi.appdata.xml.in:82
 msgid "(main): display error window if xi-editor crashes"
 msgstr "(main): Zeige ein Fehler an, wenn xi-editor crashed"
 
-#: data/com.github.Cogitri.gxi.appdata.xml.in:70
+#: data/com.github.Cogitri.gxi.appdata.xml.in:83
 msgid ""
 "(edit_view): add newline to end of the file if it doesn't terminate with one"
 msgstr ""
 "(edit_view): Füge eine neue Linie dem Dokument hinzu, falls es nicht mit "
 "einer endet"
 
-#: data/com.github.Cogitri.gxi.appdata.xml.in:71
+#: data/com.github.Cogitri.gxi.appdata.xml.in:84
 msgid "(edit_view): only draw trailing spaces"
 msgstr "(edit_view): Zeige nur nachhängende Leerzeichen an"
 
-#: data/com.github.Cogitri.gxi.appdata.xml.in:72
+#: data/com.github.Cogitri.gxi.appdata.xml.in:85
 msgid "(shared_queue): also use for sending stuff to xi"
 msgstr "(shared_queue): Nutze sie auch um Nachrichten zu xi zu senden"
 
-#: data/com.github.Cogitri.gxi.appdata.xml.in:73
+#: data/com.github.Cogitri.gxi.appdata.xml.in:86
 msgid "(gettext): build against system gettext"
 msgstr "(gettext): Benutze das gettext des Systems"
 
-#: data/com.github.Cogitri.gxi.appdata.xml.in:79
+#: data/com.github.Cogitri.gxi.appdata.xml.in:92
 msgid ""
 "Fix hangs during startup, add 'Replace…' button and shortcut. Adds an option "
 "to visually draw spaces/tabs"
@@ -119,7 +158,7 @@ msgstr ""
 "wurde ein Knopf (und Shortcut) für Finden+Ersetzen hinzugefügt und eine "
 "Option um Leerzeichen und Tabs anzuzeigen"
 
-#: data/com.github.Cogitri.gxi.appdata.xml.in:84
+#: data/com.github.Cogitri.gxi.appdata.xml.in:97
 msgid ""
 "Use FileChooserNative instead of FileChooserDialog, fixes file opening/"
 "saving in flatpaks."
@@ -128,11 +167,11 @@ msgstr ""
 "funktioniert jetzt das Öffnen/Schließen von Dateien in der Flatpak-Version "
 "von gxi."
 
-#: data/com.github.Cogitri.gxi.appdata.xml.in:89
+#: data/com.github.Cogitri.gxi.appdata.xml.in:102
 msgid "Use GSettings to determine the default font."
 msgstr "GSettings wird nun genutzt, um die Standardschriftart zu bestimmen."
 
-#: data/com.github.Cogitri.gxi.appdata.xml.in:94
+#: data/com.github.Cogitri.gxi.appdata.xml.in:107
 msgid "Use GSettings for GXI config instead of a TOML file, add appdata."
 msgstr ""
 "Jetzt nutzt gxi GSettings statt einer TOML Datei. Außerdem wurde eine ."
@@ -179,6 +218,18 @@ msgstr "Bei welcher Buchstabenanzahl der Rand gezeigt werden soll"
 msgid "Sets the column at which the margin should be drawn"
 msgstr "Setzt die Buchstabenanzahl, bei der der Rand gezeichnet werden soll"
 
+#: data/com.github.Cogitri.gxi.gschema.xml:41
+msgid "Whether the current line should be highlighted"
+msgstr "Ob die momentane Linie hervorgehoben werden soll"
+
+#: data/com.github.Cogitri.gxi.gschema.xml:42
+msgid ""
+"Sets if the current line should be highlighted, which eases navigation "
+"through the document"
+msgstr ""
+"Diese Option setzt, ob die momentane Linie hervorgehoben werden soll, was es "
+"einfach macht durch das Dokument zu navigieren"
+
 #: src/about_win.rs:16
 msgid "GTK frontend for the xi text editor, written in Rust"
 msgstr "Ein in Rust und GTK geschriebenes Frontend für den xi Texteditor"
@@ -195,19 +246,19 @@ msgstr "Rasmus Thomsen"
 msgid "Showing about window"
 msgstr "Zeige das 'über' Fenster"
 
-#: src/main.rs:130
+#: src/main.rs:138
 msgid "Starting gxi"
 msgstr "Starte gxi"
 
-#: src/main.rs:160
+#: src/main.rs:168
 msgid "Activating new view"
 msgstr "Aktiviere eine neue EditView"
 
-#: src/main.rs:177
+#: src/main.rs:185
 msgid "Opening new file"
 msgstr "Öffne eine neue Datei"
 
-#: src/main.rs:200
+#: src/main.rs:208
 msgid "Shutting down…"
 msgstr "Schließe die Applikation…"
 
@@ -240,66 +291,66 @@ msgstr "Klartext"
 msgid "Setting language to"
 msgstr "Setze Sprache zu"
 
-#: src/main_win.rs:188 src/main_win.rs:196 src/main_win.rs:204
-#: src/main_win.rs:212 src/main_win.rs:220 src/main_win.rs:228
-#: src/main_win.rs:236 src/main_win.rs:244 src/main_win.rs:252
-#: src/main_win.rs:260 src/main_win.rs:269 src/main_win.rs:498
-#: src/main_win.rs:506 src/main_win.rs:562 src/main_win.rs:586
-#: src/main_win.rs:599 src/edit_view.rs:432 src/edit_view.rs:497
-#: src/edit_view.rs:577 src/edit_view.rs:630 src/edit_view.rs:656
-#: src/edit_view.rs:826 src/edit_view.rs:1033 src/edit_view.rs:1076
-#: src/edit_view.rs:1139 src/edit_view.rs:1182
+#: src/main_win.rs:189 src/main_win.rs:197 src/main_win.rs:205
+#: src/main_win.rs:213 src/main_win.rs:221 src/main_win.rs:229
+#: src/main_win.rs:237 src/main_win.rs:245 src/main_win.rs:253
+#: src/main_win.rs:261 src/main_win.rs:270 src/main_win.rs:500
+#: src/main_win.rs:508 src/main_win.rs:563 src/main_win.rs:588
+#: src/main_win.rs:601 src/edit_view.rs:533 src/edit_view.rs:599
+#: src/edit_view.rs:677 src/edit_view.rs:730 src/edit_view.rs:756
+#: src/edit_view.rs:947 src/edit_view.rs:1154 src/edit_view.rs:1253
+#: src/edit_view.rs:1316 src/edit_view.rs:1359
 msgid "Handling"
 msgstr "Behandle"
 
-#: src/main_win.rs:188 src/main_win.rs:196 src/main_win.rs:204
-#: src/main_win.rs:212 src/main_win.rs:220 src/main_win.rs:228
-#: src/main_win.rs:236 src/main_win.rs:244 src/main_win.rs:252
-#: src/main_win.rs:260 src/main_win.rs:269
+#: src/main_win.rs:189 src/main_win.rs:197 src/main_win.rs:205
+#: src/main_win.rs:213 src/main_win.rs:221 src/main_win.rs:229
+#: src/main_win.rs:237 src/main_win.rs:245 src/main_win.rs:253
+#: src/main_win.rs:261 src/main_win.rs:270
 msgid "action"
 msgstr "Aktion"
 
-#: src/main_win.rs:272
-msgid "User chose to quit application"
-msgstr "Der Benutzer hat sich entscheiden, die Anwendung zu verlassen"
-
-#: src/main_win.rs:275
+#: src/main_win.rs:273
 msgid "User chose to not quit application"
 msgstr "Der Benutzer hat sich entscheiden, die Anwendung zu verlassen"
 
-#: src/main_win.rs:291
+#: src/main_win.rs:275
+msgid "User chose to quit application"
+msgstr "Der Benutzer hat sich entscheiden, die Anwendung zu verlassen"
+
+#: src/main_win.rs:292
 msgid "Auto indent"
 msgstr "Thema-Name"
 
-#: src/main_win.rs:310
+#: src/main_win.rs:311
 msgid "Space indent"
 msgstr "Einrücken mit Leerzeichen"
 
-#: src/main_win.rs:332
+#: src/main_win.rs:334
 msgid "Showing main window"
 msgstr "Zeige das Hauptfenster"
 
-#: src/main_win.rs:351
+#: src/main_win.rs:353
 msgid "Handling CoreMsg"
 msgstr "Behandle eine CoreMsg"
 
-#: src/main_win.rs:376
+#: src/main_win.rs:378
 msgid "!!! UNHANDLED NOTIFICATION, PLEASE OPEN A BUGREPORT!"
 msgstr "!!! NICHT BEHANDELTE BENACHRICHTIGUNG, BITTE ÖFFNE EINEN BUG-REPORT!"
 
-#: src/main_win.rs:408 src/ui/prefs_win.glade:37
+#: src/main_win.rs:410 src/ui/prefs_win.glade:37
 msgid "Theme"
 msgstr "Thema"
 
-#: src/main_win.rs:410
+#: src/main_win.rs:412
 msgid "isn't available, setting to default"
 msgstr "ist nicht verfügbar, setze zurück zum Standard"
 
-#: src/main_win.rs:429
+#: src/main_win.rs:431
 msgid "Failed to convert theme settings"
 msgstr "Das konvertieren der Thema-Einstellungen ist fehgelschlagen"
 
-#: src/main_win.rs:464
+#: src/main_win.rs:466
 msgid ""
 "Couldn't find syntect plugin, functionality will be limited! Only found the "
 "following plugins"
@@ -307,103 +358,107 @@ msgstr ""
 "Konnte das Syntect-Plugin nicht finden, einige Funktionen werden nicht "
 "funktionieren"
 
-#: src/main_win.rs:536
+#: src/main_win.rs:538
 msgid "has stopped due to an user-initiated exit"
 msgstr "wurde aufgrund des Users angehalten"
 
-#: src/main_win.rs:539
+#: src/main_win.rs:541
 msgid "has crashed with error code"
 msgstr "ist abgestürzt mit dem Fehlercode"
 
-#: src/main_win.rs:542
+#: src/main_win.rs:544
 msgid "has crashed"
 msgstr "ist abgestürzt"
 
-#: src/main_win.rs:548
+#: src/main_win.rs:550
 msgid "Plugin"
 msgstr "Plugin"
 
-#: src/main_win.rs:551
+#: src/main_win.rs:553
 msgid "functionality will be limited"
 msgstr "einige Funktionen werden nicht funktionieren"
 
-#: src/main_win.rs:608
+#: src/main_win.rs:610
 msgid "Changing language to"
 msgstr "Wechsle die Sprache zu"
 
-#: src/main_win.rs:618
+#: src/main_win.rs:620
 msgid "Open a file to edit"
 msgstr "Öffne eine Datei zum editieren"
 
-#: src/main_win.rs:621 src/ui/gxi.glade:266
+#: src/main_win.rs:623 src/ui/gxi.glade:266
 msgid "Open"
 msgstr "Öffnen"
 
-#: src/main_win.rs:622 src/main_win.rs:679 src/main_win.rs:899
+#: src/main_win.rs:624 src/main_win.rs:683 src/main_win.rs:911
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: src/main_win.rs:630
+#: src/main_win.rs:632
 msgid "FileChooserNative open response"
 msgstr "FileChooserNative Öffnungs-Antwort"
 
-#: src/main_win.rs:641
+#: src/main_win.rs:643
 msgid "Couldn't open file"
 msgstr "Konnte Datei nicht öffnen"
 
-#: src/main_win.rs:675
+#: src/main_win.rs:679
 msgid "Save file"
 msgstr "Datei speichern"
 
-#: src/main_win.rs:678 src/main_win.rs:903 src/ui/gxi.glade:307
+#: src/main_win.rs:682 src/main_win.rs:915 src/ui/gxi.glade:307
 msgid "Save"
 msgstr "Speichern"
 
-#: src/main_win.rs:687
+#: src/main_win.rs:691
 msgid "FileChooserNative save response"
 msgstr "FileChooserNative Öffnungs-Antwort"
 
-#: src/main_win.rs:698
+#: src/main_win.rs:702
 msgid "Saving file"
 msgstr "Speichere Datei"
 
-#: src/main_win.rs:705
+#: src/main_win.rs:709
 msgid "Couldn't save file"
 msgstr "Konnte Datei nicht speichern"
 
-#: src/main_win.rs:755
-msgid "Failed to get the current EditView"
-msgstr "Das Erhalten der momentanen EditView ist fehlgeschlagen"
+#: src/main_win.rs:761
+msgid ""
+"Couldn't get current EditView. This may only mean that you don't have an "
+"editing tab open right now."
+msgstr ""
+"Konnte die momentane EditView nicht erhalten. Das kann der Fall sein, wenn "
+"momentan einfach nur kein Tab offen ist."
 
-#: src/main_win.rs:759
+#: src/main_win.rs:766
 msgid "Requesting new view"
 msgstr "Frage neue View an"
 
-#: src/main_win.rs:779 src/edit_view.rs:201
+#: src/main_win.rs:786 src/edit_view.rs:215
 msgid "Creating new EditView"
 msgstr "Erstelle neue EditView"
 
-#: src/main_win.rs:817
+#: src/main_win.rs:826
 msgid "Closing all EditViews"
 msgstr "Schließe alle EditViews"
 
-#: src/main_win.rs:854
+#: src/main_win.rs:863
 msgid "Closing current Editview"
 msgstr "Schließe momentane EditView"
 
-#: src/main_win.rs:862
+#: src/main_win.rs:874
 msgid "Closing Editview"
 msgstr "Schließe EditView"
 
-#: src/main_win.rs:892
+#: src/main_win.rs:904
 msgid "Save unsaved changes"
 msgstr "Speichere nicht gespeicherte Änderungen"
 
-#: src/main_win.rs:895
+#: src/main_win.rs:907
 msgid "Close Without Saving"
 msgstr "Schließe, ohne zu speichern"
 
-#: src/main_win.rs:918
+#: src/main_win.rs:930
 msgid "Save dialog has been destroyed before the user clicked a button"
 msgstr ""
 "Der Speicher-Dialog wurde geschlossen, ohne, dass ein Knopf gedrückt wurde"
@@ -526,25 +581,49 @@ msgstr "Breche Zeilen am Rand um, anstatt horizontal zu scrollen"
 msgid "Display right margin at the column:"
 msgstr "Zeige Rand auf der rechten Seite bei Buchstabenanzahl:"
 
-#: src/ui/prefs_win.glade:228
+#: src/ui/prefs_win.glade:221
+msgid "Highlight the current line"
+msgstr "Hebe die momentane Linie hervor"
+
+#: src/ui/prefs_win.glade:243
 msgid "Editing"
 msgstr "Textbearbeitung"
 
-#: src/ui/find_replace.glade:59
+#: src/ui/find_replace.glade:32
 msgid "Find"
 msgstr "Finden"
 
-#: src/ui/find_replace.glade:121
-msgid "No Results"
-msgstr "Keine Ergebnisse"
+#: src/ui/find_replace.glade:82
+msgid "Switch between Search and Search-and-Replace"
+msgstr "Wechsle zwischen Suchen und Suchen-und-Ersetzen"
 
-#: src/ui/find_replace.glade:153 src/ui/find_replace.glade:163
+#: src/ui/find_replace.glade:103
+msgid "Show or hide search options such as case sensitivity"
+msgstr "Zeige oder verstecke Suchoptionen"
+
+#: src/ui/find_replace.glade:140 src/ui/find_replace.glade:150
 msgid "Replace"
 msgstr "Ersetzen"
 
-#: src/ui/find_replace.glade:176
+#: src/ui/find_replace.glade:162
 msgid "Replace All"
 msgstr "Alles Ersetzen"
+
+#: src/ui/find_replace.glade:191
+msgid "Regular expressions"
+msgstr "Regexp"
+
+#: src/ui/find_replace.glade:206
+msgid "Case sensitive"
+msgstr "Groß- und Kleinschreibung"
+
+#: src/ui/find_replace.glade:220
+msgid "Match whole word only"
+msgstr "Ganze Wörter"
+
+#: src/ui/find_replace.glade:245
+msgid "No Results"
+msgstr "Keine Ergebnisse"
 
 #: src/edit_view.rs:36
 msgid "Failed to get Pango language"
@@ -590,116 +669,124 @@ msgstr "Höhe"
 msgid "Failed to get Pango context"
 msgstr "Das Holen des Pango Kontexts ist fehlgeschlage"
 
-#: src/edit_view.rs:348
+#: src/edit_view.rs:376
 msgid "Connecting FindReplace events for EditView"
 msgstr "Verbinde die FindReplace Events der EditView"
 
-#: src/edit_view.rs:392
+#: src/edit_view.rs:493
 msgid "Connecting"
 msgstr "Verbinde"
 
-#: src/edit_view.rs:393
+#: src/edit_view.rs:494
 msgid "events for EditView"
 msgstr "Events für die EditView"
 
-#: src/edit_view.rs:406 src/edit_view.rs:408
+#: src/edit_view.rs:507 src/edit_view.rs:509
 msgid "Untitled"
 msgstr "Unbenannt"
 
-#: src/edit_view.rs:419
+#: src/edit_view.rs:520
 msgid "Setting title for EditView"
 msgstr "Setze Titel für EditView"
 
-#: src/edit_view.rs:433 src/edit_view.rs:498 src/edit_view.rs:578
-#: src/edit_view.rs:631 src/edit_view.rs:657 src/edit_view.rs:827
-#: src/edit_view.rs:1034 src/edit_view.rs:1077 src/edit_view.rs:1140
-#: src/edit_view.rs:1183
+#: src/edit_view.rs:534 src/edit_view.rs:600 src/edit_view.rs:678
+#: src/edit_view.rs:731 src/edit_view.rs:757 src/edit_view.rs:948
+#: src/edit_view.rs:1155 src/edit_view.rs:1254 src/edit_view.rs:1317
+#: src/edit_view.rs:1360
 msgid "for EditView"
 msgstr "für EditView"
 
-#: src/edit_view.rs:453
+#: src/edit_view.rs:555
 msgid "Setting edit font to"
 msgstr "Setze Schriftart zu"
 
-#: src/edit_view.rs:482
+#: src/edit_view.rs:584
 msgid "Unhandled config option, open a bug report!"
 msgstr "Unbehandelte Konfigurationsoption, bitte öffne einen Bugreport!"
 
-#: src/edit_view.rs:606
+#: src/edit_view.rs:706
 msgid "Allocating DrawingArea size"
 msgstr "Belege DrawingArea Größe"
 
-#: src/edit_view.rs:617
+#: src/edit_view.rs:717
 msgid "Vertical scrollbar changed value"
 msgstr "Der Wert der vertikalen Scrollbar hat sich geändert"
 
-#: src/edit_view.rs:642
+#: src/edit_view.rs:742
 msgid "Updating visible scroll region"
 msgstr "Update den sichtbaren Scroll-Bereich"
 
-#: src/edit_view.rs:705
+#: src/edit_view.rs:837
 msgid "Drawing EditView"
 msgstr "Zeichne EditView"
 
-#: src/edit_view.rs:706
+#: src/edit_view.rs:838
 msgid "vertical adjustment"
 msgstr "vertikale Einstellung"
 
-#: src/edit_view.rs:709
+#: src/edit_view.rs:841
 msgid "horizontal adjustment"
 msgstr "horizontale Einstellung"
 
-#: src/edit_view.rs:1156
+#: src/edit_view.rs:1243
+msgid ""
+"Couldn't update hscrollbar value because I couldn't get the line to scroll "
+"to!"
+msgstr ""
+"Konnte die horizontale Scrollbar nicht updaten, weil ich nicht die Linie "
+"holen konnte, zu der ich scrollen soll!"
+
+#: src/edit_view.rs:1333
 msgid "Smooth scrolling failed"
 msgstr "Smooth-Scrolling fehlgeschlagen"
 
-#: src/edit_view.rs:1189
+#: src/edit_view.rs:1366
 msgid "Processing key press"
 msgstr "Verarbeite Knopfdruck"
 
-#: src/edit_view.rs:1190
+#: src/edit_view.rs:1367
 msgid "value"
 msgstr "Wert"
 
-#: src/edit_view.rs:1192
+#: src/edit_view.rs:1369
 msgid "state"
 msgstr "Status"
 
-#: src/edit_view.rs:1194
+#: src/edit_view.rs:1371
 msgid "length"
 msgstr "Länge"
 
-#: src/edit_view.rs:1196
+#: src/edit_view.rs:1373
 msgid "group"
 msgstr "Gruppe"
 
-#: src/edit_view.rs:1198
+#: src/edit_view.rs:1375
 msgid "unicode"
 msgstr "Unicode"
 
-#: src/edit_view.rs:1333
+#: src/edit_view.rs:1510
 msgid "Cutting text"
 msgstr "Schneide Text aus"
 
-#: src/edit_view.rs:1351
+#: src/edit_view.rs:1528
 msgid "Copying text"
 msgstr "Kopiere Text"
 
 #. if let Some(text) = Clipboard::get(&SELECTION_CLIPBOARD).wait_for_text() {
 #. self.core.borrow().insert(view_id, &text);
 #. }
-#: src/edit_view.rs:1371
+#: src/edit_view.rs:1548
 msgid "Pasting text"
 msgstr "Füge Text ein"
 
 #. if let Some(text) = Clipboard::get(&SELECTION_PRIMARY).wait_for_text() {
 #. self.core.borrow().insert(view_id, &text);
 #. }
-#: src/edit_view.rs:1383
+#: src/edit_view.rs:1560
 msgid "Pasting primary text"
 msgstr "Füge Text aus der primären Zwischenablage ein"
 
-#: src/edit_view.rs:1394
+#: src/edit_view.rs:1571
 msgid "Resizing EditView"
 msgstr "Setze die Größe der EditView"
 
@@ -749,59 +836,63 @@ msgstr "Xi-Konfiguration"
 msgid "Saving config to"
 msgstr "Speichere die Konfigurationsdatei zu"
 
-#: src/prefs_win.rs:51
+#: src/prefs_win.rs:53
 msgid "Setting font description"
 msgstr "Setze Schriftart"
 
-#: src/prefs_win.rs:64
+#: src/prefs_win.rs:66
 msgid "Setting font to"
 msgstr "Setze Schriftart zu"
 
-#: src/prefs_win.rs:65
+#: src/prefs_win.rs:67
 msgid "Setting font size to"
 msgstr "Setze Schriftgröße zu"
 
-#: src/prefs_win.rs:83
+#: src/prefs_win.rs:85
 msgid "Setting active theme"
 msgstr "Setze aktives Thema"
 
-#: src/prefs_win.rs:91
+#: src/prefs_win.rs:93
 msgid "Theme changed to"
 msgstr "Thema gewechselt zu"
 
-#: src/prefs_win.rs:109
+#: src/prefs_win.rs:111
 msgid "Scrolling past end"
 msgstr "Scrollen über das Ende des Dokuments hinaus"
 
-#: src/prefs_win.rs:124
+#: src/prefs_win.rs:126
 msgid "Word wrapping"
 msgstr "Zeilenumbruch"
 
-#: src/prefs_win.rs:139
+#: src/prefs_win.rs:141
 msgid "Tab stops"
 msgstr "Tab stops"
 
-#: src/prefs_win.rs:162
+#: src/prefs_win.rs:164
 msgid "Right hand margin"
 msgstr "Rechter Rand"
 
-#: src/prefs_win.rs:176
+#: src/prefs_win.rs:180
 msgid "Right hand margin width"
 msgstr "Breite des rechten Rands"
 
-#: src/rpc.rs:78
+#: src/rpc.rs:69 src/rpc.rs:71
+msgid "Error code"
+msgstr "Fehlercode"
+
+#: src/rpc.rs:90
 msgid "Calling callback"
 msgstr ""
 
-#: src/rpc.rs:81
+#: src/rpc.rs:93
 msgid "unexpected result"
 msgstr "Unerwartetes Ergebnis"
 
-#: src/rpc.rs:84
+#: src/rpc.rs:96
 msgid "Got"
 msgstr "Habe"
 
-#: src/rpc.rs:84
+#: src/rpc.rs:96
 msgid "at RPC level"
 msgstr "im RPC level"
 
