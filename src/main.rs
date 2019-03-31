@@ -93,7 +93,7 @@ use gio::{ApplicationExt, ApplicationExtManual, ApplicationFlags, FileExt};
 use glib::MainContext;
 use gtk::Application;
 use human_panic::setup_panic;
-use log::{debug, info, warn};
+use log::{debug, info, trace, warn};
 use serde_json::{json, Value};
 use std::cell::RefCell;
 use std::env::args;
@@ -123,6 +123,7 @@ fn main() {
     let (xi_peer, xi_rx) = XiPeer::new();
     let core = Core::new(xi_peer, xi_rx, err_tx, shared_queue.clone());
 
+    trace!("application_id: {}", app_id!());
     let application = Application::new(app_id!(), ApplicationFlags::HANDLES_OPEN)
         .unwrap_or_else(|_| panic!("Failed to create the GTK+ application"));
 
