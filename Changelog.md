@@ -1,3 +1,13 @@
+## Changes in v0.6.1
+
+### Feature changes
+
+ - No new features
+
+### Bugfixes
+
+ - No bugfixes
+
 ## Changes in v0.6.0
 
 ### Feature changes

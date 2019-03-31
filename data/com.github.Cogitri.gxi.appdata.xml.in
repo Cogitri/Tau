@@ -32,6 +32,11 @@
 	</provides>
 
 	<releases>
+		<release version="0.6.1" date="2019-03-31">
+			<description>
+				<p>Bugfix release to include meson_options.txt in the release tarballs</p>
+			</description>
+		</release>
 		<release version="0.6.0" date="2019-03-31">
 			<description>
 				<p>Changes in this release:</p>
