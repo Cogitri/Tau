@@ -1,6 +1,6 @@
 [package]
 name = "gxi"
-version = "0.6.1"
+version = "0.6.2"
 authors = ["Rasmus Thomsen <oss@cogitri.dev>", "Brian Vincent <brainn@gmail.com>"]
 homepage = "https://github.com/Cogitri/gxi"
 description = "GTK frontend, written in Rust, for the xi editor"

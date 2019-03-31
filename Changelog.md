@@ -1,3 +1,13 @@
+## Changes in v0.6.2
+
+### Feature changes
+
+ - No new features
+
+### Bugfixes
+
+ - (main): trace log app_id
+
 ## Changes in v0.6.1
 
 ### Feature changes
