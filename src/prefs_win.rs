@@ -41,6 +41,7 @@ impl PrefsWin {
         let margin_spinbutton: SpinButton = builder.get_object("margin_spinbutton").unwrap();
         let highlight_line_checkbutton: ToggleButton =
             builder.get_object("highlight_line_checkbutton").unwrap();
+        let tab_size_spinbutton: SpinButton = builder.get_object("tab_size_spinbutton").unwrap();
 
         let xi_config = &main_state.borrow().config;
 
@@ -183,6 +184,26 @@ impl PrefsWin {
                     ev.borrow().view_item.edit_area.queue_draw();
                 }
             }));
+        }
+
+        {
+            tab_size_spinbutton.set_value(f64::from(
+                main_state.borrow().config.borrow().config.tab_size,
+            ));
+
+            tab_size_spinbutton.connect_value_changed(
+                clone!(main_state, edit_view => move |spin_btn| {
+                    let value = spin_btn.get_value();
+                    debug!("{}: {}", gettext("Setting tab size"), value);
+                    main_state.borrow().config.borrow_mut().config.tab_size = value as u32;
+                    main_state.borrow().config.borrow().save()
+                    .map_err(|e| error!("{}", e.to_string()))
+                    .unwrap();
+                    if let Some(ev) = edit_view.clone() {
+                        ev.borrow().view_item.edit_area.queue_draw();
+                    }
+                }),
+            );
         }
 
         {
