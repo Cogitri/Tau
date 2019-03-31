@@ -1,11 +1,11 @@
 #!/bin/sh
 
-export GXI_PLUGIN_DIR="$8"
-export GXI_LOCALEDIR="$9"
-export GXI_VERSION="$10"
-export GXI_APP_ID="$11"
-export GXI_BUILD_PROFILE="$12"
-export GXI_NAME="$13"
+export GXI_PLUGIN_DIR="${8}"
+export GXI_LOCALEDIR="${9}"
+export GXI_VERSION="${10}"
+export GXI_APP_ID="${11}"
+export GXI_BUILD_PROFILE="${12}"
+export GXI_NAME="${13}"
 
 export GREEN='\033[0;32m'
 export NO_COLOR='\033[0m'
@@ -30,7 +30,7 @@ fi
 
 if [ "$GXI_BUILD_PROFILE" = "development" ]; then
 	path=$(echo $path | sed 's|release|debug|')
-	cargo build --target-dir $4 ${features} && cp "${path}" $2/$3
+	cargo build --target-dir ${4} ${features} && cp "${path}" ${2}/${3}
 else
-	cargo build --target-dir $4 --release ${features} && cp "${path}" $2/$3
+	cargo build --target-dir ${4} --release ${features} && cp "${path}" ${2}/${3}
 fi
