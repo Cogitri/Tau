@@ -408,6 +408,13 @@ impl FindReplace {
 
         self.search_bar.connect_entry(&self.search_entry);
 
+        self.search_bar
+            .connect_property_search_mode_enabled_notify(clone!(ev => move |sb| {
+                if ! sb.get_search_mode() {
+                    ev.borrow().stop_search();
+                }
+            }));
+
         self.search_entry
             .connect_search_changed(clone!(ev => move |w| {
                 if let Some(text) = w.get_text() {
