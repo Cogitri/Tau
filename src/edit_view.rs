@@ -565,12 +565,19 @@ impl EditView {
                             self.view_item.edit_area.queue_draw();
                         }
                     }
+                    "tab_size" => {
+                        if let Some(size) = value.as_u64() {
+                            debug!("{}: {}", gettext("Setting tab size to"), size);
+                            self.main_state.borrow().config.borrow_mut().config.tab_size =
+                                size as u32;
+                            self.view_item.edit_area.queue_draw();
+                        }
+                    }
                     // These are handled in main_win via XiConfig
                     "auto_indent" => (),
                     "autodetect_whitespace" => (),
                     "plugin_search_path" => (),
                     "scroll_past_end" => (),
-                    "tab_size" => (),
                     "translate_tabs_to_spaces" => (),
                     "use_tab_stops" => (),
                     "word_wrap" => (),
@@ -692,7 +699,8 @@ impl EditView {
         let index = if let Some(line) = self.line_cache.get_line(line_num) {
             let pango_ctx = self.view_item.get_pango_ctx();
 
-            let layout = self.create_layout_for_line(&pango_ctx, &main_state, line);
+            let layout =
+                self.create_layout_for_line(&pango_ctx, &main_state, line, &self.get_tabs());
             let (_, index, trailing) = layout.xy_to_index(x as i32 * pango::SCALE, 0);
             index + trailing
         } else {
@@ -782,13 +790,14 @@ impl EditView {
         let mut max_width = pango::SCALE;
 
         let pango_ctx = self.view_item.get_pango_ctx();
+        let tabs = self.get_tabs();
 
         // Determine the longest line as per Pango. Creating layouts with Pango here is kind of expensive
         // here, but it's hard determining an accurate width otherwise.
         for i in first_line..last_line {
             if let Some(line) = self.line_cache.get_line(i) {
                 let layout =
-                    self.create_layout_for_line(&pango_ctx, &self.main_state.borrow(), line);
+                    self.create_layout_for_line(&pango_ctx, &self.main_state.borrow(), line, &tabs);
                 max_width = max(max_width, layout.get_extents().1.width);
             }
         }
@@ -879,6 +888,8 @@ impl EditView {
 
         let main_state = self.main_state.borrow();
 
+        let tabs = self.get_tabs();
+
         for i in first_line..last_line {
             // Keep track of the starting x position
             if let Some(line) = self.line_cache.get_line(i) {
@@ -900,7 +911,7 @@ impl EditView {
                 );
 
                 let pango_ctx = self.view_item.get_pango_ctx();
-                let layout = self.create_layout_for_line(&pango_ctx, &main_state, line);
+                let layout = self.create_layout_for_line(&pango_ctx, &main_state, line, &tabs);
                 // debug!("width={}", layout.get_extents().1.width);
                 update_layout(cr, &layout);
                 show_layout(cr, &layout);
@@ -1035,6 +1046,19 @@ impl EditView {
         layout
     }
 
+    fn get_tabs(&self) -> TabArray {
+        let mut tabs = TabArray::new(1, false);
+        tabs.set_tab(
+            0,
+            TabAlign::Left,
+            self.edit_font.font_width as i32
+                * self.main_state.borrow().config.borrow().config.tab_size as i32
+                * pango::SCALE,
+        );
+
+        tabs
+    }
+
     /// Checks how wide a line is
     pub fn line_width(&self, line_string: &str) -> f64 {
         let line = Line::from_json(
@@ -1045,7 +1069,8 @@ impl EditView {
         );
         let main_state = self.main_state.borrow();
         let pango_ctx = self.view_item.get_pango_ctx();
-        let linecount_layout = self.create_layout_for_line(&pango_ctx, &main_state, &line);
+        let linecount_layout =
+            self.create_layout_for_line(&pango_ctx, &main_state, &line, &self.get_tabs());
 
         f64::from(linecount_layout.get_extents().1.width / pango::SCALE)
     }
@@ -1056,6 +1081,7 @@ impl EditView {
         pango_ctx: &pango::Context,
         main_state: &MainState,
         line: &Line,
+        tabs: &TabArray,
     ) -> pango::Layout {
         let line_view = if line.text().ends_with('\n') {
             &line.text()[0..line.text().len() - 1]
@@ -1082,6 +1108,7 @@ impl EditView {
 
         // let layout = create_layout(cr).unwrap();
         let layout = pango::Layout::new(pango_ctx);
+        layout.set_tabs(tabs);
         layout.set_font_description(&self.edit_font.font_desc);
         layout.set_text(&line_view);
 
