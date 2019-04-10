@@ -8,111 +8,112 @@ msgstr ""
 "Project-Id-Version: gxi\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-04-06 10:53-0300\n"
-"PO-Revision-Date: 2019-04-06 10:57-0300\n"
-"Language-Team: \n"
+"PO-Revision-Date: 2019-04-10 09:02+0000\n"
+"Last-Translator: Chojan Shang <PsiACE@outlook.com>\n"
+"Language-Team: Chinese (Traditional) <https://hosted.weblate.org/projects/"
+"gxi/translation/zh_Hant/>\n"
+"Language: zh-Hant\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.2.1\n"
-"Last-Translator: \n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"Language: zh-Hant\n"
+"X-Generator: Weblate 3.6-dev\n"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:7
 #: data/com.github.Cogitri.gxi.desktop.in:3
 msgid "gxi"
-msgstr ""
+msgstr "gxi"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:8
 msgid "GTK frontend for the xi text editor"
-msgstr ""
+msgstr "文本編輯器 xi 的 GTK 前端"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:12
 msgid ""
 "gxi is a GTK frontend for the xi text editor written in Rust. It's a very "
 "fast plain text editor."
-msgstr ""
+msgstr "gxi，文本編輯器 xi 的 GTK 前端，用 Rust 編寫。一款非常快速的純文本編輯器。"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:27
 msgid "Rasmus \"Cogitri\" Thomsen"
-msgstr ""
+msgstr "Rasmus \"Cogitri\" Thomsen"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:37
 msgid "Bugfix release to fix build on flathub and trace log app_id on startup"
-msgstr ""
+msgstr "錯誤修復版本，用於修復在 flathub 上的構建，並在啟動時跟踪記錄 app_id"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:42
 msgid "Bugfix release to include meson_options.txt in the release tarballs"
-msgstr ""
+msgstr "錯誤修復版本，將 meson_options.txt 包含在發布的 tarballs 中"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:47
 msgid "Changes in this release:"
-msgstr ""
+msgstr "此版本中的更改："
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:49
 msgid "display an ErrorDialog if Xi sends 'error'"
-msgstr ""
+msgstr "如果 xi 發送「錯誤」則顯示一個錯誤對話框"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:50
 msgid "Rework the FindReplace dialog to be more compact"
-msgstr ""
+msgstr "重構搜尋取代」對話框，使其更緊湊"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:51
 msgid ""
 "Add a regex, case sensitive and whole word matching option to the find dialog"
-msgstr ""
+msgstr "在 “搜尋” 對話框中添加規則運算式、區分大小寫和全字匹配選項"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:52
 msgid "Set Ctrl+W as shortcut for closing the current tab"
-msgstr ""
+msgstr "將 Crtl+W 設定為關閉當前選項卡的快捷方式"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:53
 msgid ""
 "Makes cut/copy operations non-blocking (fixes copy/paste when word-wrap is "
 "enabled)"
-msgstr ""
+msgstr "使剪切/複製操作非阻塞化 (修復啟用自動換行時的複製/粘貼)"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:54
 msgid ""
 "Rework how the value/upper of the scrollbars is determined. This fixes "
 "scrolling when the cursor gets out of the view."
-msgstr ""
+msgstr "重構如何確定滾動條的值/上限。這修復了游標離開視圖時的滾動問題。"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:60
 msgid ""
 "This release adds an option for creating a right hand margin. It uses a "
 "different save dialog, and fixes pressing 'Cancel' in it."
-msgstr ""
+msgstr "此版本添加了用於創建右邊距的選項。使用不同的保存對話框, 並修復按「取消」时的问题。"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:65
 msgid ""
 "This release made the linecount nicer (as in more visible/readable). gxi "
 "also offers a Norwegian Bokmål translation."
-msgstr ""
+msgstr "这一版本优化了行数显示（更易浏览/阅读）。gxi 還提供了挪威语书面文翻譯。"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:70
 msgid ""
 "Ask user if changes should be saved upon closing. Also makes panics more "
 "readable."
-msgstr ""
+msgstr "詢問使用者是否應在關閉時保存更改。也使恐慌信息更具可讀性。"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:75
 msgid ""
 "This release fixes the linecount upon deleting lines and fixes some crashes. "
 "It also adds a new icon."
-msgstr ""
+msgstr "此版本修復了删除行時的行數问题，並修復了一些崩潰。還添加了一個新圖標。"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:83
 msgid "This release fixes the build without appstream-util."
-msgstr ""
+msgstr "此版本修復了沒有 appstream-util 的构建。"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:88
 msgid "This release contains the following feature changes:"
-msgstr ""
+msgstr "此版本包含以下功能更改："
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:90
 msgid "(shared_queue): more verbose trace logging"
-msgstr ""
+msgstr "(shared_queue): 更詳細的跟踪日誌記錄"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:91
 msgid "(main_win): use a thread to handle CoreMsgs instead of add_idle"
@@ -137,7 +138,7 @@ msgstr ""
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:96
 msgid "(gettext): build against system gettext"
-msgstr ""
+msgstr "(gettext): 根據系統 gettext 構建"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:102
 msgid ""
@@ -153,27 +154,27 @@ msgstr ""
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:112
 msgid "Use GSettings to determine the default font."
-msgstr ""
+msgstr "使用 GSettings 確定預設字體。"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:117
 msgid "Use GSettings for GXI config instead of a TOML file, add appdata."
-msgstr ""
+msgstr "使用 GSettings 配寘 GXI 而不是 TOML 檔案，添加 appdata。"
 
 #: data/com.github.Cogitri.gxi.desktop.in:5
 msgid "The gxi text editor"
-msgstr ""
+msgstr "gxi 文本编辑器"
 
 #: data/com.github.Cogitri.gxi.desktop.in:8
 msgid "com.github.Cogitri.gxi"
-msgstr ""
+msgstr "com.github.Cogitri.gxi"
 
 #: data/com.github.Cogitri.gxi.gschema.xml:9
 msgid "Xi-Editor's theme"
-msgstr ""
+msgstr "Xi 編輯器主題"
 
 #: data/com.github.Cogitri.gxi.gschema.xml:10
 msgid "Sets the theme used for the editing area"
-msgstr ""
+msgstr "設定用於編輯區域的主題"
 
 #: data/com.github.Cogitri.gxi.gschema.xml:17 src/ui/prefs_win.glade:213
 msgid "Draw trailing spaces"
@@ -211,15 +212,15 @@ msgstr ""
 
 #: src/about_win.rs:16
 msgid "GTK frontend for the xi text editor, written in Rust"
-msgstr ""
+msgstr "文本编辑器 xi 的 GTK 前端，用 Rust 编写"
 
 #: src/about_win.rs:23
 msgid "gxi's Github Repo"
-msgstr ""
+msgstr "gxi 的 Github 存储库"
 
 #: src/about_win.rs:24
 msgid "translator-credits"
-msgstr ""
+msgstr "翻译人员 - 致谢"
 
 #: src/about_win.rs:30
 msgid "Showing about window"
@@ -235,7 +236,7 @@ msgstr ""
 
 #: src/main.rs:186
 msgid "Opening new file"
-msgstr ""
+msgstr "打开新文件"
 
 #: src/main.rs:209
 msgid "Shutting down…"
@@ -264,11 +265,11 @@ msgstr ""
 #. xi-editor doesn't know about the translations
 #: src/main_win.rs:166 src/main_win.rs:173
 msgid "Plain Text"
-msgstr ""
+msgstr "純文字"
 
 #: src/main_win.rs:180
 msgid "Setting language to"
-msgstr ""
+msgstr "將語言設定為"
 
 #: src/main_win.rs:189 src/main_win.rs:197 src/main_win.rs:205
 #: src/main_win.rs:213 src/main_win.rs:221 src/main_win.rs:229
@@ -280,96 +281,96 @@ msgstr ""
 #: src/edit_view.rs:958 src/edit_view.rs:1181 src/edit_view.rs:1280
 #: src/edit_view.rs:1343 src/edit_view.rs:1386
 msgid "Handling"
-msgstr ""
+msgstr "處理"
 
 #: src/main_win.rs:189 src/main_win.rs:197 src/main_win.rs:205
 #: src/main_win.rs:213 src/main_win.rs:221 src/main_win.rs:229
 #: src/main_win.rs:237 src/main_win.rs:245 src/main_win.rs:253
 #: src/main_win.rs:261 src/main_win.rs:270
 msgid "action"
-msgstr ""
+msgstr "動作"
 
 #: src/main_win.rs:273
 msgid "User chose to not quit application"
-msgstr ""
+msgstr "用戶選擇不退出應用程式"
 
 #: src/main_win.rs:275
 msgid "User chose to quit application"
-msgstr ""
+msgstr "用戶選擇退出應用程式"
 
 #: src/main_win.rs:292
 msgid "Auto indent"
-msgstr ""
+msgstr "自動縮進"
 
 #: src/main_win.rs:311
 msgid "Space indent"
-msgstr ""
+msgstr "空格縮進"
 
 #: src/main_win.rs:334
 msgid "Showing main window"
-msgstr ""
+msgstr "顯示主視窗"
 
 #: src/main_win.rs:353
 msgid "Handling CoreMsg"
-msgstr ""
+msgstr "處理 CoreMsg"
 
 #: src/main_win.rs:378
 msgid "!!! UNHANDLED NOTIFICATION, PLEASE OPEN A BUGREPORT!"
-msgstr ""
+msgstr "特別注意：未處理的通知，請打開錯誤報告！"
 
 #: src/main_win.rs:410 src/ui/prefs_win.glade:42
 msgid "Theme"
-msgstr ""
+msgstr "主題"
 
 #: src/main_win.rs:412
 msgid "isn't available, setting to default"
-msgstr ""
+msgstr "不可用，設定為預設值"
 
 #: src/main_win.rs:431
 msgid "Failed to convert theme settings"
-msgstr ""
+msgstr "無法轉換主題設定"
 
 #: src/main_win.rs:466
 msgid ""
 "Couldn't find syntect plugin, functionality will be limited! Only found the "
 "following plugins"
-msgstr ""
+msgstr "找不到語法挿件，功能將受到限制！只找到以下挿件"
 
 #: src/main_win.rs:538
 msgid "has stopped due to an user-initiated exit"
-msgstr ""
+msgstr "由於用戶啟動的退出而停止"
 
 #: src/main_win.rs:541
 msgid "has crashed with error code"
-msgstr ""
+msgstr "已崩潰，錯誤代碼為"
 
 #: src/main_win.rs:544
 msgid "has crashed"
-msgstr ""
+msgstr "已崩潰"
 
 #: src/main_win.rs:550
 msgid "Plugin"
-msgstr ""
+msgstr "挿件"
 
 #: src/main_win.rs:553
 msgid "functionality will be limited"
-msgstr ""
+msgstr "功能將受到限制"
 
 #: src/main_win.rs:610
 msgid "Changing language to"
-msgstr ""
+msgstr "將語言更改為"
 
 #: src/main_win.rs:620
 msgid "Open a file to edit"
-msgstr ""
+msgstr "開啟要编辑的檔案"
 
 #: src/main_win.rs:623 src/ui/gxi.glade:266
 msgid "Open"
-msgstr ""
+msgstr "開啟"
 
 #: src/main_win.rs:624 src/main_win.rs:683 src/main_win.rs:911
 msgid "Cancel"
-msgstr ""
+msgstr "取消"
 
 #: src/main_win.rs:632
 msgid "FileChooserNative open response"
@@ -377,15 +378,15 @@ msgstr ""
 
 #: src/main_win.rs:643
 msgid "Couldn't open file"
-msgstr ""
+msgstr "無法開啟檔案"
 
 #: src/main_win.rs:679
 msgid "Save file"
-msgstr ""
+msgstr "儲存檔案"
 
 #: src/main_win.rs:682 src/main_win.rs:915 src/ui/gxi.glade:307
 msgid "Save"
-msgstr ""
+msgstr "儲存"
 
 #: src/main_win.rs:691
 msgid "FileChooserNative save response"
@@ -393,11 +394,11 @@ msgstr ""
 
 #: src/main_win.rs:702
 msgid "Saving file"
-msgstr ""
+msgstr "正在儲存檔案"
 
 #: src/main_win.rs:709
 msgid "Couldn't save file"
-msgstr ""
+msgstr "無法儲存檔案"
 
 #: src/main_win.rs:761
 msgid ""
@@ -475,63 +476,63 @@ msgstr ""
 
 #: src/ui/gxi.glade:22
 msgid "Save As…"
-msgstr ""
+msgstr "另存為…"
 
 #: src/ui/gxi.glade:36
 msgid "Save All"
-msgstr ""
+msgstr "儲存全部"
 
 #: src/ui/gxi.glade:61
 msgid "Find…"
-msgstr ""
+msgstr "搜尋…"
 
 #: src/ui/gxi.glade:75
 msgid "Replace…"
-msgstr ""
+msgstr "取代…"
 
 #: src/ui/gxi.glade:100
 msgid "Auto Indent"
-msgstr ""
+msgstr "自動縮進"
 
 #: src/ui/gxi.glade:114
 msgid "Insert Spaces"
-msgstr ""
+msgstr "插入空格"
 
 #: src/ui/gxi.glade:139 src/ui/prefs_win.glade:17
 msgid "Preferences"
-msgstr ""
+msgstr "偏好設定"
 
 #: src/ui/gxi.glade:164
 msgid "Help"
-msgstr ""
+msgstr "幫助"
 
 #: src/ui/gxi.glade:178
 msgid "About"
-msgstr ""
+msgstr "關於"
 
 #: src/ui/gxi.glade:203
 msgid "Close All"
-msgstr ""
+msgstr "關閉全部"
 
 #: src/ui/gxi.glade:217
 msgid "Close"
-msgstr ""
+msgstr "關閉"
 
 #: src/ui/gxi.glade:231
 msgid "Quit"
-msgstr ""
+msgstr "離開"
 
 #: src/ui/gxi.glade:322
 msgid "Syntax Selection"
-msgstr ""
+msgstr "語法選擇"
 
 #: src/ui/gxi.glade:457
 msgid "Save changes to document \"Untitled\" before closing?"
-msgstr ""
+msgstr "是否在關閉前儲存對檔案 “無標題” 的更改？"
 
 #: src/ui/prefs_win.glade:64
 msgid "Font"
-msgstr ""
+msgstr "字體"
 
 #: src/ui/prefs_win.glade:112
 msgid "Appearance"
@@ -555,27 +556,27 @@ msgstr ""
 
 #: src/ui/prefs_win.glade:198
 msgid "Wrap lines at the end of the view instead of offering scrolling"
-msgstr ""
+msgstr "在視圖末尾換行，而不是提供滾動"
 
 #: src/ui/prefs_win.glade:231
 msgid "Display right margin at the column:"
-msgstr ""
+msgstr "在列中顯示右邊距："
 
 #: src/ui/prefs_win.glade:269
 msgid "Highlight the current line"
-msgstr ""
+msgstr "突出顯示當前行"
 
 #: src/ui/prefs_win.glade:291
 msgid "Editing"
-msgstr ""
+msgstr "編輯"
 
 #: src/ui/find_replace.glade:32
 msgid "Find"
-msgstr ""
+msgstr "搜尋"
 
 #: src/ui/find_replace.glade:82
 msgid "Switch between Search and Search-and-Replace"
-msgstr ""
+msgstr "在「搜尋」和「搜尋及取代」之間切換"
 
 #: src/ui/find_replace.glade:103
 msgid "Show or hide search options such as case sensitivity"
@@ -678,7 +679,7 @@ msgstr ""
 
 #: src/edit_view.rs:555
 msgid "Setting edit font to"
-msgstr ""
+msgstr "將編輯字體設定為"
 
 #: src/edit_view.rs:570
 msgid "Setting tab size to"
@@ -686,11 +687,11 @@ msgstr ""
 
 #: src/edit_view.rs:591
 msgid "Unhandled config option, open a bug report!"
-msgstr ""
+msgstr "未處理的配置選項，開啟錯誤報告！"
 
 #: src/edit_view.rs:714
 msgid "Allocating DrawingArea size"
-msgstr ""
+msgstr "分配繪圖區域大小"
 
 #: src/edit_view.rs:725
 msgid "Vertical scrollbar changed value"
@@ -698,7 +699,7 @@ msgstr ""
 
 #: src/edit_view.rs:750
 msgid "Updating visible scroll region"
-msgstr ""
+msgstr "更新可見滾動區域"
 
 #: src/edit_view.rs:846
 msgid "Drawing EditView"
@@ -706,11 +707,11 @@ msgstr ""
 
 #: src/edit_view.rs:847
 msgid "vertical adjustment"
-msgstr ""
+msgstr "垂直調整"
 
 #: src/edit_view.rs:850
 msgid "horizontal adjustment"
-msgstr ""
+msgstr "水準調整"
 
 #: src/edit_view.rs:1270
 msgid ""
@@ -720,31 +721,31 @@ msgstr ""
 
 #: src/edit_view.rs:1360
 msgid "Smooth scrolling failed"
-msgstr ""
+msgstr "順滑捲動失败"
 
 #: src/edit_view.rs:1393
 msgid "Processing key press"
-msgstr ""
+msgstr "處理按键"
 
 #: src/edit_view.rs:1394
 msgid "value"
-msgstr ""
+msgstr "值"
 
 #: src/edit_view.rs:1396
 msgid "state"
-msgstr ""
+msgstr "狀態"
 
 #: src/edit_view.rs:1398
 msgid "length"
-msgstr ""
+msgstr "長度"
 
 #: src/edit_view.rs:1400
 msgid "group"
-msgstr ""
+msgstr "組"
 
 #: src/edit_view.rs:1402
 msgid "unicode"
-msgstr ""
+msgstr "unicode"
 
 #: src/edit_view.rs:1537
 msgid "Cutting text"
@@ -766,15 +767,15 @@ msgstr ""
 #. }
 #: src/edit_view.rs:1587
 msgid "Pasting primary text"
-msgstr ""
+msgstr "粘貼主文本"
 
 #: src/edit_view.rs:1598
 msgid "Resizing EditView"
-msgstr ""
+msgstr "調整編輯視圖的大小"
 
 #: src/pref_storage.rs:79
 msgid "Failed to create the config dir"
-msgstr ""
+msgstr "無法創建配寘目錄"
 
 #: src/pref_storage.rs:126
 msgid "Couldn't read config, falling back to the default XI-Editor config"
@@ -846,11 +847,11 @@ msgstr ""
 
 #: src/prefs_win.rs:165
 msgid "Right hand margin"
-msgstr ""
+msgstr "右邊距"
 
 #: src/prefs_win.rs:181
 msgid "Right hand margin width"
-msgstr ""
+msgstr "右邊距寬度"
 
 #: src/prefs_win.rs:197
 msgid "Setting tab size"
@@ -858,7 +859,7 @@ msgstr ""
 
 #: src/rpc.rs:69 src/rpc.rs:71
 msgid "Error code"
-msgstr ""
+msgstr "错误代码"
 
 #: src/rpc.rs:90
 msgid "Calling callback"
