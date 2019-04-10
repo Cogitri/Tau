@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: gxi\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-03-31 12:51+0200\n"
-"PO-Revision-Date: 2019-03-20 12:43+0100\n"
+"PO-Revision-Date: 2019-04-06 16:45+0000\n"
 "Last-Translator: maxice8 <thinkabit.ukim@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://hosted.weblate.org/projects/gxi/"
 "translation/pt_BR/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Poedit 2.2.1\n"
+"X-Generator: Weblate 3.6-dev\n"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:7
 #: data/com.github.Cogitri.gxi.desktop.in:3
@@ -42,11 +42,11 @@ msgstr "Rasmus \"Cogitri\" Thomsen"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:37
 msgid "Changes in this release:"
-msgstr ""
+msgstr "Mudanças nesta edição:"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:39
 msgid "display an ErrorDialog if Xi sends 'error'"
-msgstr ""
+msgstr "Mostrar um dialogo de erro se Xi enviar 'error'"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:40
 msgid "Rework the FindReplace dialog to be more compact"
