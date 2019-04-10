@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: gxi\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-03-31 12:51+0200\n"
-"PO-Revision-Date: 2019-03-20 12:43+0100\n"
+"PO-Revision-Date: 2019-04-01 16:04+0000\n"
 "Last-Translator: Allan Nordhøy <epost@anotheragency.no>\n"
 "Language-Team: Norwegian Bokmål <https://hosted.weblate.org/projects/gxi/"
 "translation/nb_NO/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Poedit 2.2.1\n"
+"X-Generator: Weblate 3.6-dev\n"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:7
 #: data/com.github.Cogitri.gxi.desktop.in:3
@@ -42,36 +42,42 @@ msgstr "Rasmus \"Cogitri\" Thomsen"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:37
 msgid "Changes in this release:"
-msgstr ""
+msgstr "Endringer i denne utgaven:"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:39
 msgid "display an ErrorDialog if Xi sends 'error'"
-msgstr ""
+msgstr "vis en feildialog hvis Xi returnerer \"error\""
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:40
 msgid "Rework the FindReplace dialog to be more compact"
-msgstr ""
+msgstr "Omarbeidet finn-og-erstatt -tekst, nå mer kompakt"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:41
 msgid ""
 "Add a regex, case sensitive and whole word matching option to the find dialog"
 msgstr ""
+"Legg til reguært uttrykk, med forskjell på små og store boskstaver, mulighet "
+"for jamføring av hele ord i finn-dialogvinduet"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:42
 msgid "Set Ctrl+W as shortcut for closing the current tab"
-msgstr ""
+msgstr "Sett Ctrl+W som snarvei for lukking av gjeldende fane"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:43
 msgid ""
 "Makes cut/copy operations non-blocking (fixes copy/paste when word-wrap is "
 "enabled)"
 msgstr ""
+"Gjør klipp/kopier ikke-blokkerende (fikser kopier/lim inn når linjebryting "
+"er påskrudd)"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:44
 msgid ""
 "Rework how the value/upper of the scrollbars is determined. This fixes "
 "scrolling when the cursor gets out of the view."
 msgstr ""
+"Omarbeidet øvre grense for bestemmelse av rullefelt. Dette fikser rulling "
+"når pekeren er ute av syne."
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:50
 #, fuzzy
@@ -218,13 +224,15 @@ msgstr "Hvilken kolonne skal margen vises i"
 
 #: data/com.github.Cogitri.gxi.gschema.xml:41
 msgid "Whether the current line should be highlighted"
-msgstr ""
+msgstr "Hvorvidt nåværende linje skal framheves"
 
 #: data/com.github.Cogitri.gxi.gschema.xml:42
 msgid ""
 "Sets if the current line should be highlighted, which eases navigation "
 "through the document"
 msgstr ""
+"Bestemmer hvorvidt nåværende linje skal framheves, noe som letter navigasjon "
+"i dokumentet"
 
 #: src/about_win.rs:16
 msgid "GTK frontend for the xi text editor, written in Rust"
@@ -275,11 +283,11 @@ msgstr "Fant en melding fra xi"
 
 #: src/main_win.rs:154
 msgid "User chose to cancel exiting"
-msgstr ""
+msgstr "Bruker velger å avbryte lukking"
 
 #: src/main_win.rs:157
 msgid "User chose to close the application"
-msgstr ""
+msgstr "Brukeren velger å lukke programmet"
 
 #. xi-editor doesn't know about the translations
 #: src/main_win.rs:166 src/main_win.rs:173
@@ -308,11 +316,11 @@ msgstr "Håndtering"
 #: src/main_win.rs:237 src/main_win.rs:245 src/main_win.rs:253
 #: src/main_win.rs:261 src/main_win.rs:270
 msgid "action"
-msgstr ""
+msgstr "handling"
 
 #: src/main_win.rs:273
 msgid "User chose to not quit application"
-msgstr ""
+msgstr "Bruker velger å ikke lukke programmet"
 
 #: src/main_win.rs:275
 #, fuzzy
@@ -434,6 +442,8 @@ msgid ""
 "Couldn't get current EditView. This may only mean that you don't have an "
 "editing tab open right now."
 msgstr ""
+"Kune ikke hende nåværende redigeringsvisning. Dette kan bety at d ikke har "
+"en redigeringsfane åpen akkurat nå."
 
 #: src/main_win.rs:766
 #, fuzzy
@@ -612,11 +622,11 @@ msgstr "Finn"
 
 #: src/ui/find_replace.glade:82
 msgid "Switch between Search and Search-and-Replace"
-msgstr ""
+msgstr "Veksle mellom søk og søk-og-erstatt"
 
 #: src/ui/find_replace.glade:103
 msgid "Show or hide search options such as case sensitivity"
-msgstr ""
+msgstr "Vis eller skjul søkevalg som forskjell på små og store bokstaver"
 
 #: src/ui/find_replace.glade:140 src/ui/find_replace.glade:150
 msgid "Replace"
@@ -628,15 +638,15 @@ msgstr "Erstatt alle"
 
 #: src/ui/find_replace.glade:191
 msgid "Regular expressions"
-msgstr ""
+msgstr "Regulære uttrykk"
 
 #: src/ui/find_replace.glade:206
 msgid "Case sensitive"
-msgstr ""
+msgstr "Forskjell på små og store bokstaver"
 
 #: src/ui/find_replace.glade:220
 msgid "Match whole word only"
-msgstr ""
+msgstr "Jamfør kun hele ord"
 
 #: src/ui/find_replace.glade:245
 msgid "No Results"
@@ -671,7 +681,7 @@ msgstr "Hendelser"
 
 #: src/edit_view.rs:113
 msgid "Connecting events of EditView"
-msgstr ""
+msgstr "Tilknyttede hendlinger for redigeringsvisning"
 
 #: src/edit_view.rs:152
 msgid "Size changed to"
@@ -691,15 +701,15 @@ msgstr "Klarte ikke å hente Pango-bindeleddsinfo"
 
 #: src/edit_view.rs:376
 msgid "Connecting FindReplace events for EditView"
-msgstr ""
+msgstr "Kobler sammen finn-og-erstatt -hendelser for redigeringsvisning"
 
 #: src/edit_view.rs:493
 msgid "Connecting"
-msgstr ""
+msgstr "Sammenkoblende"
 
 #: src/edit_view.rs:494
 msgid "events for EditView"
-msgstr ""
+msgstr "hendelser for redigeringsvisning"
 
 #: src/edit_view.rs:507 src/edit_view.rs:509
 msgid "Untitled"
@@ -751,10 +761,13 @@ msgid "horizontal adjustment"
 msgstr "vannrett justering"
 
 #: src/edit_view.rs:1243
+#, fuzzy
 msgid ""
 "Couldn't update hscrollbar value because I couldn't get the line to scroll "
 "to!"
 msgstr ""
+"Kunne ikke oppdatere rullefeltsverdi, fordi linjen å rulle til ikke ble "
+"funnet."
 
 #: src/edit_view.rs:1333
 msgid "Smooth scrolling failed"
@@ -792,21 +805,21 @@ msgstr "Setter tittel til"
 
 #: src/edit_view.rs:1528
 msgid "Copying text"
-msgstr ""
+msgstr "Kopiering av tekst"
 
 #. if let Some(text) = Clipboard::get(&SELECTION_CLIPBOARD).wait_for_text() {
 #. self.core.borrow().insert(view_id, &text);
 #. }
 #: src/edit_view.rs:1548
 msgid "Pasting text"
-msgstr ""
+msgstr "Innliming av tekst"
 
 #. if let Some(text) = Clipboard::get(&SELECTION_PRIMARY).wait_for_text() {
 #. self.core.borrow().insert(view_id, &text);
 #. }
 #: src/edit_view.rs:1560
 msgid "Pasting primary text"
-msgstr ""
+msgstr "Limer inn hovedtekst"
 
 #: src/edit_view.rs:1571
 #, fuzzy
@@ -825,7 +838,7 @@ msgstr ""
 
 #: src/pref_storage.rs:137
 msgid "Discovered config dir in home dir"
-msgstr ""
+msgstr "Oppdaget oppsettsmappe i hjemmemappe"
 
 #: src/pref_storage.rs:145
 #, fuzzy
@@ -838,7 +851,7 @@ msgstr "Klarte ikke å opprette midlertidig oppsettsmappe"
 
 #: src/pref_storage.rs:177
 msgid "Discovered config dir in temporary dir"
-msgstr ""
+msgstr "Oppdaget oppsettsmappe i midlertidig mappe"
 
 #: src/pref_storage.rs:186
 msgid "Opening config file"
@@ -894,19 +907,19 @@ msgstr "Tabulatorstopp"
 
 #: src/prefs_win.rs:164
 msgid "Right hand margin"
-msgstr ""
+msgstr "Marg på høyre side"
 
 #: src/prefs_win.rs:180
 msgid "Right hand margin width"
-msgstr ""
+msgstr "Bredde for marg på høyresiden"
 
 #: src/rpc.rs:69 src/rpc.rs:71
 msgid "Error code"
-msgstr ""
+msgstr "Feilkode"
 
 #: src/rpc.rs:90
 msgid "Calling callback"
-msgstr ""
+msgstr "Kaller tilbakekallsprosess"
 
 #: src/rpc.rs:93
 msgid "unexpected result"
