@@ -6,6 +6,7 @@
 [![Drone CI Build Status](https://drone.exqa.de/api/badges/Cogitri/gxi/status.svg)](https://drone.exqa.de/Cogitri/gxi)
 [![Travis CI Build Status](https://travis-ci.com/Cogitri/gxi.svg?branch=master)](https://travis-ci.com/Cogitri/gxi)
 [![Translation Progress](https://hosted.weblate.org/widgets/gxi/-/translation/svg-badge.svg)](https://hosted.weblate.org/engage/gxi/?utm_source=widget)
+[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/2711/badge)](https://bestpractices.coreinfrastructure.org/projects/2711)
 
 GTK frontend, written in Rust, for the [xi editor](https://github.com/google/xi-editor).
 
