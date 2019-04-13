@@ -14,7 +14,7 @@ GTK frontend, written in Rust, for the [xi editor](https://github.com/google/xi-
 
 ## Contributing
 
-Please see the docs on https://cogitri.github.io/gxi to learn more about gxi's inner workings. 
+Please see the docs on https://gxi.cogitri.dev/docs to learn more about gxi's inner workings. 
 [gtk-rs' site](https://gtk-rs.org/) offers documentation and examples about how gtk-rs works.
 
 Visit [Weblate](https://hosted.weblate.org/engage/gxi/) to translate gxi.
