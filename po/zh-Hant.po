@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: gxi\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-04-06 10:53-0300\n"
-"PO-Revision-Date: 2019-04-10 09:02+0000\n"
+"PO-Revision-Date: 2019-04-13 01:04+0000\n"
 "Last-Translator: Chojan Shang <PsiACE@outlook.com>\n"
 "Language-Team: Chinese (Traditional) <https://hosted.weblate.org/projects/"
 "gxi/translation/zh_Hant/>\n"
@@ -56,12 +56,12 @@ msgstr "如果 xi 發送「錯誤」則顯示一個錯誤對話框"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:50
 msgid "Rework the FindReplace dialog to be more compact"
-msgstr "重構搜尋取代」對話框，使其更緊湊"
+msgstr "重構「搜尋取代」對話框，使其更緊湊"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:51
 msgid ""
 "Add a regex, case sensitive and whole word matching option to the find dialog"
-msgstr "在 “搜尋” 對話框中添加規則運算式、區分大小寫和全字匹配選項"
+msgstr "在「搜尋」對話框中添加規則運算式、區分大小寫和全字匹配選項"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:52
 msgid "Set Ctrl+W as shortcut for closing the current tab"
@@ -117,24 +117,24 @@ msgstr "(shared_queue): 更詳細的跟踪日誌記錄"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:91
 msgid "(main_win): use a thread to handle CoreMsgs instead of add_idle"
-msgstr ""
+msgstr "(main_win): 使用線程來處理 CoreMsgs，而不是 add_idle"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:92
 msgid "(main): display error window if xi-editor crashes"
-msgstr ""
+msgstr "(main): 如果 xi 編輯器崩潰，顯示錯誤視窗"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:93
 msgid ""
 "(edit_view): add newline to end of the file if it doesn't terminate with one"
-msgstr ""
+msgstr "(edit_view): 如果檔案結尾不是以新行結尾，則在檔案結尾添加新行"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:94
 msgid "(edit_view): only draw trailing spaces"
-msgstr ""
+msgstr "(edit_view): 僅繪製尾隨空格"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:95
 msgid "(shared_queue): also use for sending stuff to xi"
-msgstr ""
+msgstr "(shared_queue): 也用於向 xi 發送內容"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:96
 msgid "(gettext): build against system gettext"
@@ -144,13 +144,13 @@ msgstr "(gettext): 根據系統 gettext 構建"
 msgid ""
 "Fix hangs during startup, add 'Replace…' button and shortcut. Adds an option "
 "to visually draw spaces/tabs"
-msgstr ""
+msgstr "修復啟動過程中的掛起問題, 添加「取代...」按鈕和快捷方式。添加一個選項以直觀地繪製空格/定位字元"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:107
 msgid ""
 "Use FileChooserNative instead of FileChooserDialog, fixes file opening/"
 "saving in flatpaks."
-msgstr ""
+msgstr "使用「本機文件選擇器」而不是「文件選擇對話框」，修復了在 flatpak 中開啟/儲存檔案的問題。"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:112
 msgid "Use GSettings to determine the default font."
@@ -178,37 +178,37 @@ msgstr "設定用於編輯區域的主題"
 
 #: data/com.github.Cogitri.gxi.gschema.xml:17 src/ui/prefs_win.glade:213
 msgid "Draw trailing spaces"
-msgstr ""
+msgstr "繪製尾隨空格"
 
 #: data/com.github.Cogitri.gxi.gschema.xml:18
 msgid "Draw spaces which are at the end of a line"
-msgstr ""
+msgstr "繪製位於行尾的空格"
 
 #: data/com.github.Cogitri.gxi.gschema.xml:25
 msgid "Draw a right hand margin"
-msgstr ""
+msgstr "繪製右邊距"
 
 #: data/com.github.Cogitri.gxi.gschema.xml:26
 msgid "Draw a right hand margin to limit the text width"
-msgstr ""
+msgstr "繪製右邊距以限制文本寬度"
 
 #: data/com.github.Cogitri.gxi.gschema.xml:33
 msgid "At what column to display the margin"
-msgstr ""
+msgstr "在哪個列顯示邊距"
 
 #: data/com.github.Cogitri.gxi.gschema.xml:34
 msgid "Sets the column at which the margin should be drawn"
-msgstr ""
+msgstr "設定應繪製邊距的列"
 
 #: data/com.github.Cogitri.gxi.gschema.xml:41
 msgid "Whether the current line should be highlighted"
-msgstr ""
+msgstr "是否應突出顯示當前行"
 
 #: data/com.github.Cogitri.gxi.gschema.xml:42
 msgid ""
 "Sets if the current line should be highlighted, which eases navigation "
 "through the document"
-msgstr ""
+msgstr "設定是否應突出顯示當前行，從而簡化檔案導航"
 
 #: src/about_win.rs:16
 msgid "GTK frontend for the xi text editor, written in Rust"
@@ -224,15 +224,15 @@ msgstr "翻译人员 - 致谢"
 
 #: src/about_win.rs:30
 msgid "Showing about window"
-msgstr ""
+msgstr "顯示關於視窗"
 
 #: src/main.rs:139
 msgid "Starting gxi"
-msgstr ""
+msgstr "啟動 gxi"
 
 #: src/main.rs:169
 msgid "Activating new view"
-msgstr ""
+msgstr "啟動新視圖"
 
 #: src/main.rs:186
 msgid "Opening new file"
@@ -240,27 +240,27 @@ msgstr "打开新文件"
 
 #: src/main.rs:209
 msgid "Shutting down…"
-msgstr ""
+msgstr "關閉…"
 
 #: src/main_win.rs:91
 msgid "Theme name"
-msgstr ""
+msgstr "主題名稱"
 
 #: src/main_win.rs:133
 msgid "Found message in queue"
-msgstr ""
+msgstr "在佇列中找到消息"
 
 #: src/main_win.rs:142
 msgid "Found a message from xi"
-msgstr ""
+msgstr "從 xi 中找到消息"
 
 #: src/main_win.rs:154
 msgid "User chose to cancel exiting"
-msgstr ""
+msgstr "用戶選擇取消退出"
 
 #: src/main_win.rs:157
 msgid "User chose to close the application"
-msgstr ""
+msgstr "用戶選擇關閉應用程式"
 
 #. xi-editor doesn't know about the translations
 #: src/main_win.rs:166 src/main_win.rs:173
@@ -374,7 +374,7 @@ msgstr "取消"
 
 #: src/main_win.rs:632
 msgid "FileChooserNative open response"
-msgstr ""
+msgstr "「本機檔案選擇器」開啟響應"
 
 #: src/main_win.rs:643
 msgid "Couldn't open file"
@@ -390,7 +390,7 @@ msgstr "儲存"
 
 #: src/main_win.rs:691
 msgid "FileChooserNative save response"
-msgstr ""
+msgstr "「本機檔案選擇器」儲存響應"
 
 #: src/main_win.rs:702
 msgid "Saving file"
@@ -404,75 +404,75 @@ msgstr "無法儲存檔案"
 msgid ""
 "Couldn't get current EditView. This may only mean that you don't have an "
 "editing tab open right now."
-msgstr ""
+msgstr "無法獲取當前的編輯視圖。這可能僅僅意味著您現在沒有開啟任何編輯選項卡。"
 
 #: src/main_win.rs:766
 msgid "Requesting new view"
-msgstr ""
+msgstr "請求新視圖"
 
 #: src/main_win.rs:786 src/edit_view.rs:215
 msgid "Creating new EditView"
-msgstr ""
+msgstr "創建新的編輯視圖"
 
 #: src/main_win.rs:826
 msgid "Closing all EditViews"
-msgstr ""
+msgstr "關閉所有編輯視圖"
 
 #: src/main_win.rs:863
 msgid "Closing current Editview"
-msgstr ""
+msgstr "關閉當前編輯視圖"
 
 #: src/main_win.rs:874
 msgid "Closing Editview"
-msgstr ""
+msgstr "關閉編輯視圖"
 
 #: src/main_win.rs:904
 msgid "Save unsaved changes"
-msgstr ""
+msgstr "儲存未儲存的更改"
 
 #: src/main_win.rs:907
 msgid "Close Without Saving"
-msgstr ""
+msgstr "關閉但不儲存"
 
 #: src/main_win.rs:930
 msgid "Save dialog has been destroyed before the user clicked a button"
-msgstr ""
+msgstr "在用戶按下按鈕前，儲存對話框已被銷毀"
 
 #: src/errors.rs:54
 msgid "No default application"
-msgstr ""
+msgstr "沒有預設應用程式"
 
 #: src/errors.rs:56
 msgid "Default application has wrong type"
-msgstr ""
+msgstr "預設應用程式的類型錯誤"
 
 #: src/xi_thread.rs:18
 msgid "Failed to send msg to Xi"
-msgstr ""
+msgstr "未能發送 msg 到 Xi"
 
 #: src/xi_thread.rs:45
 msgid "Didn't expect xi-rpc to call read()"
-msgstr ""
+msgstr "xi-rpc 於預期之外調用 read()"
 
 #: src/xi_thread.rs:53
 msgid "Didn't expect xi-rpc to call fill_buf()"
-msgstr ""
+msgstr "xi-rpc 於預期之外調用 fill_buf()"
 
 #: src/xi_thread.rs:57
 msgid "Didn't expect xi-rpc to call consume()"
-msgstr ""
+msgstr "xi-rpc 於預期之外調用 consume()"
 
 #: src/xi_thread.rs:77
 msgid "Didn't expect xi-rpc to call write()"
-msgstr ""
+msgstr "xi-rpc 於預期之外調用 write()"
 
 #: src/xi_thread.rs:81
 msgid "Didn't expect xi-rpc to call flush()"
-msgstr ""
+msgstr "xi-rpc 於預期之外調用 flush()"
 
 #: src/xi_thread.rs:88
 msgid "RPC rx thread lost"
-msgstr ""
+msgstr "RPC rx 線程遺失"
 
 #: src/ui/gxi.glade:22
 msgid "Save As…"
@@ -536,23 +536,23 @@ msgstr "字體"
 
 #: src/ui/prefs_win.glade:112
 msgid "Appearance"
-msgstr ""
+msgstr "外觀"
 
 #: src/ui/prefs_win.glade:133
 msgid "0"
-msgstr ""
+msgstr "0"
 
 #: src/ui/prefs_win.glade:149
 msgid "Tab size"
-msgstr ""
+msgstr "定位字元大小"
 
 #: src/ui/prefs_win.glade:168
 msgid "Treat spaces like tabs"
-msgstr ""
+msgstr "將空格視為定位字元"
 
 #: src/ui/prefs_win.glade:183
 msgid "Scroll past the end of documents"
-msgstr ""
+msgstr "滾動到檔案末尾"
 
 #: src/ui/prefs_win.glade:198
 msgid "Wrap lines at the end of the view instead of offering scrolling"
@@ -580,102 +580,102 @@ msgstr "在「搜尋」和「搜尋及取代」之間切換"
 
 #: src/ui/find_replace.glade:103
 msgid "Show or hide search options such as case sensitivity"
-msgstr ""
+msgstr "顯示或隱藏搜尋選項, 如區分大小寫"
 
 #: src/ui/find_replace.glade:140 src/ui/find_replace.glade:150
 msgid "Replace"
-msgstr ""
+msgstr "取代"
 
 #: src/ui/find_replace.glade:162
 msgid "Replace All"
-msgstr ""
+msgstr "取代全部"
 
 #: src/ui/find_replace.glade:191
 msgid "Regular expressions"
-msgstr ""
+msgstr "規則運算式"
 
 #: src/ui/find_replace.glade:206
 msgid "Case sensitive"
-msgstr ""
+msgstr "區分大小寫"
 
 #: src/ui/find_replace.glade:220
 msgid "Match whole word only"
-msgstr ""
+msgstr "僅匹配整個單詞"
 
 #: src/ui/find_replace.glade:245
 msgid "No Results"
-msgstr ""
+msgstr "無結果"
 
 #: src/edit_view.rs:36
 msgid "Failed to get Pango language"
-msgstr ""
+msgstr "無法獲取 Pango 語言"
 
 #: src/edit_view.rs:39
 msgid "Failed to load Pango font set"
-msgstr ""
+msgstr "無法加載 Pango 字體集"
 
 #: src/edit_view.rs:42
 msgid "Failed to load Pango font metrics"
-msgstr ""
+msgstr "無法加載 Pango 字體度量"
 
 #: src/edit_view.rs:47
 msgid "Pango font size"
-msgstr ""
+msgstr "Pango 字體大小"
 
 #: src/edit_view.rs:56
 msgid "Font metrics"
-msgstr ""
+msgstr "字體度量"
 
 #: src/edit_view.rs:97
 msgid "Events"
-msgstr ""
+msgstr "事件"
 
 #: src/edit_view.rs:113
 msgid "Connecting events of EditView"
-msgstr ""
+msgstr "連接編輯視圖的事件"
 
 #: src/edit_view.rs:152
 msgid "Size changed to"
-msgstr ""
+msgstr "大小更改為"
 
 #: src/edit_view.rs:152
 msgid "width"
-msgstr ""
+msgstr "寬"
 
 #: src/edit_view.rs:152
 msgid "height"
-msgstr ""
+msgstr "高"
 
 #: src/edit_view.rs:172
 msgid "Failed to get Pango context"
-msgstr ""
+msgstr "無法獲取 Pango 上下文"
 
 #: src/edit_view.rs:376
 msgid "Connecting FindReplace events for EditView"
-msgstr ""
+msgstr "連接編輯視圖的搜尋取代事件"
 
 #: src/edit_view.rs:493
 msgid "Connecting"
-msgstr ""
+msgstr "連接"
 
 #: src/edit_view.rs:494
 msgid "events for EditView"
-msgstr ""
+msgstr "編輯視圖的事件"
 
 #: src/edit_view.rs:507 src/edit_view.rs:509
 msgid "Untitled"
-msgstr ""
+msgstr "無標題"
 
 #: src/edit_view.rs:520
 msgid "Setting title for EditView"
-msgstr ""
+msgstr "設定編輯視圖的標題"
 
 #: src/edit_view.rs:534 src/edit_view.rs:607 src/edit_view.rs:685
 #: src/edit_view.rs:739 src/edit_view.rs:765 src/edit_view.rs:959
 #: src/edit_view.rs:1182 src/edit_view.rs:1281 src/edit_view.rs:1344
 #: src/edit_view.rs:1387
 msgid "for EditView"
-msgstr ""
+msgstr "對於編輯視圖"
 
 #: src/edit_view.rs:555
 msgid "Setting edit font to"
@@ -683,7 +683,7 @@ msgstr "將編輯字體設定為"
 
 #: src/edit_view.rs:570
 msgid "Setting tab size to"
-msgstr ""
+msgstr "定位字元大小設定為"
 
 #: src/edit_view.rs:591
 msgid "Unhandled config option, open a bug report!"
@@ -695,7 +695,7 @@ msgstr "分配繪圖區域大小"
 
 #: src/edit_view.rs:725
 msgid "Vertical scrollbar changed value"
-msgstr ""
+msgstr "垂直捲動條更改值"
 
 #: src/edit_view.rs:750
 msgid "Updating visible scroll region"
@@ -703,7 +703,7 @@ msgstr "更新可見滾動區域"
 
 #: src/edit_view.rs:846
 msgid "Drawing EditView"
-msgstr ""
+msgstr "繪製編輯視圖"
 
 #: src/edit_view.rs:847
 msgid "vertical adjustment"
@@ -717,7 +717,7 @@ msgstr "水準調整"
 msgid ""
 "Couldn't update hscrollbar value because I couldn't get the line to scroll "
 "to!"
-msgstr ""
+msgstr "無法更新 hscrollbar 值，因為無法獲取要滾動到的行！"
 
 #: src/edit_view.rs:1360
 msgid "Smooth scrolling failed"
@@ -749,18 +749,18 @@ msgstr "unicode"
 
 #: src/edit_view.rs:1537
 msgid "Cutting text"
-msgstr ""
+msgstr "剪下文本"
 
 #: src/edit_view.rs:1555
 msgid "Copying text"
-msgstr ""
+msgstr "複製文本"
 
 #. if let Some(text) = Clipboard::get(&SELECTION_CLIPBOARD).wait_for_text() {
 #. self.core.borrow().insert(view_id, &text);
 #. }
 #: src/edit_view.rs:1575
 msgid "Pasting text"
-msgstr ""
+msgstr "貼上文本"
 
 #. if let Some(text) = Clipboard::get(&SELECTION_PRIMARY).wait_for_text() {
 #. self.core.borrow().insert(view_id, &text);
@@ -779,71 +779,71 @@ msgstr "無法創建配寘目錄"
 
 #: src/pref_storage.rs:126
 msgid "Couldn't read config, falling back to the default XI-Editor config"
-msgstr ""
+msgstr "無法讀取配置，回落到預設的 xi 編輯器配置"
 
 #: src/pref_storage.rs:137
 msgid "Discovered config dir in home dir"
-msgstr ""
+msgstr "在主目錄中發現配置目錄"
 
 #: src/pref_storage.rs:145
 msgid "Couldn't determine home dir! Settings will be temporary"
-msgstr ""
+msgstr "無法確定主目錄！設定將是臨時的"
 
 #: src/pref_storage.rs:154
 msgid "Failed to create temporary config dir"
-msgstr ""
+msgstr "無法創建臨時配寘目錄"
 
 #: src/pref_storage.rs:177
 msgid "Discovered config dir in temporary dir"
-msgstr ""
+msgstr "在臨時目錄中發現配寘目錄"
 
 #: src/pref_storage.rs:186
 msgid "Opening config file"
-msgstr ""
+msgstr "開啟設定檔案"
 
 #: src/pref_storage.rs:190
 msgid "Reading config file"
-msgstr ""
+msgstr "讀取設定檔案"
 
 #: src/pref_storage.rs:194
 msgid "Xi-Config"
-msgstr ""
+msgstr "Xi-Config"
 
 #: src/pref_storage.rs:204
 msgid "Saving config to"
-msgstr ""
+msgstr "將配寘儲存到"
 
 #: src/prefs_win.rs:54
 msgid "Setting font description"
-msgstr ""
+msgstr "設定字體說明"
 
 #: src/prefs_win.rs:67
 msgid "Setting font to"
-msgstr ""
+msgstr "將字體設定為"
 
 #: src/prefs_win.rs:68
 msgid "Setting font size to"
-msgstr ""
+msgstr "將字體大小設定為"
 
 #: src/prefs_win.rs:86
 msgid "Setting active theme"
-msgstr ""
+msgstr "設定活動主題"
 
 #: src/prefs_win.rs:94
 msgid "Theme changed to"
-msgstr ""
+msgstr "主題更改為"
 
 #: src/prefs_win.rs:112
 msgid "Scrolling past end"
-msgstr ""
+msgstr "滾動到末尾"
 
 #: src/prefs_win.rs:127
 msgid "Word wrapping"
-msgstr ""
+msgstr "文字換行"
 
 #: src/prefs_win.rs:142
 msgid "Tab stops"
-msgstr ""
+msgstr "製表位"
 
 #: src/prefs_win.rs:165
 msgid "Right hand margin"
@@ -855,7 +855,7 @@ msgstr "右邊距寬度"
 
 #: src/prefs_win.rs:197
 msgid "Setting tab size"
-msgstr ""
+msgstr "設定定位字元大小"
 
 #: src/rpc.rs:69 src/rpc.rs:71
 msgid "Error code"
@@ -863,16 +863,16 @@ msgstr "错误代码"
 
 #: src/rpc.rs:90
 msgid "Calling callback"
-msgstr ""
+msgstr "調用回調函數"
 
 #: src/rpc.rs:93
 msgid "unexpected result"
-msgstr ""
+msgstr "預期之外的結果"
 
 #: src/rpc.rs:96
 msgid "Got"
-msgstr ""
+msgstr "獲得"
 
 #: src/rpc.rs:96
 msgid "at RPC level"
-msgstr ""
+msgstr "在 RPC 層"

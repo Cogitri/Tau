@@ -8,63 +8,64 @@ msgstr ""
 "Project-Id-Version: gxi\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-04-06 10:53-0300\n"
-"PO-Revision-Date: 2019-04-10 09:31-0300\n"
-"Language-Team: \n"
+"PO-Revision-Date: 2019-04-13 01:04+0000\n"
+"Last-Translator: Chojan Shang <PsiACE@outlook.com>\n"
+"Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/gxi/"
+"translation/zh_Hans/>\n"
+"Language: zh_Hans\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.2.1\n"
-"Last-Translator: \n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"Language: zh_Hans\n"
+"X-Generator: Weblate 3.6-dev\n"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:7
 #: data/com.github.Cogitri.gxi.desktop.in:3
 msgid "gxi"
-msgstr ""
+msgstr "gxi"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:8
 msgid "GTK frontend for the xi text editor"
-msgstr ""
+msgstr "文本编辑器 xi 的 GTK 前端"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:12
 msgid ""
 "gxi is a GTK frontend for the xi text editor written in Rust. It's a very "
 "fast plain text editor."
-msgstr ""
+msgstr "gxi，文本编辑器 xi 的 GTK 前端，用 Rust 编写。一款非常快的纯文本编辑器。"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:27
 msgid "Rasmus \"Cogitri\" Thomsen"
-msgstr ""
+msgstr "Rasmus \"Cogitri\" Thomsen"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:37
 msgid "Bugfix release to fix build on flathub and trace log app_id on startup"
-msgstr ""
+msgstr "错误修复版本，用于修复在 flathub 上的构建，并在启动时跟踪记录 app_id"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:42
 msgid "Bugfix release to include meson_options.txt in the release tarballs"
-msgstr ""
+msgstr "错误修复版本，将 meson_options.txt 包含在发布的 tarballs 中"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:47
 msgid "Changes in this release:"
-msgstr ""
+msgstr "此版本中的更改："
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:49
 msgid "display an ErrorDialog if Xi sends 'error'"
-msgstr ""
+msgstr "如果 Xi 发送 “错误” 则显示一个错误对话框"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:50
 msgid "Rework the FindReplace dialog to be more compact"
-msgstr ""
+msgstr "重构 “查找替换” 对话框，使其更紧凑"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:51
 msgid ""
 "Add a regex, case sensitive and whole word matching option to the find dialog"
-msgstr ""
+msgstr "在 “查找” 对话框中添加正则表达式、区分大小写和全字匹配选项"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:52
 msgid "Set Ctrl+W as shortcut for closing the current tab"
-msgstr ""
+msgstr "将 Ctrl+W 设置为关闭当前选项卡的快捷方式"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:53
 msgid ""
