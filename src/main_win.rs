@@ -128,7 +128,7 @@ impl MainWin {
                             .steal_batch_and_pop(&local)
                     })
                     .find(|s| !s.is_retry())
-                    .and_then(|s| s.success())
+                    .and_then(crossbeam_deque::Steal::success)
                 }) {
                     trace!("{}: {:?}", gettext("Found message in queue"), msg);
                     msg_tx.send(msg).unwrap();
@@ -770,7 +770,7 @@ impl MainWin {
         }
 
         let shared_queue = self.shared_queue.clone();
-        let file_name2 = file_name.map(|s| s.to_string());
+        let file_name2 = file_name.map(std::string::ToString::to_string);
         self.core
             .borrow_mut()
             .send_request("new_view", &params, move |value| {

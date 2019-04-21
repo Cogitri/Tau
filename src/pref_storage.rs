@@ -87,7 +87,7 @@ impl Config {
                 path: config_dir
                     .join("preferences.xiconfig")
                     .to_str()
-                    .map(|s| s.to_string())
+                    .map(std::string::ToString::to_string)
                     .unwrap(),
             };
 
@@ -163,7 +163,7 @@ impl Config {
                 path: config_dir
                     .join("preferences.xiconfig")
                     .to_str()
-                    .map(|s| s.to_string())
+                    .map(std::string::ToString::to_string)
                     .unwrap(),
             };
             xi_config
