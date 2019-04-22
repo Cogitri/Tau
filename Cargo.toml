@@ -38,7 +38,7 @@ dirs = "1"
 toml = "0.5"
 tempfile = "3"
 gettext-rs = { version="0.4", features=["gettext-system"] }
-crossbeam-deque = "0.7"
+crossbeam-queue = "0.1"
 crossbeam-channel = "0.3"
 human-panic = "1"
 syntect="3"

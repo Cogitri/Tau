@@ -6,7 +6,6 @@ use crate::prefs_win::PrefsWin;
 use crate::rpc::Core;
 use crate::shared_queue::{CoreMsg, SharedQueue};
 use crate::theme::{u32_from_color, LineStyle};
-use crossbeam_deque::Worker;
 use gettextrs::gettext;
 use gio::{ActionMapExt, SimpleAction};
 use glib::MainContext;
@@ -115,24 +114,10 @@ impl MainWin {
         let main_context = MainContext::default();
         main_context.acquire();
 
-        thread::spawn(move || {
-            let local = Worker::new_fifo();
-
-            loop {
-                while let Some(msg) = local.pop().or_else(|| {
-                    std::iter::repeat_with(|| {
-                        shared_queue
-                            .queue_rx
-                            .lock()
-                            .unwrap()
-                            .steal_batch_and_pop(&local)
-                    })
-                    .find(|s| !s.is_retry())
-                    .and_then(crossbeam_deque::Steal::success)
-                }) {
-                    trace!("{}: {:?}", gettext("Found message in queue"), msg);
-                    msg_tx.send(msg).unwrap();
-                }
+        thread::spawn(move || loop {
+            if let Ok(msg) = shared_queue.queue_rx.lock().unwrap().pop() {
+                trace!("{}: {:?}", gettext("Found message in queue"), msg);
+                msg_tx.send(msg).unwrap();
             }
         });
 

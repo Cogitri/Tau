@@ -1,4 +1,4 @@
-use crossbeam_deque::Injector;
+use crossbeam_queue::SegQueue;
 use gettextrs::gettext;
 use log::trace;
 use serde_json::Value;
@@ -19,15 +19,15 @@ pub enum CoreMsg {
 
 #[derive(Clone)]
 pub struct SharedQueue {
-    pub queue_rx: Arc<Mutex<Injector<CoreMsg>>>,
-    pub queue_tx: Arc<Mutex<Injector<CoreMsg>>>,
+    pub queue_rx: Arc<Mutex<SegQueue<CoreMsg>>>,
+    pub queue_tx: Arc<Mutex<SegQueue<CoreMsg>>>,
 }
 
 impl SharedQueue {
     pub fn new() -> Self {
         Self {
-            queue_rx: Arc::new(Mutex::new(Injector::<CoreMsg>::new())),
-            queue_tx: Arc::new(Mutex::new(Injector::<CoreMsg>::new())),
+            queue_rx: Arc::new(Mutex::new(SegQueue::<CoreMsg>::new())),
+            queue_tx: Arc::new(Mutex::new(SegQueue::<CoreMsg>::new())),
         }
     }
 
