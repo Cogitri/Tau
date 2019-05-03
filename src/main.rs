@@ -124,13 +124,13 @@ fn main() {
     let core = Core::new(xi_peer, xi_rx, err_tx, shared_queue.clone());
 
     trace!("application_id: {}", app_id!());
-    let application = Application::new(app_id!(), ApplicationFlags::HANDLES_OPEN)
+    let application = Application::new(Some(app_id!()), ApplicationFlags::HANDLES_OPEN)
         .unwrap_or_else(|_| panic!("Failed to create the GTK+ application"));
 
     let main_context = MainContext::default();
     main_context.acquire();
     // Used to create error msgs from threads other than the main thread
-    err_rx.attach(&main_context, |err_msg| {
+    err_rx.attach(Some(&main_context), |err_msg| {
         crate::errors::ErrorDialog::new(err_msg);
         glib::source::Continue(false)
     });
