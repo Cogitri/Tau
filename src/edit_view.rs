@@ -137,7 +137,7 @@ impl ViewItem {
             if let Some(disp) = DisplayManager::get().get_default_display() {
                 let cur = Cursor::new_for_display(&disp, CursorType::Xterm);
                 if let Some(win) = w.get_window() {
-                    win.set_cursor(&cur)
+                    win.set_cursor(Some(&cur))
                 }
             }
             w.grab_focus();
@@ -302,7 +302,7 @@ impl TopBar {
         let tab_widget = gtk::Box::new(Orientation::Horizontal, 5);
         let label = Label::new(Some(""));
         tab_widget.add(&label);
-        let close_button = Button::new_from_icon_name("window-close", IconSize::Button);
+        let close_button = Button::new_from_icon_name(Some("window-close"), IconSize::Button);
         tab_widget.add(&close_button);
         tab_widget.show_all();
 
@@ -361,7 +361,7 @@ impl FindReplace {
         popover.set_position(PositionType::Bottom);
         #[cfg(not(feature = "gtk_v3_22"))]
         popover.set_transitions_enabled(true);
-        popover.set_relative_to(btn);
+        popover.set_relative_to(Some(btn));
 
         Self {
             replace_revealer,
@@ -1055,7 +1055,7 @@ impl EditView {
         );
         let layout = pango::Layout::new(pango_ctx);
         layout.set_alignment(pango::Alignment::Center);
-        layout.set_font_description(&self.interface_font.font_desc);
+        layout.set_font_description(Some(&self.interface_font.font_desc));
         layout.set_text(line_view.as_str());
         layout
     }
@@ -1122,8 +1122,8 @@ impl EditView {
 
         // let layout = create_layout(cr).unwrap();
         let layout = pango::Layout::new(pango_ctx);
-        layout.set_tabs(tabs);
-        layout.set_font_description(&self.edit_font.font_desc);
+        layout.set_tabs(Some(tabs));
+        layout.set_font_description(Some(&self.edit_font.font_desc));
         layout.set_text(&line_view);
 
         let mut ix = 0;
@@ -1184,7 +1184,7 @@ impl EditView {
             ix += style.start + style.len as i64;
         }
 
-        layout.set_attributes(&attr_list);
+        layout.set_attributes(Some(&attr_list));
         layout
     }
 
@@ -1557,7 +1557,7 @@ impl EditView {
             MainContext::channel::<Option<String>>(glib::PRIORITY_HIGH);
         let main_context = MainContext::default();
 
-        clipboard_rx.attach(&main_context, move |text_opt| {
+        clipboard_rx.attach(Some(&main_context), move |text_opt| {
             if let Some(text) = text_opt {
                 Clipboard::get(&SELECTION_CLIPBOARD).set_text(&text);
             }
@@ -1574,7 +1574,7 @@ impl EditView {
             MainContext::channel::<Option<String>>(glib::PRIORITY_HIGH);
         let main_context = MainContext::default();
 
-        clipboard_rx.attach(&main_context, move |text_opt| {
+        clipboard_rx.attach(Some(&main_context), move |text_opt| {
             if let Some(text) = text_opt {
                 Clipboard::get(&SELECTION_CLIPBOARD).set_text(&text);
             }
@@ -1593,7 +1593,9 @@ impl EditView {
         let view_id2 = view_id.to_string().clone();
         let core = self.core.clone();
         Clipboard::get(&SELECTION_CLIPBOARD).request_text(move |_, text| {
-            core.borrow().insert(&view_id2, &text);
+            if let Some(clip_content) = text {
+                core.borrow().insert(&view_id2, &clip_content);
+            }
         });
     }
 
@@ -1606,7 +1608,9 @@ impl EditView {
         let core = self.core.clone();
         Clipboard::get(&SELECTION_PRIMARY).request_text(move |_, text| {
             core.borrow().gesture_point_select(&view_id2, line, col);
-            core.borrow().insert(&view_id2, &text);
+            if let Some(clip_content) = text {
+                core.borrow().insert(&view_id2, &clip_content);
+            }
         });
     }
 

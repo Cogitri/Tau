@@ -84,7 +84,7 @@ impl PrefsWin {
                 theme_combo_box.append_text(theme_name);
                 if &main_state.theme_name == theme_name {
                     trace!("{}: {}", gettext("Setting active theme"), i);
-                    theme_combo_box.set_active(i as u32);
+                    theme_combo_box.set_active(Some(i as u32));
                 }
             }
         }
@@ -223,7 +223,7 @@ impl PrefsWin {
             window: window.clone(),
         }));
 
-        window.set_transient_for(parent);
+        window.set_transient_for(Some(parent));
         window.show_all();
 
         prefs_win

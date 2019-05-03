@@ -122,7 +122,7 @@ impl MainWin {
         });
 
         msg_rx.attach(
-            &main_context,
+            Some(&main_context),
             clone!(main_win => move |msg| {
                 trace!("{}", gettext("Found a message from xi"));
                 Self::handle_msg(main_win.clone(), msg);
@@ -130,7 +130,7 @@ impl MainWin {
             }),
         );
 
-        window.set_application(application);
+        window.set_application(Some(application));
 
         //This is called when the window is closed with the 'X' or via the application menu, etc.
         window.connect_delete_event(clone!(main_win, window => move |_, _| {
@@ -149,7 +149,7 @@ impl MainWin {
             let main_win = main_win.clone();
 
             syntax_combo_box.append_text(&gettext("Plain Text"));
-            syntax_combo_box.set_active(0);
+            syntax_combo_box.set_active(Some(0));
 
             syntax_combo_box.connect_changed(move |cb| {
                 if let Some(lang) = cb.get_active_text() {
@@ -909,7 +909,7 @@ impl MainWin {
             ask_save_dialog.set_default_response(ResponseType::Other(SaveAction::Cancel as u16));
             let ret = ask_save_dialog.run();
             ask_save_dialog.destroy();
-            match SaveAction::from_i32(ret) {
+            match SaveAction::from_i32(ret.into()) {
                 Some(SaveAction::Save) => {
                     Self::handle_save_button(main_win);
                     SaveAction::Save
