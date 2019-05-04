@@ -229,6 +229,9 @@ impl Core {
     pub fn insert_tab(&self, view_id: &str) {
         self.send_edit_cmd(view_id, "insert_tab", &json!({}))
     }
+    pub fn outdent(&self, view_id: &str) {
+        self.send_edit_cmd(view_id, "outdent", &json!({}))
+    }
     pub fn move_up(&self, view_id: &str) {
         self.send_edit_cmd(view_id, "move_up", &json!({}))
     }

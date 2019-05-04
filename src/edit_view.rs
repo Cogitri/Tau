@@ -1415,6 +1415,7 @@ impl EditView {
                 self.core.borrow().insert_newline(&view_id);
             }
             key::Tab if norm && !shift => self.core.borrow().insert_tab(view_id),
+            key::Tab | key::ISO_Left_Tab if norm && shift => self.core.borrow().outdent(view_id),
             key::Up if norm && !shift => self.core.borrow().move_up(view_id),
             key::Down if norm && !shift => self.core.borrow().move_down(view_id),
             key::Left if norm && !shift => self.core.borrow().move_left(view_id),
