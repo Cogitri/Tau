@@ -124,7 +124,7 @@ impl ViewItem {
 
         self.edit_area
             .connect_key_press_event(clone!(edit_view => move |_, ek| {
-                edit_view.borrow_mut().handle_key_press_event(ek)
+                edit_view.borrow().handle_key_press_event(ek)
             }));
 
         self.edit_area
@@ -199,6 +199,7 @@ pub struct EditView {
     find_replace: FindReplace,
     edit_font: Font,
     interface_font: Font,
+    im_context: IMContextSimple,
 }
 
 impl EditView {
@@ -211,11 +212,13 @@ impl EditView {
         hamburger_button: &MenuButton,
         file_name: Option<String>,
         view_id: &str,
+        parent: &ApplicationWindow,
     ) -> Rc<RefCell<Self>> {
         trace!("{}, '{}'", gettext("Creating new EditView"), view_id);
         let view_item = ViewItem::new();
         let find_replace = FindReplace::new(&hamburger_button);
         let pango_ctx = view_item.get_pango_ctx();
+        let im_context = IMContextSimple::new();
 
         let edit_view = Rc::new(RefCell::new(Self {
             core: core.clone(),
@@ -230,6 +233,7 @@ impl EditView {
             edit_font: Self::get_edit_font(&pango_ctx, &main_state.borrow().config),
             interface_font: Self::get_interface_font(&pango_ctx),
             find_replace: find_replace.clone(),
+            im_context: im_context.clone(),
         }));
 
         edit_view.borrow_mut().update_title();
@@ -237,8 +241,18 @@ impl EditView {
 
         view_item.connect_events(&edit_view);
         find_replace.connect_events(&edit_view);
+        EditView::connect_im_events(&edit_view, &im_context);
+
+        im_context.set_client_window(parent.get_window().as_ref());
 
         edit_view
+    }
+
+    fn connect_im_events(edit_view: &Rc<RefCell<EditView>>, im_context: &IMContextSimple) {
+        im_context.connect_commit(clone!(edit_view => move |_, text| {
+            let ev = edit_view.borrow();
+            ev.core.borrow().insert(&ev.view_id, text);
+        }));
     }
 
     fn setup_root_box(view_item: &ViewItem) -> Box {
@@ -1380,7 +1394,7 @@ impl EditView {
     // Allow this to be a long function since splitting up the matching into multiple functions
     // would be a pain
     #[allow(clippy::cyclomatic_complexity)]
-    fn handle_key_press_event(&mut self, ek: &EventKey) -> Inhibit {
+    fn handle_key_press_event(&self, ek: &EventKey) -> Inhibit {
         trace!(
             "{} 'key_press_event' {} '{}': {:?}",
             gettext("Handling"),
@@ -1520,12 +1534,15 @@ impl EditView {
                         }
                         c if (norm) && c >= '\u{0020}' => {
                             debug!("inserting key");
-                            self.core.borrow().insert(view_id, &c.to_string());
+                            self.im_context.filter_keypress(ek);
                         }
                         _ => {
-                            debug!("unhandled key: {:?}", ch);
+                            warn!("unhandled key: {:?}", ch);
                         }
                     }
+                } else {
+                    debug!("Inserting non char key");
+                    self.im_context.filter_keypress(ek);
                 }
             }
         };
