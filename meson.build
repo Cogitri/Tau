@@ -94,9 +94,10 @@ syntect_releasebin_path = join_paths(meson.current_build_dir(), 'vendor', 'xi-ed
 
 git = find_program('git', native: true, required: false)
 
-subdir_check = run_command('sh', '-c', 'ls -d $MESON_SOURCE_ROOT/vendor/xi-editor')
+subdir_xi_check = run_command('sh', '-c', 'ls -d $MESON_SOURCE_ROOT/vendor/xi-editor')
+subdir_syntect_check = run_command('sh', '-c', 'ls -d $MESON_SOURCE_ROOT/vendor/xi-editor/rust/syntect-plugin/assets/')
 
-if subdir_check.returncode() != 0
+if subdir_xi_check.returncode() != 0 or subdir_syntect_check.returncode() != 0
     if git.found()
         message('Couldn\'t find xi-editor subdir, trying to clone it')
         if run_command(git, 'status').returncode() == 128
