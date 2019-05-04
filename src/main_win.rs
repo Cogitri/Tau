@@ -784,8 +784,14 @@ impl MainWin {
 
         if let Some(view_id) = value.as_str() {
             let hamburger_button = win.builder.get_object("hamburger_button").unwrap();
-            let edit_view =
-                EditView::new(&win.state, &win.core, &hamburger_button, file_name, view_id);
+            let edit_view = EditView::new(
+                &win.state,
+                &win.core,
+                &hamburger_button,
+                file_name,
+                view_id,
+                &win.window,
+            );
             {
                 let ev = edit_view.borrow();
                 let page_num =
