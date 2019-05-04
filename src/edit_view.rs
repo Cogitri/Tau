@@ -31,11 +31,10 @@ pub struct Font {
 impl Font {
     fn new(pango_ctx: &pango::Context, font_desc: FontDescription) -> Self {
         pango_ctx.set_font_description(&font_desc);
-        let language = pango_ctx
-            .get_language()
-            .unwrap_or_else(|| panic!("{}", &gettext("Failed to get Pango language")));
+        // FIXME: Just use en-US lang here, otherwise FontMetrics may be different (as in font_ascent/
+        // font_descent being larger to account for the language's special signs), which breaks cursor positioning.
         let fontset = pango_ctx
-            .load_fontset(&font_desc, &language)
+            .load_fontset(&font_desc, &Language::from_string("en-US"))
             .unwrap_or_else(|| panic!("{}", &gettext("Failed to load Pango font set")));
         let metrics = fontset
             .get_metrics()
