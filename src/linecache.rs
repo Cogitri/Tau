@@ -251,6 +251,19 @@ impl LineCache {
         self.n_invalid_after = new_invalid_after;
         //debug!("lc after update {:?}", self);
     }
+
+    /// Returns true if this Linecache only contains one line, which doesn't contain any text
+    pub fn is_empty(&self) -> bool {
+        if self.height() == 1 {
+            if let Some(line) = self.get_line(0) {
+                if &line.text == "" {
+                    return true;
+                }
+            }
+        }
+
+        false
+    }
 }
 
 #[cfg(test)]
@@ -323,5 +336,22 @@ mod test {
         assert!(linecache.get_line(53).is_none());
 
         println!("LINE CACHE: {:?}", linecache);
+    }
+
+    #[test]
+    fn test_empty() {
+        let mut linecache = LineCache::new();
+
+        linecache.apply_update(&json!({"annotations":[{"n":1,"payloads":null,"ranges":[[0,0,0,0]],"type":"selection"}],"ops":[{"lines":[{"cursor":[0],"ln":1,"styles":[],"text":""}],"n":1,"op":"ins"}],"pristine":true}));
+
+        assert!(linecache.is_empty());
+
+        linecache.apply_update(&json!({"annotations":[{"n":1,"payloads":null,"ranges":[[1,0,1,0]],"type":"selection"}],"ops":[{"lines":[{"ln":1,"styles":[0,75,8],"text":"test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out\n"},{"cursor":[0],"ln":2,"styles":[],"text":""}],"n":2,"op":"ins"}],"pristine":false}));
+
+        assert!(!linecache.is_empty());
+
+        linecache.apply_update(&json!({"annotations":[{"n":1,"payloads":null,"ranges":[[0,0,0,0]],"type":"selection"}],"ops":[{"lines":[{"cursor":[0],"ln":1,"styles":[],"text":""}],"n":1,"op":"ins"}],"pristine":true}));
+
+        assert!(linecache.is_empty());
     }
 }

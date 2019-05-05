@@ -1779,4 +1779,9 @@ impl EditView {
             self.core.borrow().replace_all(&self.view_id);
         }
     }
+
+    /// Returns true if this EditView is empty (contains no text)
+    pub fn is_empty(&self) -> bool {
+        self.line_cache.is_empty()
+    }
 }

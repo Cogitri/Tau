@@ -197,7 +197,7 @@ fn main() {
                     move |value| {
                         shared_queue.add_core_msg(CoreMsg::NewViewReply{
                             file_name: Some(path),
-                        value: value.clone(),
+                            value: value.clone(),
                         })
                     }
                 );
