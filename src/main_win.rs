@@ -10,7 +10,7 @@ use gettextrs::gettext;
 use gio::{ActionMapExt, SimpleAction};
 use glib::MainContext;
 use gtk::*;
-use log::{debug, error, trace, warn};
+use log::{debug, error, info, trace, warn};
 use serde_derive::*;
 use serde_json::{self, json, Value};
 use std::cell::RefCell;
@@ -743,7 +743,7 @@ impl MainWin {
                 }
             }
         }
-        warn!("{}", gettext("Couldn't get current EditView. This may only mean that you don't have an editing tab open right now."));
+        info!("{}", gettext("Couldn't get current EditView. This may only mean that you don't have an editing tab open right now."));
         None
     }
 
@@ -769,47 +769,71 @@ impl MainWin {
 
     fn new_view_response(main_win: &Rc<RefCell<Self>>, file_name: Option<String>, value: &Value) {
         trace!("{}", gettext("Creating new EditView"));
-        let mut win = main_win.borrow_mut();
+        let mut old_ev = None;
+        {
+            let mut win = main_win.borrow_mut();
 
-        // Add all available langs to the syntax_combo_box for the user to select it. We're doing
-        // it here because we can be sure that xi-editor has sent available_languages by now.
-        let syntax_combo_box: ComboBoxText = win.builder.get_object("syntax_combo_box").unwrap();
+            // Add all available langs to the syntax_combo_box for the user to select it. We're doing
+            // it here because we can be sure that xi-editor has sent available_languages by now.
+            let syntax_combo_box: ComboBoxText =
+                win.builder.get_object("syntax_combo_box").unwrap();
 
-        win.state
-            .borrow()
-            .avail_languages
-            .iter()
-            .filter(|l| l != &&"Plain Text".to_string())
-            .for_each(|lang| syntax_combo_box.append_text(lang));
+            win.state
+                .borrow()
+                .avail_languages
+                .iter()
+                .filter(|l| l != &&"Plain Text".to_string())
+                .for_each(|lang| syntax_combo_box.append_text(lang));
 
-        if let Some(view_id) = value.as_str() {
-            let hamburger_button = win.builder.get_object("hamburger_button").unwrap();
-            let edit_view = EditView::new(
-                &win.state,
-                &win.core,
-                &hamburger_button,
-                file_name,
-                view_id,
-                &win.window,
-            );
-            {
-                let ev = edit_view.borrow();
-                let page_num =
-                    win.notebook
-                        .insert_page(&ev.root_widget, Some(&ev.top_bar.tab_widget), None);
-                if let Some(w) = win.notebook.get_nth_page(Some(page_num)) {
-                    win.w_to_ev.insert(w.clone(), edit_view.clone());
-                    win.view_id_to_w.insert(view_id.to_string(), w);
+            if let Some(view_id) = value.as_str() {
+                let position = if let Some(curr_ev) = win.get_current_edit_view() {
+                    if curr_ev.borrow().is_empty() {
+                        old_ev = Some(curr_ev.clone());
+                        if let Some(w) = win.view_id_to_w.get(&curr_ev.borrow().view_id) {
+                            win.notebook.page_num(w)
+                        } else {
+                            None
+                        }
+                    } else {
+                        None
+                    }
+                } else {
+                    None
+                };
+
+                let hamburger_button = win.builder.get_object("hamburger_button").unwrap();
+                let edit_view = EditView::new(
+                    &win.state,
+                    &win.core,
+                    &hamburger_button,
+                    file_name,
+                    view_id,
+                    &win.window,
+                );
+                {
+                    let ev = edit_view.borrow();
+                    let page_num = win.notebook.insert_page(
+                        &ev.root_widget,
+                        Some(&ev.top_bar.tab_widget),
+                        position,
+                    );
+                    if let Some(w) = win.notebook.get_nth_page(Some(page_num)) {
+                        win.w_to_ev.insert(w.clone(), edit_view.clone());
+                        win.view_id_to_w.insert(view_id.to_string(), w);
+                    }
+
+                    ev.top_bar.close_button.connect_clicked(
+                        clone!(main_win, edit_view => move |_| {
+                            Self::close_view(&main_win, &edit_view);
+                        }),
+                    );
                 }
 
-                ev.top_bar
-                    .close_button
-                    .connect_clicked(clone!(main_win, edit_view => move |_| {
-                        Self::close_view(&main_win, &edit_view);
-                    }));
+                win.views.insert(view_id.to_string(), edit_view);
             }
-
-            win.views.insert(view_id.to_string(), edit_view);
+        }
+        if let Some(empty_ev) = old_ev {
+            Self::close_view(&main_win, &empty_ev);
         }
     }
 
