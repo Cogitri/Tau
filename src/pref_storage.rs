@@ -8,7 +8,7 @@ use std::io::prelude::*;
 use tempfile::tempdir;
 
 /// Wrapper struct around `XiConfig`, it's annoying to pass around path otherwise
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct Config {
     pub path: String,
     pub config: XiConfig,

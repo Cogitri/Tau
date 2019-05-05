@@ -47,6 +47,7 @@ pub struct MeasureWidth {
     pub strings: Vec<String>,
 }
 
+#[derive(Default)]
 pub struct MainState {
     pub themes: Vec<String>,
     pub theme_name: String,
@@ -55,7 +56,7 @@ pub struct MainState {
     pub fonts: Vec<String>,
     pub avail_languages: Vec<String>,
     pub selected_language: String,
-    pub config: Rc<RefCell<Config>>,
+    pub config: Config,
 }
 
 pub struct MainWin {
@@ -77,7 +78,7 @@ impl MainWin {
         application: &Application,
         shared_queue: SharedQueue,
         core: Rc<RefCell<Core>>,
-        config: Rc<RefCell<Config>>,
+        config: Config,
     ) -> Rc<RefCell<Self>> {
         let glade_src = include_str!("ui/gxi.glade");
         let builder = Builder::new_from_string(glade_src);
@@ -89,6 +90,12 @@ impl MainWin {
         let theme_name = crate::pref_storage::get_theme_schema();
         debug!("{}: {}", gettext("Theme name"), &theme_name);
 
+        let main_state = Rc::new(RefCell::new(MainState {
+            config,
+            theme_name,
+            ..Default::default()
+        }));
+
         let main_win = Rc::new(RefCell::new(Self {
             core: core.clone(),
             shared_queue: shared_queue.clone(),
@@ -98,16 +105,7 @@ impl MainWin {
             views: Default::default(),
             w_to_ev: Default::default(),
             view_id_to_w: Default::default(),
-            state: Rc::new(RefCell::new(MainState {
-                themes: Default::default(),
-                theme_name,
-                theme: Default::default(),
-                styles: Default::default(),
-                fonts: Default::default(),
-                avail_languages: Default::default(),
-                selected_language: Default::default(),
-                config: config.clone(),
-            })),
+            state: main_state.clone(),
         }));
 
         let (msg_tx, msg_rx) = MainContext::channel::<CoreMsg>(glib::PRIORITY_HIGH);
@@ -267,16 +265,16 @@ impl MainWin {
             let auto_indent_action = SimpleAction::new_stateful(
                 "auto_indent",
                 None,
-                &config.borrow().config.auto_indent.to_variant(),
+                &main_state.borrow().config.config.auto_indent.to_variant(),
             );;
 
-            auto_indent_action.connect_change_state(clone!(config => move |action, value| {
+            auto_indent_action.connect_change_state(clone!(main_state => move |action, value| {
                 if let Some(value) = value.as_ref() {
                     action.set_state(value);
                     let value: bool = value.get().unwrap();
                     debug!("{}: {}", gettext("Auto indent"), value);
-                    config.borrow_mut().config.auto_indent = value;
-                    config.borrow().save()
+                    main_state.borrow_mut().config.config.auto_indent = value;
+                    main_state.borrow().config.save()
                         .map_err(|e| error!("{}", e.to_string()))
                         .unwrap();
                 }
@@ -287,16 +285,26 @@ impl MainWin {
             let space_indent_action = SimpleAction::new_stateful(
                 "insert_spaces",
                 None,
-                &config.borrow().config.translate_tabs_to_spaces.to_variant(),
+                &main_state
+                    .borrow()
+                    .config
+                    .config
+                    .translate_tabs_to_spaces
+                    .to_variant(),
             );;
             space_indent_action.connect_change_state(move |action, value| {
                 if let Some(value) = value.as_ref() {
                     action.set_state(value);
                     let value: bool = value.get().unwrap();
                     debug!("{}: {}", gettext("Space indent"), value);
-                    config.borrow_mut().config.translate_tabs_to_spaces = value;
-                    config
+                    main_state
+                        .borrow_mut()
+                        .config
+                        .config
+                        .translate_tabs_to_spaces = value;
+                    main_state
                         .borrow()
+                        .config
                         .save()
                         .map_err(|e| error!("{}", e.to_string()))
                         .unwrap();

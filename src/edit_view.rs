@@ -276,13 +276,12 @@ impl EditView {
         )
     }
 
-    fn get_edit_font(pango_ctx: &pango::Context, config: &Rc<RefCell<Config>>) -> Font {
+    fn get_edit_font(pango_ctx: &pango::Context, config: &Config) -> Font {
         Font::new(
             pango_ctx,
             FontDescription::from_string(&format!(
                 "{} {}",
-                &config.borrow().config.font_face,
-                &config.borrow().config.font_size,
+                &config.config.font_face, &config.config.font_size,
             )),
         )
     }
@@ -581,8 +580,7 @@ impl EditView {
                     "tab_size" => {
                         if let Some(size) = value.as_u64() {
                             debug!("{}: {}", gettext("Setting tab size to"), size);
-                            self.main_state.borrow().config.borrow_mut().config.tab_size =
-                                size as u32;
+                            self.main_state.borrow_mut().config.config.tab_size = size as u32;
                             self.view_item.edit_area.queue_draw();
                         }
                     }
@@ -1065,7 +1063,7 @@ impl EditView {
             0,
             TabAlign::Left,
             self.edit_font.font_width as i32
-                * self.main_state.borrow().config.borrow().config.tab_size as i32
+                * self.main_state.borrow().config.config.tab_size as i32
                 * pango::SCALE,
         );
 
