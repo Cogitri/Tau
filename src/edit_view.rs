@@ -689,7 +689,7 @@ impl EditView {
     /// Maps x|y pixel coordinates to the line num and col. This can be used e.g. for
     /// determining the firt and last time, but setting the y coordinate to 0 and the
     /// last pixel.
-    pub fn da_px_to_cell(&self, main_state: &MainState, x: f64, y: f64) -> (u64, u64) {
+    pub fn da_px_to_cell(&self, x: f64, y: f64) -> (u64, u64) {
         trace!(
             "{} 'da_px_to_cell' {} '{}': x: {} y: {}",
             gettext("Handling"),
@@ -710,8 +710,7 @@ impl EditView {
         let index = if let Some(line) = self.line_cache.get_line(line_num) {
             let pango_ctx = self.view_item.get_pango_ctx();
 
-            let layout =
-                self.create_layout_for_line(&pango_ctx, &main_state, line, &self.get_tabs());
+            let layout = self.create_layout_for_line(&pango_ctx, line, &self.get_tabs());
             let (_, index, trailing) = layout.xy_to_index(x as i32 * pango::SCALE, 0);
             index + trailing
         } else {
@@ -750,10 +749,9 @@ impl EditView {
             gettext("for EditView"),
             self.view_id
         );
-        let main_state = self.main_state.borrow();
         let da_height = self.view_item.edit_area.get_allocated_height();
-        let (_, first_line) = self.da_px_to_cell(&main_state, 0.0, 0.0);
-        let (_, last_line) = self.da_px_to_cell(&main_state, 0.0, f64::from(da_height));
+        let (_, first_line) = self.da_px_to_cell(0.0, 0.0);
+        let (_, last_line) = self.da_px_to_cell(0.0, f64::from(da_height));
         let last_line = last_line + 1;
 
         debug!(
@@ -807,8 +805,7 @@ impl EditView {
         // here, but it's hard determining an accurate width otherwise.
         for i in first_line..last_line {
             if let Some(line) = self.line_cache.get_line(i) {
-                let layout =
-                    self.create_layout_for_line(&pango_ctx, &self.main_state.borrow(), line, &tabs);
+                let layout = self.create_layout_for_line(&pango_ctx, line, &tabs);
                 max_width = max(max_width, layout.get_extents().1.width);
             }
         }
@@ -897,8 +894,6 @@ impl EditView {
 
         set_source_color(cr, theme.foreground);
 
-        let main_state = self.main_state.borrow();
-
         let tabs = self.get_tabs();
 
         for i in first_line..last_line {
@@ -922,7 +917,7 @@ impl EditView {
                 );
 
                 let pango_ctx = self.view_item.get_pango_ctx();
-                let layout = self.create_layout_for_line(&pango_ctx, &main_state, line, &tabs);
+                let layout = self.create_layout_for_line(&pango_ctx, line, &tabs);
                 // debug!("width={}", layout.get_extents().1.width);
                 update_layout(cr, &layout);
                 show_layout(cr, &layout);
@@ -1021,7 +1016,6 @@ impl EditView {
 
                 let linecount_layout = self.create_layout_for_linecount(
                     &pango_ctx,
-                    &self.main_state.borrow(),
                     current_line,
                     linecount_width as usize,
                 );
@@ -1041,7 +1035,6 @@ impl EditView {
     fn create_layout_for_linecount(
         &self,
         pango_ctx: &pango::Context,
-        _main_state: &MainState,
         n: u64,
         padding: usize,
     ) -> pango::Layout {
@@ -1078,10 +1071,8 @@ impl EditView {
             }),
             None,
         );
-        let main_state = self.main_state.borrow();
         let pango_ctx = self.view_item.get_pango_ctx();
-        let linecount_layout =
-            self.create_layout_for_line(&pango_ctx, &main_state, &line, &self.get_tabs());
+        let linecount_layout = self.create_layout_for_line(&pango_ctx, &line, &self.get_tabs());
 
         f64::from(linecount_layout.get_extents().1.width / pango::SCALE)
     }
@@ -1090,7 +1081,6 @@ impl EditView {
     fn create_layout_for_line(
         &self,
         pango_ctx: &pango::Context,
-        main_state: &MainState,
         line: &Line,
         tabs: &TabArray,
     ) -> pango::Layout {
@@ -1128,6 +1118,7 @@ impl EditView {
         for style in &line.styles {
             let start_index = (ix + style.start) as u32;
             let end_index = (ix + style.start + style.len as i64) as u32;
+            let main_state = self.main_state.borrow();
             let line_style = main_state.styles.get(&style.id);
 
             if let Some(foreground) = line_style.and_then(|s| s.fg_color) {
@@ -1296,10 +1287,7 @@ impl EditView {
         self.view_item.edit_area.grab_focus();
 
         let (x, y) = eb.get_position();
-        let (col, line) = {
-            let main_state = self.main_state.borrow();
-            self.da_px_to_cell(&main_state, x, y)
-        };
+        let (col, line) = self.da_px_to_cell(x, y);
 
         match eb.get_button() {
             1 => {
@@ -1337,10 +1325,7 @@ impl EditView {
     /// button clicked.
     pub fn handle_drag(&mut self, em: &EventMotion) -> Inhibit {
         let (x, y) = em.get_position();
-        let (col, line) = {
-            let main_state = self.main_state.borrow();
-            self.da_px_to_cell(&main_state, x, y)
-        };
+        let (col, line) = self.da_px_to_cell(x, y);
         self.core.borrow().drag(&self.view_id, line, col);
         Inhibit(false)
     }
