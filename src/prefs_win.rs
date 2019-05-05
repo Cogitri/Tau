@@ -47,8 +47,8 @@ impl PrefsWin {
 
         {
             let mut font_desc = FontDescription::new();
-            let font_face = &xi_config.borrow().config.font_face;
-            font_desc.set_size(xi_config.borrow().config.font_size as i32 * pango::SCALE);
+            let font_face = &xi_config.config.font_face;
+            font_desc.set_size(xi_config.config.font_size as i32 * pango::SCALE);
             font_desc.set_family(font_face);
 
             trace!("{}: {}", gettext("Setting font description"), font_face);
@@ -58,9 +58,9 @@ impl PrefsWin {
 
         {
             font_chooser_widget.connect_property_font_desc_notify(
-                clone!(xi_config => move |font_widget| {
+                clone!(main_state => move |font_widget| {
                     if let Some(font_desc) = font_widget.get_font_desc() {
-                        let mut font_conf = xi_config.borrow_mut();
+                        let mut font_conf = &mut main_state.borrow_mut().config;
 
                         let font_family = font_desc.get_family().unwrap();
                         let font_size = font_desc.get_size() / pango::SCALE;
@@ -104,14 +104,15 @@ impl PrefsWin {
 
         {
             {
-                scroll_past_end_checkbutton.set_active(xi_config.borrow().config.scroll_past_end);
+                scroll_past_end_checkbutton
+                    .set_active(main_state.borrow().config.config.scroll_past_end);
             }
 
-            scroll_past_end_checkbutton.connect_toggled(clone!(xi_config => move |toggle_btn| {
+            scroll_past_end_checkbutton.connect_toggled(clone!(main_state => move |toggle_btn| {
                 let value = toggle_btn.get_active();;
                 debug!("{}: {}", gettext("Scrolling past end"), value);
-                xi_config.borrow_mut().config.scroll_past_end = value;
-                xi_config.borrow().save()
+                main_state.borrow_mut().config.config.scroll_past_end = value;
+                main_state.borrow().config.save()
                     .map_err(|e| error!("{}", e.to_string()))
                     .unwrap();
             }));
@@ -119,14 +120,14 @@ impl PrefsWin {
 
         {
             {
-                word_wrap_checkbutton.set_active(xi_config.borrow().config.word_wrap);
+                word_wrap_checkbutton.set_active(main_state.borrow().config.config.word_wrap);
             }
 
-            word_wrap_checkbutton.connect_toggled(clone!(xi_config => move |toggle_btn| {
+            word_wrap_checkbutton.connect_toggled(clone!(main_state => move |toggle_btn| {
                 let value = toggle_btn.get_active();
                 debug!("{}: {}", gettext("Word wrapping"), value);
-                xi_config.borrow_mut().config.word_wrap = value;
-                xi_config.borrow_mut().save()
+                main_state.borrow_mut().config.config.word_wrap = value;
+                main_state.borrow().config.save()
                     .map_err(|e| error!("{}", e.to_string()))
                     .unwrap();
             }));
@@ -134,14 +135,14 @@ impl PrefsWin {
 
         {
             {
-                tab_stops_checkbutton.set_active(xi_config.borrow().config.use_tab_stops);
+                tab_stops_checkbutton.set_active(main_state.borrow().config.config.use_tab_stops);
             }
 
-            tab_stops_checkbutton.connect_toggled(clone!(xi_config => move |toggle_btn| {
+            tab_stops_checkbutton.connect_toggled(clone!(main_state => move |toggle_btn| {
                 let value = toggle_btn.get_active();
                 debug!("{}: {}", gettext("Tab stops"), value);
-                xi_config.borrow_mut().config.use_tab_stops = value;
-                xi_config.borrow().save()
+                main_state.borrow_mut().config.config.use_tab_stops = value;
+                main_state.borrow().config.save()
                     .map_err(|e| error!("{}", e.to_string()))
                     .unwrap();
             }));
@@ -187,16 +188,14 @@ impl PrefsWin {
         }
 
         {
-            tab_size_spinbutton.set_value(f64::from(
-                main_state.borrow().config.borrow().config.tab_size,
-            ));
+            tab_size_spinbutton.set_value(f64::from(main_state.borrow().config.config.tab_size));
 
             tab_size_spinbutton.connect_value_changed(
                 clone!(main_state, edit_view => move |spin_btn| {
                     let value = spin_btn.get_value();
                     debug!("{}: {}", gettext("Setting tab size"), value);
-                    main_state.borrow().config.borrow_mut().config.tab_size = value as u32;
-                    main_state.borrow().config.borrow().save()
+                    main_state.borrow_mut().config.config.tab_size = value as u32;
+                    main_state.borrow().config.save()
                     .map_err(|e| error!("{}", e.to_string()))
                     .unwrap();
                     if let Some(ev) = edit_view.clone() {

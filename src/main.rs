@@ -161,7 +161,7 @@ fn main() {
             application,
             shared_queue.clone(),
             Rc::new(RefCell::new(core.clone())),
-            Rc::new(RefCell::new(xi_config)),
+            xi_config,
            );
     }));
 
