@@ -75,3 +75,16 @@ Building and installing the git tracking package is identical, just replace all 
 
 Please consult the [Arch Wiki](https://wiki.archlinux.org/index.php/Arch_User_Repository#Installing_packages)
 for more information regarding installing packages from the AUR.
+
+### Installation on Windows
+
+I'll try to have binary releases for Windows by gxi version 0.7.0. If you don't want to wait,
+or want to use a debug build for developing follow the following instructions:
+
+0) Install Rust by visiting https://rustup.rs. After running the exe press `2` (right after you see the terminal of rustup-init.exe) to customize the settings and enter `x86_64-pc-windows-gnu` as default triplet (notice the `gnu` instead of `msvc`)
+1) Go to https://www.msys2.org/ and download the appropriate installer (usually x86_64)
+2) Go into your start menu and open the MSYS terminal
+3) Enter `pacman -S mingw-w64-x86_64-toolchain mingw-w64-x86_64-gtk3 git` in the terminal
+4) Open the `MinGW64` terminal from your start menu. Do `echo 'PATH="/c/Users/${USER}/.cargo/bin:${PATH}"' >> .bash_profile`
+5) Reload the just made changes with `source .bash_profile`. Then clone gxi: `git clone https://github.com/Cogitri/gxi`.
+6) `cd gxi && cargo run` <- This should produce a debug build for you and run it.
