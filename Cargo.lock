@@ -948,7 +948,7 @@ dependencies = [
 [[package]]
 name = "pango"
 version = "0.6.0"
-source = "git+https://github.com/gtk-rs/pango#3cd4be96502ed94b451022c3401c377d43c85a5a"
+source = "git+https://github.com/gtk-rs/pango#b57c5744c7fc49359a287bec674d1c53857ca284"
 dependencies = [
  "bitflags 1.0.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "glib 0.7.0 (git+https://github.com/gtk-rs/glib)",
