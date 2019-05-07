@@ -582,7 +582,7 @@ dependencies = [
 [[package]]
 name = "gtk"
 version = "0.6.0"
-source = "git+https://github.com/gtk-rs/gtk#fdf7b58f845def4a8d190d070b29ad7be6f1358d"
+source = "git+https://github.com/gtk-rs/gtk#54d7de7563db715e544c28604ae1f25a9eaaafdf"
 dependencies = [
  "atk 0.6.0 (git+https://github.com/gtk-rs/atk)",
  "bitflags 1.0.5 (registry+https://github.com/rust-lang/crates.io-index)",
