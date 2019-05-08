@@ -1491,6 +1491,9 @@ impl EditView {
             key::Page_Down if norm && shift => {
                 self.core.borrow().page_down_and_modify_selection(view_id);
             }
+            key::Escape => {
+                self.stop_search();
+            }
             _ => {
                 if let Some(ch) = ch {
                     match ch {
