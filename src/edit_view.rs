@@ -1410,6 +1410,7 @@ impl EditView {
         match ek.get_keyval() {
             key::Delete if norm => self.core.borrow().delete_forward(view_id),
             key::BackSpace if norm => self.core.borrow().delete_backward(view_id),
+            key::BackSpace if ctrl => self.core.borrow().delete_word_backward(view_id),
             key::Return | key::KP_Enter => {
                 self.core.borrow().insert_newline(&view_id);
             }
