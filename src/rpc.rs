@@ -220,6 +220,9 @@ impl Core {
     pub fn delete_backward(&self, view_id: &str) {
         self.send_edit_cmd(view_id, "delete_backward", &json!({}))
     }
+    pub fn delete_word_backward(&self, view_id: &str) {
+        self.send_edit_cmd(view_id, "delete_word_backward", &json!({}))
+    }
     pub fn insert_newline(&self, view_id: &str) {
         self.send_edit_cmd(view_id, "insert_newline", &json!({}))
     }
