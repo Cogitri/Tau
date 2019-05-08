@@ -49,6 +49,7 @@ human-panic = "1"
 syntect="3"
 
 [dev-dependencies.cargo-husky]
+git="https://github.com/Cogitri/cargo-husky"
 version = "1"
 default-features = false
 features = ["precommit-hook", "prepush-hook", "run-cargo-clippy", "run-cargo-fmt"]
