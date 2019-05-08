@@ -1,0 +1,22 @@
+#!/bin/sh
+
+YELLOW='\033[1;33m'
+NO_COLOR='\033[0m'
+
+if [ -n "$NOQA" ]; then
+	exit 0
+fi
+
+if cargo clippy -- --help >/dev/null 2>&1; then
+	echo '+cargo clippy'
+	cargo clippy || exit 1
+else
+	echo "${YELLOW}You don't seem to have cargo clippy installed! If possible install it to run code linters locally, instead of on CI.${NO_COLOR}"
+fi
+
+if cargo fmt -- --help > /dev/null 2>&1; then
+	echo '+cargo fmt -- --check'
+	cargo fmt -- --check || exit 1
+else
+	echo "${YELLOW}You don't seem to have cargo fmt installed! If possible install it to run code linters locally, instead of on CI.${NO_COLOR}"
+fi

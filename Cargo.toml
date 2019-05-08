@@ -52,7 +52,7 @@ syntect="3"
 git="https://github.com/Cogitri/cargo-husky"
 version = "1"
 default-features = false
-features = ["precommit-hook", "prepush-hook", "run-cargo-clippy", "run-cargo-fmt"]
+features = ["user-hooks"]
 
 [profile.release]
 lto = true

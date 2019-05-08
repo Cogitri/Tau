@@ -157,6 +157,7 @@ subdir('po')
 test(
   'cargo test',
   cargo,
+  env: ['DONT_INSTALL_HUSKY_HOOKS=1'],
   args: 'test',
   timeout: 3000,
 )
