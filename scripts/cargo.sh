@@ -23,9 +23,6 @@ export GXI_NAME="${13}"
 GREEN='\033[0;32m'
 NO_COLOR='\033[0m'
 
-# Don't taint user's hooks when he installs from meson.
-export DONT_INSTALL_HUSKY_HOOKS=1
-
 echo "\tGXI Plugindir: ${GREEN}${GXI_PLUGIN_DIR}${NO_COLOR}
 \tGXI Localedir:       ${GREEN}${GXI_LOCALEDIR}${NO_COLOR}
 \tGXI Version:         ${GREEN}${GXI_VERSION}${NO_COLOR}
