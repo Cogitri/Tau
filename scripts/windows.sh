@@ -16,7 +16,7 @@ mv release/mingw64/* release
 
 mkdir -p release/share/glib-2.0/schemas
 
-cp data/com.github.Cogitri.gxi.gschema.xml release/share/glib-2.0/schemas
+cp data/com.github.Cogitri.gxi.gschema.xml.in release/share/glib-2.0/schemas/com.github.Cogitri.gxi.gschema.xml
 
 sed -i 's/@app_id@/com.github.Cogitri.gxi/' release/share/glib-2.0/schemas/com.github.Cogitri.gxi.gschema.xml
 

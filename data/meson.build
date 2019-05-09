@@ -52,6 +52,6 @@ endif
 
 conf = configuration_data()
 conf.set('app_id', application_id)
-configure_file(input: 'com.github.Cogitri.gxi.gschema.xml', install_dir: join_paths(gxi_datadir, 'glib-2.0', 'schemas'), output: application_id + '.gschema.xml', install: true, configuration: conf)
+configure_file(input: 'com.github.Cogitri.gxi.gschema.xml.in', install_dir: join_paths(gxi_datadir, 'glib-2.0', 'schemas'), output: application_id + '.gschema.xml', install: true, configuration: conf)
 
 install_subdir('icons', install_dir: gxi_datadir)
