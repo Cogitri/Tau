@@ -1,3 +1,26 @@
+## Changes in v0.7.0
+
+### Feature changes
+
+ - (edit_view): keybind Shift+Tab to outdent
+ - (edit_view): keybind Escape to stopping the current search
+ - (edit_view): keybind Ctrl+Backspace to delete_word_backward
+ - (main_win): open in existing tab if there's an empty tab
+ - (po): Add zh_Hans and zh-Hant to LINGUAS file
+ - (po): add zh_Hans to LINGUAS
+ - (po): add zh-Hant to LINGUAS
+ - (edit_view|prefs_win): support setting a custom tab size
+
+### Bugfixes
+
+ - (ui): remove startup_id property of ApplicationWindow
+ - (edit_view): measure FontMetrics in en-US locale
+ - (edit_view): use IMContextSimple to fix inserting dead/non latin characters
+ - (i18n): update lang (Chinese (Traditional))
+ - (i18n): update lang (Chinese (Traditional))
+ - (i18n): update lang (Portuguese (Brazil))
+ - (i18n): update lang (Norwegian Bokmål)
+
 ## Changes in v0.6.2
 
 ### Feature changes

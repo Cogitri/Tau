@@ -32,6 +32,31 @@
 	</provides>
 
 	<releases>
+		<release version="0.7.0" date="2019-05-09">
+			<description>
+				<p>Changes in this release:</p>
+					<ul>
+						<li>(edit_view): keybind Shift+Tab to outdent</li>
+						<li>(edit_view): keybind Escape to stopping the current search</li>
+						<li>(edit_view): keybind Ctrl+Backspace to delete_word_backward</li>
+						<li>(main_win): open in existing tab if there's an empty tab</li>
+						<li>(po): Add zh_Hans and zh-Hant to LINGUAS file</li>
+						<li>(po): add zh_Hans to LINGUAS</li>
+						<li>(po): add zh-Hant to LINGUAS</li>
+						<li>(edit_view|prefs_win): support setting a custom tab size</li>
+					</ul>
+				<p>Bugfixes in this relase:</p>
+					<ul>
+						<li>(ui): remove startup_id property of ApplicationWindow</li>
+						<li>(edit_view): measure FontMetrics in en-US locale</li>
+						<li>(edit_view): use IMContextSimple to fix inserting dead/non latin characters</li>
+						<li>(i18n): update lang (Chinese (Traditional))</li>
+						<li>(i18n): update lang (Chinese (Traditional))</li>
+						<li>(i18n): update lang (Portuguese (Brazil))</li>
+						<li>(i18n): update lang (Norwegian Bokmål)</li>
+					</ul>
+			</description>
+		</release>
 		<release version="0.6.2" date="2019-03-31">
 			<description>
 				<p>Bugfix release to fix build on flathub and trace log app_id on startup</p>
