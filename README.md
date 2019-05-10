@@ -58,7 +58,7 @@ repository tracking package
 (including dependencies) the first package can be accomplished with:
 
 ```sh
-yaourt -Sy gxi
+yay -S gxi
 ```
 
 Alternatively use `makepkg`:
