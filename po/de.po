@@ -8,15 +8,16 @@ msgstr ""
 "Project-Id-Version: gxi\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-03-31 12:51+0200\n"
-"PO-Revision-Date: 2019-03-31 12:55+0200\n"
-"Last-Translator: \n"
-"Language-Team: \n"
+"PO-Revision-Date: 2019-05-06 20:48+0000\n"
+"Last-Translator: ssantos <ssantos@web.de>\n"
+"Language-Team: German <https://hosted.weblate.org/projects/gxi/translation/"
+"de/>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.2.1\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 3.7-dev\n"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:7
 #: data/com.github.Cogitri.gxi.desktop.in:3
@@ -41,7 +42,7 @@ msgstr "Rasmus \"Cogitri\" Thomsen"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:37
 msgid "Changes in this release:"
-msgstr "Änderungen in diesem Release"
+msgstr "Änderungen in diesem Release:"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:39
 msgid "display an ErrorDialog if Xi sends 'error'"
@@ -56,11 +57,12 @@ msgid ""
 "Add a regex, case sensitive and whole word matching option to the find dialog"
 msgstr ""
 "Es wurden die Optionen 'regexp', 'Groß- und Kleinschreibung' und 'ganze "
-"Wörter' zum Suchdialog hinzugefügt."
+"Wörter' zum Suchdialog hinzugefügt"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:42
 msgid "Set Ctrl+W as shortcut for closing the current tab"
-msgstr "Strg+W ist jetzt das Shortcut, um den momentanen Tab zu schließen."
+msgstr ""
+"Strg+W als Verknüpfung zum Schließen der aktuellen Registerkarte einstellen"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:43
 msgid ""
@@ -866,7 +868,7 @@ msgstr "Zeilenumbruch"
 
 #: src/prefs_win.rs:141
 msgid "Tab stops"
-msgstr "Tab stops"
+msgstr "Tabstops"
 
 #: src/prefs_win.rs:164
 msgid "Right hand margin"
@@ -882,7 +884,7 @@ msgstr "Fehlercode"
 
 #: src/rpc.rs:90
 msgid "Calling callback"
-msgstr ""
+msgstr "Callback aufrufen"
 
 #: src/rpc.rs:93
 msgid "unexpected result"
