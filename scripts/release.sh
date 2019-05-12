@@ -48,3 +48,8 @@ ginst .cargo
 # packaging
 cd $DEST/dist
 tar cJvf $PKGVER.tar.xz $PKGVER
+
+if type gpg; then
+	gpg --armor --detach-sign $PKGVER.tar.xz
+	gpg --verify $PKGVER.tar.xz.asc $PKGVER.tar.xz
+fi
