@@ -4,9 +4,10 @@ use crate::xi_thread::XiPeer;
 use crossbeam_channel::Receiver;
 use gettextrs::gettext;
 use log::{debug, error, trace};
+use parking_lot::Mutex;
 use serde_json::{json, Value};
 use std::collections::BTreeMap;
-use std::sync::{Arc, Mutex};
+use std::sync::Arc;
 use std::thread;
 
 pub const XI_SHIFT_KEY_MASK: u32 = 1 << 1;
@@ -83,7 +84,7 @@ impl Core {
                         &msg["method"], &msg["params"]
                     );
                     let callback = {
-                        let mut state = core.state.lock().unwrap();
+                        let mut state = core.state.lock();
                         state.pending.remove(&id)
                     };
                     if let Some(callback) = callback {
@@ -114,13 +115,13 @@ impl Core {
             "method": method,
             "params": params,
         });
-        let state = self.state.lock().unwrap();
+        let state = self.state.lock();
         debug!("Xi-CORE <-- {}", cmd);
         state.xi_peer.send_json(&cmd);
     }
 
     pub fn send_result(&self, id: u64, result: &Value) {
-        let state = self.state.lock().unwrap();
+        let state = self.state.lock();
         let cmd = json!({
             "id": id,
             "result": result,
@@ -134,7 +135,7 @@ impl Core {
     where
         F: FnOnce(&Value) + Send + 'static,
     {
-        let mut state = self.state.lock().unwrap();
+        let mut state = self.state.lock();
         let id = state.id;
         let cmd = json!({
             "method": method,

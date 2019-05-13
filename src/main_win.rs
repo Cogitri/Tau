@@ -113,7 +113,7 @@ impl MainWin {
         main_context.acquire();
 
         thread::spawn(move || loop {
-            if let Ok(msg) = shared_queue.queue_rx.lock().unwrap().pop() {
+            if let Ok(msg) = shared_queue.queue_rx.lock().pop() {
                 trace!("{}: {:?}", gettext("Found message in queue"), msg);
                 msg_tx.send(msg).unwrap();
             }
@@ -266,7 +266,7 @@ impl MainWin {
                 "auto_indent",
                 None,
                 &main_state.borrow().config.config.auto_indent.to_variant(),
-            );;
+            );
 
             auto_indent_action.connect_change_state(clone!(main_state => move |action, value| {
                 if let Some(value) = value.as_ref() {
