@@ -92,7 +92,6 @@ use gettextrs::{gettext, TextDomain, TextDomainError};
 use gio::{ApplicationExt, ApplicationExtManual, ApplicationFlags, FileExt};
 use glib::MainContext;
 use gtk::Application;
-use human_panic::setup_panic;
 use log::{debug, info, trace, warn};
 use serde_json::{json, Value};
 use std::cell::RefCell;
@@ -100,7 +99,7 @@ use std::env::args;
 use std::rc::Rc;
 
 fn main() {
-    setup_panic!();
+    setup_gtk_panic!();
 
     // Only set Warn as loglevel if the user hasn't explicitly set something else
     if std::env::var_os("RUST_LOG").is_none() {
