@@ -647,7 +647,7 @@ impl MainWin {
     pub fn handle_save_button(main_win: &Rc<RefCell<Self>>) {
         if let Some(edit_view) = main_win.borrow().get_current_edit_view() {
             if edit_view.borrow().file_name.is_some() {
-                let ev = edit_view.borrow_mut();
+                let ev = edit_view.borrow();
                 let core = main_win.borrow().core.clone();
                 core.borrow()
                     .save(&ev.view_id, ev.file_name.as_ref().unwrap());

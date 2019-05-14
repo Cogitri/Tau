@@ -87,15 +87,13 @@ impl ViewItem {
         let linecount = DrawingArea::new();
         let horiz_bar = Scrollbar::new(Orientation::Horizontal, None::<&gtk::Adjustment>);
         let verti_bar = Scrollbar::new(Orientation::Vertical, None::<&gtk::Adjustment>);
-
-        edit_area.set_events(
+        edit_area.add_events(
             EventMask::BUTTON_PRESS_MASK
                 | EventMask::BUTTON_RELEASE_MASK
                 | EventMask::BUTTON_MOTION_MASK
                 | EventMask::SCROLL_MASK
                 | EventMask::SMOOTH_SCROLL_MASK,
         );
-        debug!("{}: {:?}", gettext("Events"), edit_area.get_events());
         edit_area.set_can_focus(true);
 
         Self {
@@ -113,6 +111,7 @@ impl ViewItem {
             edit_view.borrow().view_id,
             gettext("Connecting events of EditView")
         );
+
         self.edit_area
             .connect_button_press_event(clone!(edit_view => move |_,eb| {
                 edit_view.borrow().handle_button_press(eb)
@@ -120,7 +119,7 @@ impl ViewItem {
 
         self.edit_area
             .connect_draw(clone!(edit_view => move |_,ctx| {
-                edit_view.borrow_mut().handle_da_draw(&ctx)
+                edit_view.borrow().handle_da_draw(&ctx)
             }));
 
         self.edit_area
@@ -130,7 +129,7 @@ impl ViewItem {
 
         self.edit_area
             .connect_motion_notify_event(clone!(edit_view => move |_,em| {
-                edit_view.borrow_mut().handle_drag(em)
+                edit_view.borrow().handle_drag(em)
             }));
 
         self.edit_area.connect_realize(|w| {
@@ -151,18 +150,19 @@ impl ViewItem {
 
         self.edit_area.connect_size_allocate(clone!(edit_view => move |_,alloc| {
             debug!("{}: {}={} {}={}", gettext("Size changed to"), gettext("width"), alloc.width, gettext("height"), alloc.height);
-            edit_view.borrow_mut().da_size_allocate(alloc.width, alloc.height);
+            edit_view.borrow().da_size_allocate(alloc.width, alloc.height);
             edit_view.borrow().do_resize(&edit_view.borrow().view_id,alloc.width, alloc.height);
         }));
 
-        self.linecount
-            .connect_draw(clone!(edit_view => move |_,ctx| {
-                edit_view.borrow_mut().handle_linecount_draw(&ctx)
+        self.verti_bar
+            .connect_change_value(clone!(edit_view => move |_,_,_| {
+                edit_view.borrow().update_visible_scroll_region();
+                Inhibit(false)
             }));
 
-        self.verti_bar
-            .connect_change_value(clone!(edit_view => move |_,_,value| {
-                edit_view.borrow_mut().vscrollbar_change_value(value)
+        self.linecount
+            .connect_draw(clone!(edit_view => move |_,ctx| {
+                edit_view.borrow().handle_linecount_draw(&ctx)
             }));
     }
 
@@ -193,7 +193,7 @@ pub struct EditView {
     pub view_id: String,
     pub file_name: Option<String>,
     pub pristine: bool,
-    pub root_widget: gtk::Box,
+    pub root_widget: Box,
     pub top_bar: TopBar,
     pub view_item: ViewItem,
     line_cache: LineCache,
@@ -457,7 +457,7 @@ impl FindReplace {
             if let Some(text) = text_opt {
                 edit_view.borrow().search_changed(Some(text.to_string()));
             } else {
-                edit_view.borrow_mut().search_changed(None);
+                edit_view.borrow().search_changed(None);
             }
         };
 
@@ -471,7 +471,7 @@ impl FindReplace {
             .connect_toggled(clone!(ev => move |_| restart_search(ev.clone())));
 
         self.search_entry.connect_activate(clone!(ev => move |_| {
-            ev.borrow_mut().find_next();
+            ev.borrow().find_next();
         }));
 
         self.search_entry
@@ -489,11 +489,11 @@ impl FindReplace {
             }));
 
         self.go_down_button.connect_clicked(clone!(ev => move |_| {
-            ev.borrow_mut().find_next();
+            ev.borrow().find_next();
         }));
 
         self.go_up_button.connect_clicked(clone!(ev => move |_| {
-            ev.borrow_mut().find_prev();
+            ev.borrow().find_prev();
         }));
     }
 }
@@ -659,34 +659,6 @@ impl EditView {
         self.view_item.linecount.queue_draw();
     }
 
-    fn change_scrollbar_visibility(&self) {
-        let vadj = self.view_item.verti_bar.get_adjustment();
-        let hadj = self.view_item.horiz_bar.get_adjustment();
-
-        if vadj.get_value() <= vadj.get_lower()
-            && vadj.get_value() + vadj.get_page_size() >= vadj.get_upper()
-        {
-            self.view_item.verti_bar.hide();
-        } else {
-            self.view_item.verti_bar.show();
-        }
-
-        if hadj.get_value() <= hadj.get_lower()
-            && hadj.get_value() + hadj.get_page_size() >= hadj.get_upper()
-        {
-            self.view_item.horiz_bar.hide();
-        } else {
-            debug!(
-                "SHOWING HSCROLLBAR: {} {}-{} {}",
-                hadj.get_value(),
-                hadj.get_lower(),
-                hadj.get_upper(),
-                hadj.get_page_size()
-            );
-            self.view_item.horiz_bar.show();
-        }
-    }
-
     /// Maps x|y pixel coordinates to the line num and col. This can be used e.g. for
     /// determining the firt and last time, but setting the y coordinate to 0 and the
     /// last pixel.
@@ -700,8 +672,8 @@ impl EditView {
             y
         );
         // let first_line = (vadj.get_value() / font_extents.height) as usize;
-        let x = x + self.view_item.horiz_bar.get_adjustment().get_value();
-        let y = y + self.view_item.verti_bar.get_adjustment().get_value();
+        let x = x + self.view_item.horiz_bar.get_value();
+        let y = y + self.view_item.verti_bar.get_value();
 
         let mut y = y - self.edit_font.font_descent;
         if y < 0.0 {
@@ -721,7 +693,7 @@ impl EditView {
     }
 
     /// Allocate the space our DrawingArea needs.
-    fn da_size_allocate(&mut self, da_width: i32, da_height: i32) {
+    fn da_size_allocate(&self, da_width: i32, da_height: i32) {
         debug!("{}", gettext("Allocating DrawingArea size"));
         let vadj = self.view_item.verti_bar.get_adjustment();
         vadj.set_page_size(f64::from(da_height));
@@ -729,15 +701,6 @@ impl EditView {
         hadj.set_page_size(f64::from(da_width));
 
         self.update_visible_scroll_region();
-    }
-
-    /// Upon changing the vertical scrollbar we have to call [update_visible_scroll_region](struct.EditView.html#method.vscrollbar_change_value)
-    fn vscrollbar_change_value(&mut self, value: f64) -> Inhibit {
-        debug!("{} {}", gettext("Vertical scrollbar changed value"), value);
-
-        self.update_visible_scroll_region();
-
-        Inhibit(false)
     }
 
     /// This updates the part of the document that's visible to the user, e.g. when scrolling.
@@ -830,7 +793,7 @@ impl EditView {
 
     /// Handles the drawing of the EditView. This is called when we get a update from xi-editor or if
     /// gtk requests us to draw the EditView. This draws the background, all lines and the cursor.
-    pub fn handle_da_draw(&mut self, cr: &Context) -> Inhibit {
+    pub fn handle_da_draw(&self, cr: &Context) -> Inhibit {
         const CURSOR_WIDTH: f64 = 2.0;
 
         // let foreground = self.main_state.borrow().theme.foreground;
@@ -882,7 +845,7 @@ impl EditView {
             cr.rectangle(
                 until_margin_width - self.view_item.horiz_bar.get_value(),
                 0.0,
-                f64::from(da_width) + self.view_item.horiz_bar.get_value(),
+                f64::from(da_width) + self.view_item.verti_bar.get_value(),
                 f64::from(da_height),
             );
             cr.fill();
@@ -959,7 +922,7 @@ impl EditView {
 
     /// This draws the linecount. We have this as our own widget to make sure we don't mess up text
     /// selection etc.
-    pub fn handle_linecount_draw(&mut self, cr: &Context) -> Inhibit {
+    pub fn handle_linecount_draw(&self, cr: &Context) -> Inhibit {
         trace!(
             "{} 'linecount_draw' {} '{}'",
             gettext("Handling"),
@@ -1246,8 +1209,6 @@ impl EditView {
                 // Only measure width up to the right column
                 line_text.truncate(col as usize);
                 let line_length = self.line_width(&line_text);
-                let padding = self.edit_font.font_width * 4.0;
-                let hadj = self.view_item.horiz_bar.get_adjustment();
 
                 let min = min(
                     begin_selection.unwrap_or(line_length as i64),
@@ -1259,6 +1220,9 @@ impl EditView {
                 ) as f64;
 
                 trace!("Horizontal scrolling to min: {}; max: {}", min, max);
+
+                let padding = self.edit_font.font_width * 4.0;
+                let hadj = self.view_item.horiz_bar.get_adjustment();
 
                 // If the cursor/selection is to the left of our current view, this is true
                 if min < hadj.get_value() {
@@ -1324,7 +1288,7 @@ impl EditView {
 
     /// Handle selecting line(s) by dragging the mouse across them while having the left mouse
     /// button clicked.
-    pub fn handle_drag(&mut self, em: &EventMotion) -> Inhibit {
+    pub fn handle_drag(&self, em: &EventMotion) -> Inhibit {
         let (x, y) = em.get_position();
         let (col, line) = self.da_px_to_cell(x, y);
         self.core.borrow().drag(&self.view_id, line, col);
