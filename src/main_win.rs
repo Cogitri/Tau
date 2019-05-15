@@ -80,7 +80,7 @@ impl MainWin {
         core: Rc<RefCell<Core>>,
         config: Config,
     ) -> Rc<RefCell<Self>> {
-        let glade_src = include_str!("ui/gxi.glade");
+        let glade_src = GLADE_SRC;
         let builder = Builder::new_from_string(glade_src);
 
         let window: ApplicationWindow = builder.get_object("appwindow").unwrap();
