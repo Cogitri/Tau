@@ -18,6 +18,8 @@ use std::cmp::{max, min};
 use std::rc::Rc;
 use std::u32;
 
+const TAB_GLADE_SRC: &str = include_str!("ui/close_tab.glade");
+
 /// The `Font` Struct holds all information about the font used in the `EditView` for the editing area
 /// or the interface font (used for the linecount)
 pub struct Font {
@@ -297,11 +299,10 @@ pub struct TopBar {
 impl TopBar {
     /// Make the widgets for the tab
     fn new() -> Self {
-        let tab_widget = gtk::Box::new(Orientation::Horizontal, 5);
-        let label = Label::new(Some(""));
-        tab_widget.add(&label);
-        let close_button = Button::new_from_icon_name(Some("window-close"), IconSize::Button);
-        tab_widget.add(&close_button);
+        let builder = Builder::new_from_string(TAB_GLADE_SRC);
+        let tab_widget: Box = builder.get_object("tab_widget").unwrap();
+        let label = builder.get_object("tab_label").unwrap();
+        let close_button = builder.get_object("close_button").unwrap();
         tab_widget.show_all();
 
         Self {
