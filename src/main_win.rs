@@ -60,7 +60,7 @@ pub struct MainState {
 }
 
 pub struct MainWin {
-    core: Rc<RefCell<Core>>,
+    core: Core,
     shared_queue: SharedQueue,
     window: ApplicationWindow,
     notebook: Notebook,
@@ -77,7 +77,7 @@ impl MainWin {
     pub fn new(
         application: &Application,
         shared_queue: SharedQueue,
-        core: Rc<RefCell<Core>>,
+        core: Core,
         config: Config,
     ) -> Rc<RefCell<Self>> {
         let glade_src = GLADE_SRC;
@@ -161,7 +161,7 @@ impl MainWin {
                     if let Some(ev) = main_win.borrow().get_current_edit_view() {
                         let core = &main_win.borrow().core;
                         trace!("{} {}", gettext("Setting language to"), &lang);
-                        Self::set_language(&core, &ev.borrow().view_id, &lang);
+                        Self::set_language(core, &ev.borrow().view_id, &lang);
                     }
                 }
             });
@@ -413,7 +413,6 @@ impl MainWin {
         }
 
         self.core
-            .borrow()
             .send_notification("set_theme", &json!({ "theme_name": state.theme_name }));
     }
 
@@ -571,7 +570,6 @@ impl MainWin {
 
             if let Some(id) = id {
                 self.core
-                    .borrow()
                     .send_result(id, &serde_json::to_value(vec![widths]).unwrap());
             }
         }
@@ -599,9 +597,9 @@ impl MainWin {
         }
     }
 
-    pub fn set_language(core: &Rc<RefCell<Core>>, view_id: &str, lang: &str) {
+    pub fn set_language(core: &Core, view_id: &str, lang: &str) {
         debug!("{} '{:?}'", gettext("Changing language to"), lang);
-        core.borrow().set_language(&view_id, &lang);
+        core.set_language(&view_id, &lang);
     }
 
     /// Display the FileChooserNative for opening, send the result to the Xi core.
@@ -649,8 +647,7 @@ impl MainWin {
             if edit_view.borrow().file_name.is_some() {
                 let ev = edit_view.borrow();
                 let core = main_win.borrow().core.clone();
-                core.borrow()
-                    .save(&ev.view_id, ev.file_name.as_ref().unwrap());
+                core.save(&ev.view_id, ev.file_name.as_ref().unwrap());
             } else {
                 Self::save_as(main_win, &edit_view);
             }
@@ -695,7 +692,7 @@ impl MainWin {
                                 debug!("{} {:?}", gettext("Saving file"), &file);
                                 let view_id = edit_view.borrow().view_id.clone();
                                 let file = file.to_string_lossy();
-                                win.core.borrow().save(&view_id, &file);
+                                win.core.save(&view_id, &file);
                                 edit_view.borrow_mut().set_file(&file);
                             }
                         Err(e) => {
@@ -764,15 +761,13 @@ impl MainWin {
 
         let shared_queue = self.shared_queue.clone();
         let file_name2 = file_name.map(std::string::ToString::to_string);
-        self.core
-            .borrow_mut()
-            .send_request("new_view", &params, move |value| {
-                let value = value.clone();
-                shared_queue.add_core_msg(CoreMsg::NewViewReply {
-                    file_name: file_name2,
-                    value,
-                })
-            });
+        self.core.send_request("new_view", &params, move |value| {
+            let value = value.clone();
+            shared_queue.add_core_msg(CoreMsg::NewViewReply {
+                file_name: file_name2,
+                value,
+            })
+        });
     }
 
     fn new_view_response(main_win: &Rc<RefCell<Self>>, file_name: Option<String>, value: &Value) {
@@ -815,7 +810,7 @@ impl MainWin {
                     &win.core,
                     &hamburger_button,
                     file_name,
-                    view_id,
+                    view_id.to_string(),
                     &win.window,
                 );
                 {
@@ -970,7 +965,7 @@ impl MainWin {
             }
             main_win.view_id_to_w.remove(&view_id);
             main_win.views.remove(&view_id);
-            main_win.core.borrow().close_view(&view_id);
+            main_win.core.close_view(&view_id);
         }
         save_action
     }
