@@ -188,7 +188,7 @@ pub struct TextSize {
 
 /// The EditView is the part of gxi that does the actual editing. This is where you edit documents.
 pub struct EditView {
-    core: Rc<RefCell<Core>>,
+    core: Rc<Core>,
     main_state: Rc<RefCell<MainState>>,
     pub view_id: String,
     pub file_name: Option<String>,
@@ -208,11 +208,11 @@ impl EditView {
     /// the syntax lang and connects all events which might happen during usage (e.g. scrolling)
     pub fn new(
         main_state: &Rc<RefCell<MainState>>,
-        core: &Rc<RefCell<Core>>,
+        core: &Rc<Core>,
         // The FindReplace dialog is relative to this
         hamburger_button: &MenuButton,
         file_name: Option<String>,
-        view_id: &str,
+        view_id: String,
         parent: &ApplicationWindow,
     ) -> Rc<RefCell<Self>> {
         trace!("{}, '{}'", gettext("Creating new EditView"), view_id);
@@ -221,12 +221,14 @@ impl EditView {
         let pango_ctx = view_item.get_pango_ctx();
         let im_context = IMContextSimple::new();
 
+        crate::MainWin::set_language(&core, &view_id, "Plain Text");
+
         let edit_view = Rc::new(RefCell::new(Self {
             core: core.clone(),
             main_state: main_state.clone(),
             file_name,
             pristine: true,
-            view_id: view_id.to_string(),
+            view_id,
             root_widget: Self::setup_root_box(&view_item),
             top_bar: TopBar::new(),
             view_item: view_item.clone(),
@@ -238,7 +240,6 @@ impl EditView {
         }));
 
         edit_view.borrow_mut().update_title();
-        crate::MainWin::set_language(&core, view_id, "Plain Text");
 
         view_item.connect_events(&edit_view);
         find_replace.connect_events(&edit_view);
@@ -252,7 +253,7 @@ impl EditView {
     fn connect_im_events(edit_view: &Rc<RefCell<EditView>>, im_context: &IMContextSimple) {
         im_context.connect_commit(clone!(edit_view => move |_, text| {
             let ev = edit_view.borrow();
-            ev.core.borrow().insert(&ev.view_id, text);
+            ev.core.insert(&ev.view_id, text);
         }));
     }
 
@@ -725,9 +726,7 @@ impl EditView {
             last_line
         );
 
-        self.core
-            .borrow()
-            .scroll(&self.view_id, first_line, last_line);
+        self.core.scroll(&self.view_id, first_line, last_line);
     }
 
     /// Returns the width&height of the entire document
@@ -1257,25 +1256,15 @@ impl EditView {
         match eb.get_button() {
             1 => {
                 if eb.get_state().contains(ModifierType::SHIFT_MASK) {
-                    self.core
-                        .borrow()
-                        .gesture_range_select(&self.view_id, line, col);
+                    self.core.gesture_range_select(&self.view_id, line, col);
                 } else if eb.get_state().contains(ModifierType::CONTROL_MASK) {
-                    self.core
-                        .borrow()
-                        .gesture_toggle_sel(&self.view_id, line, col);
+                    self.core.gesture_toggle_sel(&self.view_id, line, col);
                 } else if eb.get_event_type() == EventType::DoubleButtonPress {
-                    self.core
-                        .borrow()
-                        .gesture_word_select(&self.view_id, line, col);
+                    self.core.gesture_word_select(&self.view_id, line, col);
                 } else if eb.get_event_type() == EventType::TripleButtonPress {
-                    self.core
-                        .borrow()
-                        .gesture_line_select(&self.view_id, line, col);
+                    self.core.gesture_line_select(&self.view_id, line, col);
                 } else {
-                    self.core
-                        .borrow()
-                        .gesture_point_select(&self.view_id, line, col);
+                    self.core.gesture_point_select(&self.view_id, line, col);
                 }
             }
             2 => {
@@ -1291,7 +1280,7 @@ impl EditView {
     pub fn handle_drag(&self, em: &EventMotion) -> Inhibit {
         let (x, y) = em.get_position();
         let (col, line) = self.da_px_to_cell(x, y);
-        self.core.borrow().drag(&self.view_id, line, col);
+        self.core.drag(&self.view_id, line, col);
         Inhibit(false)
     }
 
@@ -1373,89 +1362,81 @@ impl EditView {
         let norm = !alt && !ctrl && !meta;
 
         match ek.get_keyval() {
-            key::Delete if norm => self.core.borrow().delete_forward(view_id),
-            key::BackSpace if norm => self.core.borrow().delete_backward(view_id),
-            key::BackSpace if ctrl => self.core.borrow().delete_word_backward(view_id),
+            key::Delete if norm => self.core.delete_forward(view_id),
+            key::BackSpace if norm => self.core.delete_backward(view_id),
+            key::BackSpace if ctrl => self.core.delete_word_backward(view_id),
             key::Return | key::KP_Enter => {
-                self.core.borrow().insert_newline(&view_id);
+                self.core.insert_newline(&view_id);
             }
-            key::Tab if norm && !shift => self.core.borrow().insert_tab(view_id),
-            key::Tab | key::ISO_Left_Tab if norm && shift => self.core.borrow().outdent(view_id),
-            key::Up if norm && !shift => self.core.borrow().move_up(view_id),
-            key::Down if norm && !shift => self.core.borrow().move_down(view_id),
-            key::Left if norm && !shift => self.core.borrow().move_left(view_id),
-            key::Right if norm && !shift => self.core.borrow().move_right(view_id),
+            key::Tab if norm && !shift => self.core.insert_tab(view_id),
+            key::Tab | key::ISO_Left_Tab if norm && shift => self.core.outdent(view_id),
+            key::Up if norm && !shift => self.core.move_up(view_id),
+            key::Down if norm && !shift => self.core.move_down(view_id),
+            key::Left if norm && !shift => self.core.move_left(view_id),
+            key::Right if norm && !shift => self.core.move_right(view_id),
             key::Up if norm && shift => {
-                self.core.borrow().move_up_and_modify_selection(view_id);
+                self.core.move_up_and_modify_selection(view_id);
             }
             key::Down if norm && shift => {
-                self.core.borrow().move_down_and_modify_selection(view_id);
+                self.core.move_down_and_modify_selection(view_id);
             }
             key::Left if norm && shift => {
-                self.core.borrow().move_left_and_modify_selection(view_id);
+                self.core.move_left_and_modify_selection(view_id);
             }
             key::Right if norm && shift => {
-                self.core.borrow().move_right_and_modify_selection(view_id);
+                self.core.move_right_and_modify_selection(view_id);
             }
             key::Left if ctrl && !shift => {
-                self.core.borrow().move_word_left(view_id);
+                self.core.move_word_left(view_id);
             }
             key::Right if ctrl && !shift => {
-                self.core.borrow().move_word_right(view_id);
+                self.core.move_word_right(view_id);
             }
             key::Left if ctrl && shift => {
-                self.core
-                    .borrow()
-                    .move_word_left_and_modify_selection(view_id);
+                self.core.move_word_left_and_modify_selection(view_id);
             }
             key::Right if ctrl && shift => {
-                self.core
-                    .borrow()
-                    .move_word_right_and_modify_selection(view_id);
+                self.core.move_word_right_and_modify_selection(view_id);
             }
             key::Home if norm && !shift => {
-                self.core.borrow().move_to_left_end_of_line(view_id);
+                self.core.move_to_left_end_of_line(view_id);
             }
             key::End if norm && !shift => {
-                self.core.borrow().move_to_right_end_of_line(view_id);
+                self.core.move_to_right_end_of_line(view_id);
             }
             key::Home if norm && shift => {
                 self.core
-                    .borrow()
                     .move_to_left_end_of_line_and_modify_selection(view_id);
             }
             key::End if norm && shift => {
                 self.core
-                    .borrow()
                     .move_to_right_end_of_line_and_modify_selection(view_id);
             }
             key::Home if ctrl && !shift => {
-                self.core.borrow().move_to_beginning_of_document(view_id);
+                self.core.move_to_beginning_of_document(view_id);
             }
             key::End if ctrl && !shift => {
-                self.core.borrow().move_to_end_of_document(view_id);
+                self.core.move_to_end_of_document(view_id);
             }
             key::Home if ctrl && shift => {
                 self.core
-                    .borrow()
                     .move_to_beginning_of_document_and_modify_selection(view_id);
             }
             key::End if ctrl && shift => {
                 self.core
-                    .borrow()
                     .move_to_end_of_document_and_modify_selection(view_id);
             }
             key::Page_Up if norm && !shift => {
-                self.core.borrow().page_up(view_id);
+                self.core.page_up(view_id);
             }
             key::Page_Down if norm && !shift => {
-                self.core.borrow().page_down(view_id);
+                self.core.page_down(view_id);
             }
             key::Page_Up if norm && shift => {
-                self.core.borrow().page_up_and_modify_selection(view_id);
+                self.core.page_up_and_modify_selection(view_id);
             }
             key::Page_Down if norm && shift => {
-                self.core.borrow().page_down_and_modify_selection(view_id);
+                self.core.page_down_and_modify_selection(view_id);
             }
             key::Escape => {
                 self.stop_search();
@@ -1464,7 +1445,7 @@ impl EditView {
                 if let Some(ch) = ch {
                     match ch {
                         'a' if ctrl => {
-                            self.core.borrow().select_all(view_id);
+                            self.core.select_all(view_id);
                         }
                         'c' if ctrl => {
                             self.do_copy(view_id);
@@ -1479,10 +1460,10 @@ impl EditView {
                             self.do_cut(view_id);
                         }
                         'z' if ctrl => {
-                            self.core.borrow().undo(view_id);
+                            self.core.undo(view_id);
                         }
                         'Z' if ctrl && shift => {
-                            self.core.borrow().redo(view_id);
+                            self.core.redo(view_id);
                         }
                         c if (norm) && c >= '\u{0020}' => {
                             debug!("inserting key");
@@ -1516,7 +1497,7 @@ impl EditView {
             source::Continue(false)
         });
 
-        self.core.borrow_mut().cut(view_id, clipboard_tx);
+        self.core.cut(view_id, clipboard_tx);
     }
 
     /// Copies text to the clipboard
@@ -1533,35 +1514,35 @@ impl EditView {
             source::Continue(false)
         });
 
-        self.core.borrow_mut().copy(view_id, clipboard_tx);
+        self.core.copy(view_id, clipboard_tx);
     }
 
     /// Pastes text from the clipboard into the EditView
     fn do_paste(&self, view_id: &str) {
         // if let Some(text) = Clipboard::get(&SELECTION_CLIPBOARD).wait_for_text() {
-        //     self.core.borrow().insert(view_id, &text);
+        //     self.core.insert(view_id, &text);
         // }
         debug!("{}", gettext("Pasting text"));
         let view_id2 = view_id.to_string().clone();
         let core = self.core.clone();
         Clipboard::get(&SELECTION_CLIPBOARD).request_text(move |_, text| {
             if let Some(clip_content) = text {
-                core.borrow().insert(&view_id2, &clip_content);
+                core.insert(&view_id2, &clip_content);
             }
         });
     }
 
     fn do_paste_primary(&self, view_id: &str, line: u64, col: u64) {
         // if let Some(text) = Clipboard::get(&SELECTION_PRIMARY).wait_for_text() {
-        //     self.core.borrow().insert(view_id, &text);
+        //     self.core.insert(view_id, &text);
         // }
         debug!("{}", gettext("Pasting primary text"));
         let view_id2 = view_id.to_string().clone();
         let core = self.core.clone();
         Clipboard::get(&SELECTION_PRIMARY).request_text(move |_, text| {
-            core.borrow().gesture_point_select(&view_id2, line, col);
+            core.gesture_point_select(&view_id2, line, col);
             if let Some(clip_content) = text {
-                core.borrow().insert(&view_id2, &clip_content);
+                core.insert(&view_id2, &clip_content);
             }
         });
     }
@@ -1569,7 +1550,7 @@ impl EditView {
     /// Resize the EditView
     fn do_resize(&self, view_id: &str, width: i32, height: i32) {
         trace!("{} '{}'", gettext("Resizing EditView"), view_id);
-        self.core.borrow().resize(view_id, width, height);
+        self.core.resize(view_id, width, height);
     }
 
     /// Opens the find dialog (Ctrl+F)
@@ -1599,9 +1580,7 @@ impl EditView {
                 // No need to pass the actual values of case_sensitive etc. to Xi here, we as soon
                 // as we start typing something into the search box/flick one of the switches we call
                 // EditView::search_changed() anyway, which does that for us.
-                self.core
-                    .borrow()
-                    .find(&self.view_id, &needle, false, false, false);
+                self.core.find(&self.view_id, &needle, false, false, false);
             }
         }
     }
@@ -1692,14 +1671,12 @@ impl EditView {
 
     /// Go to the next match in the find/replace dialog
     pub fn find_next(&self) {
-        self.core
-            .borrow()
-            .find_next(&self.view_id, Some(true), Some(true));
+        self.core.find_next(&self.view_id, Some(true), Some(true));
     }
 
     /// Go the to previous match in the find/replace dialog
     pub fn find_prev(&self) {
-        self.core.borrow().find_previous(&self.view_id, Some(true));
+        self.core.find_previous(&self.view_id, Some(true));
     }
 
     /// Tells xi-editor that we're searching for a different string (or none) now
@@ -1709,7 +1686,6 @@ impl EditView {
         let whole_worlds = self.find_replace.whole_word_button.get_active();
         let case_sensitive = self.find_replace.case_sensitive_button.get_active();
         self.core
-            .borrow()
             .find(&self.view_id, &needle, case_sensitive, regex, whole_worlds);
     }
 
@@ -1717,9 +1693,8 @@ impl EditView {
     pub fn replace(&self) {
         if let Some(replace_chars) = self.find_replace.replace_entry.get_text() {
             self.core
-                .borrow()
                 .replace(&self.view_id, replace_chars.as_str(), false);
-            self.core.borrow().replace_next(&self.view_id);
+            self.core.replace_next(&self.view_id);
         }
     }
 
@@ -1727,9 +1702,8 @@ impl EditView {
     pub fn replace_all(&self) {
         if let Some(replace_chars) = self.find_replace.replace_entry.get_text() {
             self.core
-                .borrow()
                 .replace(&self.view_id, replace_chars.as_str(), false);
-            self.core.borrow().replace_all(&self.view_id);
+            self.core.replace_all(&self.view_id);
         }
     }
 

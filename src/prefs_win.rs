@@ -10,7 +10,7 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 pub struct PrefsWin {
-    core: Rc<RefCell<Core>>,
+    core: Rc<Core>,
     window: Window,
 }
 
@@ -18,7 +18,7 @@ impl PrefsWin {
     pub fn new(
         parent: &ApplicationWindow,
         main_state: &Rc<RefCell<MainState>>,
-        core: &Rc<RefCell<Core>>,
+        core: &Rc<Core>,
         edit_view: Option<Rc<RefCell<EditView>>>,
     ) -> Rc<RefCell<Self>> {
         const SRC: &str = include_str!("ui/prefs_win.glade");
@@ -92,7 +92,6 @@ impl PrefsWin {
         theme_combo_box.connect_changed(clone!(core, main_state => move |cb|{
             if let Some(theme_name) = cb.get_active_text() {
                 debug!("{} {:?}", gettext("Theme changed to"), &theme_name);
-                let core = core.borrow();
                 core.set_theme(&theme_name);
 
                 crate::pref_storage::set_theme_schema(theme_name.to_string());

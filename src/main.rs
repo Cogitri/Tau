@@ -94,7 +94,6 @@ use glib::MainContext;
 use gtk::Application;
 use log::{debug, info, trace, warn};
 use serde_json::{json, Value};
-use std::cell::RefCell;
 use std::env::args;
 use std::rc::Rc;
 
@@ -159,7 +158,7 @@ fn main() {
         MainWin::new(
             application,
             shared_queue.clone(),
-            Rc::new(RefCell::new(core.clone())),
+            Rc::new(core.clone()),
             xi_config,
            );
     }));
