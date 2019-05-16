@@ -446,7 +446,7 @@ impl Core {
         self.send_edit_cmd(view_id, "redo", &json!({}))
     }
 
-    pub fn cut(&mut self, view_id: &str, clipboard_rx: glib::Sender<Option<String>>) {
+    pub fn cut(&self, view_id: &str, clipboard_rx: glib::Sender<Option<String>>) {
         self.send_request(
             "edit",
             &json!({
@@ -464,7 +464,7 @@ impl Core {
         );
     }
 
-    pub fn copy(&mut self, view_id: &str, clipboard_rx: glib::Sender<Option<String>>) {
+    pub fn copy(&self, view_id: &str, clipboard_rx: glib::Sender<Option<String>>) {
         self.send_request(
             "edit",
             &json!({
