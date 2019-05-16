@@ -19,6 +19,7 @@ use std::rc::Rc;
 use std::u32;
 
 const TAB_GLADE_SRC: &str = include_str!("ui/close_tab.glade");
+const EV_GLADE_SRC: &str = include_str!("ui/ev.glade");
 
 /// The `Font` Struct holds all information about the font used in the `EditView` for the editing area
 /// or the interface font (used for the linecount)
@@ -74,6 +75,7 @@ impl Font {
 /// The ViewItem contains the drawing areas and scrollbars of the EditView.
 #[derive(Clone)]
 pub struct ViewItem {
+    root_box: Box,
     pub edit_area: DrawingArea,
     linecount: DrawingArea,
     horiz_bar: Scrollbar,
@@ -83,10 +85,14 @@ pub struct ViewItem {
 impl ViewItem {
     /// Sets up the drawing areas and scrollbars.
     fn new() -> Self {
-        let edit_area = DrawingArea::new();
-        let linecount = DrawingArea::new();
-        let horiz_bar = Scrollbar::new(Orientation::Horizontal, None::<&gtk::Adjustment>);
-        let verti_bar = Scrollbar::new(Orientation::Vertical, None::<&gtk::Adjustment>);
+        let builder = Builder::new_from_string(EV_GLADE_SRC);
+
+        let horiz_bar = builder.get_object("horiz_bar").unwrap();
+        let verti_bar = builder.get_object("vert_bar").unwrap();
+        let edit_area: DrawingArea = builder.get_object("edit_area").unwrap();
+        let linecount: DrawingArea = builder.get_object("line_count").unwrap();
+        let hbox: Box = builder.get_object("ev_root_widget").unwrap();
+        hbox.show_all();
         edit_area.add_events(
             EventMask::BUTTON_PRESS_MASK
                 | EventMask::BUTTON_RELEASE_MASK
@@ -101,6 +107,7 @@ impl ViewItem {
             linecount,
             horiz_bar,
             verti_bar,
+            root_box: hbox,
         }
     }
 
@@ -129,7 +136,7 @@ impl ViewItem {
 
         self.edit_area
             .connect_motion_notify_event(clone!(edit_view => move |_,em| {
-                edit_view.borrow().handle_drag(em)
+               edit_view.borrow().handle_drag(em)
             }));
 
         self.edit_area.connect_realize(|w| {
@@ -229,7 +236,7 @@ impl EditView {
             file_name,
             pristine: true,
             view_id,
-            root_widget: Self::setup_root_box(&view_item),
+            root_widget: view_item.root_box.clone(),
             top_bar: TopBar::new(),
             view_item: view_item.clone(),
             line_cache: LineCache::new(),
@@ -255,21 +262,6 @@ impl EditView {
             let ev = edit_view.borrow();
             ev.core.insert(&ev.view_id, text);
         }));
-    }
-
-    fn setup_root_box(view_item: &ViewItem) -> Box {
-        let root_box = Box::new(Orientation::Vertical, 0);
-        let hbox = Box::new(Orientation::Horizontal, 0);
-        let vbox = Box::new(Orientation::Vertical, 0);
-        root_box.pack_start(&hbox, true, true, 0);
-        hbox.pack_start(&view_item.linecount, false, false, 0);
-        hbox.pack_start(&vbox, true, true, 0);
-        hbox.pack_start(&view_item.verti_bar, false, false, 0);
-        vbox.pack_start(&view_item.edit_area, true, true, 0);
-        vbox.pack_start(&view_item.horiz_bar, false, false, 0);
-        root_box.show_all();
-
-        root_box
     }
 
     fn get_interface_font(pango_ctx: &pango::Context) -> Font {
