@@ -1,17 +1,17 @@
-use crate::edit_view::EditView;
-use crate::main_win::MainState;
-use crate::pref_storage::*;
-use crate::rpc::Core;
+use editview::EditView;
+use editview::MainState;
 use gettextrs::gettext;
 use gtk::*;
+use gxi_config_storage::{pref_storage, pref_storage::*};
+use gxi_peer::Core;
 use log::{debug, error, trace};
 use pango::*;
 use std::cell::RefCell;
 use std::rc::Rc;
 
 pub struct PrefsWin {
-    core: Core,
-    window: Window,
+    pub core: Core,
+    pub window: Window,
 }
 
 impl PrefsWin {
@@ -20,7 +20,7 @@ impl PrefsWin {
         main_state: &Rc<RefCell<MainState>>,
         core: &Core,
         edit_view: Option<Rc<RefCell<EditView>>>,
-    ) -> Rc<RefCell<Self>> {
+    ) -> Self {
         const SRC: &str = include_str!("ui/prefs_win.glade");
         let builder = Builder::new_from_string(SRC);
 
@@ -94,7 +94,7 @@ impl PrefsWin {
                 debug!("{} {:?}", gettext("Theme changed to"), &theme_name);
                 core.set_theme(&theme_name);
 
-                crate::pref_storage::set_theme_schema(theme_name.to_string());
+                pref_storage::set_theme_schema(theme_name.to_string());
 
                 let mut main_state = main_state.borrow_mut();
                 main_state.theme_name = theme_name.to_string();
@@ -216,10 +216,10 @@ impl PrefsWin {
             }));
         }
 
-        let prefs_win = Rc::new(RefCell::new(Self {
+        let prefs_win = Self {
             core: core.clone(),
             window: window.clone(),
-        }));
+        };
 
         window.set_transient_for(Some(parent));
         window.show_all();

@@ -1,0 +1,47 @@
+[package]
+name = "gxi"
+version = "0.7.0"
+authors = ["Rasmus Thomsen <oss@cogitri.dev>"]
+homepage = "https://gxi.cogitri.dev"
+description = "GTK frontend, written in Rust, for the xi editor"
+repository = "https://github.com/Cogtri/gxi"
+keywords = ["gxi", "xi"]
+categories = ["editor"]
+license = "MIT"
+edition = "2018"
+
+[features]
+default = []
+
+gtk_v3_22 = ["gtk/v3_22"]
+
+[dependencies]
+cairo-rs = { git="https://github.com/gtk-rs/cairo" }
+cairo-sys-rs = { git="https://github.com/gtk-rs/cairo" }
+editview = { path="../editview" }
+env_logger = "0.6"
+failure = "0.1"
+gdk = { git="https://github.com/gtk-rs/gdk" }
+gettext-rs = { version="0.4", features=["gettext-system"] }
+gio = { git="https://github.com/gtk-rs/gio" }
+glib = { git="https://github.com/gtk-rs/glib" }
+glib-sys = { git="https://github.com/gtk-rs/sys", features = ["v2_44"] }
+gobject-sys = { git="https://github.com/gtk-rs/sys" }
+gtk = { git="https://github.com/gtk-rs/gtk", features = ["v3_20"] }
+gtk-sys = { git="https://github.com/gtk-rs/sys", features = ["v3_20"] }
+gxi-config-storage = { path="../gxi-config-storage" }
+gxi-linecache = { path="../gxi-linecache" }
+gxi-peer = { path="../gxi-peer" }
+gxi-utils = { path="../gxi-utils" }
+human-panic = "1"
+log = "0.4"
+pango = { git="https://github.com/gtk-rs/pango", features = ["v1_38"] }
+pango-sys = { git="https://github.com/gtk-rs/sys", features = ["v1_38"]}
+pangocairo = { git="https://github.com/gtk-rs/pangocairo" }
+serde = "1"
+serde_derive = "1"
+serde_json = "1"
+syntect = "3"
+
+[dev-dependencies]
+cargo-husky = { git="https://github.com/Cogitri/cargo-husky", default-features = false, features = ["user-hooks"] }

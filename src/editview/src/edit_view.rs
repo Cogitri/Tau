@@ -1,7 +1,4 @@
-use crate::linecache::{Line, LineCache, StyleSpan};
-use crate::main_win::MainState;
-use crate::pref_storage::*;
-use crate::rpc::Core;
+use crate::main_state::MainState;
 use crate::theme::{color_from_u32, set_margin_source_color, set_source_color, PangoColor};
 use cairo::Context;
 use gdk::enums::key;
@@ -9,6 +6,9 @@ use gdk::*;
 use gettextrs::gettext;
 use glib::{source, MainContext};
 use gtk::{self, *};
+use gxi_config_storage::{pref_storage::*, Config};
+use gxi_linecache::{Line, LineCache, StyleSpan};
+use gxi_peer::Core;
 use log::{debug, error, trace, warn};
 use pango::{self, ContextExt, LayoutExt, *};
 use pangocairo::functions::*;
@@ -98,7 +98,8 @@ impl ViewItem {
                 | EventMask::BUTTON_RELEASE_MASK
                 | EventMask::BUTTON_MOTION_MASK
                 | EventMask::SCROLL_MASK
-                | EventMask::SMOOTH_SCROLL_MASK,
+                | EventMask::SMOOTH_SCROLL_MASK
+                | EventMask::TOUCH_MASK,
         );
         edit_area.set_can_focus(true);
 
@@ -228,7 +229,7 @@ impl EditView {
         let pango_ctx = view_item.get_pango_ctx();
         let im_context = IMContextSimple::new();
 
-        crate::MainWin::set_language(&core, &view_id, "Plain Text");
+        //FIXME: crate::MainWin::set_language(&core, &view_id, "Plain Text");
 
         let edit_view = Rc::new(RefCell::new(Self {
             core: core.clone(),

@@ -1,20 +1,24 @@
+# assets
 data/com.github.Cogitri.gxi.appdata.xml.in
 data/com.github.Cogitri.gxi.desktop.in
-data/com.github.Cogitri.gxi.gschema.xml
+data/com.github.Cogitri.gxi.gschema.xml.in
 
-src/about_win.rs
-src/main.rs
-src/globals.rs
-src/main_win.rs
-src/errors.rs
-src/xi_thread.rs
-src/ui/gxi.glade
-src/ui/prefs_win.glade
-src/ui/find_replace.glade
-src/edit_view.rs
-src/pref_storage.rs
-src/linecache.rs
-src/prefs_win.rs
-src/macros.rs
-src/theme.rs
-src/rpc.rs
+# glade files
+src/editview/src/ui/ev.glade
+src/editview/src/ui/find_replace.glade
+src/editview/src/ui/close_tab.glade
+src/gxi/src/ui/prefs_win.glade
+src/gxi/src/ui/gxi.glade
+
+# source files
+src/editview/src/edit_view.rs
+src/gxi/src/about_win.rs
+src/gxi/src/errors.rs
+src/gxi/src/main.rs
+src/gxi/src/main_win.rs
+src/gxi/src/panic_handler.rs
+src/gxi/src/prefs_win.rs
+src/gxi-config-storage/src/pref_storage.rs
+src/gxi-peer/src/rpc.rs
+src/gxi-peer/src/shared_queue.rs
+src/gxi-peer/src/xi_thread.rs

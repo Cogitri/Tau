@@ -1,0 +1,36 @@
+[package]
+name = "editview"
+version = "0.1.0"
+authors = ["Rasmus Thomsen <oss@cogitri.dev>"]
+edition = "2018"
+license = "MIT"
+homepage = "https://gxi.cogitri.dev"
+repository = "https://github.com/Cogitri/gxi"
+keywords = ["gxi", "xi"]
+categories = ["GUI", "text-editors"]
+description = "The EditView GTK widget, backed by Xi"
+readme = "README.md"
+
+[dependencies]
+cairo-rs = { git="https://github.com/gtk-rs/cairo" }
+cairo-sys-rs = { git="https://github.com/gtk-rs/cairo" }
+gdk = { git="https://github.com/gtk-rs/gdk" }
+gettext-rs = { version="0.4", features=["gettext-system"] }
+gio = { git="https://github.com/gtk-rs/gio" }
+glib = { git="https://github.com/gtk-rs/glib" }
+glib-sys = { git="https://github.com/gtk-rs/sys", features = ["v2_44"] }
+gobject-sys = { git="https://github.com/gtk-rs/sys" }
+gtk = { git="https://github.com/gtk-rs/gtk", features = ["v3_20"] }
+gtk-sys = { git="https://github.com/gtk-rs/sys", features = ["v3_20"] }
+gxi-config-storage = { path="../gxi-config-storage" }
+gxi-linecache = { path="../gxi-linecache" }
+gxi-peer = { path="../gxi-peer" }
+gxi-utils = { path="../gxi-utils" }
+log = "0.4"
+pango = { git="https://github.com/gtk-rs/pango", features = ["v1_38"] }
+pango-sys = { git="https://github.com/gtk-rs/sys", features = ["v1_38"]}
+pangocairo = { git="https://github.com/gtk-rs/pangocairo" }
+serde = "1"
+serde_derive = "1"
+serde_json = "1"
+syntect = "3"

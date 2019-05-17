@@ -58,7 +58,7 @@ impl Core {
 
         thread::spawn(clone!(core => move || {
             while let Ok(msg) = xi_rx.recv() {
-                debug!("{:?}", msg);
+                debug!("{}", msg);
                 if let Value::String(ref method) = msg["method"] {
                     shared_queue.add_core_msg(CoreMsg::Notification {
                         method: method.to_string(),

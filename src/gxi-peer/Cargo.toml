@@ -1,0 +1,26 @@
+[package]
+name = "gxi-peer"
+version = "0.1.0"
+authors = ["Rasmus Thomsen <oss@cogitri.dev>"]
+edition = "2018"
+homepage = "https://gxi.cogitri.dev"
+repository = "https://github.com/Cogitri/gxi"
+keywords = ["gxi, xi"]
+license = "MIT"
+readme = "README.md"
+description = "gxi's way to spawn a Xi instance in a thread"
+
+[dependencies]
+crossbeam-queue = "0.1"
+crossbeam-channel = "0.3"
+gettext-rs = { version="0.4", features=["gettext-system"] }
+glib = { git="https://github.com/gtk-rs/glib" }
+glib-sys = { git="https://github.com/gtk-rs/sys", features = ["v2_44"] }
+gxi-config-storage = { path="../gxi-config-storage" }
+gxi-utils = { path="../gxi-utils" }
+log = "0.4"
+parking_lot = "0.8"
+serde = "1"
+serde_json = "1"
+xi-core-lib = { version="0.2.0", path="../../vendor/xi-editor/rust/core-lib", features=["notify"] }
+xi-rpc = { version="0.2.0", path="../../vendor/xi-editor/rust/rpc" }

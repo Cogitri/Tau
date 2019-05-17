@@ -1,15 +1,14 @@
 use crate::about_win::AboutWin;
-use crate::edit_view::EditView;
-use crate::errors::{ErrorDialog, ErrorMsg};
-use crate::pref_storage::Config;
+use crate::errors::ErrorDialog;
 use crate::prefs_win::PrefsWin;
-use crate::rpc::Core;
-use crate::shared_queue::{CoreMsg, SharedQueue};
-use crate::theme::{u32_from_color, LineStyle};
+use editview::{theme::u32_from_color, theme::LineStyle, EditView, MainState};
 use gettextrs::gettext;
 use gio::{ActionMapExt, SimpleAction};
 use glib::MainContext;
 use gtk::*;
+use gxi_config_storage::{pref_storage, Config};
+use gxi_peer::ErrorMsg;
+use gxi_peer::{Core, CoreMsg, SharedQueue};
 use log::{debug, error, info, trace, warn};
 use serde_derive::*;
 use serde_json::{self, json, Value};
@@ -47,18 +46,6 @@ pub struct MeasureWidth {
     pub strings: Vec<String>,
 }
 
-#[derive(Default)]
-pub struct MainState {
-    pub themes: Vec<String>,
-    pub theme_name: String,
-    pub theme: ThemeSettings,
-    pub styles: HashMap<usize, LineStyle>,
-    pub fonts: Vec<String>,
-    pub avail_languages: Vec<String>,
-    pub selected_language: String,
-    pub config: Config,
-}
-
 pub struct MainWin {
     core: Core,
     shared_queue: SharedQueue,
@@ -87,7 +74,7 @@ impl MainWin {
         let notebook: Notebook = builder.get_object("notebook").unwrap();
         let syntax_combo_box: ComboBoxText = builder.get_object("syntax_combo_box").unwrap();
 
-        let theme_name = crate::pref_storage::get_theme_schema();
+        let theme_name = pref_storage::get_theme_schema();
         debug!("{}: {}", gettext("Theme name"), &theme_name);
 
         let main_state = Rc::new(RefCell::new(MainState {
