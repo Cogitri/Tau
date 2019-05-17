@@ -1,12 +1,13 @@
 use gettextrs::gettext;
 use gtk::*;
+use gxi_utils::globals;
 use log::trace;
 use std::cell::RefCell;
 use std::rc::Rc;
 
 /// The about window, which displays some simple info about gxi
 pub struct AboutWin {
-    about_dialog: AboutDialog,
+    pub about_dialog: AboutDialog,
 }
 
 impl AboutWin {
@@ -18,8 +19,8 @@ impl AboutWin {
         about_dialog.set_copyright(Some("\u{a9} 2017 Brian Vincent, 2019 Rasmus Thomsen."));
         about_dialog.set_license_type(gtk::License::MitX11);
         about_dialog.set_modal(true);
-        about_dialog.set_version(crate::globals::VERSION);
-        about_dialog.set_program_name(crate::globals::APP_NAME.unwrap_or("com.github.Cogitri.gxi"));
+        about_dialog.set_version(globals::VERSION);
+        about_dialog.set_program_name(globals::APP_NAME.unwrap_or("com.github.Cogitri.gxi"));
         about_dialog.set_website(Some("https://gxi.cogitri.dev"));
         about_dialog.set_translator_credits(Some(gettext("translator-credits").as_str()));
         about_dialog.set_logo_icon_name(Some("com.github.Cogitri.gxi"));

@@ -1,59 +1,13 @@
-[package]
-name = "gxi"
-version = "0.7.0"
-authors = ["Rasmus Thomsen <oss@cogitri.dev>", "Brian Vincent <brainn@gmail.com>"]
-homepage = "https://github.com/Cogitri/gxi"
-description = "GTK frontend, written in Rust, for the xi editor"
-repository = "https://github.com/Cogtri/gxi"
-keywords = ["gxi", "xi"]
-categories = ["editor"]
-license = "MIT"
-edition = "2018"
-readme = "README.md"
-
-[features]
-default = []
-
-gtk_v3_22 = ["gtk/v3_22"]
-
-[dependencies]
-cairo-rs = {git="https://github.com/gtk-rs/cairo"}
-env_logger = "0.6"
-failure = "0.1"
-lazy_static = "1"
-libc = "0.2"
-log = "0.4"
-cairo-sys-rs = {git="https://github.com/gtk-rs/cairo"}
-gdk = {git="https://github.com/gtk-rs/gdk"}
-gio = {git="https://github.com/gtk-rs/gio"}
-glib = {git="https://github.com/gtk-rs/glib"}
-glib-sys = {git="https://github.com/gtk-rs/sys", features = ["v2_44"] }
-gobject-sys = {git="https://github.com/gtk-rs/sys"}
-gtk = {git="https://github.com/gtk-rs/gtk", features = ["v3_20"] }
-gtk-sys = {git="https://github.com/gtk-rs/sys", features = ["v3_20"] }
-pango-sys = {git="https://github.com/gtk-rs/sys", features = ["v1_38"]}
-pango = {git="https://github.com/gtk-rs/pango", features = ["v1_38"] }
-pangocairo = {git="https://github.com/gtk-rs/pangocairo"}
-serde = "1"
-serde_json = "1"
-serde_derive = "1"
-xi-core-lib = { version="0.2.0", path="vendor/xi-editor/rust/core-lib", features=["notify"] }
-xi-rpc = { version="0.2.0", path="vendor/xi-editor/rust/rpc" }
-dirs = "1"
-toml = "0.5"
-tempfile = "3"
-gettext-rs = { version="0.4", features=["gettext-system"] }
-crossbeam-queue = "0.1"
-crossbeam-channel = "0.3"
-human-panic = "1"
-syntect = "3"
-parking_lot = "0.8"
-
-[dev-dependencies.cargo-husky]
-git="https://github.com/Cogitri/cargo-husky"
-version = "1"
-default-features = false
-features = ["user-hooks"]
+[workspace]
+members = [
+    "src/editview",
+    "src/gxi",
+    "src/gxi-config-storage",
+    "src/gxi-linecache",
+    "src/gxi-peer",
+    "src/gxi-utils"
+]
+exclude = ["vendor/xi-editor/rust/core-lib", "vendor/xi-editor/rust/rpc"]
 
 [profile.release]
 lto = true

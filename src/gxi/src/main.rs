@@ -62,42 +62,32 @@
 //! know gtk-rs yet!
 
 #![recursion_limit = "128"]
-//Just for now...
-#![allow(dead_code)]
 #![deny(clippy::all)]
 
 #[macro_use]
-mod macros;
+extern crate gxi_utils;
 
 mod about_win;
-mod edit_view;
 mod errors;
-mod globals;
-mod linecache;
 mod main_win;
-mod pref_storage;
+mod panic_handler;
 mod prefs_win;
-mod rpc;
-mod shared_queue;
-mod theme;
-mod xi_thread;
 
-use crate::errors::ErrorMsg;
 use crate::main_win::MainWin;
-use crate::pref_storage::Config;
-use crate::rpc::Core;
-use crate::shared_queue::{CoreMsg, SharedQueue};
-use crate::xi_thread::XiPeer;
+use crate::panic_handler::PanicHandler;
 use gettextrs::{gettext, TextDomain, TextDomainError};
 use gio::{ApplicationExt, ApplicationExtManual, ApplicationFlags, FileExt};
 use glib::MainContext;
 use gtk::Application;
+use gxi_config_storage::Config;
+use gxi_peer::{Core, CoreMsg, ErrorMsg, SharedQueue, XiPeer};
+use gxi_utils::globals;
 use log::{debug, info, trace, warn};
 use serde_json::{json, Value};
 use std::env::args;
 
 fn main() {
-    setup_gtk_panic!();
+    PanicHandler::new();
 
     // Only set Warn as loglevel if the user hasn't explicitly set something else
     if std::env::var_os("RUST_LOG").is_none() {
@@ -139,7 +129,7 @@ fn main() {
 
         // No need to gettext this, gettext doesn't work yet
         match TextDomain::new("gxi")
-            .push(crate::globals::LOCALEDIR.unwrap_or("po"))
+            .push(globals::LOCALEDIR.unwrap_or("po"))
             .init()
         {
             Ok(locale) => info!("Translation found, setting locale to {:?}", locale),
@@ -152,7 +142,7 @@ fn main() {
             Err(TextDomainError::InvalidLocale(locale)) => warn!("Invalid locale {}", locale),
         }
 
-        core.client_started(&config_dir, crate::globals::PLUGIN_DIR.unwrap_or("/usr/local/lib/gxi/plugins"));
+        core.client_started(&config_dir, globals::PLUGIN_DIR.unwrap_or("/usr/local/lib/gxi/plugins"));
 
         MainWin::new(
             application,

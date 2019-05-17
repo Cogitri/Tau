@@ -1,0 +1,25 @@
+[package]
+name = "gxi-config-storage"
+version = "0.1.0"
+authors = ["Rasmus Thomsen <oss@cogitri.dev>"]
+edition = "2018"
+categories = ["config"]
+keywords = ["gxi", "xi"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://gxi.cogitri.dev"
+repository = "https://github.com/Cogitri/gxi"
+description = "gxi's config backend"
+
+[dependencies]
+dirs = "1"
+failure = "0.1"
+gettext-rs = { version="0.4", features=["gettext-system"] }
+gio = { git="https://github.com/gtk-rs/gio" }
+gio-sys = { git="https://github.com/gtk-rs/sys", features = ["v2_44"] }
+gxi-utils = { path="../gxi-utils" }
+log = "0.4"
+serde = "1"
+serde_derive = "1"
+tempfile = "3"
+toml = "0.5"
