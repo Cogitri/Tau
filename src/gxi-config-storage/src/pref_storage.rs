@@ -277,6 +277,23 @@ impl GSchemaExt<u32> for GSchema {
     }
 }
 
+impl GSchemaExt<i32> for GSchema {
+    fn get(schema_name: &str, field_name: &str) -> Option<i32> {
+        SettingsSchemaSource::get_default()
+            .and_then(|settings_source| settings_source.lookup(schema_name, true))
+            .map(|_| Settings::new(schema_name).get_int(field_name))
+    }
+
+    fn set(schema_name: &str, field_name: &str, val: i32) {
+        if SettingsSchemaSource::get_default()
+            .and_then(|settings_source| settings_source.lookup(schema_name, true))
+            .is_some()
+        {
+            Settings::new(schema_name).set_int(field_name, val);
+        };
+    }
+}
+
 pub fn get_theme_schema() -> String {
     GSchema::get(app_id!(), "theme-name").unwrap_or_else(|| {
         warn!("Couldn't find GSchema! Defaulting to default theme.");
@@ -344,4 +361,37 @@ pub fn get_highlight_line() -> bool {
 
 pub fn set_highlight_line(val: bool) {
     GSchema::set(app_id!(), "highlight-line", val);
+}
+
+pub fn set_window_width(val: i32) {
+    GSchema::set(app_id!(), "window-width", val);
+}
+
+pub fn get_window_width() -> i32 {
+    GSchema::get(app_id!(), "window-width").unwrap_or_else(|| {
+        warn!("Couldn't find GSchema! Defaulting default width: 700");
+        700
+    })
+}
+
+pub fn set_window_height(val: i32) {
+    GSchema::set(app_id!(), "window-height", val);
+}
+
+pub fn get_window_height() -> i32 {
+    GSchema::get(app_id!(), "window-height").unwrap_or_else(|| {
+        warn!("Couldn't find GSchema! Defaulting default width: 900");
+        900
+    })
+}
+
+pub fn set_window_maximized(val: bool) {
+    GSchema::set(app_id!(), "window-maximized", val);
+}
+
+pub fn get_window_maximized() -> bool {
+    GSchema::get(app_id!(), "window-maximized").unwrap_or_else(|| {
+        warn!("Couldn't find GSchema! Defaulting to a not maximized window!");
+        false
+    })
 }

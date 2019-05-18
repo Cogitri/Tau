@@ -43,6 +43,22 @@
                 Sets if the current line should be highlighted, which eases navigation through the document
             </description>
         </key>
+
+        <key name="window-height" type="i">
+            <default>900</default>
+            <summary>Sets the height of the window in the next startup</summary>
+        </key>
+
+        <key name="window-width" type="i">
+            <default>700</default>
+            <summary>Sets the width of the window in the next startup</summary>
+        </key>
+
+        <key name="window-maximized" type="b">
+            <default>false</default>
+            <summary>Sets if the window should be maximized during the next startup</summary>
+        </key>
+
     </schema>
 
 </schemalist>
