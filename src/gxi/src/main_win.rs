@@ -46,6 +46,28 @@ pub struct MeasureWidth {
     pub strings: Vec<String>,
 }
 
+struct WinProp {
+    height: i32,
+    width: i32,
+    is_maximized: bool,
+}
+
+impl WinProp {
+    pub fn new() -> Self {
+        Self {
+            height: pref_storage::get_window_height(),
+            width: pref_storage::get_window_width(),
+            is_maximized: pref_storage::get_window_maximized(),
+        }
+    }
+
+    pub fn save(&self) {
+        pref_storage::set_window_height(self.height);
+        pref_storage::set_window_width(self.width);
+        pref_storage::set_window_maximized(self.is_maximized);
+    }
+}
+
 pub struct MainWin {
     core: Core,
     shared_queue: SharedQueue,
@@ -56,6 +78,7 @@ pub struct MainWin {
     w_to_ev: HashMap<Widget, Rc<RefCell<EditView>>>,
     view_id_to_w: HashMap<String, Widget>,
     state: Rc<RefCell<MainState>>,
+    properties: WinProp,
 }
 
 const GLADE_SRC: &str = include_str!("ui/gxi.glade");
@@ -70,7 +93,15 @@ impl MainWin {
         let glade_src = GLADE_SRC;
         let builder = Builder::new_from_string(glade_src);
 
+        let properties = WinProp::new();
         let window: ApplicationWindow = builder.get_object("appwindow").unwrap();
+
+        if properties.is_maximized {
+            window.maximize();
+        } else {
+            window.set_size_request(properties.width, properties.height);
+        }
+
         let notebook: Notebook = builder.get_object("notebook").unwrap();
         let syntax_combo_box: ComboBoxText = builder.get_object("syntax_combo_box").unwrap();
 
@@ -93,6 +124,7 @@ impl MainWin {
             w_to_ev: Default::default(),
             view_id_to_w: Default::default(),
             state: main_state.clone(),
+            properties: WinProp::new(),
         }));
 
         let (msg_tx, msg_rx) = MainContext::channel::<CoreMsg>(glib::PRIORITY_HIGH);
@@ -125,8 +157,21 @@ impl MainWin {
                 Inhibit(true)
             } else {
                 debug!("{}", gettext("User chose to close the application"));
+                main_win.borrow().properties.save();
                 window.destroy();
                 Inhibit(false)
+            }
+        }));
+
+        window.connect_size_allocate(clone!(main_win, window => move |_, _| {
+            let win_size = window.get_size();
+            let maximized = window.is_maximized();
+
+            let properties = &mut main_win.borrow_mut().properties;
+            properties.is_maximized = maximized;
+            if ! maximized {
+                properties.width = win_size.0;
+                properties.height = win_size.1;
             }
         }));
 
