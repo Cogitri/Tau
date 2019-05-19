@@ -28,7 +28,7 @@ impl ErrorDialog {
             &err_msg.msg,
         );
 
-        err_dialog.connect_response(clone!(err_msg => move |err_dialog, _| {
+        err_dialog.connect_response(enclose!((err_msg) move |err_dialog, _| {
             err_dialog.destroy();
 
             if err_msg.fatal {

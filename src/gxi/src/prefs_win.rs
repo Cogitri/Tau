@@ -59,7 +59,7 @@ impl PrefsWin {
 
         {
             font_chooser_widget.connect_property_font_desc_notify(
-                clone!(main_state => move |font_widget| {
+                enclose!((main_state) move |font_widget| {
                     if let Some(font_desc) = font_widget.get_font_desc() {
                         let mut font_conf = &mut main_state.borrow_mut().config;
 
@@ -90,7 +90,7 @@ impl PrefsWin {
             }
         }
 
-        theme_combo_box.connect_changed(clone!(core, main_state, gschema => move |cb|{
+        theme_combo_box.connect_changed(enclose!((core, main_state, gschema) move |cb|{
             if let Some(theme_name) = cb.get_active_text() {
                 let theme_name = theme_name.to_string();
                 debug!("{} {}", gettext("Theme changed to"), &theme_name);
@@ -109,7 +109,7 @@ impl PrefsWin {
                     .set_active(main_state.borrow().config.config.scroll_past_end);
             }
 
-            scroll_past_end_checkbutton.connect_toggled(clone!(main_state => move |toggle_btn| {
+            scroll_past_end_checkbutton.connect_toggled(enclose!((main_state) move |toggle_btn| {
                 let value = toggle_btn.get_active();;
                 debug!("{}: {}", gettext("Scrolling past end"), value);
                 main_state.borrow_mut().config.config.scroll_past_end = value;
@@ -124,7 +124,7 @@ impl PrefsWin {
                 word_wrap_checkbutton.set_active(main_state.borrow().config.config.word_wrap);
             }
 
-            word_wrap_checkbutton.connect_toggled(clone!(main_state => move |toggle_btn| {
+            word_wrap_checkbutton.connect_toggled(enclose!((main_state) move |toggle_btn| {
                 let value = toggle_btn.get_active();
                 debug!("{}: {}", gettext("Word wrapping"), value);
                 main_state.borrow_mut().config.config.word_wrap = value;
@@ -139,7 +139,7 @@ impl PrefsWin {
                 tab_stops_checkbutton.set_active(main_state.borrow().config.config.use_tab_stops);
             }
 
-            tab_stops_checkbutton.connect_toggled(clone!(main_state => move |toggle_btn| {
+            tab_stops_checkbutton.connect_toggled(enclose!((main_state) move |toggle_btn| {
                 let value = toggle_btn.get_active();
                 debug!("{}: {}", gettext("Tab stops"), value);
                 main_state.borrow_mut().config.config.use_tab_stops = value;
@@ -152,17 +152,19 @@ impl PrefsWin {
         {
             draw_trailing_spaces_checkbutton.set_active(gschema.get_key("draw-trailing-spaces"));
 
-            draw_trailing_spaces_checkbutton.connect_toggled(clone!(gschema => move |toggle_btn| {
-                let value = toggle_btn.get_active();
-                gschema.set_key("draw-trailing-spaces", value).unwrap();
-            }));
+            draw_trailing_spaces_checkbutton.connect_toggled(
+                enclose!((gschema) move |toggle_btn| {
+                    let value = toggle_btn.get_active();
+                    gschema.set_key("draw-trailing-spaces", value).unwrap();
+                }),
+            );
         }
 
         {
             margin_checkbutton.set_active(gschema.get_key("draw-right-margin"));
 
             margin_checkbutton.connect_toggled(
-                clone!(edit_view, margin_spinbutton, gschema => move |toggle_btn| {
+                enclose!((edit_view, margin_spinbutton, gschema) move |toggle_btn| {
                     let value = toggle_btn.get_active();
                     debug!("{}: {}", gettext("Right hand margin"), value);
                     gschema.set_key("draw-right-margin", value).unwrap();
@@ -179,21 +181,23 @@ impl PrefsWin {
             let margin_value: u32 = gschema.get_key("column-right-margin");
             margin_spinbutton.set_value(f64::from(margin_value));
 
-            margin_spinbutton.connect_value_changed(clone!(edit_view, gschema => move |spin_btn| {
-                let value = spin_btn.get_value() as u32;
-                debug!("{}: {}", gettext("Right hand margin width"), value);
-                gschema.set_key("column-right-margin", value).unwrap();
-                if let Some(ev) = edit_view.clone() {
-                    ev.borrow().view_item.edit_area.queue_draw();
-                }
-            }));
+            margin_spinbutton.connect_value_changed(
+                enclose!((edit_view, gschema) move |spin_btn| {
+                    let value = spin_btn.get_value() as u32;
+                    debug!("{}: {}", gettext("Right hand margin width"), value);
+                    gschema.set_key("column-right-margin", value).unwrap();
+                    if let Some(ev) = edit_view.clone() {
+                        ev.borrow().view_item.edit_area.queue_draw();
+                    }
+                }),
+            );
         }
 
         {
             tab_size_spinbutton.set_value(f64::from(main_state.borrow().config.config.tab_size));
 
             tab_size_spinbutton.connect_value_changed(
-                clone!(main_state, edit_view => move |spin_btn| {
+                enclose!((main_state, edit_view) move |spin_btn| {
                     let value = spin_btn.get_value();
                     debug!("{}: {}", gettext("Setting tab size"), value);
                     main_state.borrow_mut().config.config.tab_size = value as u32;
@@ -211,7 +215,7 @@ impl PrefsWin {
             highlight_line_checkbutton.set_active(gschema.get_key("highlight-line"));
 
             highlight_line_checkbutton.connect_toggled(
-                clone!(edit_view, gschema => move |toggle_btn| {
+                enclose!((edit_view, gschema) move |toggle_btn| {
                     let value = toggle_btn.get_active();
                     gschema.set_key("highlight-line", value).unwrap();
                     if let Some(ev) = edit_view.clone() {

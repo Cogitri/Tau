@@ -19,6 +19,7 @@ gtk_v3_22 = ["gtk/v3_22"]
 cairo-rs = { git="https://github.com/gtk-rs/cairo" }
 cairo-sys-rs = { git="https://github.com/gtk-rs/cairo" }
 editview = { path="../editview" }
+enclose = "1"
 env_logger = "0.6"
 failure = "0.1"
 gdk = { git="https://github.com/gtk-rs/gdk" }
@@ -32,7 +33,6 @@ gtk-sys = { git="https://github.com/gtk-rs/sys", features = ["v3_20"] }
 gxi-config-storage = { path="../gxi-config-storage" }
 gxi-linecache = { path="../gxi-linecache" }
 gxi-peer = { path="../gxi-peer" }
-gxi-utils = { path="../gxi-utils" }
 human-panic = "1"
 log = "0.4"
 pango = { git="https://github.com/gtk-rs/pango", features = ["v1_38"] }

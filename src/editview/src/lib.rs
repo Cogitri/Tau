@@ -1,5 +1,5 @@
 #[macro_use]
-extern crate gxi_utils;
+extern crate enclose;
 
 pub mod edit_view;
 pub mod main_state;

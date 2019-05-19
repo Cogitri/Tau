@@ -14,6 +14,7 @@ readme = "README.md"
 [dependencies]
 cairo-rs = { git="https://github.com/gtk-rs/cairo" }
 cairo-sys-rs = { git="https://github.com/gtk-rs/cairo" }
+enclose = "1"
 gdk = { git="https://github.com/gtk-rs/gdk" }
 gettext-rs = { version="0.4", features=["gettext-system"] }
 gio = { git="https://github.com/gtk-rs/gio" }
@@ -25,7 +26,6 @@ gtk-sys = { git="https://github.com/gtk-rs/sys", features = ["v3_20"] }
 gxi-config-storage = { path="../gxi-config-storage" }
 gxi-linecache = { path="../gxi-linecache" }
 gxi-peer = { path="../gxi-peer" }
-gxi-utils = { path="../gxi-utils" }
 log = "0.4"
 pango = { git="https://github.com/gtk-rs/pango", features = ["v1_38"] }
 pango-sys = { git="https://github.com/gtk-rs/sys", features = ["v1_38"]}

@@ -5,7 +5,6 @@ members = [
     "src/gxi-config-storage",
     "src/gxi-linecache",
     "src/gxi-peer",
-    "src/gxi-utils"
 ]
 exclude = ["vendor/xi-editor/rust/core-lib", "vendor/xi-editor/rust/rpc"]
 

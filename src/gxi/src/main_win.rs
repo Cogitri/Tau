@@ -3,7 +3,7 @@ use crate::errors::ErrorDialog;
 use crate::prefs_win::PrefsWin;
 use editview::{theme::u32_from_color, theme::LineStyle, EditView, MainState};
 use gettextrs::gettext;
-use gio::{ActionMapExt, SimpleAction};
+use gio::{ActionMapExt, ApplicationExt, SimpleAction};
 use glib::MainContext;
 use gtk::*;
 use gxi_config_storage::{Config, GSchema, GSchemaExt};
@@ -54,8 +54,8 @@ struct WinProp {
 }
 
 impl WinProp {
-    pub fn new() -> Self {
-        let gschema = GSchema::new(app_id!());
+    pub fn new(application: &Application) -> Self {
+        let gschema = GSchema::new(application.get_application_id().unwrap().as_str());
         Self {
             height: gschema.get_key("window-height"),
             width: gschema.get_key("window-width"),
@@ -97,7 +97,7 @@ impl MainWin {
         let glade_src = GLADE_SRC;
         let builder = Builder::new_from_string(glade_src);
 
-        let properties = WinProp::new();
+        let properties = WinProp::new(&application);
         let window: ApplicationWindow = builder.get_object("appwindow").unwrap();
 
         if properties.is_maximized {
@@ -128,7 +128,7 @@ impl MainWin {
             w_to_ev: Default::default(),
             view_id_to_w: Default::default(),
             state: main_state.clone(),
-            properties: WinProp::new(),
+            properties,
         }));
 
         let (msg_tx, msg_rx) = MainContext::channel::<CoreMsg>(glib::PRIORITY_HIGH);
@@ -144,7 +144,7 @@ impl MainWin {
 
         msg_rx.attach(
             Some(&main_context),
-            clone!(main_win => move |msg| {
+            enclose!((main_win) move |msg| {
                 trace!("{}", gettext("Found a message from xi"));
                 Self::handle_msg(main_win.clone(), msg);
                 glib::source::Continue(true)
@@ -154,7 +154,7 @@ impl MainWin {
         window.set_application(Some(application));
 
         //This is called when the window is closed with the 'X' or via the application menu, etc.
-        window.connect_delete_event(clone!(main_win, window => move |_, _| {
+        window.connect_delete_event(enclose!((main_win, window) move |_, _| {
             // Only destroy the window when the user has saved the changes or closes without saving
             if Self::close_all(main_win.clone()) == SaveAction::Cancel {
                 debug!("{}", gettext("User chose to cancel exiting"));
@@ -167,7 +167,7 @@ impl MainWin {
             }
         }));
 
-        window.connect_size_allocate(clone!(main_win, window => move |_, _| {
+        window.connect_size_allocate(enclose!((main_win, window) move |_, _| {
             let win_size = window.get_size();
             let maximized = window.is_maximized();
 
@@ -204,7 +204,7 @@ impl MainWin {
         }
         {
             let open_action = SimpleAction::new("open", None);
-            open_action.connect_activate(clone!(main_win => move |_,_| {
+            open_action.connect_activate(enclose!((main_win) move |_,_| {
                 trace!("{} 'open' {}", gettext("Handling"), gettext("action"));
                 Self::handle_open_button(&main_win);
             }));
@@ -212,7 +212,7 @@ impl MainWin {
         }
         {
             let new_action = SimpleAction::new("new", None);
-            new_action.connect_activate(clone!(main_win => move |_,_| {
+            new_action.connect_activate(enclose!((main_win) move |_,_| {
                 trace!("{} 'new' {}", gettext("Handling"), gettext("action"));
                 main_win.borrow_mut().req_new_view(None);
             }));
@@ -220,7 +220,7 @@ impl MainWin {
         }
         {
             let prefs_action = SimpleAction::new("prefs", None);
-            prefs_action.connect_activate(clone!(main_win => move |_,_| {
+            prefs_action.connect_activate(enclose!((main_win) move |_,_| {
                 trace!("{} 'prefs' {}", gettext("Handling"), gettext("action"));
                 Self::prefs(main_win.clone())
             }));
@@ -228,7 +228,7 @@ impl MainWin {
         }
         {
             let about_action = SimpleAction::new("about", None);
-            about_action.connect_activate(clone!(main_win => move |_,_| {
+            about_action.connect_activate(enclose!((main_win) move |_,_| {
                 trace!("{} 'about' {}", gettext("Handling"), gettext("action"));
                 Self::about(main_win.clone())
             }));
@@ -236,7 +236,7 @@ impl MainWin {
         }
         {
             let find_action = SimpleAction::new("find", None);
-            find_action.connect_activate(clone!(main_win => move |_,_| {
+            find_action.connect_activate(enclose!((main_win) move |_,_| {
                 trace!("{} 'find' {}", gettext("Handling"), gettext("action"));
                 Self::find(&main_win);
             }));
@@ -244,7 +244,7 @@ impl MainWin {
         }
         {
             let replace_action = SimpleAction::new("replace", None);
-            replace_action.connect_activate(clone!(main_win => move |_,_| {
+            replace_action.connect_activate(enclose!((main_win) move |_,_| {
                 trace!("{} 'replace' {}", gettext("Handling"), gettext("action"));
                 Self::replace(&main_win);
             }));
@@ -252,7 +252,7 @@ impl MainWin {
         }
         {
             let save_action = SimpleAction::new("save", None);
-            save_action.connect_activate(clone!(main_win => move |_,_| {
+            save_action.connect_activate(enclose!((main_win) move |_,_| {
                 trace!("{} 'save' {}", gettext("Handling"), gettext("action"));
                 Self::handle_save_button(&main_win.clone());
             }));
@@ -260,7 +260,7 @@ impl MainWin {
         }
         {
             let save_as_action = SimpleAction::new("save_as", None);
-            save_as_action.connect_activate(clone!(main_win => move |_,_| {
+            save_as_action.connect_activate(enclose!((main_win) move |_,_| {
                 trace!("{} 'save_as' {}", gettext("Handling"), gettext("action"));
                 Self::current_save_as(&main_win.clone());
             }));
@@ -268,7 +268,7 @@ impl MainWin {
         }
         {
             let close_action = SimpleAction::new("close", None);
-            close_action.connect_activate(clone!(main_win => move |_,_| {
+            close_action.connect_activate(enclose!((main_win) move |_,_| {
                 trace!("{} 'close' {}", gettext("Handling"), gettext("action"));
                 Self::close(&main_win.clone());
             }));
@@ -276,7 +276,7 @@ impl MainWin {
         }
         {
             let close_all_action = SimpleAction::new("close_all", None);
-            close_all_action.connect_activate(clone!(main_win => move |_,_| {
+            close_all_action.connect_activate(enclose!((main_win) move |_,_| {
                 trace!("{} 'close_all' {}", gettext("Handling"), gettext("action"));
                 Self::close_all(main_win.clone());
             }));
@@ -285,7 +285,7 @@ impl MainWin {
         {
             // This is called when we run app.quit, e.g. via Ctrl+Q
             let quit_action = SimpleAction::new("quit", None);
-            quit_action.connect_activate(clone!(main_win => move |_,_| {
+            quit_action.connect_activate(enclose!((main_win) move |_,_| {
                 trace!("{} 'quit' {}", gettext("Handling"), gettext("action"));
                 // Same as in connect_destroy, only quit if the user saves or wants to close without saving
                 if Self::close_all(main_win.clone()) == SaveAction::Cancel {
@@ -304,7 +304,7 @@ impl MainWin {
                 &main_state.borrow().config.config.auto_indent.to_variant(),
             );
 
-            auto_indent_action.connect_change_state(clone!(main_state => move |action, value| {
+            auto_indent_action.connect_change_state(enclose!((main_state) move |action, value| {
                 if let Some(value) = value.as_ref() {
                     action.set_state(value);
                     let value: bool = value.get().unwrap();
@@ -653,7 +653,7 @@ impl MainWin {
         fcn.set_transient_for(Some(&main_win.borrow().window.clone()));
         fcn.set_select_multiple(true);
 
-        fcn.connect_response(clone!(main_win => move |fcd, res| {
+        fcn.connect_response(enclose!((main_win) move |fcd, res| {
             debug!(
                 "{}: {:#?}",
                 gettext("FileChooserNative open response"),
@@ -711,7 +711,7 @@ impl MainWin {
         fcn.set_transient_for(Some(&main_win.borrow().window.clone()));
         fcn.set_current_name("");
 
-        fcn.connect_response(clone!(edit_view, main_win => move |fcd, res| {
+        fcn.connect_response(enclose!((edit_view, main_win) move |fcd, res| {
             debug!(
                 "{}: {:#?}",
                 gettext("FileChooserNative save response"),
@@ -863,7 +863,7 @@ impl MainWin {
                     }
 
                     ev.top_bar.close_button.connect_clicked(
-                        clone!(main_win, edit_view => move |_| {
+                        enclose!((main_win, edit_view) move |_| {
                             Self::close_view(&main_win, &edit_view);
                         }),
                     );

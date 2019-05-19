@@ -1,5 +1,5 @@
 #[macro_use]
-extern crate gxi_utils;
+extern crate enclose;
 
 pub mod errors;
 pub mod rpc;

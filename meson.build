@@ -42,27 +42,6 @@ else
   gtk3_22='false'
 endif
 
-if get_option('profile') == 'development'
-  profile = 'devel'
-  name_suffix = ' (Development)'
-  vcs_tag = run_command('git', 'rev-parse', '--short', 'HEAD').stdout().strip()
-  if vcs_tag == ''
-    version_suffix = '-devel'
-  else
-    version_suffix = '-@0@'.format (vcs_tag)
-  endif
-else
-  profile = ''
-  name_suffix = ''
-  version_suffix = ''
-endif
-
-application_id = 'com.github.Cogitri.gxi'
-
-if profile != ''
-  application_id = application_id + '.@0@'.format(profile)
-endif
-
 custom_target('cargo-build-gxi',
                         build_by_default: true,
                         build_always_stale: true,
@@ -81,10 +60,7 @@ custom_target('cargo-build-gxi',
                                   gtk3_22,
                                   gxi_plugin_dir,
                                   gxi_localedir,
-                                  meson.project_version() + version_suffix,
-                                  application_id,
-                                  get_option('profile'),
-                                  'gxi' + name_suffix,
+                                  meson.project_version(),
                                  ])
 
 syntect_build_path = join_paths(meson.current_source_dir(), 'vendor', 'xi-editor', 'rust', 'syntect-plugin')
@@ -128,10 +104,7 @@ custom_target('cargo-build-syntect',
                                   '',
                                   gxi_plugin_dir,
                                   gxi_localedir,
-                                  meson.project_version() + version_suffix,
-                                  application_id,
-                                  get_option('profile'),
-                                  'gxi' + name_suffix,
+                                  meson.project_version(),
                                  ])
 
 synctect_assets = ['assets/Makefile.toml', 'assets/YAML.toml', 'manifest.toml']

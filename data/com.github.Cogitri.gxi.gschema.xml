@@ -2,7 +2,7 @@
 
 <schemalist>
 
-    <schema path="/com/github/Cogitri/gxi/" id="@app_id@">
+    <schema path="/com/github/Cogitri/gxi/" id="com.github.Cogitri.gxi">
 
         <key name="theme-name" type="s">
             <default>"InspiredGitHub"</default>

@@ -1,7 +1,7 @@
 # assets
 data/com.github.Cogitri.gxi.appdata.xml.in
 data/com.github.Cogitri.gxi.desktop.in
-data/com.github.Cogitri.gxi.gschema.xml.in
+data/com.github.Cogitri.gxi.gschema.xml
 
 # glade files
 src/editview/src/ui/ev.glade
