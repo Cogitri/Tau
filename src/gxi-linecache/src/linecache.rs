@@ -80,7 +80,7 @@ impl Line {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct LineCache {
     map: HashMap<u64, Line>,
     pub n_invalid_before: u64,

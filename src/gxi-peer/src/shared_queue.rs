@@ -18,7 +18,7 @@ pub enum CoreMsg {
     },
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub struct SharedQueue {
     pub queue_rx: Arc<Mutex<SegQueue<CoreMsg>>>,
     pub queue_tx: Arc<Mutex<SegQueue<CoreMsg>>>,
