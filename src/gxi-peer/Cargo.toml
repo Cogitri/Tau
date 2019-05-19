@@ -13,11 +13,11 @@ description = "gxi's way to spawn a Xi instance in a thread"
 [dependencies]
 crossbeam-queue = "0.1"
 crossbeam-channel = "0.3"
+enclose = "1"
 gettext-rs = { version="0.4", features=["gettext-system"] }
 glib = { git="https://github.com/gtk-rs/glib" }
 glib-sys = { git="https://github.com/gtk-rs/sys", features = ["v2_44"] }
 gxi-config-storage = { path="../gxi-config-storage" }
-gxi-utils = { path="../gxi-utils" }
 log = "0.4"
 parking_lot = "0.8"
 serde = "1"

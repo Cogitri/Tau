@@ -1,6 +1,6 @@
+use crate::globals;
 use gettextrs::gettext;
 use gtk::*;
-use gxi_utils::globals;
 use log::trace;
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -20,7 +20,7 @@ impl AboutWin {
         about_dialog.set_license_type(gtk::License::MitX11);
         about_dialog.set_modal(true);
         about_dialog.set_version(globals::VERSION);
-        about_dialog.set_program_name(globals::APP_NAME.unwrap_or("com.github.Cogitri.gxi"));
+        about_dialog.set_program_name(glib::get_application_name().unwrap().as_str());
         about_dialog.set_website(Some("https://gxi.cogitri.dev"));
         about_dialog.set_translator_credits(Some(gettext("translator-credits").as_str()));
         about_dialog.set_logo_icon_name(Some("com.github.Cogitri.gxi"));

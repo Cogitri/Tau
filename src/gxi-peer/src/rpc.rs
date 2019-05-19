@@ -56,7 +56,7 @@ impl Core {
             state: Arc::new(Mutex::new(state)),
         };
 
-        thread::spawn(clone!(core => move || {
+        thread::spawn(enclose!((core) move || {
             while let Ok(msg) = xi_rx.recv() {
                 debug!("{}", msg);
                 if let Value::String(ref method) = msg["method"] {

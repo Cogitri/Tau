@@ -4,7 +4,7 @@ use cairo::Context;
 use gdk::enums::key;
 use gdk::*;
 use gettextrs::gettext;
-use gio::SettingsExt;
+use gio::{ApplicationExt, SettingsExt};
 use glib::{source, MainContext};
 use gtk::{self, *};
 use gxi_config_storage::{Config, GSchema, GSchemaExt};
@@ -122,22 +122,22 @@ impl ViewItem {
         );
 
         self.edit_area
-            .connect_button_press_event(clone!(edit_view => move |_,eb| {
+            .connect_button_press_event(enclose!((edit_view) move |_,eb| {
                 edit_view.borrow().handle_button_press(eb)
             }));
 
         self.edit_area
-            .connect_draw(clone!(edit_view => move |_,ctx| {
+            .connect_draw(enclose!((edit_view) move |_,ctx| {
                 edit_view.borrow().handle_da_draw(&ctx)
             }));
 
         self.edit_area
-            .connect_key_press_event(clone!(edit_view => move |_, ek| {
+            .connect_key_press_event(enclose!((edit_view) move |_, ek| {
                 edit_view.borrow().handle_key_press_event(ek)
             }));
 
         self.edit_area
-            .connect_motion_notify_event(clone!(edit_view => move |_,em| {
+            .connect_motion_notify_event(enclose!((edit_view) move |_,em| {
                edit_view.borrow().handle_drag(em)
             }));
 
@@ -153,24 +153,24 @@ impl ViewItem {
         });
 
         self.edit_area
-            .connect_scroll_event(clone!(edit_view => move |_,es| {
+            .connect_scroll_event(enclose!((edit_view) move |_,es| {
                 edit_view.borrow_mut().handle_scroll(es)
             }));
 
-        self.edit_area.connect_size_allocate(clone!(edit_view => move |_,alloc| {
+        self.edit_area.connect_size_allocate(enclose!((edit_view) move |_,alloc| {
             debug!("{}: {}={} {}={}", gettext("Size changed to"), gettext("width"), alloc.width, gettext("height"), alloc.height);
             edit_view.borrow().da_size_allocate(alloc.width, alloc.height);
             edit_view.borrow().do_resize(&edit_view.borrow().view_id,alloc.width, alloc.height);
         }));
 
         self.verti_bar
-            .connect_change_value(clone!(edit_view => move |_,_,_| {
+            .connect_change_value(enclose!((edit_view) move |_,_,_| {
                 edit_view.borrow().update_visible_scroll_region();
                 Inhibit(false)
             }));
 
         self.linecount
-            .connect_draw(clone!(edit_view => move |_,ctx| {
+            .connect_draw(enclose!((edit_view) move |_,ctx| {
                 edit_view.borrow().handle_linecount_draw(&ctx)
             }));
     }
@@ -223,7 +223,7 @@ impl Settings {
         let gschema = self.gschema.clone();
         gschema
             .settings
-            .connect_changed(clone!(ev, gschema => move |_, key| {
+            .connect_changed(enclose!((ev, gschema) move |_, key| {
                 match key {
                     "draw-trailing-spaces" => {
                         let val = gschema.get_key("draw-trailing-spaces");
@@ -284,7 +284,14 @@ impl EditView {
         let find_replace = FindReplace::new(&hamburger_button);
         let pango_ctx = view_item.get_pango_ctx();
         let im_context = IMContextSimple::new();
-        let settings = Settings::new(app_id!());
+        let settings = Settings::new(
+            parent
+                .get_application()
+                .unwrap()
+                .get_application_id()
+                .unwrap()
+                .as_str(),
+        );
         let interface_font = Self::get_interface_font(&settings, &pango_ctx);
 
         //FIXME: crate::MainWin::set_language(&core, &view_id, "Plain Text");
@@ -324,7 +331,7 @@ impl EditView {
     }
 
     fn connect_im_events(edit_view: &Rc<RefCell<EditView>>, im_context: &IMContextSimple) {
-        im_context.connect_commit(clone!(edit_view => move |_, text| {
+        im_context.connect_commit(enclose!((edit_view) move |_, text| {
             let ev = edit_view.borrow();
             ev.core.insert(&ev.view_id, text);
         }));
@@ -449,19 +456,19 @@ impl FindReplace {
             ev.borrow().view_id
         );
 
-        self.popover.connect_event(clone!(ev => move |_, event| {
+        self.popover.connect_event(enclose!((ev) move |_, event| {
             ev.borrow().find_replace.search_bar.handle_event(event);
 
             Inhibit(false)
         }));
 
-        self.popover.connect_closed(clone!(ev => move |_| {
+        self.popover.connect_closed(enclose!((ev) move |_| {
             ev.borrow().stop_search();
             ev.borrow().stop_replace();
         }));
 
         self.show_replace_button
-            .connect_toggled(clone!(ev => move |toggle_btn| {
+            .connect_toggled(enclose!((ev) move |toggle_btn| {
                 if toggle_btn.get_active() {
                     ev.borrow().show_replace();
                 } else {
@@ -470,7 +477,7 @@ impl FindReplace {
             }));
 
         self.show_options_button
-            .connect_toggled(clone!(ev => move |toggle_btn| {
+            .connect_toggled(enclose!((ev) move |toggle_btn| {
                 if toggle_btn.get_active() {
                     ev.borrow().show_findreplace_opts();
                 } else {
@@ -481,14 +488,14 @@ impl FindReplace {
         self.search_bar.connect_entry(&self.search_entry);
 
         self.search_bar
-            .connect_property_search_mode_enabled_notify(clone!(ev => move |sb| {
+            .connect_property_search_mode_enabled_notify(enclose!((ev) move |sb| {
                 if ! sb.get_search_mode() {
                     ev.borrow().stop_search();
                 }
             }));
 
         self.search_entry
-            .connect_search_changed(clone!(ev => move |w| {
+            .connect_search_changed(enclose!((ev) move |w| {
                 if let Some(text) = w.get_text() {
                     ev.borrow().search_changed(Some(text.to_string()));
                 } else {
@@ -497,17 +504,17 @@ impl FindReplace {
             }));
 
         self.replace_entry
-            .connect_next_match(clone!(ev => move |_| {
+            .connect_next_match(enclose!((ev) move |_| {
                 ev.borrow().find_next();
             }));
 
         self.replace_entry
-            .connect_previous_match(clone!(ev => move |_| {
+            .connect_previous_match(enclose!((ev) move |_| {
                 ev.borrow().find_prev();
             }));
 
         self.replace_entry
-            .connect_stop_search(clone!(ev => move |_| {
+            .connect_stop_search(enclose!((ev) move |_| {
                 ev.borrow().stop_replace();
             }));
 
@@ -521,37 +528,37 @@ impl FindReplace {
         };
 
         self.use_regex_button
-            .connect_toggled(clone!(ev => move |_| restart_search(ev.clone())));
+            .connect_toggled(enclose!((ev) move |_| restart_search(ev.clone())));
 
         self.whole_word_button
-            .connect_toggled(clone!(ev => move |_| restart_search(ev.clone())));
+            .connect_toggled(enclose!((ev) move |_| restart_search(ev.clone())));
 
         self.case_sensitive_button
-            .connect_toggled(clone!(ev => move |_| restart_search(ev.clone())));
+            .connect_toggled(enclose!((ev) move |_| restart_search(ev.clone())));
 
-        self.search_entry.connect_activate(clone!(ev => move |_| {
+        self.search_entry.connect_activate(enclose!((ev) move |_| {
             ev.borrow().find_next();
         }));
 
         self.search_entry
-            .connect_stop_search(clone!(ev => move |_| {
+            .connect_stop_search(enclose!((ev) move |_| {
                 ev.borrow().stop_search();
             }));
 
-        self.replace_button.connect_clicked(clone!(ev => move |_| {
+        self.replace_button.connect_clicked(enclose!((ev) move |_| {
             ev.borrow().replace();
         }));
 
         self.replace_all_button
-            .connect_clicked(clone!(ev => move |_| {
+            .connect_clicked(enclose!((ev) move |_| {
                 ev.borrow().replace_all();
             }));
 
-        self.go_down_button.connect_clicked(clone!(ev => move |_| {
+        self.go_down_button.connect_clicked(enclose!((ev) move |_| {
             ev.borrow().find_next();
         }));
 
-        self.go_up_button.connect_clicked(clone!(ev => move |_| {
+        self.go_up_button.connect_clicked(enclose!((ev) move |_| {
             ev.borrow().find_prev();
         }));
     }

@@ -65,10 +65,11 @@
 #![deny(clippy::all)]
 
 #[macro_use]
-extern crate gxi_utils;
+extern crate enclose;
 
 mod about_win;
 mod errors;
+mod globals;
 mod main_win;
 mod panic_handler;
 mod prefs_win;
@@ -81,8 +82,7 @@ use glib::MainContext;
 use gtk::Application;
 use gxi_config_storage::Config;
 use gxi_peer::{Core, CoreMsg, ErrorMsg, SharedQueue, XiPeer};
-use gxi_utils::globals;
-use log::{debug, info, trace, warn};
+use log::{debug, info, warn};
 use serde_json::{json, Value};
 use std::env::args;
 
@@ -110,9 +110,11 @@ fn main() {
     let (xi_peer, xi_rx) = XiPeer::new();
     let core = Core::new(xi_peer, xi_rx, err_tx, shared_queue.clone());
 
-    trace!("application_id: {}", app_id!());
-    let application = Application::new(Some(app_id!()), ApplicationFlags::HANDLES_OPEN)
-        .unwrap_or_else(|_| panic!("Failed to create the GTK+ application"));
+    let application = Application::new(
+        Some("com.github.Cogitri.gxi"),
+        ApplicationFlags::HANDLES_OPEN,
+    )
+    .unwrap_or_else(|_| panic!("Failed to create the GTK+ application"));
 
     let main_context = MainContext::default();
     main_context.acquire();
@@ -122,14 +124,16 @@ fn main() {
         glib::source::Continue(false)
     });
 
-    application.connect_startup(clone!(shared_queue, core => move |application| {
+    application.connect_startup(enclose!((shared_queue, core) move |application| {
         debug!("{}", gettext("Starting gxi"));
+
+        glib::set_application_name("gxi");
 
         let (config_dir, xi_config) = Config::new();
 
         // No need to gettext this, gettext doesn't work yet
         match TextDomain::new("gxi")
-            .push(globals::LOCALEDIR.unwrap_or("po"))
+            .push(crate::globals::LOCALEDIR.unwrap_or("po"))
             .init()
         {
             Ok(locale) => info!("Translation found, setting locale to {:?}", locale),
@@ -142,7 +146,7 @@ fn main() {
             Err(TextDomainError::InvalidLocale(locale)) => warn!("Invalid locale {}", locale),
         }
 
-        core.client_started(&config_dir, globals::PLUGIN_DIR.unwrap_or("/usr/local/lib/gxi/plugins"));
+        core.client_started(&config_dir, crate::globals::PLUGIN_DIR.unwrap_or("/usr/local/lib/gxi/plugins"));
 
         MainWin::new(
             application,
@@ -152,7 +156,7 @@ fn main() {
            );
     }));
 
-    application.connect_activate(clone!(shared_queue, core => move |_| {
+    application.connect_activate(enclose!((shared_queue, core) move |_| {
         debug!("{}", gettext("Activating new view"));
 
         let mut params = json!({});
@@ -169,7 +173,7 @@ fn main() {
         );
     }));
 
-    application.connect_open(clone!(shared_queue, core => move |_,files,_| {
+    application.connect_open(enclose!((shared_queue, core) move |_,files,_| {
         debug!("{}", gettext("Opening new file"));
 
         for file in files {
