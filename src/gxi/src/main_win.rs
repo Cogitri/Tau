@@ -6,7 +6,7 @@ use gettextrs::gettext;
 use gio::{ActionMapExt, SimpleAction};
 use glib::MainContext;
 use gtk::*;
-use gxi_config_storage::{pref_storage, Config};
+use gxi_config_storage::{Config, GSchema, GSchemaExt};
 use gxi_peer::ErrorMsg;
 use gxi_peer::{Core, CoreMsg, SharedQueue};
 use log::{debug, error, info, trace, warn};
@@ -50,21 +50,25 @@ struct WinProp {
     height: i32,
     width: i32,
     is_maximized: bool,
+    gschema: GSchema,
 }
 
 impl WinProp {
     pub fn new() -> Self {
+        let gschema = GSchema::new(app_id!());
         Self {
-            height: pref_storage::get_window_height(),
-            width: pref_storage::get_window_width(),
-            is_maximized: pref_storage::get_window_maximized(),
+            height: gschema.get_key("window-height"),
+            width: gschema.get_key("window-width"),
+            is_maximized: gschema.get_key("window-maximized"),
+            gschema,
         }
     }
-
     pub fn save(&self) {
-        pref_storage::set_window_height(self.height);
-        pref_storage::set_window_width(self.width);
-        pref_storage::set_window_maximized(self.is_maximized);
+        self.gschema.set_key("window-height", self.height).unwrap();
+        self.gschema.set_key("window-width", self.width).unwrap();
+        self.gschema
+            .set_key("window-maximized", self.is_maximized)
+            .unwrap();
     }
 }
 
@@ -105,7 +109,7 @@ impl MainWin {
         let notebook: Notebook = builder.get_object("notebook").unwrap();
         let syntax_combo_box: ComboBoxText = builder.get_object("syntax_combo_box").unwrap();
 
-        let theme_name = pref_storage::get_theme_schema();
+        let theme_name = properties.gschema.get_key("theme-name");
         debug!("{}: {}", gettext("Theme name"), &theme_name);
 
         let main_state = Rc::new(RefCell::new(MainState {
@@ -753,6 +757,7 @@ impl MainWin {
             &main_state,
             &core,
             main_win.get_current_edit_view(),
+            &main_win.properties.gschema,
         );
     }
 
