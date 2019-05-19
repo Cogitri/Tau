@@ -1,5 +1,20 @@
 #!/bin/bash
-echo '<meta http-equiv="refresh" content="0;url=https://gxi.cogitri.dev/docs">' > target/doc/index.html &&
+
+write_index() {
+	cat > target/doc/index.html <<EOF
+	<a href="editview/index.html">EditView docs</a>
+	<br>
+	<a href="gxi/index.html">gxi docs</a>
+	<br>
+	<a href="gxi_config_storage/index.html">gxi-config-storage docs</a>
+	<br>
+	<a href="gxi_linecache/index.html">gxi-linecache docs</a>
+	<br>
+	<a href="gxi_peer/index.html">gxi-peer</a>
+EOF
+}
+
+write_index &&
 mv target/doc/gxi target/doc/docs &&
 chmod 600 .ci/id_ed25519 &&
 eval "$(ssh-agent -s)" &&
