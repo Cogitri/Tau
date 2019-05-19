@@ -9,6 +9,7 @@ use std::panic::{self, PanicInfo};
 pub struct PanicHandler {}
 
 impl PanicHandler {
+    #[allow(clippy::new_ret_no_self)]
     pub fn new() {
         let meta = Metadata {
             version: env!("CARGO_PKG_VERSION").into(),
