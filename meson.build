@@ -128,7 +128,7 @@ subdir('data')
 subdir('po')
 
 test(
-  'cargo test',
+  'cargo test --all',
   cargo,
   env: ['DONT_INSTALL_HUSKY_HOOKS=1'],
   args: 'test',
