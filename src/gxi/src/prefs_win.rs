@@ -2,7 +2,7 @@ use editview::EditView;
 use editview::MainState;
 use gettextrs::gettext;
 use gtk::*;
-use gxi_config_storage::{pref_storage, pref_storage::*};
+use gxi_config_storage::{GSchema, GSchemaExt};
 use gxi_peer::Core;
 use log::{debug, error, trace};
 use pango::*;
@@ -20,6 +20,7 @@ impl PrefsWin {
         main_state: &Rc<RefCell<MainState>>,
         core: &Core,
         edit_view: Option<Rc<RefCell<EditView>>>,
+        gschema: &GSchema,
     ) -> Self {
         const SRC: &str = include_str!("ui/prefs_win.glade");
         let builder = Builder::new_from_string(SRC);
@@ -89,15 +90,16 @@ impl PrefsWin {
             }
         }
 
-        theme_combo_box.connect_changed(clone!(core, main_state => move |cb|{
+        theme_combo_box.connect_changed(clone!(core, main_state, gschema => move |cb|{
             if let Some(theme_name) = cb.get_active_text() {
-                debug!("{} {:?}", gettext("Theme changed to"), &theme_name);
+                let theme_name = theme_name.to_string();
+                debug!("{} {}", gettext("Theme changed to"), &theme_name);
                 core.set_theme(&theme_name);
 
-                pref_storage::set_theme_schema(theme_name.to_string());
+                gschema.set_key("theme-name", theme_name.clone()).unwrap();
 
                 let mut main_state = main_state.borrow_mut();
-                main_state.theme_name = theme_name.to_string();
+                main_state.theme_name = theme_name;
             }
         }));
 
@@ -148,22 +150,22 @@ impl PrefsWin {
         }
 
         {
-            draw_trailing_spaces_checkbutton.set_active(get_draw_trailing_spaces_schema());
+            draw_trailing_spaces_checkbutton.set_active(gschema.get_key("draw-trailing-spaces"));
 
-            draw_trailing_spaces_checkbutton.connect_toggled(move |toggle_btn| {
+            draw_trailing_spaces_checkbutton.connect_toggled(clone!(gschema => move |toggle_btn| {
                 let value = toggle_btn.get_active();
-                set_draw_trailing_spaces_schema(value);
-            });
+                gschema.set_key("draw-trailing-spaces", value).unwrap();
+            }));
         }
 
         {
-            margin_checkbutton.set_active(get_draw_right_margin());
+            margin_checkbutton.set_active(gschema.get_key("draw-right-margin"));
 
             margin_checkbutton.connect_toggled(
-                clone!(edit_view, margin_spinbutton => move |toggle_btn| {
+                clone!(edit_view, margin_spinbutton, gschema => move |toggle_btn| {
                     let value = toggle_btn.get_active();
                     debug!("{}: {}", gettext("Right hand margin"), value);
-                    set_draw_right_margin(value);
+                    gschema.set_key("draw-right-margin", value).unwrap();
                     if let Some(ev) = edit_view.clone() {
                         ev.borrow().view_item.edit_area.queue_draw();
                     }
@@ -173,13 +175,14 @@ impl PrefsWin {
         }
 
         {
-            margin_spinbutton.set_sensitive(get_draw_right_margin());
-            margin_spinbutton.set_value(f64::from(get_column_right_margin()));
+            margin_spinbutton.set_sensitive(gschema.get_key("draw-right-margin"));
+            let margin_value: u32 = gschema.get_key("column-right-margin");
+            margin_spinbutton.set_value(f64::from(margin_value));
 
-            margin_spinbutton.connect_value_changed(clone!(edit_view => move |spin_btn| {
-                let value = spin_btn.get_value();
+            margin_spinbutton.connect_value_changed(clone!(edit_view, gschema => move |spin_btn| {
+                let value = spin_btn.get_value() as u32;
                 debug!("{}: {}", gettext("Right hand margin width"), value);
-                set_column_right_margin(value as u32);
+                gschema.set_key("column-right-margin", value).unwrap();
                 if let Some(ev) = edit_view.clone() {
                     ev.borrow().view_item.edit_area.queue_draw();
                 }
@@ -205,15 +208,17 @@ impl PrefsWin {
         }
 
         {
-            highlight_line_checkbutton.set_active(get_highlight_line());
+            highlight_line_checkbutton.set_active(gschema.get_key("highlight-line"));
 
-            highlight_line_checkbutton.connect_toggled(clone!(edit_view => move |toggle_btn| {
-                let value = toggle_btn.get_active();
-                set_highlight_line(value);
-                if let Some(ev) = edit_view.clone() {
-                    ev.borrow().view_item.edit_area.queue_draw();
-                }
-            }));
+            highlight_line_checkbutton.connect_toggled(
+                clone!(edit_view, gschema => move |toggle_btn| {
+                    let value = toggle_btn.get_active();
+                    gschema.set_key("highlight-line", value).unwrap();
+                    if let Some(ev) = edit_view.clone() {
+                        ev.borrow().view_item.edit_area.queue_draw();
+                    }
+                }),
+            );
         }
 
         let prefs_win = Self {

@@ -10,6 +10,8 @@ pub enum Error {
     DeToml(String),
     #[fail(display = "Failed to serialize config TOML! Error: {}", _0)]
     SerToml(String),
+    #[fail(display = "Failed to set GSettings key! Error: {}", _0)]
+    GSettings(String),
 }
 
 impl From<std::io::Error> for Error {

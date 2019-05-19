@@ -427,7 +427,7 @@ dependencies = [
  "gobject-sys 0.8.0 (git+https://github.com/gtk-rs/sys)",
  "gtk 0.6.0 (git+https://github.com/gtk-rs/gtk)",
  "gtk-sys 0.8.0 (git+https://github.com/gtk-rs/sys)",
- "gxi-config-storage 0.1.0",
+ "gxi-config-storage 0.2.0",
  "gxi-linecache 0.1.0",
  "gxi-peer 0.1.0",
  "gxi-utils 0.1.0",
@@ -754,7 +754,7 @@ dependencies = [
  "gobject-sys 0.8.0 (git+https://github.com/gtk-rs/sys)",
  "gtk 0.6.0 (git+https://github.com/gtk-rs/gtk)",
  "gtk-sys 0.8.0 (git+https://github.com/gtk-rs/sys)",
- "gxi-config-storage 0.1.0",
+ "gxi-config-storage 0.2.0",
  "gxi-linecache 0.1.0",
  "gxi-peer 0.1.0",
  "gxi-utils 0.1.0",
@@ -771,14 +771,15 @@ dependencies = [
 
 [[package]]
 name = "gxi-config-storage"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "dirs 1.0.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "failure 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "gettext-rs 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "gio 0.6.0 (git+https://github.com/gtk-rs/gio)",
  "gio-sys 0.8.0 (git+https://github.com/gtk-rs/sys)",
- "gxi-utils 0.1.0",
+ "glib 0.7.0 (git+https://github.com/gtk-rs/glib)",
+ "glib-sys 0.8.0 (git+https://github.com/gtk-rs/sys)",
  "log 0.4.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde 1.0.91 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde_derive 1.0.91 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -805,7 +806,7 @@ dependencies = [
  "gettext-rs 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "glib 0.7.0 (git+https://github.com/gtk-rs/glib)",
  "glib-sys 0.8.0 (git+https://github.com/gtk-rs/sys)",
- "gxi-config-storage 0.1.0",
+ "gxi-config-storage 0.2.0",
  "gxi-utils 0.1.0",
  "log 0.4.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "parking_lot 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)",

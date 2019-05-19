@@ -4,9 +4,10 @@ use cairo::Context;
 use gdk::enums::key;
 use gdk::*;
 use gettextrs::gettext;
+use gio::SettingsExt;
 use glib::{source, MainContext};
 use gtk::{self, *};
-use gxi_config_storage::{pref_storage::*, Config};
+use gxi_config_storage::{Config, GSchema, GSchemaExt};
 use gxi_linecache::{Line, LineCache, StyleSpan};
 use gxi_peer::Core;
 use log::{debug, error, trace, warn};
@@ -194,6 +195,60 @@ pub struct TextSize {
     contained_width: bool,
 }
 
+/// A Struct containing setting switches for the EditView
+struct Settings {
+    gschema: GSchema,
+    trailing_spaces: bool,
+    highlight_line: bool,
+    right_margin: bool,
+    column_right_margin: u32,
+    interface_font: String,
+}
+
+impl Settings {
+    pub fn new(schema_name: &str) -> Self {
+        let gschema = GSchema::new(schema_name);
+        let gnome_gschema = GSchema::new("org.gnome.desktop.interface");
+        Self {
+            trailing_spaces: gschema.get_key("draw-trailing-spaces"),
+            highlight_line: gschema.get_key("highlight-line"),
+            right_margin: gschema.get_key("draw-right-margin"),
+            column_right_margin: gschema.get_key("column-right-margin"),
+            interface_font: gnome_gschema.get_key("font-name"),
+            gschema,
+        }
+    }
+
+    pub fn connect_change(&self, ev: &Rc<RefCell<EditView>>) {
+        let gschema = self.gschema.clone();
+        gschema
+            .settings
+            .connect_changed(clone!(ev, gschema => move |_, key| {
+                match key {
+                    "draw-trailing-spaces" => {
+                        let val = gschema.get_key("draw-trailing-spaces");
+                        ev.borrow_mut().settings.trailing_spaces = val;
+                    }
+                    "highlight-line" => {
+                        let val = gschema.get_key("highlight-line");
+                        ev.borrow_mut().settings.highlight_line = val;
+                    }
+                    "draw-right-margin" => {
+                        let val = gschema.get_key("draw-right-margin");
+                        ev.borrow_mut().settings.right_margin = val;
+                    }
+                    "column-right-margin" => {
+                        let val = gschema.get_key("column-right-margin");
+                        ev.borrow_mut().settings.column_right_margin = val;
+                    }
+                    _key => {
+                        warn!("{}: {}", gettext("Unknown key change event"), _key)
+                    }
+                }
+            }));
+    }
+}
+
 /// The EditView is the part of gxi that does the actual editing. This is where you edit documents.
 pub struct EditView {
     core: Core,
@@ -209,6 +264,7 @@ pub struct EditView {
     edit_font: Font,
     interface_font: Font,
     im_context: IMContextSimple,
+    settings: Settings,
 }
 
 impl EditView {
@@ -228,6 +284,8 @@ impl EditView {
         let find_replace = FindReplace::new(&hamburger_button);
         let pango_ctx = view_item.get_pango_ctx();
         let im_context = IMContextSimple::new();
+        let settings = Settings::new(app_id!());
+        let interface_font = Self::get_interface_font(&settings, &pango_ctx);
 
         //FIXME: crate::MainWin::set_language(&core, &view_id, "Plain Text");
 
@@ -242,16 +300,23 @@ impl EditView {
             view_item: view_item.clone(),
             line_cache: LineCache::new(),
             edit_font: Self::get_edit_font(&pango_ctx, &main_state.borrow().config),
-            interface_font: Self::get_interface_font(&pango_ctx),
+            interface_font,
             find_replace: find_replace.clone(),
             im_context: im_context.clone(),
+            settings,
         }));
 
         edit_view.borrow_mut().update_title();
 
+        {
+            let settings = &edit_view.borrow().settings;
+            settings.connect_change(&edit_view.clone());
+        }
+
         view_item.connect_events(&edit_view);
         find_replace.connect_events(&edit_view);
         EditView::connect_im_events(&edit_view, &im_context);
+        //edit_view.borrow().connect_gschema(&gschema);
 
         im_context.set_client_window(parent.get_window().as_ref());
 
@@ -265,10 +330,10 @@ impl EditView {
         }));
     }
 
-    fn get_interface_font(pango_ctx: &pango::Context) -> Font {
+    fn get_interface_font(settings: &Settings, pango_ctx: &pango::Context) -> Font {
         Font::new(
             &pango_ctx,
-            FontDescription::from_string(&get_default_interface_font_schema()),
+            FontDescription::from_string(&settings.interface_font),
         )
     }
 
@@ -825,9 +890,9 @@ impl EditView {
         pango_ctx.set_font_description(&self.edit_font.font_desc);
 
         // Draw a line at x chars
-        if get_draw_right_margin() {
+        if self.settings.right_margin {
             let until_margin_width =
-                self.edit_font.font_width * f64::from(get_column_right_margin());
+                self.edit_font.font_width * f64::from(self.settings.column_right_margin);
             // Draw editing background
             set_source_color(cr, theme.background);
             cr.rectangle(0.0, 0.0, until_margin_width, f64::from(da_height));
@@ -855,7 +920,7 @@ impl EditView {
         for i in first_line..last_line {
             // Keep track of the starting x position
             if let Some(line) = self.line_cache.get_line(i) {
-                if get_highlight_line() && !line.cursor().is_empty() {
+                if self.settings.highlight_line && !line.cursor().is_empty() {
                     set_source_color(cr, theme.line_highlight);
                     cr.rectangle(
                         0.0,
@@ -1048,7 +1113,7 @@ impl EditView {
 
         // Replace spaces with '·'. Do this here since we only want
         // to draw this, we don't want to save the file like that.
-        let line_view = if get_draw_trailing_spaces_schema() && line_view.ends_with(' ') {
+        let line_view = if self.settings.trailing_spaces && line_view.ends_with(' ') {
             // Replace tabs here to make sure trim_end doesn't remove them
             let last_char = line_view.replace("\t", "a").trim_end().len();
             let (line_view_without_space, spaces) = line_view.split_at(last_char);

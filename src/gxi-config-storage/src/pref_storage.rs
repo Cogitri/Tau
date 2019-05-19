@@ -1,7 +1,8 @@
 use crate::errors::Error;
 use gettextrs::gettext;
-use gio::{Settings, SettingsExt, SettingsSchemaSource};
-use log::{debug, error, trace, warn};
+use gio::{Settings, SettingsExt};
+use glib::Variant;
+use log::{debug, error, trace};
 use serde_derive::*;
 use std::fs::OpenOptions;
 use std::io::prelude::*;
@@ -48,13 +49,16 @@ impl Default for XiConfig {
             vec!["[".to_string(), "]".to_string()],
         ];
 
+        let monospace_font: String =
+            GSchema::new("org.gnome.desktop.interface").get_key("monospace-font-name");
+
         // Default valuess as dictated by https://github.com/xi-editor/xi-editor/blob/master/rust/core-lib/assets/client_example.toml
         Self {
             tab_size: 4,
             translate_tabs_to_spaces: false,
             use_tab_stops: true,
             plugin_search_path: vec![String::new()],
-            font_face: get_default_monospace_font_schema(),
+            font_face: monospace_font,
             font_size: 12,
             auto_indent: true,
             scroll_past_end: false,
@@ -218,180 +222,76 @@ impl Config {
 }
 
 pub trait GSchemaExt<RHS = Self> {
-    fn get(schema_name: &str, field_name: &str) -> Option<RHS>;
+    fn get_key(&self, field_name: &str) -> RHS;
 
-    fn set(schema_name: &str, field_name: &str, val: RHS);
+    fn set_key(&self, field_name: &str, val: RHS) -> Result<(), Error>;
 }
 
-pub struct GSchema {}
+#[derive(Clone)]
+pub struct GSchema {
+    pub settings: Settings,
+}
+
+impl GSchema {
+    /// Get a new GSchema object.
+    ///
+    /// # Panics
+    ///
+    /// This panics if it can't find the GSchema, e.g. because it
+    /// hasn't been installed correctly.
+    pub fn new(schema_name: &str) -> Self {
+        Self {
+            settings: Settings::new(schema_name),
+        }
+    }
+}
 
 impl GSchemaExt<String> for GSchema {
-    fn get(schema_name: &str, field_name: &str) -> Option<String> {
-        SettingsSchemaSource::get_default()
-            .and_then(|settings_source| settings_source.lookup(schema_name, true))
-            .and_then(|_| Settings::new(schema_name).get_string(field_name))
-            .map(|s| s.to_string())
+    fn get_key(&self, key_name: &str) -> String {
+        self.settings.get_string(key_name).unwrap().to_string()
     }
 
-    fn set(schema_name: &str, field_name: &str, val: String) {
-        if SettingsSchemaSource::get_default()
-            .and_then(|settings_source| settings_source.lookup(schema_name, true))
-            .is_some()
-        {
-            Settings::new(schema_name).set_string(field_name, &val);
-        };
-    }
-}
+    fn set_key(&self, key_name: &str, val: String) -> Result<(), Error> {
+        let res = self.settings.set_string(key_name, &val);
 
-impl GSchemaExt<bool> for GSchema {
-    fn get(schema_name: &str, field_name: &str) -> Option<bool> {
-        SettingsSchemaSource::get_default()
-            .and_then(|settings_source| settings_source.lookup(schema_name, true))
-            .map(|_| Settings::new(schema_name).get_boolean(field_name))
-    }
-
-    fn set(schema_name: &str, field_name: &str, val: bool) {
-        if SettingsSchemaSource::get_default()
-            .and_then(|settings_source| settings_source.lookup(schema_name, true))
-            .is_some()
-        {
-            Settings::new(schema_name).set_boolean(field_name, val);
-        };
+        if res {
+            Ok(())
+        } else {
+            Err(Error::GSettings(format!(
+                "Key {} isn't writeable!",
+                key_name
+            )))
+        }
     }
 }
 
-impl GSchemaExt<u32> for GSchema {
-    fn get(schema_name: &str, field_name: &str) -> Option<u32> {
-        SettingsSchemaSource::get_default()
-            .and_then(|settings_source| settings_source.lookup(schema_name, true))
-            .map(|_| Settings::new(schema_name).get_uint(field_name))
+impl GSchemaExt<Variant> for GSchema {
+    fn get_key(&self, key_name: &str) -> Variant {
+        self.settings.get_value(key_name).unwrap()
     }
 
-    fn set(schema_name: &str, field_name: &str, val: u32) {
-        if SettingsSchemaSource::get_default()
-            .and_then(|settings_source| settings_source.lookup(schema_name, true))
-            .is_some()
-        {
-            Settings::new(schema_name).set_uint(field_name, val);
-        };
-    }
-}
+    fn set_key(&self, key_name: &str, val: Variant) -> Result<(), Error> {
+        let res = self.settings.set_value(key_name, &val);
 
-impl GSchemaExt<i32> for GSchema {
-    fn get(schema_name: &str, field_name: &str) -> Option<i32> {
-        SettingsSchemaSource::get_default()
-            .and_then(|settings_source| settings_source.lookup(schema_name, true))
-            .map(|_| Settings::new(schema_name).get_int(field_name))
-    }
-
-    fn set(schema_name: &str, field_name: &str, val: i32) {
-        if SettingsSchemaSource::get_default()
-            .and_then(|settings_source| settings_source.lookup(schema_name, true))
-            .is_some()
-        {
-            Settings::new(schema_name).set_int(field_name, val);
-        };
+        if res {
+            Ok(())
+        } else {
+            Err(Error::GSettings(format!(
+                "Key {} isn't writeable!",
+                key_name
+            )))
+        }
     }
 }
 
-pub fn get_theme_schema() -> String {
-    GSchema::get(app_id!(), "theme-name").unwrap_or_else(|| {
-        warn!("Couldn't find GSchema! Defaulting to default theme.");
-        "InspiredGitHub".to_string()
-    })
-}
+impl_typed_getset!(bool, get_boolean, set_boolean);
 
-pub fn set_theme_schema(theme_name: String) {
-    GSchema::set(app_id!(), "theme-name", theme_name);
-}
+impl_typed_getset!(f64, get_double, set_double);
 
-pub fn get_default_monospace_font_schema() -> String {
-    GSchema::get("org.gnome.desktop.interface", "monospace-font-name").unwrap_or_else(|| {
-        warn!("Couldn't find GSchema! Defaulting to default monospace font.");
-        "Monospace".to_string()
-    })
-}
+impl_typed_getset!(i32, get_int, set_int);
 
-pub fn get_default_interface_font_schema() -> String {
-    GSchema::get("org.gnome.desktop.interface", "font-name").unwrap_or_else(|| {
-        warn!("Couldn't find GSchema! Defaulting to default interface font.");
-        "Cantarell 11".to_string()
-    })
-}
+impl_typed_getset!(i64, get_int64, set_int64);
 
-pub fn get_draw_trailing_spaces_schema() -> bool {
-    GSchema::get(app_id!(), "draw-trailing-spaces").unwrap_or_else(|| {
-        warn!("Couldn't find GSchema! Defaulting to not drawing tabs!");
-        false
-    })
-}
+impl_typed_getset!(u32, get_uint, set_uint);
 
-pub fn set_draw_trailing_spaces_schema(val: bool) {
-    GSchema::set(app_id!(), "draw-trailing-spaces", val);
-}
-
-pub fn get_draw_right_margin() -> bool {
-    GSchema::get(app_id!(), "draw-right-margin").unwrap_or_else(|| {
-        warn!("Couldn't find GSchema! Defaulting to not drawing a right hand margin!");
-        false
-    })
-}
-
-pub fn set_draw_right_margin(val: bool) {
-    GSchema::set(app_id!(), "draw-right-margin", val);
-}
-
-pub fn get_column_right_margin() -> u32 {
-    GSchema::get(app_id!(), "column-right-margin").unwrap_or_else(|| {
-        warn!("Couldn't find GSchema! Defaulting to drawing right hand marging at column 80");
-        80
-    })
-}
-
-pub fn set_column_right_margin(val: u32) {
-    GSchema::set(app_id!(), "column-right-margin", val);
-}
-
-pub fn get_highlight_line() -> bool {
-    GSchema::get(app_id!(), "highlight-line").unwrap_or_else(|| {
-        warn!("Couldn't find GSchema! Defaulting to not highlighting the current line");
-        false
-    })
-}
-
-pub fn set_highlight_line(val: bool) {
-    GSchema::set(app_id!(), "highlight-line", val);
-}
-
-pub fn set_window_width(val: i32) {
-    GSchema::set(app_id!(), "window-width", val);
-}
-
-pub fn get_window_width() -> i32 {
-    GSchema::get(app_id!(), "window-width").unwrap_or_else(|| {
-        warn!("Couldn't find GSchema! Defaulting default width: 700");
-        700
-    })
-}
-
-pub fn set_window_height(val: i32) {
-    GSchema::set(app_id!(), "window-height", val);
-}
-
-pub fn get_window_height() -> i32 {
-    GSchema::get(app_id!(), "window-height").unwrap_or_else(|| {
-        warn!("Couldn't find GSchema! Defaulting default width: 900");
-        900
-    })
-}
-
-pub fn set_window_maximized(val: bool) {
-    GSchema::set(app_id!(), "window-maximized", val);
-}
-
-pub fn get_window_maximized() -> bool {
-    GSchema::get(app_id!(), "window-maximized").unwrap_or_else(|| {
-        warn!("Couldn't find GSchema! Defaulting to a not maximized window!");
-        false
-    })
-}
+impl_typed_getset!(u64, get_uint64, set_uint64);
