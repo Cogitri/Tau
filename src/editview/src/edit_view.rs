@@ -241,6 +241,8 @@ impl Settings {
                         let val = gschema.get_key("column-right-margin");
                         ev.borrow_mut().settings.column_right_margin = val;
                     }
+                    // We load these during startup
+                    "window-height" | "window-width" | "window-maximized" => {}
                     _key => {
                         warn!("{}: {}", gettext("Unknown key change event"), _key)
                     }
