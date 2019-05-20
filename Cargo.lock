@@ -643,7 +643,7 @@ dependencies = [
 [[package]]
 name = "gio"
 version = "0.6.0"
-source = "git+https://github.com/gtk-rs/gio#047ea1cf0735f04c5a404331c61d192ac4cb43a9"
+source = "git+https://github.com/gtk-rs/gio#144987ae909bdde81b3f7e3ae7f101f0bbd1ea2a"
 dependencies = [
  "bitflags 1.0.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "fragile 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -658,7 +658,7 @@ dependencies = [
 [[package]]
 name = "gio-sys"
 version = "0.8.0"
-source = "git+https://github.com/gtk-rs/sys#758341f571ac74117b53254813850e8fff440467"
+source = "git+https://github.com/gtk-rs/sys#c45adc74dd9432b22825fa8318a4028590eb9ec2"
 dependencies = [
  "glib-sys 0.8.0 (git+https://github.com/gtk-rs/sys)",
  "gobject-sys 0.8.0 (git+https://github.com/gtk-rs/sys)",
@@ -669,7 +669,7 @@ dependencies = [
 [[package]]
 name = "glib"
 version = "0.7.0"
-source = "git+https://github.com/gtk-rs/glib#6d260569b8e3ef13963c8dbf45bb564314c3c538"
+source = "git+https://github.com/gtk-rs/glib#679b8071b6d0022034c125a57267ad369c54ba19"
 dependencies = [
  "bitflags 1.0.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "glib-sys 0.8.0 (git+https://github.com/gtk-rs/sys)",
@@ -681,7 +681,7 @@ dependencies = [
 [[package]]
 name = "glib-sys"
 version = "0.8.0"
-source = "git+https://github.com/gtk-rs/sys#758341f571ac74117b53254813850e8fff440467"
+source = "git+https://github.com/gtk-rs/sys#c45adc74dd9432b22825fa8318a4028590eb9ec2"
 dependencies = [
  "libc 0.2.55 (registry+https://github.com/rust-lang/crates.io-index)",
  "pkg-config 0.3.14 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -690,7 +690,7 @@ dependencies = [
 [[package]]
 name = "gobject-sys"
 version = "0.8.0"
-source = "git+https://github.com/gtk-rs/sys#758341f571ac74117b53254813850e8fff440467"
+source = "git+https://github.com/gtk-rs/sys#c45adc74dd9432b22825fa8318a4028590eb9ec2"
 dependencies = [
  "glib-sys 0.8.0 (git+https://github.com/gtk-rs/sys)",
  "libc 0.2.55 (registry+https://github.com/rust-lang/crates.io-index)",
