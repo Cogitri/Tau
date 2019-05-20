@@ -95,6 +95,10 @@ fn main() {
         // hasn't changed), so let's only turn on warnings for gxi.
         env_logger::Builder::new()
             .filter_module("gxi", log::LevelFilter::Warn)
+            .filter_module("editview", log::LevelFilter::Warn)
+            .filter_module("gxi-config-storage", log::LevelFilter::Warn)
+            .filter_module("gxi-linecache", log::LevelFilter::Warn)
+            .filter_module("gxi-peer", log::LevelFilter::Warn)
             .default_format_timestamp(false)
             .init();
     } else {
