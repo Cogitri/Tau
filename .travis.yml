@@ -10,14 +10,14 @@ env:
     RUST_VER: stable
   - DIST: bionic
     RUST_VER: nightly
-deploy:
-  provider: script
-  script: bash scripts/deploy-docs.sh
-  skip-cleanup: true
-  keep-history: true
-  verbose: true
-  on:
-    branch: master
+#deploy:
+#  provider: script
+#  script: bash scripts/deploy-docs.sh
+#  skip-cleanup: true
+#  keep-history: true
+#  verbose: true
+#  on:
+#    branch: master
 addons:
   ssh_known_hosts:
     secure: BbHIKWh0kjwqHTrl+RNnhbqcXiAd6OHHpT5Bk7QiQuFW/x28iTb72vgjwLIx9Lbf8BKND09iLkdVthTnXqYr1v+CnmEsIYA/eaYgg0necgJfb3dE2K1/xsdYteptrtI/N8IKz1/VEYltUcsrrhTgWs9V/3iw/92v+jhiRfxC+DmfPiTvUJUjfHzVQ68WsAoNUw+Uhq3zpcDo4vtLihMrlXxkpH20U37dGv8Xh6DDdDG+mgkd5OFlaI/67/IM3nreEv8TTJGm+qLRcTnxJuLOZOWINYBEyjLixTYQ4vaGFppD/5NDsoRtyR2NOZEcmfrRgzYUs/JWXD0qeRkT+NTOkUmIc6Au62KYCibgRpaPhYdk+81d4UGVrJ2qjoU0PlSlBD3IGb0lohSw+FqO8f9E9qKBETtm09RDYjtG9L+u3fH9hqrHKwW+woAaiGroqyqR1S+ojZe+rFbRzPCblh+n9N3TAPzSTQocrLx5YuF+fQWyqCCkrkzUFy9EG7Nl5OEFlajS6m8HgigXJzNl83I7f/9HjYGS0vlUdmS97DTdJj1tFgIWEQ/shp+BgdwxD+PzJDfmqF8GXZAqeHkv0vajXxoXxFJ6Uy6rVfuLH5IpiqRFkVSL3W/GmUyrvR3fjlJqZ9sXeTyFHZxHReAHTuOnoKYkAGkS6rD9w5/6htJwFY8=
