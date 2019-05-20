@@ -73,6 +73,15 @@ impl Font {
     }
 }
 
+#[derive(Clone)]
+struct EvBar {
+    statusbar: Statusbar,
+    syntax_menu_button: MenuButton,
+    syntax_label: Label,
+    syntax_treeview: TreeView,
+    syntax_popover: Popover,
+}
+
 /// The ViewItem contains the drawing areas and scrollbars of the EditView.
 #[derive(Clone)]
 pub struct ViewItem {
@@ -81,17 +90,43 @@ pub struct ViewItem {
     linecount: DrawingArea,
     horiz_bar: Scrollbar,
     verti_bar: Scrollbar,
+    statusbar: EvBar,
 }
 
 impl ViewItem {
     /// Sets up the drawing areas and scrollbars.
-    fn new() -> Self {
+    fn new(main_state: &MainState) -> Self {
         let builder = Builder::new_from_string(EV_GLADE_SRC);
 
         let horiz_bar = builder.get_object("horiz_bar").unwrap();
         let verti_bar = builder.get_object("vert_bar").unwrap();
         let edit_area: DrawingArea = builder.get_object("edit_area").unwrap();
         let linecount: DrawingArea = builder.get_object("line_count").unwrap();
+        let statusbar = EvBar {
+            statusbar: builder.get_object("statusbar").unwrap(),
+            syntax_treeview: builder.get_object("syntax_treeview").unwrap(),
+            syntax_label: builder.get_object("syntax_label").unwrap(),
+            syntax_popover: builder.get_object("syntax_popover").unwrap(),
+            syntax_menu_button: builder.get_object("syntax_menu_button").unwrap(),
+        };
+
+        // Creation of a model with two rows.
+        let list_model: ListStore = builder.get_object("syntax_liststore").unwrap();;
+
+        for lang in main_state.avail_languages.iter() {
+            // Localize 'Plain Text'
+            if lang == "Plain Text" {
+                let translated_plaintext = gettext("Plain Text");
+                statusbar.syntax_label.set_text(&translated_plaintext);
+                // Set Plain Text as selected item.
+                let iter = list_model.insert_with_values(None, &[0], &[&translated_plaintext]);
+                let path = list_model.get_path(&iter).unwrap();
+                statusbar.syntax_treeview.get_selection().select_path(&path);
+            } else {
+                list_model.insert_with_values(None, &[0], &[lang]);
+            }
+        }
+
         let hbox: Box = builder.get_object("ev_root_widget").unwrap();
         hbox.show_all();
         edit_area.add_events(
@@ -109,6 +144,7 @@ impl ViewItem {
             linecount,
             horiz_bar,
             verti_bar,
+            statusbar,
             root_box: hbox,
         }
     }
@@ -172,6 +208,24 @@ impl ViewItem {
         self.linecount
             .connect_draw(enclose!((edit_view) move |_,ctx| {
                 edit_view.borrow().handle_linecount_draw(&ctx)
+            }));
+
+        self.statusbar
+            .syntax_treeview
+            .get_selection()
+            .connect_changed(enclose!((edit_view) move |ts| {
+                if let Some(syntax_tup) = ts.get_selected() {
+                    let selected_syntax =  syntax_tup.0.get_value(&syntax_tup.1, 0);
+                    if let Some(lang) = selected_syntax.get::<&str>() {
+                        edit_view.borrow().view_item.statusbar.syntax_label.set_text(lang);
+                        // We localized it ourselves, so we have to turn it into English again when sending it to Xi
+                        if lang == gettext("Plain Text") {
+                             edit_view.borrow().set_language("Plain Text");
+                        } else {
+                             edit_view.borrow().set_language(&lang);
+                        }
+                    }
+                }
             }));
     }
 
@@ -282,7 +336,7 @@ impl EditView {
         parent: &ApplicationWindow,
     ) -> Rc<RefCell<Self>> {
         trace!("{}, '{}'", gettext("Creating new EditView"), view_id);
-        let view_item = ViewItem::new();
+        let view_item = ViewItem::new(&main_state.borrow());
         let find_replace = FindReplace::new(&hamburger_button);
         let pango_ctx = view_item.get_pango_ctx();
         let im_context = IMContextSimple::new();
@@ -295,8 +349,6 @@ impl EditView {
                 .as_str(),
         );
         let interface_font = Self::get_interface_font(&settings, &pango_ctx);
-
-        //FIXME: crate::MainWin::set_language(&core, &view_id, "Plain Text");
 
         let edit_view = Rc::new(RefCell::new(Self {
             core: core.clone(),
@@ -1777,5 +1829,40 @@ impl EditView {
     /// Returns true if this EditView is empty (contains no text)
     pub fn is_empty(&self) -> bool {
         self.line_cache.is_empty()
+    }
+
+    pub fn set_language(&self, lang: &str) {
+        debug!("{} '{:?}'", gettext("Changing language to"), lang);
+        self.core.set_language(&self.view_id, &lang);
+    }
+
+    pub fn language_changed(&self, syntax: Option<&str>) {
+        debug!("{} '{:?}'", gettext("Language has been changed to"), syntax);
+        if let Some(lang) = syntax {
+            // https://github.com/xi-editor/xi-editor/issues/1194
+            let lang = if lang == "" || lang == "Plain Text" {
+                gettext("Plain Text")
+            } else {
+                lang.to_string()
+            };
+            let syntax_treeview = &self.view_item.statusbar.syntax_treeview;
+            let lang_pos = self
+                .main_state
+                .borrow()
+                .avail_languages
+                .iter()
+                .position(|s| s == &lang);
+            if let Some(pos) = lang_pos {
+                syntax_treeview
+                    .get_selection()
+                    .select_path(&TreePath::new_from_string(&format!("{}", pos)));
+            } else {
+                warn!(
+                    "{}: '{}'",
+                    gettext("Couldn't determine what position the following language is in"),
+                    lang
+                )
+            }
+        }
     }
 }
