@@ -85,11 +85,13 @@ struct EvBar {
 /// The ViewItem contains the drawing areas and scrollbars of the EditView.
 #[derive(Clone)]
 pub struct ViewItem {
-    root_box: Box,
-    pub edit_area: DrawingArea,
-    linecount: DrawingArea,
-    horiz_bar: Scrollbar,
-    verti_bar: Scrollbar,
+    root_box: Grid,
+    linecount_scrolled_window: ScrolledWindow,
+    ev_scrolled_window: ScrolledWindow,
+    pub edit_area: gtk::Layout,
+    linecount: gtk::Layout,
+    hadj: Adjustment,
+    vadj: Adjustment,
     statusbar: EvBar,
 }
 
@@ -98,10 +100,10 @@ impl ViewItem {
     fn new(main_state: &MainState) -> Self {
         let builder = Builder::new_from_string(EV_GLADE_SRC);
 
-        let horiz_bar = builder.get_object("horiz_bar").unwrap();
-        let verti_bar = builder.get_object("vert_bar").unwrap();
-        let edit_area: DrawingArea = builder.get_object("edit_area").unwrap();
-        let linecount: DrawingArea = builder.get_object("line_count").unwrap();
+        let hadj = builder.get_object("hadj").unwrap();
+        let vadj = builder.get_object("vadj").unwrap();
+        let edit_area: gtk::Layout = builder.get_object("edit_area").unwrap();
+        let linecount: gtk::Layout = builder.get_object("line_count").unwrap();
         let statusbar = EvBar {
             statusbar: builder.get_object("statusbar").unwrap(),
             syntax_treeview: builder.get_object("syntax_treeview").unwrap(),
@@ -127,24 +129,19 @@ impl ViewItem {
             }
         }
 
-        let hbox: Box = builder.get_object("ev_root_widget").unwrap();
+        let ev_scrolled_window = builder.get_object("ev_scrolled_window").unwrap();
+        let linecount_scrolled_window = builder.get_object("line_count_scrolled_window").unwrap();
+        let hbox: Grid = builder.get_object("ev_root_widget").unwrap();
         hbox.show_all();
-        edit_area.add_events(
-            EventMask::BUTTON_PRESS_MASK
-                | EventMask::BUTTON_RELEASE_MASK
-                | EventMask::BUTTON_MOTION_MASK
-                | EventMask::SCROLL_MASK
-                | EventMask::SMOOTH_SCROLL_MASK
-                | EventMask::TOUCH_MASK,
-        );
-        edit_area.set_can_focus(true);
 
         Self {
             edit_area,
             linecount,
-            horiz_bar,
-            verti_bar,
+            hadj,
+            vadj,
             statusbar,
+            ev_scrolled_window,
+            linecount_scrolled_window,
             root_box: hbox,
         }
     }
@@ -157,7 +154,7 @@ impl ViewItem {
             gettext("Connecting events of EditView")
         );
 
-        self.edit_area
+        self.ev_scrolled_window
             .connect_button_press_event(enclose!((edit_view) move |_,eb| {
                 edit_view.borrow().handle_button_press(eb)
             }));
@@ -167,17 +164,17 @@ impl ViewItem {
                 edit_view.borrow().handle_da_draw(&ctx)
             }));
 
-        self.edit_area
+        self.ev_scrolled_window
             .connect_key_press_event(enclose!((edit_view) move |_, ek| {
                 edit_view.borrow().handle_key_press_event(ek)
             }));
 
-        self.edit_area
+        self.ev_scrolled_window
             .connect_motion_notify_event(enclose!((edit_view) move |_,em| {
                edit_view.borrow().handle_drag(em)
             }));
 
-        self.edit_area.connect_realize(|w| {
+        self.ev_scrolled_window.connect_realize(|w| {
             // Set the text cursor
             if let Some(disp) = DisplayManager::get().get_default_display() {
                 let cur = Cursor::new_for_display(&disp, CursorType::Xterm);
@@ -188,22 +185,11 @@ impl ViewItem {
             w.grab_focus();
         });
 
-        self.edit_area
-            .connect_scroll_event(enclose!((edit_view) move |_,es| {
-                edit_view.borrow_mut().handle_scroll(es)
-            }));
-
         self.edit_area.connect_size_allocate(enclose!((edit_view) move |_,alloc| {
             debug!("{}: {}={} {}={}", gettext("Size changed to"), gettext("width"), alloc.width, gettext("height"), alloc.height);
             edit_view.borrow().da_size_allocate(alloc.width, alloc.height);
             edit_view.borrow().do_resize(&edit_view.borrow().view_id,alloc.width, alloc.height);
         }));
-
-        self.verti_bar
-            .connect_change_value(enclose!((edit_view) move |_,_,_| {
-                edit_view.borrow().update_visible_scroll_region();
-                Inhibit(false)
-            }));
 
         self.linecount
             .connect_draw(enclose!((edit_view) move |_,ctx| {
@@ -312,7 +298,7 @@ pub struct EditView {
     pub view_id: String,
     pub file_name: Option<String>,
     pub pristine: bool,
-    pub root_widget: Box,
+    pub root_widget: Grid,
     pub top_bar: TopBar,
     pub view_item: ViewItem,
     line_cache: LineCache,
@@ -747,14 +733,14 @@ impl EditView {
         let text_size = self.get_text_size();
         let text_height = text_size.height;
         let text_width = text_size.width;
-        let vadj = self.view_item.verti_bar.get_adjustment();
+        let vadj = &self.view_item.vadj;
         vadj.set_lower(0_f64);
         vadj.set_upper(text_height as f64);
         if vadj.get_value() + vadj.get_page_size() > vadj.get_upper() {
             vadj.set_value(vadj.get_upper() - vadj.get_page_size())
         }
 
-        let hadj = self.view_item.horiz_bar.get_adjustment();
+        let hadj = &self.view_item.hadj;
         hadj.set_lower(0f64);
         let text_width = if text_size.contained_width {
             text_width
@@ -792,8 +778,8 @@ impl EditView {
             y
         );
         // let first_line = (vadj.get_value() / font_extents.height) as usize;
-        let x = x + self.view_item.horiz_bar.get_value();
-        let y = y + self.view_item.verti_bar.get_value();
+        let x = x + self.view_item.hadj.get_value();
+        let y = y + self.view_item.vadj.get_value();
 
         let mut y = y - self.edit_font.font_descent;
         if y < 0.0 {
@@ -815,9 +801,9 @@ impl EditView {
     /// Allocate the space our DrawingArea needs.
     fn da_size_allocate(&self, da_width: i32, da_height: i32) {
         debug!("{}", gettext("Allocating DrawingArea size"));
-        let vadj = self.view_item.verti_bar.get_adjustment();
+        let vadj = &self.view_item.vadj;
         vadj.set_page_size(f64::from(da_height));
-        let hadj = self.view_item.horiz_bar.get_adjustment();
+        let hadj = &self.view_item.hadj;
         hadj.set_page_size(f64::from(da_width));
 
         self.update_visible_scroll_region();
@@ -873,7 +859,7 @@ impl EditView {
             all_text_height
         };
 
-        let vadj = self.view_item.verti_bar.get_adjustment();
+        let vadj = &self.view_item.vadj;
         let first_line = (vadj.get_value() / self.edit_font.font_height) as u64;
         let last_line = (vadj.get_value() + da_height / self.edit_font.font_height) as u64 + 1;
         let last_line = min(last_line, num_lines);
@@ -929,8 +915,8 @@ impl EditView {
         // let (text_width, text_height) = self.get_text_size();
         let num_lines = self.line_cache.height();
 
-        let vadj = self.view_item.verti_bar.get_adjustment();
-        let hadj = self.view_item.horiz_bar.get_adjustment();
+        let vadj = &self.view_item.vadj;
+        let hadj = &self.view_item.hadj;
         trace!(
             "{}  {}: {}/{}; {}: {}/{}",
             gettext("Drawing EditView"),
@@ -961,9 +947,9 @@ impl EditView {
 
             set_margin_source_color(cr, theme.background);
             cr.rectangle(
-                until_margin_width - self.view_item.horiz_bar.get_value(),
+                until_margin_width - self.view_item.hadj.get_value(),
                 0.0,
-                f64::from(da_width) + self.view_item.verti_bar.get_value(),
+                f64::from(da_width) + self.view_item.vadj.get_value(),
                 f64::from(da_height),
             );
             cr.fill();
@@ -1052,7 +1038,7 @@ impl EditView {
 
         let num_lines = self.line_cache.height();
 
-        let vadj = self.view_item.verti_bar.get_adjustment();
+        let vadj = &self.view_item.vadj;
 
         let first_line = (vadj.get_value() / self.edit_font.font_height) as u64;
         let last_line = ((vadj.get_value() + f64::from(linecount_height))
@@ -1274,7 +1260,7 @@ impl EditView {
             let new_height = self.edit_font.font_height * line as f64;
             let padding = self.edit_font.font_height * 4.0;
             // The font height doesn't include these, so we have to add them for the last line
-            let vadj = self.view_item.verti_bar.get_adjustment();
+            let vadj = &self.view_item.vadj;
             // If the cursor above our current view, this is true. Scroll a bit higher than necessary
             // to make sure that during find the text isn't right at the edge of the view.
             if new_height < vadj.get_value() {
@@ -1340,7 +1326,7 @@ impl EditView {
                 trace!("Horizontal scrolling to min: {}; max: {}", min, max);
 
                 let padding = self.edit_font.font_width * 4.0;
-                let hadj = self.view_item.horiz_bar.get_adjustment();
+                let hadj = &self.view_item.hadj;
 
                 // If the cursor/selection is to the left of our current view, this is true
                 if min < hadj.get_value() {
@@ -1397,17 +1383,19 @@ impl EditView {
     /// Handle selecting line(s) by dragging the mouse across them while having the left mouse
     /// button clicked.
     pub fn handle_drag(&self, em: &EventMotion) -> Inhibit {
-        let (x, y) = em.get_position();
-        let (col, line) = self.da_px_to_cell(x, y);
-        self.core.drag(&self.view_id, line, col);
+        if em.get_state().contains(ModifierType::BUTTON1_MASK) {
+            let (x, y) = em.get_position();
+            let (col, line) = self.da_px_to_cell(x, y);
+            self.core.drag(&self.view_id, line, col);
+        }
         Inhibit(false)
     }
 
     /// Handles scroll events, i.e. the user dragging the scrollbar, scrolling via a mouse wheel
     /// or via a touchpad/drawing tablet (which use SmoothScrolling, which may scroll vertically
     /// and horizontally at the same time).
-    pub fn handle_scroll(&mut self, es: &EventScroll) -> Inhibit {
-        trace!(
+    pub fn handle_scroll(&self, es: &EventScroll) -> Inhibit {
+        error!(
             "{} 'scroll' {} '{}': {:?}",
             gettext("Handling"),
             gettext("for EditView"),
@@ -1418,8 +1406,8 @@ impl EditView {
         // TODO: Make this user configurable!
         let amt = self.edit_font.font_height;
 
-        let vadj = self.view_item.verti_bar.get_adjustment();
-        let hadj = self.view_item.horiz_bar.get_adjustment();
+        let vadj = &self.view_item.vadj;
+        let hadj = &self.view_item.hadj;
         match es.get_direction() {
             ScrollDirection::Smooth => {
                 let (scroll_change_hori, scroll_change_vert) =
@@ -1440,9 +1428,11 @@ impl EditView {
             _ => {}
         }
 
+        self.view_item.ev_scrolled_window.set_vadjustment(vadj);
+        self.view_item.ev_scrolled_window.set_hadjustment(hadj);
         self.update_visible_scroll_region();
 
-        Inhibit(false)
+        Inhibit(true)
     }
 
     /// Handles all (special) key press events, e.g. copy, pasting, PgUp/Down etc.
