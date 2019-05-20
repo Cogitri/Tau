@@ -102,9 +102,7 @@ fn main() {
             .default_format_timestamp(false)
             .init();
     } else {
-        env_logger::Builder::from_default_env()
-            .default_format_timestamp(false)
-            .init();
+        env_logger::Builder::from_default_env().init();
     }
 
     let shared_queue = SharedQueue::new();
