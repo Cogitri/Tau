@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: gxi\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-05-21 15:00+0200\n"
-"PO-Revision-Date: 2019-04-01 16:04+0000\n"
+"PO-Revision-Date: 2019-05-23 15:07+0000\n"
 "Last-Translator: Allan Nordhøy <epost@anotheragency.no>\n"
 "Language-Team: Norwegian Bokmål <https://hosted.weblate.org/projects/gxi/"
 "translation/nb_NO/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 3.6-dev\n"
+"X-Generator: Weblate 3.7-dev\n"
 
 #: data/com.github.Cogitri.gxi.appdata.xml.in:7
 #: data/com.github.Cogitri.gxi.desktop.in:3
@@ -92,15 +92,15 @@ msgstr ""
 
 #: data/com.github.Cogitri.gxi.gschema.xml:49
 msgid "Sets the height of the window in the next startup"
-msgstr ""
+msgstr "Setter høyden for vinduet for neste oppstart"
 
 #: data/com.github.Cogitri.gxi.gschema.xml:54
 msgid "Sets the width of the window in the next startup"
-msgstr ""
+msgstr "Setter bredden for vinduet for neste oppstart"
 
 #: data/com.github.Cogitri.gxi.gschema.xml:59
 msgid "Sets if the window should be maximized during the next startup"
-msgstr ""
+msgstr "Setter hvorvidt vinduet skal maksimeres ved neste oppstart"
 
 #: src/editview/src/ui/find_replace.glade:32
 msgid "Find"
@@ -157,11 +157,11 @@ msgstr "Utseende"
 
 #: src/gxi/src/ui/prefs_win.glade:133
 msgid "0"
-msgstr ""
+msgstr "0"
 
 #: src/gxi/src/ui/prefs_win.glade:149
 msgid "Tab size"
-msgstr ""
+msgstr "Fanestørrelse"
 
 #: src/gxi/src/ui/prefs_win.glade:168
 #, fuzzy
@@ -291,7 +291,7 @@ msgstr "Klarte ikke å hente Pango-bindeleddsinfo"
 
 #: src/editview/src/edit_view.rs:247
 msgid "Unknown key change event"
-msgstr ""
+msgstr "Ukjent tasteendringshendelse"
 
 #: src/editview/src/edit_view.rs:284 src/gxi/src/main_win.rs:811
 #, fuzzy
@@ -671,25 +671,27 @@ msgstr "Lagringsdialoget har blitt ødelagt før brukeren klikket en knapp"
 
 #: src/gxi/src/panic_handler.rs:39
 msgid "gxi crash reporter"
-msgstr ""
+msgstr "gxi-kræsjinnrapportering"
 
 #: src/gxi/src/panic_handler.rs:49
 msgid "It seems like gxi has crashed, sorry!"
-msgstr ""
+msgstr "Det later til at gxi har kræsjet."
 
 #: src/gxi/src/panic_handler.rs:50
 msgid ""
 "Please send the contents of the file below to our GitHub issue tracker so we "
 "can fix it! Thank you =)"
 msgstr ""
+"Send innholdet av filen nedenfor til vår GitHub-feilsporer slik at vi kan "
+"fikse det. Takk."
 
 #: src/gxi/src/panic_handler.rs:53
 msgid "File"
-msgstr ""
+msgstr "Fil"
 
 #: src/gxi/src/panic_handler.rs:53
 msgid "URL"
-msgstr ""
+msgstr "Nettadresse"
 
 #: src/gxi/src/prefs_win.rs:55
 msgid "Setting font description"
