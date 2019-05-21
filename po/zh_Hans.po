@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gxi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-04-06 10:53-0300\n"
+"POT-Creation-Date: 2019-05-21 15:00+0200\n"
 "PO-Revision-Date: 2019-04-13 01:04+0000\n"
 "Last-Translator: Chojan Shang <PsiACE@outlook.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/gxi/"
@@ -32,133 +32,8 @@ msgstr "文本编辑器 xi 的 GTK 前端"
 msgid ""
 "gxi is a GTK frontend for the xi text editor written in Rust. It's a very "
 "fast plain text editor."
-msgstr "gxi，文本编辑器 xi 的 GTK 前端，用 Rust 编写。一款非常快的纯文本编辑器。"
-
-#: data/com.github.Cogitri.gxi.appdata.xml.in:27
-msgid "Rasmus \"Cogitri\" Thomsen"
-msgstr "Rasmus \"Cogitri\" Thomsen"
-
-#: data/com.github.Cogitri.gxi.appdata.xml.in:37
-msgid "Bugfix release to fix build on flathub and trace log app_id on startup"
-msgstr "错误修复版本，用于修复在 flathub 上的构建，并在启动时跟踪记录 app_id"
-
-#: data/com.github.Cogitri.gxi.appdata.xml.in:42
-msgid "Bugfix release to include meson_options.txt in the release tarballs"
-msgstr "错误修复版本，将 meson_options.txt 包含在发布的 tarballs 中"
-
-#: data/com.github.Cogitri.gxi.appdata.xml.in:47
-msgid "Changes in this release:"
-msgstr "此版本中的更改："
-
-#: data/com.github.Cogitri.gxi.appdata.xml.in:49
-msgid "display an ErrorDialog if Xi sends 'error'"
-msgstr "如果 Xi 发送 “错误” 则显示一个错误对话框"
-
-#: data/com.github.Cogitri.gxi.appdata.xml.in:50
-msgid "Rework the FindReplace dialog to be more compact"
-msgstr "重构 “查找替换” 对话框，使其更紧凑"
-
-#: data/com.github.Cogitri.gxi.appdata.xml.in:51
-msgid ""
-"Add a regex, case sensitive and whole word matching option to the find dialog"
-msgstr "在 “查找” 对话框中添加正则表达式、区分大小写和全字匹配选项"
-
-#: data/com.github.Cogitri.gxi.appdata.xml.in:52
-msgid "Set Ctrl+W as shortcut for closing the current tab"
-msgstr "将 Ctrl+W 设置为关闭当前选项卡的快捷方式"
-
-#: data/com.github.Cogitri.gxi.appdata.xml.in:53
-msgid ""
-"Makes cut/copy operations non-blocking (fixes copy/paste when word-wrap is "
-"enabled)"
 msgstr ""
-
-#: data/com.github.Cogitri.gxi.appdata.xml.in:54
-msgid ""
-"Rework how the value/upper of the scrollbars is determined. This fixes "
-"scrolling when the cursor gets out of the view."
-msgstr ""
-
-#: data/com.github.Cogitri.gxi.appdata.xml.in:60
-msgid ""
-"This release adds an option for creating a right hand margin. It uses a "
-"different save dialog, and fixes pressing 'Cancel' in it."
-msgstr ""
-
-#: data/com.github.Cogitri.gxi.appdata.xml.in:65
-msgid ""
-"This release made the linecount nicer (as in more visible/readable). gxi "
-"also offers a Norwegian Bokmål translation."
-msgstr ""
-
-#: data/com.github.Cogitri.gxi.appdata.xml.in:70
-msgid ""
-"Ask user if changes should be saved upon closing. Also makes panics more "
-"readable."
-msgstr ""
-
-#: data/com.github.Cogitri.gxi.appdata.xml.in:75
-msgid ""
-"This release fixes the linecount upon deleting lines and fixes some crashes. "
-"It also adds a new icon."
-msgstr ""
-
-#: data/com.github.Cogitri.gxi.appdata.xml.in:83
-msgid "This release fixes the build without appstream-util."
-msgstr ""
-
-#: data/com.github.Cogitri.gxi.appdata.xml.in:88
-msgid "This release contains the following feature changes:"
-msgstr ""
-
-#: data/com.github.Cogitri.gxi.appdata.xml.in:90
-msgid "(shared_queue): more verbose trace logging"
-msgstr ""
-
-#: data/com.github.Cogitri.gxi.appdata.xml.in:91
-msgid "(main_win): use a thread to handle CoreMsgs instead of add_idle"
-msgstr ""
-
-#: data/com.github.Cogitri.gxi.appdata.xml.in:92
-msgid "(main): display error window if xi-editor crashes"
-msgstr ""
-
-#: data/com.github.Cogitri.gxi.appdata.xml.in:93
-msgid ""
-"(edit_view): add newline to end of the file if it doesn't terminate with one"
-msgstr ""
-
-#: data/com.github.Cogitri.gxi.appdata.xml.in:94
-msgid "(edit_view): only draw trailing spaces"
-msgstr ""
-
-#: data/com.github.Cogitri.gxi.appdata.xml.in:95
-msgid "(shared_queue): also use for sending stuff to xi"
-msgstr ""
-
-#: data/com.github.Cogitri.gxi.appdata.xml.in:96
-msgid "(gettext): build against system gettext"
-msgstr ""
-
-#: data/com.github.Cogitri.gxi.appdata.xml.in:102
-msgid ""
-"Fix hangs during startup, add 'Replace…' button and shortcut. Adds an option "
-"to visually draw spaces/tabs"
-msgstr ""
-
-#: data/com.github.Cogitri.gxi.appdata.xml.in:107
-msgid ""
-"Use FileChooserNative instead of FileChooserDialog, fixes file opening/"
-"saving in flatpaks."
-msgstr ""
-
-#: data/com.github.Cogitri.gxi.appdata.xml.in:112
-msgid "Use GSettings to determine the default font."
-msgstr ""
-
-#: data/com.github.Cogitri.gxi.appdata.xml.in:117
-msgid "Use GSettings for GXI config instead of a TOML file, add appdata."
-msgstr ""
+"gxi，文本编辑器 xi 的 GTK 前端，用 Rust 编写。一款非常快的纯文本编辑器。"
 
 #: data/com.github.Cogitri.gxi.desktop.in:5
 msgid "The gxi text editor"
@@ -176,7 +51,8 @@ msgstr ""
 msgid "Sets the theme used for the editing area"
 msgstr ""
 
-#: data/com.github.Cogitri.gxi.gschema.xml:17 src/ui/prefs_win.glade:213
+#: data/com.github.Cogitri.gxi.gschema.xml:17
+#: src/gxi/src/ui/prefs_win.glade:213
 msgid "Draw trailing spaces"
 msgstr ""
 
@@ -210,669 +86,733 @@ msgid ""
 "through the document"
 msgstr ""
 
-#: src/about_win.rs:16
-msgid "GTK frontend for the xi text editor, written in Rust"
+#: data/com.github.Cogitri.gxi.gschema.xml:49
+msgid "Sets the height of the window in the next startup"
 msgstr ""
 
-#: src/about_win.rs:23
-msgid "gxi's Github Repo"
+#: data/com.github.Cogitri.gxi.gschema.xml:54
+msgid "Sets the width of the window in the next startup"
 msgstr ""
 
-#: src/about_win.rs:24
-msgid "translator-credits"
+#: data/com.github.Cogitri.gxi.gschema.xml:59
+msgid "Sets if the window should be maximized during the next startup"
 msgstr ""
 
-#: src/about_win.rs:30
-msgid "Showing about window"
-msgstr ""
-
-#: src/main.rs:139
-msgid "Starting gxi"
-msgstr ""
-
-#: src/main.rs:169
-msgid "Activating new view"
-msgstr ""
-
-#: src/main.rs:186
-msgid "Opening new file"
-msgstr ""
-
-#: src/main.rs:209
-msgid "Shutting down…"
-msgstr ""
-
-#: src/main_win.rs:91
-msgid "Theme name"
-msgstr ""
-
-#: src/main_win.rs:133
-msgid "Found message in queue"
-msgstr ""
-
-#: src/main_win.rs:142
-msgid "Found a message from xi"
-msgstr ""
-
-#: src/main_win.rs:154
-msgid "User chose to cancel exiting"
-msgstr ""
-
-#: src/main_win.rs:157
-msgid "User chose to close the application"
-msgstr ""
-
-#. xi-editor doesn't know about the translations
-#: src/main_win.rs:166 src/main_win.rs:173
-msgid "Plain Text"
-msgstr ""
-
-#: src/main_win.rs:180
-msgid "Setting language to"
-msgstr ""
-
-#: src/main_win.rs:189 src/main_win.rs:197 src/main_win.rs:205
-#: src/main_win.rs:213 src/main_win.rs:221 src/main_win.rs:229
-#: src/main_win.rs:237 src/main_win.rs:245 src/main_win.rs:253
-#: src/main_win.rs:261 src/main_win.rs:270 src/main_win.rs:500
-#: src/main_win.rs:508 src/main_win.rs:563 src/main_win.rs:588
-#: src/main_win.rs:601 src/edit_view.rs:533 src/edit_view.rs:606
-#: src/edit_view.rs:684 src/edit_view.rs:738 src/edit_view.rs:764
-#: src/edit_view.rs:958 src/edit_view.rs:1181 src/edit_view.rs:1280
-#: src/edit_view.rs:1343 src/edit_view.rs:1386
-msgid "Handling"
-msgstr ""
-
-#: src/main_win.rs:189 src/main_win.rs:197 src/main_win.rs:205
-#: src/main_win.rs:213 src/main_win.rs:221 src/main_win.rs:229
-#: src/main_win.rs:237 src/main_win.rs:245 src/main_win.rs:253
-#: src/main_win.rs:261 src/main_win.rs:270
-msgid "action"
-msgstr ""
-
-#: src/main_win.rs:273
-msgid "User chose to not quit application"
-msgstr ""
-
-#: src/main_win.rs:275
-msgid "User chose to quit application"
-msgstr ""
-
-#: src/main_win.rs:292
-msgid "Auto indent"
-msgstr ""
-
-#: src/main_win.rs:311
-msgid "Space indent"
-msgstr ""
-
-#: src/main_win.rs:334
-msgid "Showing main window"
-msgstr ""
-
-#: src/main_win.rs:353
-msgid "Handling CoreMsg"
-msgstr ""
-
-#: src/main_win.rs:378
-msgid "!!! UNHANDLED NOTIFICATION, PLEASE OPEN A BUGREPORT!"
-msgstr ""
-
-#: src/main_win.rs:410 src/ui/prefs_win.glade:42
-msgid "Theme"
-msgstr ""
-
-#: src/main_win.rs:412
-msgid "isn't available, setting to default"
-msgstr ""
-
-#: src/main_win.rs:431
-msgid "Failed to convert theme settings"
-msgstr ""
-
-#: src/main_win.rs:466
-msgid ""
-"Couldn't find syntect plugin, functionality will be limited! Only found the "
-"following plugins"
-msgstr ""
-
-#: src/main_win.rs:538
-msgid "has stopped due to an user-initiated exit"
-msgstr ""
-
-#: src/main_win.rs:541
-msgid "has crashed with error code"
-msgstr ""
-
-#: src/main_win.rs:544
-msgid "has crashed"
-msgstr ""
-
-#: src/main_win.rs:550
-msgid "Plugin"
-msgstr ""
-
-#: src/main_win.rs:553
-msgid "functionality will be limited"
-msgstr ""
-
-#: src/main_win.rs:610
-msgid "Changing language to"
-msgstr ""
-
-#: src/main_win.rs:620
-msgid "Open a file to edit"
-msgstr ""
-
-#: src/main_win.rs:623 src/ui/gxi.glade:266
-msgid "Open"
-msgstr ""
-
-#: src/main_win.rs:624 src/main_win.rs:683 src/main_win.rs:911
-msgid "Cancel"
-msgstr ""
-
-#: src/main_win.rs:632
-msgid "FileChooserNative open response"
-msgstr ""
-
-#: src/main_win.rs:643
-msgid "Couldn't open file"
-msgstr ""
-
-#: src/main_win.rs:679
-msgid "Save file"
-msgstr ""
-
-#: src/main_win.rs:682 src/main_win.rs:915 src/ui/gxi.glade:307
-msgid "Save"
-msgstr ""
-
-#: src/main_win.rs:691
-msgid "FileChooserNative save response"
-msgstr ""
-
-#: src/main_win.rs:702
-msgid "Saving file"
-msgstr ""
-
-#: src/main_win.rs:709
-msgid "Couldn't save file"
-msgstr ""
-
-#: src/main_win.rs:761
-msgid ""
-"Couldn't get current EditView. This may only mean that you don't have an "
-"editing tab open right now."
-msgstr ""
-
-#: src/main_win.rs:766
-msgid "Requesting new view"
-msgstr ""
-
-#: src/main_win.rs:786 src/edit_view.rs:215
-msgid "Creating new EditView"
-msgstr ""
-
-#: src/main_win.rs:826
-msgid "Closing all EditViews"
-msgstr ""
-
-#: src/main_win.rs:863
-msgid "Closing current Editview"
-msgstr ""
-
-#: src/main_win.rs:874
-msgid "Closing Editview"
-msgstr ""
-
-#: src/main_win.rs:904
-msgid "Save unsaved changes"
-msgstr ""
-
-#: src/main_win.rs:907
-msgid "Close Without Saving"
-msgstr ""
-
-#: src/main_win.rs:930
-msgid "Save dialog has been destroyed before the user clicked a button"
-msgstr ""
-
-#: src/errors.rs:54
-msgid "No default application"
-msgstr ""
-
-#: src/errors.rs:56
-msgid "Default application has wrong type"
-msgstr ""
-
-#: src/xi_thread.rs:18
-msgid "Failed to send msg to Xi"
-msgstr ""
-
-#: src/xi_thread.rs:45
-msgid "Didn't expect xi-rpc to call read()"
-msgstr ""
-
-#: src/xi_thread.rs:53
-msgid "Didn't expect xi-rpc to call fill_buf()"
-msgstr ""
-
-#: src/xi_thread.rs:57
-msgid "Didn't expect xi-rpc to call consume()"
-msgstr ""
-
-#: src/xi_thread.rs:77
-msgid "Didn't expect xi-rpc to call write()"
-msgstr ""
-
-#: src/xi_thread.rs:81
-msgid "Didn't expect xi-rpc to call flush()"
-msgstr ""
-
-#: src/xi_thread.rs:88
-msgid "RPC rx thread lost"
-msgstr ""
-
-#: src/ui/gxi.glade:22
-msgid "Save As…"
-msgstr ""
-
-#: src/ui/gxi.glade:36
-msgid "Save All"
-msgstr ""
-
-#: src/ui/gxi.glade:61
-msgid "Find…"
-msgstr ""
-
-#: src/ui/gxi.glade:75
-msgid "Replace…"
-msgstr ""
-
-#: src/ui/gxi.glade:100
-msgid "Auto Indent"
-msgstr ""
-
-#: src/ui/gxi.glade:114
-msgid "Insert Spaces"
-msgstr ""
-
-#: src/ui/gxi.glade:139 src/ui/prefs_win.glade:17
-msgid "Preferences"
-msgstr ""
-
-#: src/ui/gxi.glade:164
-msgid "Help"
-msgstr ""
-
-#: src/ui/gxi.glade:178
-msgid "About"
-msgstr ""
-
-#: src/ui/gxi.glade:203
-msgid "Close All"
-msgstr ""
-
-#: src/ui/gxi.glade:217
-msgid "Close"
-msgstr ""
-
-#: src/ui/gxi.glade:231
-msgid "Quit"
-msgstr ""
-
-#: src/ui/gxi.glade:322
-msgid "Syntax Selection"
-msgstr ""
-
-#: src/ui/gxi.glade:457
-msgid "Save changes to document \"Untitled\" before closing?"
-msgstr ""
-
-#: src/ui/prefs_win.glade:64
-msgid "Font"
-msgstr ""
-
-#: src/ui/prefs_win.glade:112
-msgid "Appearance"
-msgstr ""
-
-#: src/ui/prefs_win.glade:133
-msgid "0"
-msgstr ""
-
-#: src/ui/prefs_win.glade:149
-msgid "Tab size"
-msgstr ""
-
-#: src/ui/prefs_win.glade:168
-msgid "Treat spaces like tabs"
-msgstr ""
-
-#: src/ui/prefs_win.glade:183
-msgid "Scroll past the end of documents"
-msgstr ""
-
-#: src/ui/prefs_win.glade:198
-msgid "Wrap lines at the end of the view instead of offering scrolling"
-msgstr ""
-
-#: src/ui/prefs_win.glade:231
-msgid "Display right margin at the column:"
-msgstr ""
-
-#: src/ui/prefs_win.glade:269
-msgid "Highlight the current line"
-msgstr ""
-
-#: src/ui/prefs_win.glade:291
-msgid "Editing"
-msgstr ""
-
-#: src/ui/find_replace.glade:32
+#: src/editview/src/ui/find_replace.glade:32
 msgid "Find"
 msgstr ""
 
-#: src/ui/find_replace.glade:82
+#: src/editview/src/ui/find_replace.glade:82
 msgid "Switch between Search and Search-and-Replace"
 msgstr ""
 
-#: src/ui/find_replace.glade:103
+#: src/editview/src/ui/find_replace.glade:103
 msgid "Show or hide search options such as case sensitivity"
 msgstr ""
 
-#: src/ui/find_replace.glade:140 src/ui/find_replace.glade:150
+#: src/editview/src/ui/find_replace.glade:140
+#: src/editview/src/ui/find_replace.glade:150
 msgid "Replace"
 msgstr ""
 
-#: src/ui/find_replace.glade:162
+#: src/editview/src/ui/find_replace.glade:162
 msgid "Replace All"
 msgstr ""
 
-#: src/ui/find_replace.glade:191
+#: src/editview/src/ui/find_replace.glade:191
 msgid "Regular expressions"
 msgstr ""
 
-#: src/ui/find_replace.glade:206
+#: src/editview/src/ui/find_replace.glade:206
 msgid "Case sensitive"
 msgstr ""
 
-#: src/ui/find_replace.glade:220
+#: src/editview/src/ui/find_replace.glade:220
 msgid "Match whole word only"
 msgstr ""
 
-#: src/ui/find_replace.glade:245
+#: src/editview/src/ui/find_replace.glade:245
 msgid "No Results"
 msgstr ""
 
-#: src/edit_view.rs:36
-msgid "Failed to get Pango language"
+#: src/gxi/src/ui/prefs_win.glade:17 src/gxi/src/ui/gxi.glade:139
+msgid "Preferences"
 msgstr ""
 
-#: src/edit_view.rs:39
+#: src/gxi/src/ui/prefs_win.glade:42 src/gxi/src/main_win.rs:439
+msgid "Theme"
+msgstr ""
+
+#: src/gxi/src/ui/prefs_win.glade:64
+msgid "Font"
+msgstr ""
+
+#: src/gxi/src/ui/prefs_win.glade:112
+msgid "Appearance"
+msgstr ""
+
+#: src/gxi/src/ui/prefs_win.glade:133
+msgid "0"
+msgstr ""
+
+#: src/gxi/src/ui/prefs_win.glade:149
+msgid "Tab size"
+msgstr ""
+
+#: src/gxi/src/ui/prefs_win.glade:168
+msgid "Treat spaces like tabs"
+msgstr ""
+
+#: src/gxi/src/ui/prefs_win.glade:183
+msgid "Scroll past the end of documents"
+msgstr ""
+
+#: src/gxi/src/ui/prefs_win.glade:198
+msgid "Wrap lines at the end of the view instead of offering scrolling"
+msgstr ""
+
+#: src/gxi/src/ui/prefs_win.glade:231
+msgid "Display right margin at the column:"
+msgstr ""
+
+#: src/gxi/src/ui/prefs_win.glade:269
+msgid "Highlight the current line"
+msgstr ""
+
+#: src/gxi/src/ui/prefs_win.glade:291
+msgid "Editing"
+msgstr ""
+
+#: src/gxi/src/ui/gxi.glade:22
+msgid "Save As…"
+msgstr ""
+
+#: src/gxi/src/ui/gxi.glade:36
+msgid "Save All"
+msgstr ""
+
+#: src/gxi/src/ui/gxi.glade:61
+msgid "Find…"
+msgstr ""
+
+#: src/gxi/src/ui/gxi.glade:75
+msgid "Replace…"
+msgstr ""
+
+#: src/gxi/src/ui/gxi.glade:100
+msgid "Auto Indent"
+msgstr ""
+
+#: src/gxi/src/ui/gxi.glade:114
+msgid "Insert Spaces"
+msgstr ""
+
+#: src/gxi/src/ui/gxi.glade:164
+msgid "Help"
+msgstr ""
+
+#: src/gxi/src/ui/gxi.glade:178
+msgid "About"
+msgstr ""
+
+#: src/gxi/src/ui/gxi.glade:203
+msgid "Close All"
+msgstr ""
+
+#: src/gxi/src/ui/gxi.glade:217
+msgid "Close"
+msgstr ""
+
+#: src/gxi/src/ui/gxi.glade:231
+msgid "Quit"
+msgstr ""
+
+#: src/gxi/src/ui/gxi.glade:265 src/gxi/src/main_win.rs:650
+msgid "Open"
+msgstr ""
+
+#: src/gxi/src/ui/gxi.glade:306 src/gxi/src/main_win.rs:708
+#: src/gxi/src/main_win.rs:970
+msgid "Save"
+msgstr ""
+
+#: src/gxi/src/ui/gxi.glade:321
+msgid "Syntax Selection"
+msgstr ""
+
+#: src/editview/src/edit_view.rs:42
 msgid "Failed to load Pango font set"
 msgstr ""
 
-#: src/edit_view.rs:42
+#: src/editview/src/edit_view.rs:45
 msgid "Failed to load Pango font metrics"
 msgstr ""
 
-#: src/edit_view.rs:47
+#: src/editview/src/edit_view.rs:50
 msgid "Pango font size"
 msgstr ""
 
-#: src/edit_view.rs:56
+#: src/editview/src/edit_view.rs:59
 msgid "Font metrics"
 msgstr ""
 
-#: src/edit_view.rs:97
-msgid "Events"
-msgstr ""
-
-#: src/edit_view.rs:113
+#: src/editview/src/edit_view.rs:121
 msgid "Connecting events of EditView"
 msgstr ""
 
-#: src/edit_view.rs:152
+#: src/editview/src/edit_view.rs:161
 msgid "Size changed to"
 msgstr ""
 
-#: src/edit_view.rs:152
+#: src/editview/src/edit_view.rs:161
 msgid "width"
 msgstr ""
 
-#: src/edit_view.rs:152
+#: src/editview/src/edit_view.rs:161
 msgid "height"
 msgstr ""
 
-#: src/edit_view.rs:172
+#: src/editview/src/edit_view.rs:182
 msgid "Failed to get Pango context"
 msgstr ""
 
-#: src/edit_view.rs:376
+#: src/editview/src/edit_view.rs:247
+msgid "Unknown key change event"
+msgstr ""
+
+#: src/editview/src/edit_view.rs:284 src/gxi/src/main_win.rs:811
+msgid "Creating new EditView"
+msgstr ""
+
+#: src/editview/src/edit_view.rs:457
 msgid "Connecting FindReplace events for EditView"
 msgstr ""
 
-#: src/edit_view.rs:493
+#: src/editview/src/edit_view.rs:574
 msgid "Connecting"
 msgstr ""
 
-#: src/edit_view.rs:494
+#: src/editview/src/edit_view.rs:575
 msgid "events for EditView"
 msgstr ""
 
-#: src/edit_view.rs:507 src/edit_view.rs:509
+#: src/editview/src/edit_view.rs:588 src/editview/src/edit_view.rs:590
 msgid "Untitled"
 msgstr ""
 
-#: src/edit_view.rs:520
+#: src/editview/src/edit_view.rs:601
 msgid "Setting title for EditView"
 msgstr ""
 
-#: src/edit_view.rs:534 src/edit_view.rs:607 src/edit_view.rs:685
-#: src/edit_view.rs:739 src/edit_view.rs:765 src/edit_view.rs:959
-#: src/edit_view.rs:1182 src/edit_view.rs:1281 src/edit_view.rs:1344
-#: src/edit_view.rs:1387
+#: src/editview/src/edit_view.rs:614 src/editview/src/edit_view.rs:686
+#: src/editview/src/edit_view.rs:736 src/editview/src/edit_view.rs:780
+#: src/editview/src/edit_view.rs:803 src/editview/src/edit_view.rs:994
+#: src/editview/src/edit_view.rs:1213 src/editview/src/edit_view.rs:1313
+#: src/editview/src/edit_view.rs:1360 src/editview/src/edit_view.rs:1403
+#: src/gxi/src/main_win.rs:208 src/gxi/src/main_win.rs:216
+#: src/gxi/src/main_win.rs:224 src/gxi/src/main_win.rs:232
+#: src/gxi/src/main_win.rs:240 src/gxi/src/main_win.rs:248
+#: src/gxi/src/main_win.rs:256 src/gxi/src/main_win.rs:264
+#: src/gxi/src/main_win.rs:272 src/gxi/src/main_win.rs:280
+#: src/gxi/src/main_win.rs:289 src/gxi/src/main_win.rs:528
+#: src/gxi/src/main_win.rs:536 src/gxi/src/main_win.rs:591
+#: src/gxi/src/main_win.rs:615 src/gxi/src/main_win.rs:628
+msgid "Handling"
+msgstr ""
+
+#: src/editview/src/edit_view.rs:615 src/editview/src/edit_view.rs:687
+#: src/editview/src/edit_view.rs:737 src/editview/src/edit_view.rs:781
+#: src/editview/src/edit_view.rs:804 src/editview/src/edit_view.rs:995
+#: src/editview/src/edit_view.rs:1214 src/editview/src/edit_view.rs:1314
+#: src/editview/src/edit_view.rs:1361 src/editview/src/edit_view.rs:1404
 msgid "for EditView"
 msgstr ""
 
-#: src/edit_view.rs:555
+#: src/editview/src/edit_view.rs:636
 msgid "Setting edit font to"
 msgstr ""
 
-#: src/edit_view.rs:570
+#: src/editview/src/edit_view.rs:651
 msgid "Setting tab size to"
 msgstr ""
 
-#: src/edit_view.rs:591
+#: src/editview/src/edit_view.rs:671
 msgid "Unhandled config option, open a bug report!"
 msgstr ""
 
-#: src/edit_view.rs:714
+#: src/editview/src/edit_view.rs:765
 msgid "Allocating DrawingArea size"
 msgstr ""
 
-#: src/edit_view.rs:725
-msgid "Vertical scrollbar changed value"
-msgstr ""
-
-#: src/edit_view.rs:750
+#: src/editview/src/edit_view.rs:791
 msgid "Updating visible scroll region"
 msgstr ""
 
-#: src/edit_view.rs:846
+#: src/editview/src/edit_view.rs:884
 msgid "Drawing EditView"
 msgstr ""
 
-#: src/edit_view.rs:847
+#: src/editview/src/edit_view.rs:885
 msgid "vertical adjustment"
 msgstr ""
 
-#: src/edit_view.rs:850
+#: src/editview/src/edit_view.rs:888
 msgid "horizontal adjustment"
 msgstr ""
 
-#: src/edit_view.rs:1270
+#: src/editview/src/edit_view.rs:1303
 msgid ""
 "Couldn't update hscrollbar value because I couldn't get the line to scroll "
 "to!"
 msgstr ""
 
-#: src/edit_view.rs:1360
+#: src/editview/src/edit_view.rs:1377
 msgid "Smooth scrolling failed"
 msgstr ""
 
-#: src/edit_view.rs:1393
+#: src/editview/src/edit_view.rs:1410
 msgid "Processing key press"
 msgstr ""
 
-#: src/edit_view.rs:1394
+#: src/editview/src/edit_view.rs:1411
 msgid "value"
 msgstr ""
 
-#: src/edit_view.rs:1396
+#: src/editview/src/edit_view.rs:1413
 msgid "state"
 msgstr ""
 
-#: src/edit_view.rs:1398
+#: src/editview/src/edit_view.rs:1415
 msgid "length"
 msgstr ""
 
-#: src/edit_view.rs:1400
+#: src/editview/src/edit_view.rs:1417
 msgid "group"
 msgstr ""
 
-#: src/edit_view.rs:1402
+#: src/editview/src/edit_view.rs:1419
 msgid "unicode"
 msgstr ""
 
-#: src/edit_view.rs:1537
+#: src/editview/src/edit_view.rs:1554
 msgid "Cutting text"
 msgstr ""
 
-#: src/edit_view.rs:1555
+#: src/editview/src/edit_view.rs:1572
 msgid "Copying text"
 msgstr ""
 
 #. if let Some(text) = Clipboard::get(&SELECTION_CLIPBOARD).wait_for_text() {
-#. self.core.borrow().insert(view_id, &text);
+#. self.core.insert(view_id, &text);
 #. }
-#: src/edit_view.rs:1575
+#: src/editview/src/edit_view.rs:1592
 msgid "Pasting text"
 msgstr ""
 
 #. if let Some(text) = Clipboard::get(&SELECTION_PRIMARY).wait_for_text() {
-#. self.core.borrow().insert(view_id, &text);
+#. self.core.insert(view_id, &text);
 #. }
-#: src/edit_view.rs:1587
+#: src/editview/src/edit_view.rs:1606
 msgid "Pasting primary text"
 msgstr ""
 
-#: src/edit_view.rs:1598
+#: src/editview/src/edit_view.rs:1619
 msgid "Resizing EditView"
 msgstr ""
 
-#: src/pref_storage.rs:79
-msgid "Failed to create the config dir"
+#: src/gxi/src/about_win.rs:17
+msgid "GTK frontend for the xi text editor, written in Rust"
 msgstr ""
 
-#: src/pref_storage.rs:126
-msgid "Couldn't read config, falling back to the default XI-Editor config"
+#: src/gxi/src/about_win.rs:25
+msgid "translator-credits"
 msgstr ""
 
-#: src/pref_storage.rs:137
-msgid "Discovered config dir in home dir"
+#: src/gxi/src/about_win.rs:31
+msgid "Showing about window"
 msgstr ""
 
-#: src/pref_storage.rs:145
-msgid "Couldn't determine home dir! Settings will be temporary"
+#: src/gxi/src/errors.rs:19
+msgid "No default application"
 msgstr ""
 
-#: src/pref_storage.rs:154
-msgid "Failed to create temporary config dir"
+#: src/gxi/src/errors.rs:21
+msgid "Default application has wrong type"
 msgstr ""
 
-#: src/pref_storage.rs:177
-msgid "Discovered config dir in temporary dir"
+#: src/gxi/src/main.rs:130
+msgid "Starting gxi"
 msgstr ""
 
-#: src/pref_storage.rs:186
-msgid "Opening config file"
+#: src/gxi/src/main.rs:162
+msgid "Activating new view"
 msgstr ""
 
-#: src/pref_storage.rs:190
-msgid "Reading config file"
+#: src/gxi/src/main.rs:179
+msgid "Opening new file"
 msgstr ""
 
-#: src/pref_storage.rs:194
-msgid "Xi-Config"
+#: src/gxi/src/main.rs:202
+msgid "Shutting down…"
 msgstr ""
 
-#: src/pref_storage.rs:204
-msgid "Saving config to"
+#: src/gxi/src/main_win.rs:113
+msgid "Theme name"
 msgstr ""
 
-#: src/prefs_win.rs:54
+#: src/gxi/src/main_win.rs:140
+msgid "Found message in queue"
+msgstr ""
+
+#: src/gxi/src/main_win.rs:148
+msgid "Found a message from xi"
+msgstr ""
+
+#: src/gxi/src/main_win.rs:160
+msgid "User chose to cancel exiting"
+msgstr ""
+
+#: src/gxi/src/main_win.rs:163
+msgid "User chose to close the application"
+msgstr ""
+
+#. xi-editor doesn't know about the translations
+#: src/gxi/src/main_win.rs:185 src/gxi/src/main_win.rs:192
+msgid "Plain Text"
+msgstr ""
+
+#: src/gxi/src/main_win.rs:199
+msgid "Setting language to"
+msgstr ""
+
+#: src/gxi/src/main_win.rs:208 src/gxi/src/main_win.rs:216
+#: src/gxi/src/main_win.rs:224 src/gxi/src/main_win.rs:232
+#: src/gxi/src/main_win.rs:240 src/gxi/src/main_win.rs:248
+#: src/gxi/src/main_win.rs:256 src/gxi/src/main_win.rs:264
+#: src/gxi/src/main_win.rs:272 src/gxi/src/main_win.rs:280
+#: src/gxi/src/main_win.rs:289
+msgid "action"
+msgstr ""
+
+#: src/gxi/src/main_win.rs:292
+msgid "User chose to not quit application"
+msgstr ""
+
+#: src/gxi/src/main_win.rs:294
+msgid "User chose to quit application"
+msgstr ""
+
+#: src/gxi/src/main_win.rs:311
+msgid "Auto indent"
+msgstr ""
+
+#: src/gxi/src/main_win.rs:335
+msgid "Space indent"
+msgstr ""
+
+#: src/gxi/src/main_win.rs:363
+msgid "Showing main window"
+msgstr ""
+
+#: src/gxi/src/main_win.rs:382
+msgid "Handling CoreMsg"
+msgstr ""
+
+#: src/gxi/src/main_win.rs:407
+msgid "!!! UNHANDLED NOTIFICATION, PLEASE OPEN A BUGREPORT!"
+msgstr ""
+
+#: src/gxi/src/main_win.rs:441
+msgid "isn't available, setting to default"
+msgstr ""
+
+#: src/gxi/src/main_win.rs:459
+msgid "Failed to convert theme settings"
+msgstr ""
+
+#: src/gxi/src/main_win.rs:494
+msgid ""
+"Couldn't find syntect plugin, functionality will be limited! Only found the "
+"following plugins"
+msgstr ""
+
+#: src/gxi/src/main_win.rs:566
+msgid "has stopped due to an user-initiated exit"
+msgstr ""
+
+#: src/gxi/src/main_win.rs:569
+msgid "has crashed with error code"
+msgstr ""
+
+#: src/gxi/src/main_win.rs:572
+msgid "has crashed"
+msgstr ""
+
+#: src/gxi/src/main_win.rs:578
+msgid "Plugin"
+msgstr ""
+
+#: src/gxi/src/main_win.rs:581
+msgid "functionality will be limited"
+msgstr ""
+
+#: src/gxi/src/main_win.rs:637
+msgid "Changing language to"
+msgstr ""
+
+#: src/gxi/src/main_win.rs:647
+msgid "Open a file to edit"
+msgstr ""
+
+#: src/gxi/src/main_win.rs:651 src/gxi/src/main_win.rs:709
+#: src/gxi/src/main_win.rs:966
+msgid "Cancel"
+msgstr ""
+
+#: src/gxi/src/main_win.rs:659
+msgid "FileChooserNative open response"
+msgstr ""
+
+#: src/gxi/src/main_win.rs:670
+msgid "Couldn't open file"
+msgstr ""
+
+#: src/gxi/src/main_win.rs:705
+msgid "Save file"
+msgstr ""
+
+#: src/gxi/src/main_win.rs:717
+msgid "FileChooserNative save response"
+msgstr ""
+
+#: src/gxi/src/main_win.rs:728
+msgid "Saving file"
+msgstr ""
+
+#: src/gxi/src/main_win.rs:735
+msgid "Couldn't save file"
+msgstr ""
+
+#: src/gxi/src/main_win.rs:788
+msgid ""
+"Couldn't get current EditView. This may only mean that you don't have an "
+"editing tab open right now."
+msgstr ""
+
+#: src/gxi/src/main_win.rs:793
+msgid "Requesting new view"
+msgstr ""
+
+#: src/gxi/src/main_win.rs:881
+msgid "Closing all EditViews"
+msgstr ""
+
+#: src/gxi/src/main_win.rs:918
+msgid "Closing current Editview"
+msgstr ""
+
+#: src/gxi/src/main_win.rs:929
+msgid "Closing Editview"
+msgstr ""
+
+#: src/gxi/src/main_win.rs:959
+msgid "Save unsaved changes"
+msgstr ""
+
+#: src/gxi/src/main_win.rs:962
+msgid "Close Without Saving"
+msgstr ""
+
+#: src/gxi/src/main_win.rs:985
+msgid "Save dialog has been destroyed before the user clicked a button"
+msgstr ""
+
+#: src/gxi/src/panic_handler.rs:39
+msgid "gxi crash reporter"
+msgstr ""
+
+#: src/gxi/src/panic_handler.rs:49
+msgid "It seems like gxi has crashed, sorry!"
+msgstr ""
+
+#: src/gxi/src/panic_handler.rs:50
+msgid ""
+"Please send the contents of the file below to our GitHub issue tracker so we "
+"can fix it! Thank you =)"
+msgstr ""
+
+#: src/gxi/src/panic_handler.rs:53
+msgid "File"
+msgstr ""
+
+#: src/gxi/src/panic_handler.rs:53
+msgid "URL"
+msgstr ""
+
+#: src/gxi/src/prefs_win.rs:55
 msgid "Setting font description"
 msgstr ""
 
-#: src/prefs_win.rs:67
+#: src/gxi/src/prefs_win.rs:68
 msgid "Setting font to"
 msgstr ""
 
-#: src/prefs_win.rs:68
+#: src/gxi/src/prefs_win.rs:69
 msgid "Setting font size to"
 msgstr ""
 
-#: src/prefs_win.rs:86
+#: src/gxi/src/prefs_win.rs:87
 msgid "Setting active theme"
 msgstr ""
 
-#: src/prefs_win.rs:94
+#: src/gxi/src/prefs_win.rs:96
 msgid "Theme changed to"
 msgstr ""
 
-#: src/prefs_win.rs:112
+#: src/gxi/src/prefs_win.rs:114
 msgid "Scrolling past end"
 msgstr ""
 
-#: src/prefs_win.rs:127
+#: src/gxi/src/prefs_win.rs:129
 msgid "Word wrapping"
 msgstr ""
 
-#: src/prefs_win.rs:142
+#: src/gxi/src/prefs_win.rs:144
 msgid "Tab stops"
 msgstr ""
 
-#: src/prefs_win.rs:165
+#: src/gxi/src/prefs_win.rs:169
 msgid "Right hand margin"
 msgstr ""
 
-#: src/prefs_win.rs:181
+#: src/gxi/src/prefs_win.rs:187
 msgid "Right hand margin width"
 msgstr ""
 
-#: src/prefs_win.rs:197
+#: src/gxi/src/prefs_win.rs:202
 msgid "Setting tab size"
 msgstr ""
 
-#: src/rpc.rs:69 src/rpc.rs:71
+#: src/gxi-config-storage/src/pref_storage.rs:83
+msgid "Failed to create the config dir"
+msgstr ""
+
+#: src/gxi-config-storage/src/pref_storage.rs:130
+msgid "Couldn't read config, falling back to the default XI-Editor config"
+msgstr ""
+
+#: src/gxi-config-storage/src/pref_storage.rs:141
+msgid "Discovered config dir in home dir"
+msgstr ""
+
+#: src/gxi-config-storage/src/pref_storage.rs:149
+msgid "Couldn't determine home dir! Settings will be temporary"
+msgstr ""
+
+#: src/gxi-config-storage/src/pref_storage.rs:158
+msgid "Failed to create temporary config dir"
+msgstr ""
+
+#: src/gxi-config-storage/src/pref_storage.rs:181
+msgid "Discovered config dir in temporary dir"
+msgstr ""
+
+#: src/gxi-config-storage/src/pref_storage.rs:190
+msgid "Opening config file"
+msgstr ""
+
+#: src/gxi-config-storage/src/pref_storage.rs:194
+msgid "Reading config file"
+msgstr ""
+
+#: src/gxi-config-storage/src/pref_storage.rs:198
+msgid "Xi-Config"
+msgstr ""
+
+#: src/gxi-config-storage/src/pref_storage.rs:208
+msgid "Saving config to"
+msgstr ""
+
+#: src/gxi-peer/src/rpc.rs:70 src/gxi-peer/src/rpc.rs:72
 msgid "Error code"
 msgstr ""
 
-#: src/rpc.rs:90
+#: src/gxi-peer/src/rpc.rs:91
 msgid "Calling callback"
 msgstr ""
 
-#: src/rpc.rs:93
+#: src/gxi-peer/src/rpc.rs:94
 msgid "unexpected result"
 msgstr ""
 
-#: src/rpc.rs:96
+#: src/gxi-peer/src/rpc.rs:97
 msgid "Got"
 msgstr ""
 
-#: src/rpc.rs:96
+#: src/gxi-peer/src/rpc.rs:97
 msgid "at RPC level"
 msgstr ""
+
+#: src/gxi-peer/src/shared_queue.rs:37
+msgid "Pushing message to rx queue"
+msgstr ""
+
+#: src/gxi-peer/src/shared_queue.rs:42
+msgid "Pushing message to tx queue"
+msgstr ""
+
+#: src/gxi-peer/src/xi_thread.rs:18
+msgid "Failed to send msg to Xi"
+msgstr ""
+
+#: src/gxi-peer/src/xi_thread.rs:45
+msgid "Didn't expect xi-rpc to call read()"
+msgstr ""
+
+#: src/gxi-peer/src/xi_thread.rs:53
+msgid "Didn't expect xi-rpc to call fill_buf()"
+msgstr ""
+
+#: src/gxi-peer/src/xi_thread.rs:57
+msgid "Didn't expect xi-rpc to call consume()"
+msgstr ""
+
+#: src/gxi-peer/src/xi_thread.rs:77
+msgid "Didn't expect xi-rpc to call write()"
+msgstr ""
+
+#: src/gxi-peer/src/xi_thread.rs:81
+msgid "Didn't expect xi-rpc to call flush()"
+msgstr ""
+
+#: src/gxi-peer/src/xi_thread.rs:88
+msgid "RPC rx thread lost"
+msgstr ""
+
+#~ msgid "Rasmus \"Cogitri\" Thomsen"
+#~ msgstr "Rasmus \"Cogitri\" Thomsen"
+
+#~ msgid ""
+#~ "Bugfix release to fix build on flathub and trace log app_id on startup"
+#~ msgstr ""
+#~ "错误修复版本，用于修复在 flathub 上的构建，并在启动时跟踪记录 app_id"
+
+#~ msgid "Bugfix release to include meson_options.txt in the release tarballs"
+#~ msgstr "错误修复版本，将 meson_options.txt 包含在发布的 tarballs 中"
+
+#~ msgid "Changes in this release:"
+#~ msgstr "此版本中的更改："
+
+#~ msgid "display an ErrorDialog if Xi sends 'error'"
+#~ msgstr "如果 Xi 发送 “错误” 则显示一个错误对话框"
+
+#~ msgid "Rework the FindReplace dialog to be more compact"
+#~ msgstr "重构 “查找替换” 对话框，使其更紧凑"
+
+#~ msgid ""
+#~ "Add a regex, case sensitive and whole word matching option to the find "
+#~ "dialog"
+#~ msgstr "在 “查找” 对话框中添加正则表达式、区分大小写和全字匹配选项"
+
+#~ msgid "Set Ctrl+W as shortcut for closing the current tab"
+#~ msgstr "将 Ctrl+W 设置为关闭当前选项卡的快捷方式"
