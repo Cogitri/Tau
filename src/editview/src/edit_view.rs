@@ -814,7 +814,14 @@ impl EditView {
 
     /// Allocate the space our DrawingArea needs.
     fn da_size_allocate(&self, da_width: i32, da_height: i32) {
-        debug!("{}", gettext("Allocating DrawingArea size"));
+        debug!(
+            "{}: {}: {}, {}: {}",
+            gettext("Allocating DrawingArea size"),
+            gettext("Width"),
+            da_width,
+            gettext("Height"),
+            da_height,
+        );
         let vadj = &self.view_item.vadj;
         vadj.set_page_size(f64::from(da_height));
         let hadj = &self.view_item.hadj;
@@ -1279,10 +1286,10 @@ impl EditView {
             // to make sure that during find the text isn't right at the edge of the view.
             if new_height < vadj.get_value() {
                 vadj.set_value(new_height - padding);
-            // If it's below out current view, this is true. Scroll a bit lower than neccessary
+            // If it's below out current view, this is true. Scroll a bit lower than necessary
             // for the same reasons cited above.
             } else if new_height + padding > vadj.get_value() + vadj.get_page_size()
-                && vadj.get_page_size() != 0.0
+                && (vadj.get_page_size() as u32 != 0 && vadj.get_page_size() as u32 != 1)
             {
                 vadj.set_value(
                     new_height
