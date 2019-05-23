@@ -1360,7 +1360,7 @@ impl EditView {
             self.view_id,
             eb
         );
-        self.view_item.edit_area.grab_focus();
+        self.view_item.ev_scrolled_window.grab_focus();
 
         let (x, y) = eb.get_position();
         let (col, line) = self.da_px_to_cell(x, y);
@@ -1714,7 +1714,7 @@ impl EditView {
         self.find_replace.show_replace_button.set_active(false);
         self.find_replace.show_options_button.set_active(false);
         self.find_replace.search_bar.set_search_mode(false);
-        self.view_item.edit_area.grab_focus();
+        self.view_item.ev_scrolled_window.grab_focus();
     }
 
     /// Displays how many matches have been found in the find/replace dialog.
