@@ -78,11 +78,11 @@ pub struct MainWin {
     window: ApplicationWindow,
     notebook: Notebook,
     builder: Builder,
-    views: BTreeMap<String, Rc<RefCell<EditView>>>,
-    w_to_ev: HashMap<Widget, Rc<RefCell<EditView>>>,
-    view_id_to_w: HashMap<String, Widget>,
+    views: RefCell<BTreeMap<String, Rc<RefCell<EditView>>>>,
+    w_to_ev: RefCell<HashMap<Widget, Rc<RefCell<EditView>>>>,
+    view_id_to_w: RefCell<HashMap<String, Widget>>,
     state: Rc<RefCell<MainState>>,
-    properties: WinProp,
+    properties: RefCell<WinProp>,
 }
 
 const GLADE_SRC: &str = include_str!("ui/gxi.glade");
@@ -93,22 +93,22 @@ impl MainWin {
         shared_queue: SharedQueue,
         core: Core,
         config: Config,
-    ) -> Rc<RefCell<Self>> {
+    ) -> Rc<Self> {
         let glade_src = GLADE_SRC;
         let builder = Builder::new_from_string(glade_src);
 
-        let properties = WinProp::new(&application);
+        let properties = RefCell::new(WinProp::new(&application));
         let window: ApplicationWindow = builder.get_object("appwindow").unwrap();
 
-        if properties.is_maximized {
+        if properties.borrow().is_maximized {
             window.maximize();
         } else {
-            window.set_size_request(properties.width, properties.height);
+            window.set_size_request(properties.borrow().width, properties.borrow().height);
         }
 
         let notebook: Notebook = builder.get_object("notebook").unwrap();
 
-        let theme_name = properties.gschema.get_key("theme-name");
+        let theme_name = properties.borrow().gschema.get_key("theme-name");
         debug!("{}: {}", gettext("Theme name"), &theme_name);
 
         let main_state = Rc::new(RefCell::new(MainState {
@@ -117,7 +117,7 @@ impl MainWin {
             ..Default::default()
         }));
 
-        let main_win = Rc::new(RefCell::new(Self {
+        let main_win = Rc::new(Self {
             core: core.clone(),
             shared_queue: shared_queue.clone(),
             window: window.clone(),
@@ -128,7 +128,7 @@ impl MainWin {
             view_id_to_w: Default::default(),
             state: main_state.clone(),
             properties,
-        }));
+        });
 
         let (msg_tx, msg_rx) = MainContext::channel::<CoreMsg>(glib::PRIORITY_HIGH);
         let main_context = MainContext::default();
@@ -145,7 +145,7 @@ impl MainWin {
             Some(&main_context),
             enclose!((main_win) move |msg| {
                 trace!("{}", gettext("Found a message from xi"));
-                Self::handle_msg(main_win.clone(), msg);
+                Self::handle_msg(&main_win, msg);
                 glib::source::Continue(true)
             }),
         );
@@ -160,7 +160,7 @@ impl MainWin {
                 Inhibit(true)
             } else {
                 debug!("{}", gettext("User chose to close the application"));
-                main_win.borrow().properties.save();
+                main_win.properties.borrow().save();
                 window.destroy();
                 Inhibit(false)
             }
@@ -170,7 +170,7 @@ impl MainWin {
             let win_size = window.get_size();
             let maximized = window.is_maximized();
 
-            let properties = &mut main_win.borrow_mut().properties;
+            let mut properties = main_win.properties.borrow_mut();
             properties.is_maximized = maximized;
             if ! maximized {
                 properties.width = win_size.0;
@@ -190,7 +190,7 @@ impl MainWin {
             let new_action = SimpleAction::new("new", None);
             new_action.connect_activate(enclose!((main_win) move |_,_| {
                 trace!("{} 'new' {}", gettext("Handling"), gettext("action"));
-                main_win.borrow().req_new_view(None);
+                main_win.req_new_view(None);
             }));
             application.add_action(&new_action);
         }
@@ -268,7 +268,7 @@ impl MainWin {
                     debug!("{}", gettext("User chose to not quit application"));
                 } else {
                     debug!("{}", gettext("User chose to quit application"));
-                    main_win.borrow().window.destroy();
+                    main_win.window.destroy();
                 }
             }));
             application.add_action(&quit_action);
@@ -354,7 +354,7 @@ impl MainWin {
 }
 
 impl MainWin {
-    pub fn handle_msg(main_win: Rc<RefCell<Self>>, msg: CoreMsg) {
+    pub fn handle_msg(main_win: &Rc<Self>, msg: CoreMsg) {
         trace!("{}: {:?}", gettext("Handling CoreMsg"), msg);
         match msg {
             CoreMsg::NewViewReply { file_name, value } => {
@@ -362,21 +362,21 @@ impl MainWin {
             }
             CoreMsg::Notification { method, params, id } => {
                 match method.as_ref() {
-                    "alert" => main_win.borrow().alert(&params),
-                    "available_themes" => main_win.borrow().available_themes(&params),
-                    "available_plugins" => main_win.borrow().available_plugins(&params),
-                    "config_changed" => main_win.borrow().config_changed(&params),
-                    "def_style" => main_win.borrow().def_style(&params),
-                    "find_status" => main_win.borrow().find_status(&params),
-                    "replace_status" => main_win.borrow().replace_status(&params),
-                    "update" => main_win.borrow().update(&params),
-                    "scroll_to" => main_win.borrow().scroll_to(&params),
-                    "theme_changed" => main_win.borrow().theme_changed(&params),
-                    "measure_width" => main_win.borrow().measure_width(id, params),
-                    "available_languages" => main_win.borrow().available_languages(&params),
-                    "language_changed" => main_win.borrow().language_changed(&params),
-                    "plugin_started" => main_win.borrow().plugin_started(&params),
-                    "plugin_stopped" => main_win.borrow().plugin_stopped(&params),
+                    "alert" => main_win.alert(&params),
+                    "available_themes" => main_win.available_themes(&params),
+                    "available_plugins" => main_win.available_plugins(&params),
+                    "config_changed" => main_win.config_changed(&params),
+                    "def_style" => main_win.def_style(&params),
+                    "find_status" => main_win.find_status(&params),
+                    "replace_status" => main_win.replace_status(&params),
+                    "update" => main_win.update(&params),
+                    "scroll_to" => main_win.scroll_to(&params),
+                    "theme_changed" => main_win.theme_changed(&params),
+                    "measure_width" => main_win.measure_width(id, params),
+                    "available_languages" => main_win.available_languages(&params),
+                    "language_changed" => main_win.language_changed(&params),
+                    "plugin_started" => main_win.plugin_started(&params),
+                    "plugin_stopped" => main_win.plugin_stopped(&params),
                     _ => {
                         error!(
                             "{}: {}",
@@ -474,19 +474,22 @@ impl MainWin {
     }
 
     pub fn config_changed(&self, params: &Value) {
-        if let Some(ev) = params["view_id"].as_str().and_then(|id| self.views.get(id)) {
+        let views = self.views.borrow();
+        if let Some(ev) = params["view_id"].as_str().and_then(|id| views.get(id)) {
             ev.borrow_mut().config_changed(&params["changes"])
         }
     }
 
     pub fn find_status(&self, params: &Value) {
-        if let Some(ev) = params["view_id"].as_str().and_then(|id| self.views.get(id)) {
+        let views = self.views.borrow();
+        if let Some(ev) = params["view_id"].as_str().and_then(|id| views.get(id)) {
             ev.borrow().find_status(&params["queries"])
         }
     }
 
     pub fn replace_status(&self, params: &Value) {
-        if let Some(ev) = params["view_id"].as_str().and_then(|id| self.views.get(id)) {
+        let views = self.views.borrow();
+        if let Some(ev) = params["view_id"].as_str().and_then(|id| views.get(id)) {
             ev.borrow().replace_status(&params["status"])
         }
     }
@@ -502,8 +505,8 @@ impl MainWin {
 
     pub fn update(&self, params: &Value) {
         trace!("{} 'update': {:?}", gettext("Handling"), params);
-
-        if let Some(ev) = params["view_id"].as_str().and_then(|id| self.views.get(id)) {
+        let views = self.views.borrow();
+        if let Some(ev) = params["view_id"].as_str().and_then(|id| views.get(id)) {
             ev.borrow_mut().update(params)
         }
     }
@@ -525,7 +528,8 @@ impl MainWin {
             }
         };
 
-        if let Some(ev) = params["view_id"].as_str().and_then(|id| self.views.get(id)) {
+        let views = self.views.borrow();
+        if let Some(ev) = params["view_id"].as_str().and_then(|id| views.get(id)) {
             let idx = self.notebook.page_num(&ev.borrow().root_widget);
             self.notebook.set_current_page(idx);
             ev.borrow().scroll_to(line, col);
@@ -602,7 +606,8 @@ impl MainWin {
 
     pub fn language_changed(&self, params: &Value) {
         debug!("{} 'language_changed' {:?}", gettext("Handling"), params);
-        if let Some(ev) = params["view_id"].as_str().and_then(|id| self.views.get(id)) {
+        let views = self.views.borrow();
+        if let Some(ev) = params["view_id"].as_str().and_then(|id| views.get(id)) {
             ev.borrow().language_changed(params["language_id"].as_str())
         }
     }
@@ -611,15 +616,15 @@ impl MainWin {
     /// Don't use FileChooserDialog here, it doesn't work for Flatpaks.
     /// This may call the GTK main loop.  There must not be any RefCell borrows out while this
     /// function runs.
-    pub fn handle_open_button(main_win: &Rc<RefCell<Self>>) {
+    pub fn handle_open_button(main_win: &Rc<Self>) {
         let fcn = FileChooserNative::new(
             Some(gettext("Open a file to edit").as_str()),
-            Some(&main_win.borrow().window),
+            Some(&main_win.window),
             FileChooserAction::Open,
             Some(gettext("Open").as_str()),
             Some(gettext("Cancel").as_str()),
         );
-        fcn.set_transient_for(Some(&main_win.borrow().window.clone()));
+        fcn.set_transient_for(Some(&main_win.window.clone()));
         fcn.set_select_multiple(true);
 
         fcn.connect_response(enclose!((main_win) move |fcd, res| {
@@ -630,11 +635,10 @@ impl MainWin {
             );
 
             if res == ResponseType::Accept {
-                let win = main_win.borrow();
                 for file in fcd.get_filenames() {
                     let file_str = &file.to_string_lossy().into_owned();
                     match &std::fs::File::open(file_str) {
-                        Ok(_) => win.req_new_view(Some(&file_str)),
+                        Ok(_) => main_win.req_new_view(Some(&file_str)),
                         Err(e) => {
                             let err_msg = format!("{} '{}': {}", &gettext("Couldn't open file"), &file_str, &e.to_string());
                             ErrorDialog::new(ErrorMsg{msg: err_msg, fatal: false});
@@ -647,11 +651,11 @@ impl MainWin {
         fcn.run();
     }
 
-    pub fn handle_save_button(main_win: &Rc<RefCell<Self>>) {
-        if let Some(edit_view) = main_win.borrow().get_current_edit_view() {
+    pub fn handle_save_button(main_win: &Rc<Self>) {
+        if let Some(edit_view) = main_win.get_current_edit_view() {
             if edit_view.borrow().file_name.is_some() {
                 let ev = edit_view.borrow();
-                let core = main_win.borrow().core.clone();
+                let core = main_win.core.clone();
                 core.save(&ev.view_id, ev.file_name.as_ref().unwrap());
             } else {
                 Self::save_as(main_win, &edit_view);
@@ -659,8 +663,8 @@ impl MainWin {
         }
     }
 
-    fn current_save_as(main_win: &Rc<RefCell<Self>>) {
-        if let Some(edit_view) = main_win.borrow().get_current_edit_view() {
+    fn current_save_as(main_win: &Rc<Self>) {
+        if let Some(edit_view) = main_win.get_current_edit_view() {
             Self::save_as(main_win, &edit_view);
         }
     }
@@ -669,15 +673,15 @@ impl MainWin {
     /// Don't use FileChooserDialog here, it doesn't work for Flatpaks.
     /// This may call the GTK main loop.  There must not be any RefCell borrows out while this
     /// function runs.
-    fn save_as(main_win: &Rc<RefCell<Self>>, edit_view: &Rc<RefCell<EditView>>) {
+    fn save_as(main_win: &Rc<Self>, edit_view: &Rc<RefCell<EditView>>) {
         let fcn = FileChooserNative::new(
             Some(gettext("Save file").as_str()),
-            Some(&main_win.borrow().window),
+            Some(&main_win.window),
             FileChooserAction::Save,
             Some(gettext("Save").as_str()),
             Some(gettext("Cancel").as_str()),
         );
-        fcn.set_transient_for(Some(&main_win.borrow().window.clone()));
+        fcn.set_transient_for(Some(&main_win.window.clone()));
         fcn.set_current_name("");
 
         fcn.connect_response(enclose!((edit_view, main_win) move |fcd, res| {
@@ -688,7 +692,6 @@ impl MainWin {
             );
 
             if res == ResponseType::Accept {
-                let win = main_win.borrow();
                 for file in fcd.get_filenames() {
                     let file_str = &file.to_string_lossy().into_owned();
                     if let Some(file) = fcd.get_filename() {
@@ -697,7 +700,7 @@ impl MainWin {
                                 debug!("{} {:?}", gettext("Saving file"), &file);
                                 let view_id = edit_view.borrow().view_id.clone();
                                 let file = file.to_string_lossy();
-                                win.core.save(&view_id, &file);
+                                main_win.core.save(&view_id, &file);
                                 edit_view.borrow_mut().set_file(&file);
                             }
                         Err(e) => {
@@ -713,35 +716,29 @@ impl MainWin {
         fcn.run();
     }
 
-    fn prefs(main_win: Rc<RefCell<Self>>) {
-        // let (main_state, core) = {
-        //     let main_win = main_win.borrow();
-        //     (main_win.state.clone(), main_win.core.clone())
-        // };
-        let main_win = main_win.borrow();
-        let main_state = main_win.state.clone();
-        let core = main_win.core.clone();
+    fn prefs(main_win: Rc<Self>) {
+        let gschema = { &main_win.properties.borrow().gschema };
         PrefsWin::new(
             &main_win.window,
-            &main_state,
-            &core,
+            &main_win.state,
+            &main_win.core,
             main_win.get_current_edit_view(),
-            &main_win.properties.gschema,
+            &gschema,
         );
     }
 
-    fn about(main_win: Rc<RefCell<Self>>) {
-        AboutWin::new(&main_win.borrow().window);
+    fn about(main_win: Rc<Self>) {
+        AboutWin::new(&main_win.window);
     }
 
-    fn find(main_win: &Rc<RefCell<Self>>) {
-        if let Some(edit_view) = main_win.borrow().get_current_edit_view() {
+    fn find(main_win: &Rc<Self>) {
+        if let Some(edit_view) = main_win.get_current_edit_view() {
             edit_view.borrow().start_search();
         }
     }
 
-    fn replace(main_win: &Rc<RefCell<Self>>) {
-        if let Some(edit_view) = main_win.borrow().get_current_edit_view() {
+    fn replace(main_win: &Rc<Self>) {
+        if let Some(edit_view) = main_win.get_current_edit_view() {
             edit_view.borrow().start_replace();
         }
     }
@@ -749,7 +746,7 @@ impl MainWin {
     fn get_current_edit_view(&self) -> Option<Rc<RefCell<EditView>>> {
         if let Some(idx) = self.notebook.get_current_page() {
             if let Some(w) = self.notebook.get_nth_page(Some(idx)) {
-                if let Some(edit_view) = self.w_to_ev.get(&w) {
+                if let Some(edit_view) = self.w_to_ev.borrow().get(&w) {
                     return Some(edit_view.clone());
                 }
             }
@@ -776,78 +773,85 @@ impl MainWin {
         });
     }
 
-    fn new_view_response(main_win: &Rc<RefCell<Self>>, file_name: Option<String>, value: &Value) {
+    fn new_view_response(main_win: &Rc<Self>, file_name: Option<String>, value: &Value) {
         trace!("{}", gettext("Creating new EditView"));
         let mut old_ev = None;
-        {
-            let mut win = main_win.borrow_mut();
 
-            if let Some(view_id) = value.as_str() {
-                let position = if let Some(curr_ev) = win.get_current_edit_view() {
-                    if curr_ev.borrow().is_empty() {
-                        old_ev = Some(curr_ev.clone());
-                        if let Some(w) = win.view_id_to_w.get(&curr_ev.borrow().view_id) {
-                            win.notebook.page_num(w)
-                        } else {
-                            None
-                        }
+        if let Some(view_id) = value.as_str() {
+            let position = if let Some(curr_ev) = main_win.get_current_edit_view() {
+                if curr_ev.borrow().is_empty() {
+                    old_ev = Some(curr_ev.clone());
+                    if let Some(w) = main_win
+                        .view_id_to_w
+                        .borrow()
+                        .get(&curr_ev.borrow().view_id)
+                    {
+                        main_win.notebook.page_num(w)
                     } else {
                         None
                     }
                 } else {
                     None
-                };
+                }
+            } else {
+                None
+            };
 
-                let hamburger_button = win.builder.get_object("hamburger_button").unwrap();
-                let edit_view = EditView::new(
-                    &win.state,
-                    &win.core,
-                    &hamburger_button,
-                    file_name,
-                    view_id.to_string(),
-                    &win.window,
+            let hamburger_button = main_win.builder.get_object("hamburger_button").unwrap();
+            let edit_view = EditView::new(
+                &main_win.state,
+                &main_win.core,
+                &hamburger_button,
+                file_name,
+                view_id.to_string(),
+                &main_win.window,
+            );
+            {
+                let ev = edit_view.borrow();
+                let page_num = main_win.notebook.insert_page(
+                    &ev.root_widget,
+                    Some(&ev.top_bar.tab_widget),
+                    position,
                 );
-                {
-                    let ev = edit_view.borrow();
-                    let page_num = win.notebook.insert_page(
-                        &ev.root_widget,
-                        Some(&ev.top_bar.tab_widget),
-                        position,
-                    );
-                    if let Some(w) = win.notebook.get_nth_page(Some(page_num)) {
-                        win.w_to_ev.insert(w.clone(), edit_view.clone());
-                        win.view_id_to_w.insert(view_id.to_string(), w);
-                    }
-
-                    ev.top_bar.close_button.connect_clicked(
-                        enclose!((main_win, edit_view) move |_| {
-                            Self::close_view(&main_win, &edit_view);
-                        }),
-                    );
+                if let Some(w) = main_win.notebook.get_nth_page(Some(page_num)) {
+                    main_win
+                        .w_to_ev
+                        .borrow_mut()
+                        .insert(w.clone(), edit_view.clone());
+                    main_win
+                        .view_id_to_w
+                        .borrow_mut()
+                        .insert(view_id.to_string(), w);
                 }
 
-                win.views.insert(view_id.to_string(), edit_view);
+                ev.top_bar
+                    .close_button
+                    .connect_clicked(enclose!((main_win, edit_view) move |_| {
+                        Self::close_view(&main_win, &edit_view);
+                    }));
             }
+
+            main_win
+                .views
+                .borrow_mut()
+                .insert(view_id.to_string(), edit_view);
         }
         if let Some(empty_ev) = old_ev {
             Self::close_view(&main_win, &empty_ev);
         }
     }
 
-    fn close_all(main_win: Rc<RefCell<Self>>) -> SaveAction {
+    fn close_all(main_win: Rc<Self>) -> SaveAction {
         trace!("{}", gettext("Closing all EditViews"));
         // Get all views that we currently have opened
-        let views = {
-            let main_win = main_win.borrow();
-            main_win.views.clone()
-        };
+        let views = { main_win.views.borrow().clone() };
         // Close each one of them
         let actions: Vec<SaveAction> = views
             .iter()
             .map(|(_, ev)| {
                 let save_action = Self::close_view(&main_win.clone(), &ev);
                 if save_action != SaveAction::Cancel {
-                    main_win.borrow_mut().views.remove(&ev.borrow().view_id);
+                    main_win.views.borrow_mut().remove(&ev.borrow().view_id);
                 }
                 save_action
             })
@@ -871,16 +875,16 @@ impl MainWin {
         }
     }
 
-    fn close(main_win: &Rc<RefCell<Self>>) -> SaveAction {
+    fn close(main_win: &Rc<Self>) -> SaveAction {
         trace!("{}", gettext("Closing current Editview"));
-        if let Some(edit_view) = main_win.borrow().get_current_edit_view() {
+        if let Some(edit_view) = main_win.get_current_edit_view() {
             Self::close_view(&main_win, &edit_view)
         } else {
             SaveAction::Cancel
         }
     }
 
-    fn close_view(main_win: &Rc<RefCell<Self>>, edit_view: &Rc<RefCell<EditView>>) -> SaveAction {
+    fn close_view(main_win: &Rc<Self>, edit_view: &Rc<RefCell<EditView>>) -> SaveAction {
         trace!(
             "{} {}",
             gettext("Closing Editview"),
@@ -895,21 +899,18 @@ impl MainWin {
             // Change the tab to the EditView we want to ask the user about saving to give him a
             // change to review that action
             if let Some(w) = main_win
-                .borrow()
                 .view_id_to_w
+                .borrow()
                 .get(&edit_view.borrow().view_id)
                 .map(Clone::clone)
             {
-                if let Some(page_num) = main_win.borrow().notebook.page_num(&w) {
-                    main_win
-                        .borrow()
-                        .notebook
-                        .set_property_page(page_num as i32);
+                if let Some(page_num) = main_win.notebook.page_num(&w) {
+                    main_win.notebook.set_property_page(page_num as i32);
                 }
             }
 
             let ask_save_dialog = MessageDialog::new(
-                Some(&main_win.borrow().window),
+                Some(&main_win.window),
                 DialogFlags::all(),
                 MessageType::Question,
                 ButtonsType::None,
@@ -950,15 +951,19 @@ impl MainWin {
 
         if save_action != SaveAction::Cancel {
             let view_id = edit_view.borrow().view_id.clone();
-            let mut main_win = main_win.borrow_mut();
-            if let Some(w) = main_win.view_id_to_w.get(&view_id).map(Clone::clone) {
+            if let Some(w) = main_win
+                .view_id_to_w
+                .borrow()
+                .get(&view_id)
+                .map(Clone::clone)
+            {
                 if let Some(page_num) = main_win.notebook.page_num(&w) {
                     main_win.notebook.remove_page(Some(page_num));
                 }
-                main_win.w_to_ev.remove(&w.clone());
+                main_win.w_to_ev.borrow_mut().remove(&w.clone());
             }
-            main_win.view_id_to_w.remove(&view_id);
-            main_win.views.remove(&view_id);
+            main_win.view_id_to_w.borrow_mut().remove(&view_id);
+            main_win.views.borrow_mut().remove(&view_id);
             main_win.core.close_view(&view_id);
         }
         save_action
