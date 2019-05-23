@@ -733,21 +733,26 @@ impl EditView {
         let text_size = self.get_text_size();
         let text_height = text_size.height;
         let text_width = text_size.width;
+
+        {
+            // don't conflict with pango::LayoutExt;
+            use gtk::LayoutExt;
+            self.view_item
+                .edit_area
+                .set_size(text_width as u32, text_height as u32);
+        }
+
         let vadj = &self.view_item.vadj;
-        vadj.set_lower(0_f64);
-        vadj.set_upper(text_height as f64);
         if vadj.get_value() + vadj.get_page_size() > vadj.get_upper() {
             vadj.set_value(vadj.get_upper() - vadj.get_page_size())
         }
 
         let hadj = &self.view_item.hadj;
-        hadj.set_lower(0f64);
         let text_width = if text_size.contained_width {
             text_width
         } else {
             text_width + self.edit_font.font_width * 4.0
         };
-        hadj.set_upper(text_width);
         if hadj.get_value() + hadj.get_page_size() > hadj.get_upper() {
             hadj.set_value(hadj.get_upper() - hadj.get_page_size())
         }
