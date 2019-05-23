@@ -1252,7 +1252,7 @@ impl EditView {
     }
 
     /// Scrolls vertically to the line specified and horizontally to the column specified.
-    pub fn scroll_to(&mut self, line: u64, col: u64) {
+    pub fn scroll_to(&self, line: u64, col: u64) {
         trace!(
             "{} 'scroll_to' {} '{}': l: {} c: {}",
             gettext("Handling"),

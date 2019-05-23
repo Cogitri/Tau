@@ -190,7 +190,7 @@ impl MainWin {
             let new_action = SimpleAction::new("new", None);
             new_action.connect_activate(enclose!((main_win) move |_,_| {
                 trace!("{} 'new' {}", gettext("Handling"), gettext("action"));
-                main_win.borrow_mut().req_new_view(None);
+                main_win.borrow().req_new_view(None);
             }));
             application.add_action(&new_action);
         }
@@ -362,21 +362,21 @@ impl MainWin {
             }
             CoreMsg::Notification { method, params, id } => {
                 match method.as_ref() {
-                    "alert" => main_win.borrow_mut().alert(&params),
-                    "available_themes" => main_win.borrow_mut().available_themes(&params),
-                    "available_plugins" => main_win.borrow_mut().available_plugins(&params),
-                    "config_changed" => main_win.borrow_mut().config_changed(&params),
-                    "def_style" => main_win.borrow_mut().def_style(&params),
-                    "find_status" => main_win.borrow_mut().find_status(&params),
-                    "replace_status" => main_win.borrow_mut().replace_status(&params),
-                    "update" => main_win.borrow_mut().update(&params),
-                    "scroll_to" => main_win.borrow_mut().scroll_to(&params),
-                    "theme_changed" => main_win.borrow_mut().theme_changed(&params),
+                    "alert" => main_win.borrow().alert(&params),
+                    "available_themes" => main_win.borrow().available_themes(&params),
+                    "available_plugins" => main_win.borrow().available_plugins(&params),
+                    "config_changed" => main_win.borrow().config_changed(&params),
+                    "def_style" => main_win.borrow().def_style(&params),
+                    "find_status" => main_win.borrow().find_status(&params),
+                    "replace_status" => main_win.borrow().replace_status(&params),
+                    "update" => main_win.borrow().update(&params),
+                    "scroll_to" => main_win.borrow().scroll_to(&params),
+                    "theme_changed" => main_win.borrow().theme_changed(&params),
                     "measure_width" => main_win.borrow().measure_width(id, params),
-                    "available_languages" => main_win.borrow_mut().available_languages(&params),
-                    "language_changed" => main_win.borrow_mut().language_changed(&params),
-                    "plugin_started" => main_win.borrow_mut().plugin_started(&params),
-                    "plugin_stopped" => main_win.borrow_mut().plugin_stopped(&params),
+                    "available_languages" => main_win.borrow().available_languages(&params),
+                    "language_changed" => main_win.borrow().language_changed(&params),
+                    "plugin_started" => main_win.borrow().plugin_started(&params),
+                    "plugin_stopped" => main_win.borrow().plugin_stopped(&params),
                     _ => {
                         error!(
                             "{}: {}",
@@ -398,7 +398,7 @@ impl MainWin {
         }
     }
 
-    pub fn available_themes(&mut self, params: &Value) {
+    pub fn available_themes(&self, params: &Value) {
         let mut state = self.state.borrow_mut();
         state.themes.clear();
         if let Some(themes) = params["themes"].as_array() {
@@ -428,7 +428,7 @@ impl MainWin {
             .send_notification("set_theme", &json!({ "theme_name": state.theme_name }));
     }
 
-    pub fn theme_changed(&mut self, params: &Value) {
+    pub fn theme_changed(&self, params: &Value) {
         let theme_settings = params["theme"].clone();
         let theme: ThemeSettings = match serde_json::from_value(theme_settings) {
             Err(e) => {
@@ -454,7 +454,7 @@ impl MainWin {
         state.styles.insert(0, selection_style);
     }
 
-    pub fn available_plugins(&mut self, params: &Value) {
+    pub fn available_plugins(&self, params: &Value) {
         let mut has_syntect = false;
 
         if let Some(available_plugins) = params["plugins"].as_array() {
@@ -473,25 +473,25 @@ impl MainWin {
         }
     }
 
-    pub fn config_changed(&mut self, params: &Value) {
+    pub fn config_changed(&self, params: &Value) {
         if let Some(ev) = params["view_id"].as_str().and_then(|id| self.views.get(id)) {
             ev.borrow_mut().config_changed(&params["changes"])
         }
     }
 
-    pub fn find_status(&mut self, params: &Value) {
+    pub fn find_status(&self, params: &Value) {
         if let Some(ev) = params["view_id"].as_str().and_then(|id| self.views.get(id)) {
-            ev.borrow_mut().find_status(&params["queries"])
+            ev.borrow().find_status(&params["queries"])
         }
     }
 
-    pub fn replace_status(&mut self, params: &Value) {
+    pub fn replace_status(&self, params: &Value) {
         if let Some(ev) = params["view_id"].as_str().and_then(|id| self.views.get(id)) {
-            ev.borrow_mut().replace_status(&params["status"])
+            ev.borrow().replace_status(&params["status"])
         }
     }
 
-    pub fn def_style(&mut self, params: &Value) {
+    pub fn def_style(&self, params: &Value) {
         let style: LineStyle = serde_json::from_value(params.clone()).unwrap();
 
         if let Some(id) = params["id"].as_u64() {
@@ -500,7 +500,7 @@ impl MainWin {
         }
     }
 
-    pub fn update(&mut self, params: &Value) {
+    pub fn update(&self, params: &Value) {
         trace!("{} 'update': {:?}", gettext("Handling"), params);
 
         if let Some(ev) = params["view_id"].as_str().and_then(|id| self.views.get(id)) {
@@ -508,7 +508,7 @@ impl MainWin {
         }
     }
 
-    pub fn scroll_to(&mut self, params: &Value) {
+    pub fn scroll_to(&self, params: &Value) {
         trace!("{} 'scroll_to' {:?}", gettext("Handling"), params);
 
         let line = {
@@ -528,7 +528,7 @@ impl MainWin {
         if let Some(ev) = params["view_id"].as_str().and_then(|id| self.views.get(id)) {
             let idx = self.notebook.page_num(&ev.borrow().root_widget);
             self.notebook.set_current_page(idx);
-            ev.borrow_mut().scroll_to(line, col);
+            ev.borrow().scroll_to(line, col);
         }
     }
 
@@ -587,7 +587,7 @@ impl MainWin {
         }
     }
 
-    pub fn available_languages(&mut self, params: &Value) {
+    pub fn available_languages(&self, params: &Value) {
         debug!("{} 'available_languages' {:?}", gettext("Handling"), params);
         let mut main_state = self.state.borrow_mut();
         main_state.avail_languages.clear();
@@ -600,7 +600,7 @@ impl MainWin {
         }
     }
 
-    pub fn language_changed(&mut self, params: &Value) {
+    pub fn language_changed(&self, params: &Value) {
         debug!("{} 'language_changed' {:?}", gettext("Handling"), params);
         if let Some(ev) = params["view_id"].as_str().and_then(|id| self.views.get(id)) {
             ev.borrow().language_changed(params["language_id"].as_str())
