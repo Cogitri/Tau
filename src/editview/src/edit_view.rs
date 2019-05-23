@@ -216,6 +216,13 @@ impl ViewItem {
                 edit_view.borrow().update_visible_scroll_region();
                 Inhibit(false)
             }));
+
+        // Make scrolling possible even when scrolling on the linecount
+        self.linecount
+            .connect_scroll_event(enclose!((edit_view) move |_,es| {
+                    edit_view.borrow().view_item.ev_scrolled_window.emit("scroll-event", &[&es.to_value()]).unwrap();
+                    Inhibit(false)
+            }));
     }
 
     /// Gets the pango Context from the main drawing area.
