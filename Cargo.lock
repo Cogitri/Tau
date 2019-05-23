@@ -190,8 +190,8 @@ dependencies = [
 
 [[package]]
 name = "cargo-husky"
-version = "1.3.0"
-source = "git+https://github.com/Cogitri/cargo-husky#a21c2d303e053cde77d068d8588c845c23f206d1"
+version = "1.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "cast"
@@ -746,7 +746,7 @@ version = "0.7.0"
 dependencies = [
  "cairo-rs 0.6.0 (git+https://github.com/gtk-rs/cairo)",
  "cairo-sys-rs 0.8.0 (git+https://github.com/gtk-rs/cairo)",
- "cargo-husky 1.3.0 (git+https://github.com/Cogitri/cargo-husky)",
+ "cargo-husky 1.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "editview 0.1.0",
  "enclose 1.1.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "env_logger 0.6.1 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -1906,7 +1906,7 @@ dependencies = [
 "checksum byteorder 1.3.1 (registry+https://github.com/rust-lang/crates.io-index)" = "a019b10a2a7cdeb292db131fc8113e57ea2a908f6e7894b0c3c671893b65dbeb"
 "checksum cairo-rs 0.6.0 (git+https://github.com/gtk-rs/cairo)" = "<none>"
 "checksum cairo-sys-rs 0.8.0 (git+https://github.com/gtk-rs/cairo)" = "<none>"
-"checksum cargo-husky 1.3.0 (git+https://github.com/Cogitri/cargo-husky)" = "<none>"
+"checksum cargo-husky 1.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = "ee1f6a41bcc9d0aeff394d58275742a53beb62da685d8046c4756a8e4a507bbf"
 "checksum cast 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)" = "926013f2860c46252efceabb19f4a6b308197505082c609025aa6706c011d427"
 "checksum cc 1.0.37 (registry+https://github.com/rust-lang/crates.io-index)" = "39f75544d7bbaf57560d2168f28fd649ff9c76153874db88bdbdfd839b1a7e7d"
 "checksum cfg-if 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)" = "11d43355396e872eefb45ce6342e4374ed7bc2b3a502d1b28e36d6e23c05d1f4"

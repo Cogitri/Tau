@@ -44,4 +44,4 @@ serde_json = "1"
 syntect = "3"
 
 [dev-dependencies]
-cargo-husky = { git="https://github.com/Cogitri/cargo-husky", default-features = false, features = ["user-hooks"] }
+cargo-husky = { version="1", default-features = false, features = ["user-hooks"] }
