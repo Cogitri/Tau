@@ -1020,8 +1020,7 @@ impl EditView {
                     // Draw the cursor
                     cr.rectangle(
                         (f64::from(x)) - hadj.get_value(),
-                        (((self.edit_font.font_ascent + self.edit_font.font_descent) as u64) * i)
-                            as f64
+                        (self.edit_font.font_ascent + self.edit_font.font_descent) * i as f64
                             - vadj.get_value(),
                         CURSOR_WIDTH,
                         self.edit_font.font_ascent + self.edit_font.font_descent,
