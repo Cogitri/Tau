@@ -756,16 +756,6 @@ impl EditView {
                 .set_size(text_width as u32, text_height as u32);
         }
 
-        let vadj = &self.view_item.vadj;
-        if vadj.get_value() + vadj.get_page_size() > vadj.get_upper() {
-            vadj.set_value(vadj.get_upper() - vadj.get_page_size())
-        }
-
-        let hadj = &self.view_item.hadj;
-        if hadj.get_value() + hadj.get_page_size() > hadj.get_upper() {
-            hadj.set_value(hadj.get_upper() - hadj.get_page_size())
-        }
-
         if let Some(pristine) = update["pristine"].as_bool() {
             if self.pristine != pristine {
                 self.pristine = pristine;
@@ -780,7 +770,7 @@ impl EditView {
     }
 
     /// Maps x|y pixel coordinates to the line num and col. This can be used e.g. for
-    /// determining the firt and last time, but setting the y coordinate to 0 and the
+    /// determining the first and last line, by setting the y coordinate to 0 and the
     /// last pixel.
     pub fn da_px_to_cell(&self, x: f64, y: f64) -> (u64, u64) {
         trace!(
@@ -791,7 +781,6 @@ impl EditView {
             x,
             y
         );
-        // let first_line = (vadj.get_value() / font_extents.height) as usize;
         let x = x + self.view_item.hadj.get_value();
         let y = y + self.view_item.vadj.get_value();
 
@@ -822,10 +811,6 @@ impl EditView {
             gettext("Height"),
             da_height,
         );
-        let vadj = &self.view_item.vadj;
-        vadj.set_page_size(f64::from(da_height));
-        let hadj = &self.view_item.hadj;
-        hadj.set_page_size(f64::from(da_width));
 
         self.update_visible_scroll_region();
     }
@@ -841,9 +826,13 @@ impl EditView {
             self.view_id
         );
         let da_height = self.view_item.edit_area.get_allocated_height();
-        let (_, first_line) = self.da_px_to_cell(0.0, 0.0);
-        let (_, last_line) = self.da_px_to_cell(0.0, f64::from(da_height));
-        let last_line = last_line + 1;
+        let num_lines = self.line_cache.height();
+        let vadj = &self.view_item.vadj;
+        let first_line = (vadj.get_value() / self.edit_font.font_height) as u64;
+        let last_line = min(
+            (vadj.get_value() + f64::from(da_height) / self.edit_font.font_height) as u64 + 1,
+            num_lines,
+        );
 
         debug!(
             "{} {} {}",
