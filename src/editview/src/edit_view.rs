@@ -1001,21 +1001,21 @@ impl EditView {
         for i in first_line..last_line {
             // Keep track of the starting x position
             if let Some(line) = self.line_cache.get_line(i) {
-                cr.move_to(
-                    0.0,
-                    self.edit_font.font_height * (i as f64) - vadj.get_value() + center_diff,
-                );
                 if line.line_num().is_some() {
-                    current_line += 1
-                }
+                    current_line += 1;
+                    cr.move_to(
+                        0.0,
+                        self.edit_font.font_height * (i as f64) - vadj.get_value() + center_diff,
+                    );
 
-                let linecount_layout = self.create_layout_for_linecount(
-                    &pango_ctx,
-                    current_line,
-                    linecount_width as usize,
-                );
-                update_layout(cr, &linecount_layout);
-                show_layout(cr, &linecount_layout);
+                    let linecount_layout = self.create_layout_for_linecount(
+                        &pango_ctx,
+                        current_line,
+                        linecount_width as usize,
+                    );
+                    update_layout(cr, &linecount_layout);
+                    show_layout(cr, &linecount_layout);
+                }
             }
         }
 
