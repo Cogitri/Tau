@@ -80,6 +80,8 @@ struct EvBar {
     syntax_label: Label,
     syntax_treeview: TreeView,
     syntax_popover: Popover,
+    line_label: Label,
+    column_label: Label,
 }
 
 /// The ViewItem contains the various GTK parts related to the edit_area of the EditView
@@ -109,6 +111,8 @@ impl ViewItem {
             syntax_label: builder.get_object("syntax_label").unwrap(),
             syntax_popover: builder.get_object("syntax_popover").unwrap(),
             syntax_menu_button: builder.get_object("syntax_menu_button").unwrap(),
+            line_label: builder.get_object("line_label").unwrap(),
+            column_label: builder.get_object("column_label").unwrap(),
         };
 
         // Creation of a model with two rows.
@@ -1263,6 +1267,15 @@ impl EditView {
             line,
             col
         );
+
+        self.view_item
+            .statusbar
+            .line_label
+            .set_text(&format!("{}: {}", gettext("Line"), line + 1));
+        self.view_item
+            .statusbar
+            .column_label
+            .set_text(&format!("{}: {}", gettext("Column"), col));
 
         {
             // The new height is the current last line + 1
