@@ -955,16 +955,23 @@ impl MainWin {
 
 pub fn new_settings() -> Settings {
     let gschema = GSchema::new("com.github.Cogitri.gxi");
-    let gnome_gschema = GSchema::new("org.gnome.desktop.interface");
+    let interface_font = {
+        use gtk::SettingsExt;
+        let gtk_settings = gtk::Settings::get_default().unwrap();
+        gtk_settings
+            .get_property_gtk_font_name()
+            .unwrap()
+            .to_string()
+    };
 
     Settings {
         trailing_spaces: gschema.get_key("draw-trailing-spaces"),
         highlight_line: gschema.get_key("highlight-line"),
         right_margin: gschema.get_key("draw-right-margin"),
         column_right_margin: gschema.get_key("column-right-margin"),
-        interface_font: gnome_gschema.get_key("font-name"),
         edit_font: gschema.get_key("font"),
         tab_size: gschema.get_key("tab-size"),
+        interface_font,
         gschema,
     }
 }
