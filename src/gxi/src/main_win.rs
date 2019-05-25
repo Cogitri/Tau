@@ -98,7 +98,7 @@ impl MainWin {
         if properties.borrow().is_maximized {
             window.maximize();
         } else {
-            window.set_size_request(properties.borrow().width, properties.borrow().height);
+            window.set_default_size(properties.borrow().width, properties.borrow().height);
         }
 
         let notebook: Notebook = builder.get_object("notebook").unwrap();
