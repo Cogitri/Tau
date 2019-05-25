@@ -80,7 +80,8 @@ use gettextrs::{gettext, TextDomain, TextDomainError};
 use gio::{ApplicationExt, ApplicationExtManual, ApplicationFlags, FileExt};
 use glib::MainContext;
 use gtk::Application;
-use gxi_config_storage::Config;
+use gxi_config_storage::pref_storage::GSchemaExt;
+use gxi_config_storage::GSchema;
 use gxi_peer::{Core, CoreMsg, ErrorMsg, SharedQueue, XiPeer};
 use log::{debug, info, warn};
 use serde_json::{json, Value};
@@ -131,8 +132,6 @@ fn main() {
 
         glib::set_application_name("gxi");
 
-        let (config_dir, xi_config) = Config::new();
-
         // No need to gettext this, gettext doesn't work yet
         match TextDomain::new("gxi")
             .push(crate::globals::LOCALEDIR.unwrap_or("po"))
@@ -148,13 +147,14 @@ fn main() {
             Err(TextDomainError::InvalidLocale(locale)) => warn!("Invalid locale {}", locale),
         }
 
-        core.client_started(&config_dir, crate::globals::PLUGIN_DIR.unwrap_or("/usr/local/lib/gxi/plugins"));
+        core.client_started(None, crate::globals::PLUGIN_DIR.unwrap_or("/usr/local/lib/gxi/plugins"));
+
+        setup_config(&core);
 
         MainWin::new(
             application,
             shared_queue.clone(),
             core.clone(),
-            xi_config,
            );
     }));
 
@@ -203,4 +203,41 @@ fn main() {
     });
 
     application.run(&args().collect::<Vec<_>>());
+}
+
+fn setup_config(core: &Core) {
+    let gschema = GSchema::new("com.github.Cogitri.gxi");
+
+    let tab_size: u32 = gschema.get_key("tab-size");
+    let autodetect_whitespace: bool = gschema.get_key("auto-indent");
+    let translate_tabs_to_spaces: bool = gschema.get_key("translate-tabs-to-spaces");
+    let use_tab_stops: bool = gschema.get_key("use-tab-stops");
+    let word_wrap: bool = gschema.get_key("word-wrap");
+
+    let font: String = gschema.get_key("font");
+    let font_vec = font.split_whitespace().collect::<Vec<_>>();
+    let (font_size, font_name) = if let Some((size, splitted_name)) = font_vec.split_last() {
+        (size.parse::<f32>().ok(), Some(splitted_name.join(" ")))
+    } else {
+        (None, None)
+    };
+
+    #[cfg(windows)]
+    const LINE_ENDING: &str = "\r\n";
+    #[cfg(not(windows))]
+    const LINE_ENDING: &str = "\n";
+
+    core.modify_user_config(
+        "general",
+        &json!({
+            "tab_size": tab_size,
+            "autodetect_whitespace": autodetect_whitespace,
+            "translate_tabs_to_spaces": translate_tabs_to_spaces,
+            "font_face": font_name,
+            "font_size": font_size,
+            "use_tab_stops": use_tab_stops,
+            "word_wrap": word_wrap,
+            "line_ending": LINE_ENDING,
+        }),
+    )
 }

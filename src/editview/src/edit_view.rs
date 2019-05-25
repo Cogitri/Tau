@@ -1,13 +1,11 @@
-use crate::main_state::MainState;
+use crate::main_state::{MainState, Settings};
 use crate::theme::{color_from_u32, set_margin_source_color, set_source_color, PangoColor};
 use cairo::Context;
 use gdk::enums::key;
 use gdk::*;
 use gettextrs::gettext;
-use gio::{ApplicationExt, SettingsExt};
 use glib::{source, MainContext};
 use gtk::{self, *};
-use gxi_config_storage::{Config, GSchema, GSchemaExt};
 use gxi_linecache::{Line, LineCache, StyleSpan};
 use gxi_peer::Core;
 use log::{debug, error, trace, warn};
@@ -249,62 +247,6 @@ pub struct TextSize {
     contained_width: bool,
 }
 
-/// A Struct containing setting switches for the EditView
-struct Settings {
-    gschema: GSchema,
-    trailing_spaces: bool,
-    highlight_line: bool,
-    right_margin: bool,
-    column_right_margin: u32,
-    interface_font: String,
-}
-
-impl Settings {
-    pub fn new(schema_name: &str) -> Self {
-        let gschema = GSchema::new(schema_name);
-        let gnome_gschema = GSchema::new("org.gnome.desktop.interface");
-        Self {
-            trailing_spaces: gschema.get_key("draw-trailing-spaces"),
-            highlight_line: gschema.get_key("highlight-line"),
-            right_margin: gschema.get_key("draw-right-margin"),
-            column_right_margin: gschema.get_key("column-right-margin"),
-            interface_font: gnome_gschema.get_key("font-name"),
-            gschema,
-        }
-    }
-
-    pub fn connect_change(&self, ev: &Rc<RefCell<EditView>>) {
-        let gschema = self.gschema.clone();
-        gschema
-            .settings
-            .connect_changed(enclose!((ev, gschema) move |_, key| {
-                match key {
-                    "draw-trailing-spaces" => {
-                        let val = gschema.get_key("draw-trailing-spaces");
-                        ev.borrow_mut().settings.trailing_spaces = val;
-                    }
-                    "highlight-line" => {
-                        let val = gschema.get_key("highlight-line");
-                        ev.borrow_mut().settings.highlight_line = val;
-                    }
-                    "draw-right-margin" => {
-                        let val = gschema.get_key("draw-right-margin");
-                        ev.borrow_mut().settings.right_margin = val;
-                    }
-                    "column-right-margin" => {
-                        let val = gschema.get_key("column-right-margin");
-                        ev.borrow_mut().settings.column_right_margin = val;
-                    }
-                    // We load these during startup
-                    "window-height" | "window-width" | "window-maximized" => {}
-                    _key => {
-                        warn!("{}: {}", gettext("Unknown key change event"), _key)
-                    }
-                }
-            }));
-    }
-}
-
 /// The EditView is the part of gxi that does the actual editing. This is where you edit documents.
 pub struct EditView {
     core: Core,
@@ -320,7 +262,6 @@ pub struct EditView {
     edit_font: Font,
     interface_font: Font,
     im_context: IMContextSimple,
-    settings: Settings,
 }
 
 impl EditView {
@@ -340,15 +281,7 @@ impl EditView {
         let find_replace = FindReplace::new(&hamburger_button);
         let pango_ctx = view_item.get_pango_ctx();
         let im_context = IMContextSimple::new();
-        let settings = Settings::new(
-            parent
-                .get_application()
-                .unwrap()
-                .get_application_id()
-                .unwrap()
-                .as_str(),
-        );
-        let interface_font = Self::get_interface_font(&settings, &pango_ctx);
+        let interface_font = Self::get_interface_font(&main_state.borrow().settings, &pango_ctx);
 
         let edit_view = Rc::new(RefCell::new(Self {
             core: core.clone(),
@@ -360,19 +293,13 @@ impl EditView {
             top_bar: TopBar::new(),
             view_item: view_item.clone(),
             line_cache: LineCache::new(),
-            edit_font: Self::get_edit_font(&pango_ctx, &main_state.borrow().config),
+            edit_font: Self::get_edit_font(&pango_ctx, &main_state.borrow().settings.edit_font),
             interface_font,
             find_replace: find_replace.clone(),
             im_context: im_context.clone(),
-            settings,
         }));
 
         edit_view.borrow_mut().update_title();
-
-        {
-            let settings = &edit_view.borrow().settings;
-            settings.connect_change(&edit_view.clone());
-        }
 
         view_item.connect_events(&edit_view);
         find_replace.connect_events(&edit_view);
@@ -398,14 +325,8 @@ impl EditView {
         )
     }
 
-    fn get_edit_font(pango_ctx: &pango::Context, config: &Config) -> Font {
-        Font::new(
-            pango_ctx,
-            FontDescription::from_string(&format!(
-                "{} {}",
-                &config.config.font_face, &config.config.font_size,
-            )),
-        )
+    fn get_edit_font(pango_ctx: &pango::Context, font: &str) -> Font {
+        Font::new(pango_ctx, FontDescription::from_string(&font))
     }
 }
 
@@ -672,7 +593,7 @@ impl EditView {
             for (name, value) in map {
                 match name.as_ref() {
                     "font_size" => {
-                        if let Some(font_size) = value.as_u64() {
+                        if let Some(font_size) = value.as_f64() {
                             let pango_ctx = self.view_item.get_pango_ctx();
                             self.edit_font
                                 .font_desc
@@ -698,14 +619,7 @@ impl EditView {
                             self.view_item.edit_area.queue_draw();
                         }
                     }
-                    "tab_size" => {
-                        if let Some(size) = value.as_u64() {
-                            debug!("{}: {}", gettext("Setting tab size to"), size);
-                            self.main_state.borrow_mut().config.config.tab_size = size as u32;
-                            self.view_item.edit_area.queue_draw();
-                        }
-                    }
-                    // These are handled in main_win via XiConfig
+                    "tab_size" => (),
                     "auto_indent" => (),
                     "autodetect_whitespace" => (),
                     "plugin_search_path" => (),
@@ -951,9 +865,9 @@ impl EditView {
         pango_ctx.set_font_description(&self.edit_font.font_desc);
 
         // Draw a line at x chars
-        if self.settings.right_margin {
-            let until_margin_width =
-                self.edit_font.font_width * f64::from(self.settings.column_right_margin);
+        if self.main_state.borrow().settings.right_margin {
+            let until_margin_width = self.edit_font.font_width
+                * f64::from(self.main_state.borrow().settings.column_right_margin);
             // Draw editing background
             set_source_color(cr, theme.background);
             cr.rectangle(0.0, 0.0, until_margin_width, f64::from(da_height));
@@ -981,7 +895,7 @@ impl EditView {
         for i in first_line..last_line {
             // Keep track of the starting x position
             if let Some(line) = self.line_cache.get_line(i) {
-                if self.settings.highlight_line && !line.cursor().is_empty() {
+                if self.main_state.borrow().settings.highlight_line && !line.cursor().is_empty() {
                     set_source_color(cr, theme.line_highlight);
                     cr.rectangle(
                         0.0,
@@ -1137,7 +1051,7 @@ impl EditView {
             0,
             TabAlign::Left,
             self.edit_font.font_width as i32
-                * self.main_state.borrow().config.config.tab_size as i32
+                * self.main_state.borrow().settings.tab_size as i32
                 * pango::SCALE,
         );
 
@@ -1173,20 +1087,21 @@ impl EditView {
 
         // Replace spaces with '·'. Do this here since we only want
         // to draw this, we don't want to save the file like that.
-        let line_view = if self.settings.trailing_spaces && line_view.ends_with(' ') {
-            // Replace tabs here to make sure trim_end doesn't remove them
-            let last_char = line_view.replace("\t", "a").trim_end().len();
-            let (line_view_without_space, spaces) = line_view.split_at(last_char);
-            let space_range = std::ops::Range {
-                start: 0,
-                end: spaces.len(),
-            };
-            let highlighted_spaces: String = space_range.map(|_| "\u{b7}").collect();
+        let line_view =
+            if self.main_state.borrow().settings.trailing_spaces && line_view.ends_with(' ') {
+                // Replace tabs here to make sure trim_end doesn't remove them
+                let last_char = line_view.replace("\t", "a").trim_end().len();
+                let (line_view_without_space, spaces) = line_view.split_at(last_char);
+                let space_range = std::ops::Range {
+                    start: 0,
+                    end: spaces.len(),
+                };
+                let highlighted_spaces: String = space_range.map(|_| "\u{b7}").collect();
 
-            format!("{}{}", line_view_without_space, highlighted_spaces)
-        } else {
-            line_view.to_string()
-        };
+                format!("{}{}", line_view_without_space, highlighted_spaces)
+            } else {
+                line_view.to_string()
+            };
 
         // let layout = create_layout(cr).unwrap();
         let layout = pango::Layout::new(pango_ctx);
