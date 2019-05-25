@@ -59,6 +59,40 @@
             <summary>Sets if the window should be maximized during the next startup</summary>
         </key>
 
+        <key name="tab-size" type="u">
+            <default>4</default>
+            <summary>Tab size</summary>
+            <description>Amount of spaces that a tab is wide</description>
+        </key>
+
+
+        <key name="translate-tabs-to-spaces" type="b">
+            <default>false</default>
+            <summary>Insert spaces instead of tabs</summary>
+            <description>Whether spaces should be inserted instead of tabs</description>
+        </key>
+
+        <key name="use-tab-stops" type="b">
+            <default>true</default>
+            <summary>Treat indention with spaces like tabs</summary>
+            <description>If translate-tabs-to-spaces is true, backspaces will delete multiple spaces, up to the previous tab stop</description>
+        </key>
+
+        <key name="auto-indent" type="b">
+            <default>true</default>
+            <summary>Automatically match document's indention on newlines</summary>
+        </key>
+
+        <key name="font" type="s">
+            <default>"Monospace 14"</default>
+            <summary>The font used for editing</summary>
+        </key>
+
+        <key name="word-wrap" type="b">
+            <default>false</default>
+            <summary>Wrap lines at the end of the document</summary>
+        </key>
+
     </schema>
 
 </schemalist>

@@ -179,7 +179,7 @@ impl Core {
         self.send_notification("edit", &edit_params);
     }
 
-    pub fn client_started(&self, config_dir: &str, client_extras_dir: &str) {
+    pub fn client_started(&self, config_dir: Option<&str>, client_extras_dir: &str) {
         self.send_notification(
             "client_started",
             &json!({
@@ -569,6 +569,17 @@ impl Core {
         self.send_notification(
             "set_language",
             &json!({ "view_id": view_id, "language_id": lang_name }),
+        );
+    }
+
+    //TODO: Use something other than a Value for `changes`
+    pub fn modify_user_config(&self, domain: &str, changes: &Value) {
+        self.send_notification(
+            "modify_user_config",
+            &json!({
+                "domain": domain,
+                "changes": changes,
+            }),
         );
     }
 }

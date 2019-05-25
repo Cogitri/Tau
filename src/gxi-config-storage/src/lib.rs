@@ -3,4 +3,4 @@ pub mod errors;
 mod macros;
 pub mod pref_storage;
 
-pub use crate::pref_storage::{Config, GSchema, GSchemaExt, XiConfig};
+pub use crate::pref_storage::{GSchema, GSchemaExt};

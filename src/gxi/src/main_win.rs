@@ -1,12 +1,12 @@
 use crate::about_win::AboutWin;
 use crate::errors::ErrorDialog;
 use crate::prefs_win::PrefsWin;
-use editview::{theme::u32_from_color, theme::LineStyle, EditView, MainState};
+use editview::{theme::u32_from_color, theme::LineStyle, EditView, MainState, Settings};
 use gettextrs::gettext;
-use gio::{ActionMapExt, ApplicationExt, SimpleAction};
+use gio::{ActionMapExt, ApplicationExt, SettingsExt, SimpleAction};
 use glib::MainContext;
 use gtk::*;
-use gxi_config_storage::{Config, GSchema, GSchemaExt};
+use gxi_config_storage::{GSchema, GSchemaExt};
 use gxi_peer::ErrorMsg;
 use gxi_peer::{Core, CoreMsg, SharedQueue};
 use log::{debug, error, info, trace, warn};
@@ -88,12 +88,7 @@ pub struct MainWin {
 const GLADE_SRC: &str = include_str!("ui/gxi.glade");
 
 impl MainWin {
-    pub fn new(
-        application: &Application,
-        shared_queue: SharedQueue,
-        core: Core,
-        config: Config,
-    ) -> Rc<Self> {
+    pub fn new(application: &Application, shared_queue: SharedQueue, core: Core) -> Rc<Self> {
         let glade_src = GLADE_SRC;
         let builder = Builder::new_from_string(glade_src);
 
@@ -111,10 +106,17 @@ impl MainWin {
         let theme_name = properties.borrow().gschema.get_key("theme-name");
         debug!("{}: {}", gettext("Theme name"), &theme_name);
 
+        let settings = new_settings();
+
         let main_state = Rc::new(RefCell::new(MainState {
-            config,
+            settings,
             theme_name,
-            ..Default::default()
+            themes: Default::default(),
+            theme: Default::default(),
+            styles: Default::default(),
+            fonts: Default::default(),
+            avail_languages: Default::default(),
+            selected_language: Default::default(),
         }));
 
         let main_win = Rc::new(Self {
@@ -129,6 +131,8 @@ impl MainWin {
             state: main_state.clone(),
             properties,
         });
+
+        connect_settings_change(&main_win, &core);
 
         let (msg_tx, msg_rx) = MainContext::channel::<CoreMsg>(glib::PRIORITY_HIGH);
         let main_context = MainContext::default();
@@ -277,20 +281,16 @@ impl MainWin {
             let auto_indent_action = SimpleAction::new_stateful(
                 "auto_indent",
                 None,
-                &main_state.borrow().config.config.auto_indent.to_variant(),
+                &main_state.borrow().settings.gschema.get_key("auto-indent"),
             );
 
             auto_indent_action.connect_change_state(enclose!((main_state) move |action, value| {
                 if let Some(value) = value.as_ref() {
                     action.set_state(value);
-                    let value: bool = value.get().unwrap();
-                    debug!("{}: {}", gettext("Auto indent"), value);
-                    main_state.borrow_mut().config.config.auto_indent = value;
-                    main_state.borrow().config.save()
-                        .map_err(|e| error!("{}", e.to_string()))
-                        .unwrap();
+                    main_state.borrow().settings.gschema.set_key("auto-indent", value.get::<bool>().unwrap()).unwrap();
                 }
             }));
+
             application.add_action(&auto_indent_action);
         }
         {
@@ -299,29 +299,18 @@ impl MainWin {
                 None,
                 &main_state
                     .borrow()
-                    .config
-                    .config
-                    .translate_tabs_to_spaces
-                    .to_variant(),
-            );;
-            space_indent_action.connect_change_state(move |action, value| {
+                    .settings
+                    .gschema
+                    .get_key("translate-tabs-to-spaces"),
+            );
+
+            space_indent_action.connect_change_state(enclose!((main_state) move |action, value| {
                 if let Some(value) = value.as_ref() {
                     action.set_state(value);
-                    let value: bool = value.get().unwrap();
-                    debug!("{}: {}", gettext("Space indent"), value);
-                    main_state
-                        .borrow_mut()
-                        .config
-                        .config
-                        .translate_tabs_to_spaces = value;
-                    main_state
-                        .borrow()
-                        .config
-                        .save()
-                        .map_err(|e| error!("{}", e.to_string()))
-                        .unwrap();
+                    main_state.borrow().settings.gschema.set_key("translate-tabs-to-spaces", value.get::<bool>().unwrap()).unwrap();
                 }
-            });
+            }));
+
             application.add_action(&space_indent_action);
         }
 
@@ -718,13 +707,7 @@ impl MainWin {
 
     fn prefs(main_win: Rc<Self>) {
         let gschema = { &main_win.properties.borrow().gschema };
-        PrefsWin::new(
-            &main_win.window,
-            &main_win.state,
-            &main_win.core,
-            main_win.get_current_edit_view(),
-            &gschema,
-        );
+        PrefsWin::new(&main_win.window, &main_win.state, &main_win.core, &gschema);
     }
 
     fn about(main_win: Rc<Self>) {
@@ -968,4 +951,124 @@ impl MainWin {
         }
         save_action
     }
+}
+
+pub fn new_settings() -> Settings {
+    let gschema = GSchema::new("com.github.Cogitri.gxi");
+    let gnome_gschema = GSchema::new("org.gnome.desktop.interface");
+
+    Settings {
+        trailing_spaces: gschema.get_key("draw-trailing-spaces"),
+        highlight_line: gschema.get_key("highlight-line"),
+        right_margin: gschema.get_key("draw-right-margin"),
+        column_right_margin: gschema.get_key("column-right-margin"),
+        interface_font: gnome_gschema.get_key("font-name"),
+        edit_font: gschema.get_key("font"),
+        tab_size: gschema.get_key("tab-size"),
+        gschema,
+    }
+}
+
+pub fn connect_settings_change(main_win: &Rc<MainWin>, core: &Core) {
+    let gschema = main_win.state.borrow().settings.gschema.clone();
+    gschema
+        .settings
+        .connect_changed(enclose!((gschema, main_win, core) move |_, key| {
+            trace!("Key '{}' has changed!", key);
+            match key {
+                "draw-trailing-spaces" => {
+                    let val = gschema.get_key("draw-trailing-spaces");
+                    main_win.state.borrow_mut().settings.trailing_spaces = val;
+                    if let Some(ev) = main_win.get_current_edit_view() {
+                        ev.borrow().view_item.edit_area.queue_draw();
+                    }
+                }
+                "highlight-line" => {
+                    let val = gschema.get_key("highlight-line");
+                    main_win.state.borrow_mut().settings.highlight_line = val;
+                    if let Some(ev) = main_win.get_current_edit_view() {
+                        ev.borrow().view_item.edit_area.queue_draw();
+                    }
+                }
+                "draw-right-margin" => {
+                    let val = gschema.get_key("draw-right-margin");
+                    main_win.state.borrow_mut().settings.right_margin = val;
+                    if let Some(ev) = main_win.get_current_edit_view() {
+                        ev.borrow().view_item.edit_area.queue_draw();
+                    }
+                }
+                "column-right-margin" => {
+                    let val = gschema.get_key("column-right-margin");
+                    main_win.state.borrow_mut().settings.column_right_margin = val;
+                    if let Some(ev) = main_win.get_current_edit_view() {
+                        ev.borrow().view_item.edit_area.queue_draw();
+                    }
+                }
+                "translate-tabs-to-spaces" => {
+                    let val: bool = gschema.get_key("translate-tabs-to-spaces");
+                    core.modify_user_config(
+                        "general",
+                        &json!({ "translate_tabs_to_spaces": val })
+                    );
+                }
+                "auto-indent" => {
+                    let val: bool = gschema.get_key("auto-indent");
+                    core.modify_user_config(
+                        "general",
+                        &json!({ "autodetect_whitespace": val })
+                    );
+                }
+                "tab-size" => {
+                    let val: u32 = gschema.get_key("tab-size");
+                    core.modify_user_config(
+                        "general",
+                        &json!({ "tab_size": val })
+                    );
+                    main_win.state.borrow_mut().settings.tab_size = val;
+                    if let Some(ev) = main_win.get_current_edit_view() {
+                        ev.borrow().view_item.edit_area.queue_draw();
+                    }
+                }
+                "font" => {
+                    let val: String = gschema.get_key("font");
+                    let font_vec = val.split_whitespace().collect::<Vec<_>>();
+                    if let Some((size, splitted_name)) = font_vec.split_last() {
+                        let font_name = splitted_name.join(" ");
+                        let font_size = size.parse::<f32>().unwrap();
+                        core.modify_user_config(
+                            "general",
+                            &json!({ "font_face": font_name, "font_size": font_size })
+                        );
+                        main_win.state.borrow_mut().settings.edit_font = val;
+                        if let Some(ev) = main_win.get_current_edit_view() {
+                            ev.borrow().view_item.edit_area.queue_draw();
+                        }
+                    }
+                }
+                "use-tab-stops" => {
+                    let val: bool = gschema.get_key("use-tab-stops");
+                    core.modify_user_config(
+                        "general",
+                        &json!({ "use_tab_stops": val })
+                    );
+                }
+                "word-wrap" => {
+                    let val: bool = gschema.get_key("word-wrap");
+                    core.modify_user_config(
+                        "general",
+                        &json!({ "word_wrap": val })
+                    );
+                }
+                "theme-name" => {
+                    if let Some(ev) = main_win.get_current_edit_view() {
+                        ev.borrow().view_item.edit_area.queue_draw();
+                    }
+                },
+                // We load these during startup
+                "window-height" | "window-width" | "window-maximized" => {}
+                _key => {
+                    warn!("{}: {}", gettext("Unknown key change event"), _key)
+                }
+            }
+        }));
 }
