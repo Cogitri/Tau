@@ -90,6 +90,8 @@
           <object class="GtkLayout" id="edit_area">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="hexpand">True</property>
+            <property name="vexpand">True</property>
           </object>
         </child>
       </object>
@@ -107,6 +109,7 @@
         <property name="margin_right">10</property>
         <property name="margin_start">10</property>
         <property name="margin_end">10</property>
+        <property name="spacing">15</property>
         <child>
           <object class="GtkMenuButton" id="syntax_menu_button">
             <property name="visible">True</property>
@@ -156,7 +159,32 @@
           <packing>
             <property name="expand">False</property>
             <property name="fill">False</property>
+            <property name="pack_type">end</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="line_label">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">0</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
             <property name="position">2</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="column_label">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">0</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">3</property>
           </packing>
         </child>
       </object>
