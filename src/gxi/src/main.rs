@@ -147,7 +147,7 @@ fn main() {
             Err(TextDomainError::InvalidLocale(locale)) => warn!("Invalid locale {}", locale),
         }
 
-        core.client_started(None, crate::globals::PLUGIN_DIR.unwrap_or("/usr/local/lib/gxi/plugins"));
+        core.client_started(None, crate::globals::PLUGIN_DIR.unwrap_or("/usr/local/libexec/gxi/plugins"));
 
         setup_config(&core);
 
