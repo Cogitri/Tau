@@ -1,7 +1,6 @@
 use log::{error, trace};
 use serde_json::Value;
 use std::cmp::min;
-use std::collections::HashMap;
 
 #[derive(Copy, Clone, Debug)]
 pub struct StyleSpan {
@@ -82,7 +81,6 @@ impl Line {
 
 #[derive(Debug, Default)]
 pub struct LineCache {
-    map: HashMap<u64, Line>,
     pub n_invalid_before: u64,
     pub lines: Vec<Option<Line>>,
     pub n_invalid_after: u64,
@@ -91,7 +89,6 @@ pub struct LineCache {
 impl LineCache {
     pub fn new() -> Self {
         Self {
-            map: HashMap::new(),
             n_invalid_before: 0,
             lines: Vec::new(),
             n_invalid_after: 0,
