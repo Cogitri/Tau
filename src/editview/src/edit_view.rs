@@ -1,5 +1,7 @@
+use crate::fonts::Font;
 use crate::main_state::{MainState, Settings};
 use crate::theme::{color_from_u32, set_margin_source_color, set_source_color, PangoColor};
+use crate::view_item::*;
 use cairo::Context;
 use gdk::enums::key;
 use gdk::*;
@@ -16,224 +18,6 @@ use std::cell::RefCell;
 use std::cmp::{max, min};
 use std::rc::Rc;
 use std::u32;
-
-const TAB_GLADE_SRC: &str = include_str!("ui/close_tab.glade");
-const EV_GLADE_SRC: &str = include_str!("ui/ev.glade");
-
-/// The `Font` Struct holds all information about the font used in the `EditView` for the editing area
-/// or the interface font (used for the linecount)
-pub struct Font {
-    font_height: f64,
-    font_width: f64,
-    font_ascent: f64,
-    font_descent: f64,
-    font_desc: FontDescription,
-}
-
-impl Font {
-    fn new(pango_ctx: &pango::Context, font_desc: FontDescription) -> Self {
-        pango_ctx.set_font_description(&font_desc);
-        // FIXME: Just use en-US lang here, otherwise FontMetrics may be different (as in font_ascent/
-        // font_descent being larger to account for the language's special signs), which breaks cursor positioning.
-        let fontset = pango_ctx
-            .load_fontset(&font_desc, &Language::from_string("en-US"))
-            .unwrap_or_else(|| panic!("{}", &gettext("Failed to load Pango font set")));
-        let metrics = fontset
-            .get_metrics()
-            .unwrap_or_else(|| panic!("{}", &gettext("Failed to load Pango font metrics")));
-
-        let layout = pango::Layout::new(pango_ctx);
-        layout.set_text("a");
-        let (_, log_extents) = layout.get_extents();
-        debug!("{}: {:?}", gettext("Pango font size"), log_extents);
-
-        let font_height = f64::from(log_extents.height) / f64::from(pango::SCALE);
-        let font_width = f64::from(log_extents.width) / f64::from(pango::SCALE);
-        let font_ascent = f64::from(metrics.get_ascent()) / f64::from(pango::SCALE);
-        let font_descent = f64::from(metrics.get_descent()) / f64::from(pango::SCALE);
-
-        debug!(
-            "{}: {} {} {} {}",
-            gettext("Font metrics"),
-            font_width,
-            font_height,
-            font_ascent,
-            font_descent
-        );
-
-        Self {
-            font_height,
-            font_width,
-            font_ascent,
-            font_descent,
-            font_desc,
-        }
-    }
-}
-
-#[derive(Clone)]
-struct EvBar {
-    statusbar: Statusbar,
-    syntax_menu_button: MenuButton,
-    syntax_label: Label,
-    syntax_treeview: TreeView,
-    syntax_popover: Popover,
-    line_label: Label,
-    column_label: Label,
-}
-
-/// The ViewItem contains the various GTK parts related to the edit_area of the EditView
-#[derive(Clone)]
-pub struct ViewItem {
-    root_box: Grid,
-    ev_scrolled_window: ScrolledWindow,
-    pub edit_area: gtk::Layout,
-    linecount: gtk::Layout,
-    hadj: Adjustment,
-    vadj: Adjustment,
-    statusbar: EvBar,
-}
-
-impl ViewItem {
-    /// Sets up the drawing areas and scrollbars.
-    fn new(main_state: &MainState) -> Self {
-        let builder = Builder::new_from_string(EV_GLADE_SRC);
-
-        let hadj = builder.get_object("hadj").unwrap();
-        let vadj = builder.get_object("vadj").unwrap();
-        let edit_area: gtk::Layout = builder.get_object("edit_area").unwrap();
-        let linecount: gtk::Layout = builder.get_object("line_count").unwrap();
-        let statusbar = EvBar {
-            statusbar: builder.get_object("statusbar").unwrap(),
-            syntax_treeview: builder.get_object("syntax_treeview").unwrap(),
-            syntax_label: builder.get_object("syntax_label").unwrap(),
-            syntax_popover: builder.get_object("syntax_popover").unwrap(),
-            syntax_menu_button: builder.get_object("syntax_menu_button").unwrap(),
-            line_label: builder.get_object("line_label").unwrap(),
-            column_label: builder.get_object("column_label").unwrap(),
-        };
-
-        // Creation of a model with two rows.
-        let list_model: ListStore = builder.get_object("syntax_liststore").unwrap();;
-
-        for lang in main_state.avail_languages.iter() {
-            // Localize 'Plain Text'
-            if lang == "Plain Text" {
-                let translated_plaintext = gettext("Plain Text");
-                statusbar.syntax_label.set_text(&translated_plaintext);
-                // Set Plain Text as selected item.
-                let iter = list_model.insert_with_values(None, &[0], &[&translated_plaintext]);
-                let path = list_model.get_path(&iter).unwrap();
-                statusbar.syntax_treeview.get_selection().select_path(&path);
-            } else {
-                list_model.insert_with_values(None, &[0], &[lang]);
-            }
-        }
-
-        let ev_scrolled_window = builder.get_object("ev_scrolled_window").unwrap();
-        let hbox: Grid = builder.get_object("ev_root_widget").unwrap();
-        hbox.show_all();
-
-        Self {
-            edit_area,
-            linecount,
-            hadj,
-            vadj,
-            statusbar,
-            ev_scrolled_window,
-            root_box: hbox,
-        }
-    }
-
-    /// Sets up event listeners for the ViewItem
-    fn connect_events(&self, edit_view: &Rc<RefCell<EditView>>) {
-        trace!(
-            "{} '{}'",
-            edit_view.borrow().view_id,
-            gettext("Connecting events of EditView")
-        );
-
-        self.ev_scrolled_window
-            .connect_button_press_event(enclose!((edit_view) move |_,eb| {
-                edit_view.borrow().handle_button_press(eb)
-            }));
-
-        self.edit_area
-            .connect_draw(enclose!((edit_view) move |_,ctx| {
-                edit_view.borrow().handle_da_draw(&ctx)
-            }));
-
-        self.ev_scrolled_window
-            .connect_key_press_event(enclose!((edit_view) move |_, ek| {
-                edit_view.borrow().handle_key_press_event(ek)
-            }));
-
-        self.ev_scrolled_window
-            .connect_motion_notify_event(enclose!((edit_view) move |_,em| {
-               edit_view.borrow().handle_drag(em)
-            }));
-
-        self.ev_scrolled_window.connect_realize(|w| {
-            // Set the text cursor
-            if let Some(disp) = DisplayManager::get().get_default_display() {
-                let cur = Cursor::new_for_display(&disp, CursorType::Xterm);
-                if let Some(win) = w.get_window() {
-                    win.set_cursor(Some(&cur))
-                }
-            }
-            w.grab_focus();
-        });
-
-        self.edit_area.connect_size_allocate(enclose!((edit_view) move |_,alloc| {
-            debug!("{}: {}={} {}={}", gettext("Size changed to"), gettext("width"), alloc.width, gettext("height"), alloc.height);
-            edit_view.borrow().da_size_allocate(alloc.width, alloc.height);
-            edit_view.borrow().do_resize(&edit_view.borrow().view_id,alloc.width, alloc.height);
-        }));
-
-        self.linecount
-            .connect_draw(enclose!((edit_view) move |_,ctx| {
-                edit_view.borrow().handle_linecount_draw(&ctx)
-            }));
-
-        self.statusbar
-            .syntax_treeview
-            .get_selection()
-            .connect_changed(enclose!((edit_view) move |ts| {
-                if let Some(syntax_tup) = ts.get_selected() {
-                    let selected_syntax =  syntax_tup.0.get_value(&syntax_tup.1, 0);
-                    if let Some(lang) = selected_syntax.get::<&str>() {
-                        edit_view.borrow().view_item.statusbar.syntax_label.set_text(lang);
-                        // We localized it ourselves, so we have to turn it into English again when sending it to Xi
-                        if lang == gettext("Plain Text") {
-                             edit_view.borrow().set_language("Plain Text");
-                        } else {
-                             edit_view.borrow().set_language(&lang);
-                        }
-                    }
-                }
-            }));
-
-        self.ev_scrolled_window
-            .connect_scroll_event(enclose!((edit_view) move |_,_| {
-                edit_view.borrow().update_visible_scroll_region();
-                Inhibit(false)
-            }));
-
-        // Make scrolling possible even when scrolling on the linecount
-        self.linecount
-            .connect_scroll_event(enclose!((edit_view) move |_,es| {
-                    edit_view.borrow().view_item.ev_scrolled_window.emit("scroll-event", &[&es.to_value()]).unwrap();
-                    Inhibit(false)
-            }));
-    }
-
-    /// Gets the pango Context from the main drawing area.
-    fn get_pango_ctx(&self) -> pango::Context {
-        self.edit_area
-            .get_pango_context()
-            .unwrap_or_else(|| panic!("{}", &gettext("Failed to get Pango context")))
-    }
-}
 
 /// Returned by `EditView::get_text_size()` and used to adjust the scrollbars.
 pub struct TextSize {
@@ -258,7 +42,7 @@ pub struct EditView {
     pub top_bar: TopBar,
     pub view_item: ViewItem,
     line_cache: LineCache,
-    find_replace: FindReplace,
+    pub(crate) find_replace: FindReplace,
     edit_font: Font,
     interface_font: Font,
     im_context: IMContextSimple,
@@ -327,215 +111,6 @@ impl EditView {
 
     fn get_edit_font(pango_ctx: &pango::Context, font: &str) -> Font {
         Font::new(pango_ctx, FontDescription::from_string(&font))
-    }
-}
-
-/// Contains the top part of the EditView, tab widget and top bar.
-pub struct TopBar {
-    pub tab_widget: gtk::Box,
-    pub label: Label,
-    pub close_button: Button,
-}
-
-impl TopBar {
-    /// Make the widgets for the tab
-    fn new() -> Self {
-        let builder = Builder::new_from_string(TAB_GLADE_SRC);
-        let tab_widget: Box = builder.get_object("tab_widget").unwrap();
-        let label = builder.get_object("tab_label").unwrap();
-        let close_button = builder.get_object("close_button").unwrap();
-        tab_widget.show_all();
-
-        Self {
-            tab_widget,
-            label,
-            close_button,
-        }
-    }
-}
-
-/// Contains the Find & Replace elements
-#[derive(Clone)]
-struct FindReplace {
-    search_bar: SearchBar,
-    replace_revealer: Revealer,
-    replace_entry: SearchEntry,
-    replace_button: Button,
-    replace_all_button: Button,
-    find_status_label: Label,
-    option_revealer: Revealer,
-    search_entry: SearchEntry,
-    go_down_button: Button,
-    go_up_button: Button,
-    popover: Popover,
-    show_replace_button: ToggleButton,
-    show_options_button: ToggleButton,
-    use_regex_button: CheckButton,
-    case_sensitive_button: CheckButton,
-    whole_word_button: CheckButton,
-}
-
-impl FindReplace {
-    /// Loads the glade description of the window, and builds gtk-rs objects.
-    fn new(btn: &MenuButton) -> Self {
-        const SRC: &str = include_str!("ui/find_replace.glade");
-
-        let builder = Builder::new_from_string(SRC);
-        let search_bar = builder.get_object("search_bar").unwrap();
-        let popover: Popover = builder.get_object("search_popover").unwrap();
-        let replace_revealer: Revealer = builder.get_object("replace_revealer").unwrap();
-        let option_revealer: Revealer = builder.get_object("option_revealer").unwrap();
-        let replace_entry: SearchEntry = builder.get_object("replace_entry").unwrap();
-        let replace_button = builder.get_object("replace_button").unwrap();
-        let replace_all_button = builder.get_object("replace_all_button").unwrap();
-        let find_status_label = builder.get_object("find_status_label").unwrap();
-        let search_entry = builder.get_object("search_entry").unwrap();
-        let go_down_button = builder.get_object("go_down_button").unwrap();
-        let go_up_button = builder.get_object("go_up_button").unwrap();
-        let use_regex_button = builder.get_object("use_regex_button").unwrap();
-        let case_sensitive_button = builder.get_object("case_sensitive_button").unwrap();
-        let whole_word_button = builder.get_object("whole_word_button").unwrap();
-        let show_replace_button = builder.get_object("show_replace_button").unwrap();
-        let show_options_button = builder.get_object("show_options_button").unwrap();
-
-        popover.set_position(PositionType::Bottom);
-        #[cfg(not(feature = "gtk_v3_22"))]
-        popover.set_transitions_enabled(true);
-        popover.set_relative_to(Some(btn));
-
-        Self {
-            replace_revealer,
-            replace_entry,
-            replace_button,
-            replace_all_button,
-            search_entry,
-            go_down_button,
-            go_up_button,
-            use_regex_button,
-            popover,
-            show_replace_button,
-            show_options_button,
-            case_sensitive_button,
-            whole_word_button,
-            option_revealer,
-            find_status_label,
-            search_bar,
-        }
-    }
-
-    /// Sets up event listeners
-    fn connect_events(&self, ev: &Rc<RefCell<EditView>>) {
-        trace!(
-            "{} '{}'",
-            gettext("Connecting FindReplace events for EditView"),
-            ev.borrow().view_id
-        );
-
-        self.popover.connect_event(enclose!((ev) move |_, event| {
-            ev.borrow().find_replace.search_bar.handle_event(event);
-
-            Inhibit(false)
-        }));
-
-        self.popover.connect_closed(enclose!((ev) move |_| {
-            ev.borrow().stop_search();
-            ev.borrow().stop_replace();
-        }));
-
-        self.show_replace_button
-            .connect_toggled(enclose!((ev) move |toggle_btn| {
-                if toggle_btn.get_active() {
-                    ev.borrow().show_replace();
-                } else {
-                    ev.borrow().hide_replace();
-                }
-            }));
-
-        self.show_options_button
-            .connect_toggled(enclose!((ev) move |toggle_btn| {
-                if toggle_btn.get_active() {
-                    ev.borrow().show_findreplace_opts();
-                } else {
-                    ev.borrow().hide_findreplace_opts();
-                }
-            }));
-
-        self.search_bar.connect_entry(&self.search_entry);
-
-        self.search_bar
-            .connect_property_search_mode_enabled_notify(enclose!((ev) move |sb| {
-                if ! sb.get_search_mode() {
-                    ev.borrow().stop_search();
-                }
-            }));
-
-        self.search_entry
-            .connect_search_changed(enclose!((ev) move |w| {
-                if let Some(text) = w.get_text() {
-                    ev.borrow().search_changed(Some(text.to_string()));
-                } else {
-                    ev.borrow().search_changed(None);
-                }
-            }));
-
-        self.replace_entry
-            .connect_next_match(enclose!((ev) move |_| {
-                ev.borrow().find_next();
-            }));
-
-        self.replace_entry
-            .connect_previous_match(enclose!((ev) move |_| {
-                ev.borrow().find_prev();
-            }));
-
-        self.replace_entry
-            .connect_stop_search(enclose!((ev) move |_| {
-                ev.borrow().stop_replace();
-            }));
-
-        let restart_search = move |edit_view: Rc<RefCell<EditView>>| {
-            let text_opt = { edit_view.borrow().find_replace.search_entry.get_text() };
-            if let Some(text) = text_opt {
-                edit_view.borrow().search_changed(Some(text.to_string()));
-            } else {
-                edit_view.borrow().search_changed(None);
-            }
-        };
-
-        self.use_regex_button
-            .connect_toggled(enclose!((ev) move |_| restart_search(ev.clone())));
-
-        self.whole_word_button
-            .connect_toggled(enclose!((ev) move |_| restart_search(ev.clone())));
-
-        self.case_sensitive_button
-            .connect_toggled(enclose!((ev) move |_| restart_search(ev.clone())));
-
-        self.search_entry.connect_activate(enclose!((ev) move |_| {
-            ev.borrow().find_next();
-        }));
-
-        self.search_entry
-            .connect_stop_search(enclose!((ev) move |_| {
-                ev.borrow().stop_search();
-            }));
-
-        self.replace_button.connect_clicked(enclose!((ev) move |_| {
-            ev.borrow().replace();
-        }));
-
-        self.replace_all_button
-            .connect_clicked(enclose!((ev) move |_| {
-                ev.borrow().replace_all();
-            }));
-
-        self.go_down_button.connect_clicked(enclose!((ev) move |_| {
-            ev.borrow().find_next();
-        }));
-
-        self.go_up_button.connect_clicked(enclose!((ev) move |_| {
-            ev.borrow().find_prev();
-        }));
     }
 }
 
@@ -720,7 +295,7 @@ impl EditView {
     }
 
     /// Allocate the space our DrawingArea needs.
-    fn da_size_allocate(&self, da_width: i32, da_height: i32) {
+    pub(crate) fn da_size_allocate(&self, da_width: i32, da_height: i32) {
         debug!(
             "{}: {}: {}, {}: {}",
             gettext("Allocating DrawingArea size"),
@@ -736,7 +311,7 @@ impl EditView {
     /// This updates the part of the document that's visible to the user, e.g. when scrolling.
     /// This requests the required lines from xi-editor to add them to the line cache and then
     /// adjusts the scrolling to the visible region.
-    fn update_visible_scroll_region(&self) {
+    pub(crate) fn update_visible_scroll_region(&self) {
         trace!(
             "{} 'update_visible_scroll_region' {} '{}'",
             gettext("Handling"),
@@ -1332,7 +907,7 @@ impl EditView {
     // Allow this to be a long function since splitting up the matching into multiple functions
     // would be a pain
     #[allow(clippy::cyclomatic_complexity)]
-    fn handle_key_press_event(&self, ek: &EventKey) -> Inhibit {
+    pub(crate) fn handle_key_press_event(&self, ek: &EventKey) -> Inhibit {
         trace!(
             "{} 'key_press_event' {} '{}': {:?}",
             gettext("Handling"),
@@ -1550,7 +1125,7 @@ impl EditView {
     }
 
     /// Resize the EditView
-    fn do_resize(&self, view_id: &str, width: i32, height: i32) {
+    pub(crate) fn do_resize(&self, view_id: &str, width: i32, height: i32) {
         trace!("{} '{}'", gettext("Resizing EditView"), view_id);
         self.core.resize(view_id, width, height);
     }
@@ -1621,11 +1196,11 @@ impl EditView {
         self.find_replace.replace_revealer.set_reveal_child(false);
     }
 
-    fn show_findreplace_opts(&self) {
+    pub(crate) fn show_findreplace_opts(&self) {
         self.find_replace.option_revealer.set_reveal_child(true);
     }
 
-    fn hide_findreplace_opts(&self) {
+    pub(crate) fn hide_findreplace_opts(&self) {
         self.find_replace.option_revealer.set_reveal_child(false);
     }
 
