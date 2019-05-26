@@ -8,7 +8,6 @@ use gdk::*;
 use gettextrs::gettext;
 use glib::{source, MainContext};
 use gtk::{self, *};
-use gxi_linecache::{Line, LineCache, StyleSpan};
 use gxi_peer::Core;
 use log::{debug, error, trace, warn};
 use pango::{self, ContextExt, LayoutExt, *};
@@ -18,6 +17,8 @@ use std::cell::RefCell;
 use std::cmp::{max, min};
 use std::rc::Rc;
 use std::u32;
+use xrl::StyleDef as StyleSpan;
+use xrl::{Line, LineCache, Update};
 
 /// Returned by `EditView::get_text_size()` and used to adjust the scrollbars.
 pub struct TextSize {
@@ -76,7 +77,7 @@ impl EditView {
             root_widget: view_item.root_box.clone(),
             top_bar: TopBar::new(),
             view_item: view_item.clone(),
-            line_cache: LineCache::new(),
+            line_cache: LineCache::default(),
             edit_font: Self::get_edit_font(&pango_ctx, &main_state.borrow().settings.edit_font),
             interface_font,
             find_replace: find_replace.clone(),
@@ -229,8 +230,8 @@ impl EditView {
             self.view_id,
             params
         );
-        let update = &params["update"];
-        self.line_cache.apply_update(update);
+        let update: Update = serde_json::from_value(params.clone()).unwrap();
+        self.line_cache.update(update.clone());
 
         // update scrollbars to the new text width and height
         let text_size = self.get_text_size();
@@ -249,12 +250,8 @@ impl EditView {
                 .set_size(text_width as u32, text_height as u32);
         }
 
-        if let Some(pristine) = update["pristine"].as_bool() {
-            if self.pristine != pristine {
-                self.pristine = pristine;
-                self.update_title();
-            }
-        }
+        self.pristine = update.pristine;
+        self.update_title();
 
         // self.change_scrollbar_visibility();
 
@@ -282,7 +279,7 @@ impl EditView {
             y = 0.0;
         }
         let line_num = (y / self.edit_font.font_height) as u64;
-        let index = if let Some(line) = self.line_cache.get_line(line_num) {
+        let index = if let Some(line) = self.line_cache.lines().get(line_num as usize) {
             let pango_ctx = self.view_item.get_pango_ctx();
 
             let layout = self.create_layout_for_line(&pango_ctx, line, &self.get_tabs());
@@ -324,7 +321,7 @@ impl EditView {
         let first_line = (vadj.get_value() / self.edit_font.font_height) as u64;
         let last_line = min(
             (vadj.get_value() + f64::from(da_height) / self.edit_font.font_height) as u64 + 1,
-            num_lines,
+            num_lines as u64,
         );
 
         debug!(
@@ -352,6 +349,7 @@ impl EditView {
         let da_width = f64::from(self.view_item.edit_area.get_allocated_width());
         let da_height = f64::from(self.view_item.edit_area.get_allocated_height());
         let num_lines = self.line_cache.height();
+        ();
 
         let all_text_height =
             num_lines as f64 * self.edit_font.font_height + self.edit_font.font_descent;
@@ -365,7 +363,7 @@ impl EditView {
         let vadj = &self.view_item.vadj;
         let first_line = (vadj.get_value() / self.edit_font.font_height) as u64;
         let last_line = (vadj.get_value() + da_height / self.edit_font.font_height) as u64 + 1;
-        let last_line = min(last_line, num_lines);
+        let last_line = min(last_line, num_lines as u64);
         // Set this to pango::SCALE, we divide by that later on.
         let mut max_width = pango::SCALE;
 
@@ -375,7 +373,7 @@ impl EditView {
         // Determine the longest line as per Pango. Creating layouts with Pango here is kind of expensive
         // here, but it's hard determining an accurate width otherwise.
         for i in first_line..last_line {
-            if let Some(line) = self.line_cache.get_line(i) {
+            if let Some(line) = self.line_cache.lines().get(i as usize) {
                 let layout = self.create_layout_for_line(&pango_ctx, line, &tabs);
                 max_width = max(max_width, layout.get_extents().1.width);
             }
@@ -417,6 +415,7 @@ impl EditView {
 
         // let (text_width, text_height) = self.get_text_size();
         let num_lines = self.line_cache.height();
+        ();
 
         let vadj = &self.view_item.vadj;
         let hadj = &self.view_item.hadj;
@@ -434,7 +433,7 @@ impl EditView {
         let first_line = (vadj.get_value() / self.edit_font.font_height) as u64;
         let last_line =
             ((vadj.get_value() + f64::from(da_height)) / self.edit_font.font_height) as u64 + 1;
-        let last_line = min(last_line, num_lines);
+        let last_line = min(last_line, num_lines as u64);
 
         let pango_ctx = self.view_item.get_pango_ctx();
         pango_ctx.set_font_description(&self.edit_font.font_desc);
@@ -469,8 +468,8 @@ impl EditView {
 
         for i in first_line..last_line {
             // Keep track of the starting x position
-            if let Some(line) = self.line_cache.get_line(i) {
-                if self.main_state.borrow().settings.highlight_line && !line.cursor().is_empty() {
+            if let Some(line) = self.line_cache.lines().get(i as usize) {
+                if self.main_state.borrow().settings.highlight_line && !line.cursor.is_empty() {
                     set_source_color(cr, theme.line_highlight);
                     cr.rectangle(
                         0.0,
@@ -508,7 +507,7 @@ impl EditView {
                 // Set cursor color
                 set_source_color(cr, theme.caret);
 
-                for c in line.cursor() {
+                for c in &line.cursor {
                     let x = layout_line.index_to_x(*c as i32, false) / pango::SCALE;
                     // Draw the cursor
                     cr.rectangle(
@@ -539,6 +538,7 @@ impl EditView {
         let linecount_height = self.view_item.linecount.get_allocated_height();
 
         let num_lines = self.line_cache.height();
+        ();
 
         let vadj = &self.view_item.vadj;
 
@@ -546,7 +546,7 @@ impl EditView {
         let last_line = ((vadj.get_value() + f64::from(linecount_height))
             / self.edit_font.font_height) as u64
             + 1;
-        let last_line = min(last_line, num_lines);
+        let last_line = min(last_line, num_lines as u64);
 
         let pango_ctx = self.view_item.get_pango_ctx();
 
@@ -575,8 +575,8 @@ impl EditView {
         set_source_color(cr, theme.foreground);
         for i in first_line..last_line {
             // Keep track of the starting x position
-            if let Some(line) = self.line_cache.get_line(i) {
-                if line.line_num().is_some() {
+            if let Some(line) = self.line_cache.lines().get(i as usize) {
+                if line.line_num.is_some() {
                     current_line += 1;
                     cr.move_to(
                         0.0,
@@ -635,16 +635,13 @@ impl EditView {
 
     /// Checks how wide a line is
     pub fn line_width(&self, line_string: &str) -> f64 {
-        let line = Line::from_json(
-            &serde_json::json!({
-                "text": line_string,
-            }),
-            None,
-        );
         let pango_ctx = self.view_item.get_pango_ctx();
-        let linecount_layout = self.create_layout_for_line(&pango_ctx, &line, &self.get_tabs());
+        let layout = pango::Layout::new(&pango_ctx);
+        layout.set_tabs(Some(&self.get_tabs()));
+        layout.set_font_description(Some(&self.edit_font.font_desc));
+        layout.set_text(&line_string);
 
-        f64::from(linecount_layout.get_extents().1.width / pango::SCALE)
+        f64::from(layout.get_extents().1.width / pango::SCALE)
     }
 
     /// Creates a pango layout for a particular line in the linecache
@@ -654,10 +651,10 @@ impl EditView {
         line: &Line,
         tabs: &TabArray,
     ) -> pango::Layout {
-        let line_view = if line.text().ends_with('\n') {
-            &line.text()[0..line.text().len() - 1]
+        let line_view = if line.text.ends_with('\n') {
+            &line.text[0..line.text.len() - 1]
         } else {
-            &line.text()
+            &line.text
         };
 
         // Replace spaces with '·'. Do this here since we only want
@@ -687,10 +684,10 @@ impl EditView {
         let mut ix = 0;
         let attr_list = pango::AttrList::new();
         for style in &line.styles {
-            let start_index = (ix + style.start) as u32;
-            let end_index = (ix + style.start + style.len as i64) as u32;
+            let start_index = (ix + style.offset) as u32;
+            let end_index = (ix + style.offset + style.length as i64) as u32;
             let main_state = self.main_state.borrow();
-            let line_style = main_state.styles.get(&style.id);
+            let line_style = main_state.styles.get(&(style.style_id as usize));
 
             if let Some(foreground) = line_style.and_then(|s| s.fg_color) {
                 let pango_color = PangoColor::from(color_from_u32(foreground));
@@ -740,7 +737,7 @@ impl EditView {
                 attr_list.insert(attr);
             }
 
-            ix += style.start + style.len as i64;
+            ix += style.offset + style.length as i64;
         }
 
         layout.set_attributes(Some(&attr_list));
@@ -796,11 +793,11 @@ impl EditView {
 
         {
             // Collect all styles with id 0/1 (selections/find results) to make sure they're in the frame
-            if let Some(line) = self.line_cache.get_line(line) {
+            if let Some(line) = self.line_cache.lines().get(line as usize) {
                 let line_selections: Vec<&StyleSpan> = line
                     .styles
                     .iter()
-                    .filter(|s| s.id == 0 || s.id == 1)
+                    .filter(|s| s.style_id == 0 || s.style_id == 1)
                     .collect();
 
                 let mut begin_selection = None;
@@ -809,19 +806,19 @@ impl EditView {
                 for x in line_selections {
                     if let Some(cur) = begin_selection {
                         // Make sure to use the lowest value of any selection so it's in the view
-                        begin_selection = Some(min(cur, x.start));
+                        begin_selection = Some(min(cur, x.offset));
                     } else {
-                        begin_selection = Some(x.start);
+                        begin_selection = Some(x.offset);
                     }
                     if let Some(cur) = end_selection {
                         // Make sure to use the highest value of any selection so it's in the view
-                        end_selection = Some(max(cur, x.start + x.len as i64));
+                        end_selection = Some(max(cur, x.offset + x.length as i64));
                     } else {
-                        end_selection = Some(x.start + x.len as i64);
+                        end_selection = Some(x.offset + x.length as i64);
                     }
                 }
 
-                let mut line_text = line.text().to_string();
+                let mut line_text = line.text.to_string();
                 // Only measure width up to the right column
                 line_text.truncate(col as usize);
                 let line_length = self.line_width(&line_text);
