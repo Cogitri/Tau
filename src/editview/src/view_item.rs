@@ -131,7 +131,7 @@ impl ViewItem {
         self.edit_area.connect_size_allocate(enclose!((edit_view) move |_,alloc| {
             debug!("{}: {}={} {}={}", gettext("Size changed to"), gettext("width"), alloc.width, gettext("height"), alloc.height);
             edit_view.borrow().da_size_allocate(alloc.width, alloc.height);
-            edit_view.borrow().do_resize(&edit_view.borrow().view_id,alloc.width, alloc.height);
+            edit_view.borrow().do_resize(edit_view.borrow().view_id,alloc.width, alloc.height);
         }));
 
         self.linecount

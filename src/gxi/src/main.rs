@@ -69,49 +69,35 @@ extern crate enclose;
 
 mod about_win;
 mod errors;
+mod frontend;
 mod globals;
 mod main_win;
-mod panic_handler;
+//mod panic_handler;
 mod prefs_win;
 
+use crate::frontend::*;
 use crate::main_win::MainWin;
-use crate::panic_handler::PanicHandler;
+//use crate::panic_handler::PanicHandler;
+use futures::future::Future;
+use futures::stream::Stream;
 use gettextrs::{gettext, TextDomain, TextDomainError};
 use gio::{ApplicationExt, ApplicationExtManual, ApplicationFlags, FileExt};
 use glib::{Char, MainContext};
 use gtk::Application;
 use gxi_config_storage::pref_storage::GSchemaExt;
 use gxi_config_storage::GSchema;
-use gxi_peer::{Core, CoreMsg, ErrorMsg, SharedQueue, XiPeer};
 use log::{debug, info, warn};
-use serde_json::{json, Value};
+use serde_json::json;
+use std::cell::RefCell;
 use std::env::args;
+use std::rc::Rc;
+use std::thread;
+use xrl::{spawn as spawn_xi, Client, ViewId, XiEvent};
 
 fn main() {
-    PanicHandler::new();
+    //PanicHandler::new();
 
-    // Only set Warn as loglevel if the user hasn't explicitly set something else
-    if std::env::var_os("RUST_LOG").is_none() {
-        // Xi likes to return some not-so-necessary Warnings (e.g. if the config
-        // hasn't changed), so let's only turn on warnings for gxi.
-        env_logger::Builder::new()
-            .filter_module("gxi", log::LevelFilter::Warn)
-            .filter_module("editview", log::LevelFilter::Warn)
-            .filter_module("gxi-config-storage", log::LevelFilter::Warn)
-            .filter_module("gxi-linecache", log::LevelFilter::Warn)
-            .filter_module("gxi-peer", log::LevelFilter::Warn)
-            .default_format_timestamp(false)
-            .init();
-    } else {
-        env_logger::Builder::from_default_env().init();
-    }
-
-    let shared_queue = SharedQueue::new();
-
-    let (err_tx, err_rx) = MainContext::channel::<ErrorMsg>(glib::PRIORITY_DEFAULT_IDLE);
-
-    let (xi_peer, xi_rx) = XiPeer::new();
-    let core = Core::new(xi_peer, xi_rx, err_tx, shared_queue.clone());
+    env_logger::Builder::from_default_env().init();
 
     let application = Application::new(
         Some("com.github.Cogitri.gxi"),
@@ -128,81 +114,84 @@ fn main() {
         None,
     );
 
-    let main_context = MainContext::default();
-    main_context.acquire();
-    // Used to create error msgs from threads other than the main thread
-    err_rx.attach(Some(&main_context), |err_msg| {
-        crate::errors::ErrorDialog::new(err_msg);
-        glib::source::Continue(false)
+    // The channel to signal MainWin to create a new tab with an EditView
+    let (new_view_tx, new_view_rx) =
+        MainContext::channel::<(ViewId, Option<String>)>(glib::PRIORITY_LOW);
+    // The channel through which all events from Xi are sent from `crate::frontend::GxiFrontend` to
+    // the MainWin
+    let (event_tx, event_rx) = MainContext::sync_channel::<XiEvent>(glib::PRIORITY_HIGH, 5);
+    let (core, core_stderr) = spawn_xi("xi-core", GxiFrontendBuilder { event_tx });
+
+    let log_core_errors = core_stderr
+        .for_each(|msg| {
+            eprintln!("xi-core stderr: {}", msg);
+            Ok(())
+        })
+        .map_err(|_| ());
+    thread::spawn(move || {
+        tokio::run(log_core_errors);
     });
 
-    application.connect_startup(enclose!((shared_queue, core) move |application| {
-        debug!("{}", gettext("Starting gxi"));
+    //FIXME: This is a hack to satisfy the borrowchecker. `connect_startup` is a FnMut even though
+    // it's only called once, so it's fine to move new_view_rx and event_rx into connect_startup
+    let new_view_rx_opt = Rc::new(RefCell::new(Some(new_view_rx)));
+    let event_rx_opt = Rc::new(RefCell::new(Some(event_rx)));
 
-        glib::set_application_name("gxi");
+    application.connect_startup(
+        enclose!((core, application, new_view_rx_opt, event_rx_opt, new_view_tx) move |_| {
+            debug!("{}", gettext("Starting gxi"));
 
-        // No need to gettext this, gettext doesn't work yet
-        match TextDomain::new("gxi")
-            .push(crate::globals::LOCALEDIR.unwrap_or("po"))
-            .init()
-        {
-            Ok(locale) => info!("Translation found, setting locale to {:?}", locale),
-            Err(TextDomainError::TranslationNotFound(lang)) => {
-                // We don't have an 'en' catalog since the messages are English by default
-                if lang != "en" {
-                    warn!("Translation not found for lang {}", lang)
+            glib::set_application_name("gxi");
+
+            // No need to gettext this, gettext doesn't work yet
+            match TextDomain::new("gxi")
+                .push(crate::globals::LOCALEDIR.unwrap_or("po"))
+                .init()
+            {
+                Ok(locale) => info!("Translation found, setting locale to {:?}", locale),
+                Err(TextDomainError::TranslationNotFound(lang)) => {
+                    // We don't have an 'en' catalog since the messages are English by default
+                    if lang != "en" {
+                        warn!("Translation not found for lang {}", lang)
+                    }
                 }
+                Err(TextDomainError::InvalidLocale(locale)) => warn!("Invalid locale {}", locale),
             }
-            Err(TextDomainError::InvalidLocale(locale)) => warn!("Invalid locale {}", locale),
-        }
 
-        core.client_started(None, crate::globals::PLUGIN_DIR.unwrap_or("/usr/local/libexec/gxi/plugins"));
+            let xi_config_dir = std::env::var("XI_CONFIG_DIR").ok();
+            tokio::run(
+                core.client_started(
+                    xi_config_dir.as_ref().map(String::as_str),
+                    crate::globals::PLUGIN_DIR).map_err(|_|()));
 
-        setup_config(&core);
+            setup_config(&core);
 
-        MainWin::new(
-            application,
-            shared_queue.clone(),
-            core.clone(),
-           );
-    }));
+            MainWin::new(
+                application.clone(),
+                core.clone(),
+                new_view_rx_opt.borrow_mut().take().unwrap(),
+                new_view_tx.clone(),
+                event_rx_opt.borrow_mut().take().unwrap(),
+            );
+        }),
+    );
 
-    application.connect_activate(enclose!((shared_queue, core) move |_| {
+    application.connect_activate(enclose!((core, new_view_tx) move |_| {
         debug!("{}", gettext("Activating new view"));
 
-        let mut params = json!({});
-        params["file_path"] = Value::Null;
+        let view_id = tokio::executor::current_thread::block_on_all(core.new_view(None)).unwrap();
 
-        let shared_queue = shared_queue.clone();
-        core.send_request("new_view", &params,
-            move |value| {
-                shared_queue.add_core_msg(CoreMsg::NewViewReply{
-                    file_name: None,
-                    value: value.clone(),
-                })
-            }
-        );
+        new_view_tx.send((view_id, None)).unwrap();
     }));
 
-    application.connect_open(enclose!((shared_queue, core) move |_,files,_| {
+    application.connect_open(enclose!((core) move |_,files,_| {
         debug!("{}", gettext("Opening new file"));
 
         for file in files {
             if let Some(path) = file.get_path() {
-                let path = path.to_string_lossy().into_owned();
-
-                let mut params = json!({});
-                params["file_path"] = json!(path);
-
-                let shared_queue = shared_queue.clone();
-                core.send_request("new_view", &params,
-                    move |value| {
-                        shared_queue.add_core_msg(CoreMsg::NewViewReply{
-                            file_name: Some(path),
-                            value: value.clone(),
-                        })
-                    }
-                );
+                let file =  path.to_str().map(|s| s.to_string());
+                let view_id = tokio::executor::current_thread::block_on_all(core.new_view(file.clone())).unwrap();
+                new_view_tx.send((view_id, file)).unwrap();
             }
         }
     }));
@@ -228,7 +217,8 @@ fn main() {
     application.run(args);
 }
 
-fn setup_config(core: &Core) {
+/// Send the current config to xi-editor during startup
+fn setup_config(core: &Client) {
     let gschema = GSchema::new("com.github.Cogitri.gxi");
 
     let tab_size: u32 = gschema.get_key("tab-size");
@@ -250,9 +240,9 @@ fn setup_config(core: &Core) {
     #[cfg(not(windows))]
     const LINE_ENDING: &str = "\n";
 
-    core.modify_user_config(
+    tokio::executor::current_thread::block_on_all(core.modify_user_config(
         "general",
-        &json!({
+        json!({
             "tab_size": tab_size,
             "autodetect_whitespace": autodetect_whitespace,
             "translate_tabs_to_spaces": translate_tabs_to_spaces,
@@ -262,5 +252,6 @@ fn setup_config(core: &Core) {
             "word_wrap": word_wrap,
             "line_ending": LINE_ENDING,
         }),
-    )
+    ))
+    .unwrap();
 }

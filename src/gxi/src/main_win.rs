@@ -1,23 +1,19 @@
 use crate::about_win::AboutWin;
-use crate::errors::ErrorDialog;
+use crate::errors::{ErrorDialog, ErrorMsg};
 use crate::prefs_win::PrefsWin;
-use editview::{theme::u32_from_color, theme::LineStyle, EditView, MainState, Settings};
+use editview::{theme::u32_from_color, EditView, MainState, Settings};
 use gdk_pixbuf::Pixbuf;
 use gettextrs::gettext;
 use gio::{ActionMapExt, ApplicationExt, Resource, SettingsExt, SimpleAction};
-use glib::{Bytes, MainContext};
+use glib::{Bytes, MainContext, Receiver, Sender};
 use gtk::*;
 use gxi_config_storage::{GSchema, GSchemaExt};
-use gxi_peer::ErrorMsg;
-use gxi_peer::{Core, CoreMsg, SharedQueue};
 use log::{debug, error, info, trace, warn};
-use serde_derive::*;
-use serde_json::{self, json, Value};
+use serde_json::{self, json};
 use std::cell::RefCell;
 use std::collections::{BTreeMap, HashMap};
 use std::rc::Rc;
-use std::thread;
-use syntect::highlighting::ThemeSettings;
+use xrl::{Client, Style, ViewId, XiEvent, XiEvent::*};
 
 pub(crate) const RESOURCE: &[u8] = include_bytes!("ui/resources.gresource");
 
@@ -41,12 +37,6 @@ impl SaveAction {
             _ => None,
         }
     }
-}
-
-#[derive(Deserialize)]
-pub struct MeasureWidth {
-    pub id: u64,
-    pub strings: Vec<String>,
 }
 
 struct WinProp {
@@ -76,20 +66,26 @@ impl WinProp {
 }
 
 pub struct MainWin {
-    core: Core,
-    shared_queue: SharedQueue,
+    core: Client,
     window: ApplicationWindow,
     notebook: Notebook,
     builder: Builder,
-    views: RefCell<BTreeMap<String, Rc<RefCell<EditView>>>>,
+    views: RefCell<BTreeMap<ViewId, Rc<RefCell<EditView>>>>,
     w_to_ev: RefCell<HashMap<Widget, Rc<RefCell<EditView>>>>,
-    view_id_to_w: RefCell<HashMap<String, Widget>>,
+    view_id_to_w: RefCell<HashMap<ViewId, Widget>>,
     state: Rc<RefCell<MainState>>,
     properties: RefCell<WinProp>,
+    new_view_tx: Sender<(ViewId, Option<String>)>,
 }
 
 impl MainWin {
-    pub fn new(application: &Application, shared_queue: SharedQueue, core: Core) -> Rc<Self> {
+    pub fn new(
+        application: Application,
+        core: Client,
+        new_view_rx: Receiver<(ViewId, Option<String>)>,
+        new_view_tx: Sender<(ViewId, Option<String>)>,
+        event_rx: Receiver<XiEvent>,
+    ) -> Rc<Self> {
         let gbytes = Bytes::from_static(RESOURCE);
         let resource = Resource::new_from_data(&gbytes).unwrap();
         gio::resources_register(&resource);
@@ -128,7 +124,6 @@ impl MainWin {
 
         let main_win = Rc::new(Self {
             core: core.clone(),
-            shared_queue: shared_queue.clone(),
             window: window.clone(),
             notebook: notebook.clone(),
             builder: builder.clone(),
@@ -136,32 +131,13 @@ impl MainWin {
             w_to_ev: Default::default(),
             view_id_to_w: Default::default(),
             state: main_state.clone(),
+            new_view_tx,
             properties,
         });
 
         connect_settings_change(&main_win, &core);
 
-        let (msg_tx, msg_rx) = MainContext::channel::<CoreMsg>(glib::PRIORITY_HIGH);
-        let main_context = MainContext::default();
-        main_context.acquire();
-
-        thread::spawn(move || loop {
-            if let Ok(msg) = shared_queue.queue_rx.lock().pop() {
-                trace!("{}: {:?}", gettext("Found message in queue"), msg);
-                msg_tx.send(msg).unwrap();
-            }
-        });
-
-        msg_rx.attach(
-            Some(&main_context),
-            enclose!((main_win) move |msg| {
-                trace!("{}", gettext("Found a message from xi"));
-                Self::handle_msg(&main_win, msg);
-                glib::source::Continue(true)
-            }),
-        );
-
-        window.set_application(Some(application));
+        window.set_application(Some(&application));
 
         //This is called when the window is closed with the 'X' or via the application menu, etc.
         window.connect_delete_event(enclose!((main_win, window) move |_, _| {
@@ -332,6 +308,24 @@ impl MainWin {
             app.set_accels_for_action("app.close", &["<Primary>w"]);
         }
 
+        let main_context = MainContext::default();
+
+        new_view_rx.attach(
+            Some(&main_context),
+            enclose!((main_win) move |(view_id, path)| {
+                MainWin::new_view_response(&main_win, path, view_id);
+                Continue(true)
+            }),
+        );
+
+        event_rx.attach(
+            Some(&main_context),
+            enclose!((main_win) move |ev| {
+                    MainWin::handle_event(&main_win, ev);
+                    Continue(true)
+            }),
+        );
+
         debug!("{}", gettext("Showing main window"));
         window.show_all();
 
@@ -350,59 +344,40 @@ impl MainWin {
 }
 
 impl MainWin {
-    pub fn handle_msg(main_win: &Rc<Self>, msg: CoreMsg) {
-        trace!("{}: {:?}", gettext("Handling CoreMsg"), msg);
-        match msg {
-            CoreMsg::NewViewReply { file_name, value } => {
-                Self::new_view_response(&main_win, file_name, &value)
-            }
-            CoreMsg::Notification { method, params, id } => {
-                match method.as_ref() {
-                    "alert" => main_win.alert(&params),
-                    "available_themes" => main_win.available_themes(&params),
-                    "available_plugins" => main_win.available_plugins(&params),
-                    "config_changed" => main_win.config_changed(&params),
-                    "def_style" => main_win.def_style(&params),
-                    "find_status" => main_win.find_status(&params),
-                    "replace_status" => main_win.replace_status(&params),
-                    "update" => main_win.update(&params),
-                    "scroll_to" => main_win.scroll_to(&params),
-                    "theme_changed" => main_win.theme_changed(&params),
-                    "measure_width" => main_win.measure_width(id, params),
-                    "available_languages" => main_win.available_languages(&params),
-                    "language_changed" => main_win.language_changed(&params),
-                    "plugin_started" => main_win.plugin_started(&params),
-                    "plugin_stopped" => main_win.plugin_stopped(&params),
-                    _ => {
-                        error!(
-                            "{}: {}",
-                            gettext("!!! UNHANDLED NOTIFICATION, PLEASE OPEN A BUGREPORT!"),
-                            method
-                        );
-                    }
-                };
-            }
-        };
-    }
-
-    pub fn alert(&self, params: &Value) {
-        if let Some(msg) = params["msg"].as_str() {
-            ErrorDialog::new(ErrorMsg {
-                msg: msg.to_string(),
-                fatal: false,
-            });
+    fn handle_event(main_win: &Rc<Self>, ev: XiEvent) {
+        trace!("{}: {:?}", gettext("Handling XiEvent"), ev);
+        match ev {
+            Alert(alert) => main_win.alert(alert),
+            AvailableThemes(themes) => main_win.available_themes(themes),
+            AvailablePlugins(plugins) => main_win.available_plugins(plugins),
+            ConfigChanged(config) => main_win.config_changed(config),
+            DefStyle(style) => main_win.def_style(style),
+            FindStatus(status) => main_win.find_status(status),
+            ReplaceStatus(status) => main_win.replace_status(status),
+            Update(update) => main_win.update(update),
+            ScrollTo(scroll) => main_win.scroll_to(scroll),
+            ThemeChanged(theme) => main_win.theme_changed(theme),
+            //MeasureWidth(measure_width) => main_win.measure_width(&measure_width),
+            AvailableLanguages(langs) => main_win.available_languages(langs),
+            LanguageChanged(lang) => main_win.language_changed(lang),
+            PluginStarted(plugin) => main_win.plugin_started(plugin),
+            PluginStoped(plugin) => main_win.plugin_stopped(plugin),
+            _ => {}
         }
     }
 
-    pub fn available_themes(&self, params: &Value) {
+    pub fn alert(&self, params: xrl::Alert) {
+        ErrorDialog::new(ErrorMsg {
+            msg: params.msg,
+            fatal: false,
+        });
+    }
+
+    pub fn available_themes(&self, params: xrl::AvailableThemes) {
         let mut state = self.state.borrow_mut();
         state.themes.clear();
-        if let Some(themes) = params["themes"].as_array() {
-            for theme in themes {
-                if let Some(theme) = theme.as_str() {
-                    state.themes.push(theme.to_string());
-                }
-            }
+        for theme in params.themes {
+            state.themes.push(theme.to_string());
         }
 
         if !state.themes.contains(&state.theme_name) {
@@ -420,191 +395,136 @@ impl MainWin {
             }
         }
 
-        self.core
-            .send_notification("set_theme", &json!({ "theme_name": state.theme_name }));
+        self.core.set_theme(&state.theme_name);
     }
 
-    pub fn theme_changed(&self, params: &Value) {
-        let theme_settings = params["theme"].clone();
-        let theme: ThemeSettings = match serde_json::from_value(theme_settings) {
-            Err(e) => {
-                error!("{}: {}", gettext("Failed to convert theme settings"), e);
-                return;
-            }
-            Ok(ts) => ts,
-        };
-
+    pub fn theme_changed(&self, params: xrl::ThemeChanged) {
         // FIXME: Use annotations instead of constructing the selection style here
-        let selection_style = LineStyle {
-            fg_color: theme
+        let selection_style = Style {
+            id: 0,
+            fg_color: params
+                .theme
                 .selection_foreground
                 .and_then(|s| Some(u32_from_color(s))),
-            bg_color: theme.selection.and_then(|s| Some(u32_from_color(s))),
+            bg_color: params.theme.selection.and_then(|s| Some(u32_from_color(s))),
             weight: None,
             italic: None,
             underline: None,
         };
 
         let mut state = self.state.borrow_mut();
-        state.theme = theme;
+        state.theme = params.theme.clone();
         state.styles.insert(0, selection_style);
     }
 
-    pub fn available_plugins(&self, params: &Value) {
+    pub fn available_plugins(&self, params: xrl::AvailablePlugins) {
         let mut has_syntect = false;
 
-        if let Some(available_plugins) = params["plugins"].as_array() {
-            for x in available_plugins {
-                if x["name"] == "xi-syntect-plugin" {
-                    has_syntect = true;
-                }
+        for x in &params.plugins {
+            if &x.name == "xi-syntect-plugin" {
+                has_syntect = true;
             }
         }
 
         if !has_syntect {
             ErrorDialog::new(ErrorMsg {
-                msg: format!("{}: {:?}", gettext("Couldn't find syntect plugin, functionality will be limited! Only found the following plugins"), params["plugins"].as_array()),
+                msg: format!("{}: {:?}", gettext("Couldn't find syntect plugin, functionality will be limited! Only found the following plugins"), params.plugins),
                 fatal: false,
             });
         }
     }
 
-    pub fn config_changed(&self, params: &Value) {
+    pub fn config_changed(&self, params: xrl::ConfigChanged) {
         let views = self.views.borrow();
-        if let Some(ev) = params["view_id"].as_str().and_then(|id| views.get(id)) {
-            ev.borrow_mut().config_changed(&params["changes"])
+        if let Some(ev) = views.get(&params.view_id) {
+            ev.borrow_mut().config_changed(&params.changes)
         }
     }
 
-    pub fn find_status(&self, params: &Value) {
+    pub fn find_status(&self, params: xrl::FindStatus) {
         let views = self.views.borrow();
-        if let Some(ev) = params["view_id"].as_str().and_then(|id| views.get(id)) {
-            ev.borrow().find_status(&params["queries"])
+        if let Some(ev) = views.get(&params.view_id) {
+            ev.borrow().find_status(&params.queries)
         }
     }
 
-    pub fn replace_status(&self, params: &Value) {
+    pub fn replace_status(&self, params: xrl::ReplaceStatus) {
         let views = self.views.borrow();
-        if let Some(ev) = params["view_id"].as_str().and_then(|id| views.get(id)) {
-            ev.borrow().replace_status(&params["status"])
+        if let Some(ev) = views.get(&params.view_id) {
+            ev.borrow().replace_status(&params.status)
         }
     }
 
-    pub fn def_style(&self, params: &Value) {
-        let style: LineStyle = serde_json::from_value(params.clone()).unwrap();
-
-        if let Some(id) = params["id"].as_u64() {
-            let mut state = self.state.borrow_mut();
-            state.styles.insert(id as usize, style);
-        }
+    pub fn def_style(&self, params: xrl::Style) {
+        let mut state = self.state.borrow_mut();
+        state.styles.insert(params.id as usize, params);
     }
 
-    pub fn update(&self, params: &Value) {
+    pub fn update(&self, params: xrl::Update) {
         trace!("{} 'update': {:?}", gettext("Handling"), params);
         let views = self.views.borrow();
-        if let Some(ev) = params["view_id"].as_str().and_then(|id| views.get(id)) {
-            ev.borrow_mut().update(params)
+        if let Some(ev) = views.get(&params.view_id) {
+            ev.borrow_mut().update(&params)
         }
     }
 
-    pub fn scroll_to(&self, params: &Value) {
+    pub fn scroll_to(&self, params: xrl::ScrollTo) {
         trace!("{} 'scroll_to' {:?}", gettext("Handling"), params);
 
-        let line = {
-            match params["line"].as_u64() {
-                None => return,
-                Some(line) => line,
-            }
-        };
-
-        let col = {
-            match params["col"].as_u64() {
-                None => return,
-                Some(col) => col,
-            }
-        };
-
         let views = self.views.borrow();
-        if let Some(ev) = params["view_id"].as_str().and_then(|id| views.get(id)) {
+        if let Some(ev) = views.get(&params.view_id) {
             let idx = self.notebook.page_num(&ev.borrow().root_widget);
             self.notebook.set_current_page(idx);
-            ev.borrow().scroll_to(line, col);
+            ev.borrow().scroll_to(params.line, params.column);
         }
     }
 
-    fn plugin_started(&self, _params: &Value) {}
+    fn plugin_started(&self, _params: xrl::PluginStarted) {}
 
-    fn plugin_stopped(&self, params: &Value) {
-        if let Some(plugin) = params["plugin"].as_str() {
-            let err_code = params["code"].as_u64();
-
-            let err_msg = match err_code {
-                Some(0) => gettext("has stopped due to an user-initiated exit"),
-                Some(_) => format!(
-                    "{} {}",
-                    gettext("has crashed with error code"),
-                    err_code.unwrap()
-                ),
-                None => gettext("has crashed"),
-            };
-
-            ErrorDialog::new(ErrorMsg {
-                msg: format!(
-                    "{} {} {} {}",
-                    gettext("Plugin"),
-                    plugin,
-                    err_msg,
-                    gettext("functionality will be limited")
-                ),
-                fatal: false,
-            });
-        }
+    fn plugin_stopped(&self, params: xrl::PluginStoped) {
+        ErrorDialog::new(ErrorMsg {
+            msg: format!(
+                "{} {} {} {}",
+                gettext("Plugin"),
+                params.plugin,
+                gettext("has crashed"),
+                gettext("functionality will be limited")
+            ),
+            fatal: false,
+        });
     }
 
-    pub fn measure_width(&self, id: Option<u64>, params: Value) {
-        trace!(
-            "{} 'measure_width' id: {:?} {:?}",
-            gettext("Handling"),
-            id,
-            params
-        );
+    /*
+    pub fn measure_width(&self, params: xrl::MeasureWidth) {
+        trace!("{} 'measure_width' {:?}", gettext("Handling"), params);
         if let Some(ev) = self.get_current_edit_view() {
-            let request: Vec<MeasureWidth> = serde_json::from_value(params).unwrap();
-
             let mut widths = Vec::new();
 
-            for mes_width in &request {
+            for mes_width in params.0 {
                 for string in &mes_width.strings {
                     widths.push(ev.borrow().line_width(string))
                 }
             }
             //let widths: Vec<f64> = request.iter().map(|x| x.strings.iter().map(|v| edit_view.borrow().line_width(&v)).collect::<Vec<f64>>()).collect();
 
-            if let Some(id) = id {
-                self.core
-                    .send_result(id, &serde_json::to_value(vec![widths]).unwrap());
-            }
+             self.core.send_result(id, &vec![widths]);
         }
-    }
+    }*/
 
-    pub fn available_languages(&self, params: &Value) {
+    pub fn available_languages(&self, params: xrl::AvailableLanguages) {
         debug!("{} 'available_languages' {:?}", gettext("Handling"), params);
         let mut main_state = self.state.borrow_mut();
         main_state.avail_languages.clear();
-        if let Some(languages) = params["languages"].as_array() {
-            for lang in languages {
-                if let Some(lang) = lang.as_str() {
-                    main_state.avail_languages.push(lang.to_string());
-                }
-            }
+        for lang in params.languages {
+            main_state.avail_languages.push(lang.to_string());
         }
     }
 
-    pub fn language_changed(&self, params: &Value) {
+    pub fn language_changed(&self, params: xrl::LanguageChanged) {
         debug!("{} 'language_changed' {:?}", gettext("Handling"), params);
         let views = self.views.borrow();
-        if let Some(ev) = params["view_id"].as_str().and_then(|id| views.get(id)) {
-            ev.borrow().language_changed(params["language_id"].as_str())
+        if let Some(ev) = views.get(&params.view_id) {
+            ev.borrow().language_changed(&params.language_id)
         }
     }
 
@@ -632,9 +552,9 @@ impl MainWin {
 
             if res == ResponseType::Accept {
                 for file in fcd.get_filenames() {
-                    let file_str = &file.to_string_lossy().into_owned();
-                    match &std::fs::File::open(file_str) {
-                        Ok(_) => main_win.req_new_view(Some(&file_str)),
+                    let file_str = file.to_string_lossy().into_owned();
+                    match std::fs::File::open(&file_str) {
+                        Ok(_) => main_win.req_new_view(Some(file_str)),
                         Err(e) => {
                             let err_msg = format!("{} '{}': {}", &gettext("Couldn't open file"), &file_str, &e.to_string());
                             ErrorDialog::new(ErrorMsg{msg: err_msg, fatal: false});
@@ -694,7 +614,7 @@ impl MainWin {
                         match &std::fs::OpenOptions::new().write(true).create(true).open(&file) {
                             Ok(_) => {
                                 debug!("{} {:?}", gettext("Saving file"), &file);
-                                let view_id = edit_view.borrow().view_id.clone();
+                                let view_id = edit_view.borrow().view_id;
                                 let file = file.to_string_lossy();
                                 main_win.core.save(&view_id, &file);
                                 edit_view.borrow_mut().set_file(&file);
@@ -745,87 +665,72 @@ impl MainWin {
         None
     }
 
-    fn req_new_view(&self, file_name: Option<&str>) {
+    fn req_new_view(&self, file_name: Option<String>) {
         trace!("{}", gettext("Requesting new view"));
-        let mut params = json!({});
-        if let Some(file_name) = file_name {
-            params["file_path"] = json!(file_name);
-        }
 
-        let shared_queue = self.shared_queue.clone();
-        let file_name2 = file_name.map(std::string::ToString::to_string);
-        self.core.send_request("new_view", &params, move |value| {
-            let value = value.clone();
-            shared_queue.add_core_msg(CoreMsg::NewViewReply {
-                file_name: file_name2,
-                value,
-            })
-        });
+        let view_id = tokio::executor::current_thread::block_on_all(
+            self.core
+                .new_view(file_name.as_ref().map(|s| s.to_string())),
+        )
+        .unwrap();
+        self.new_view_tx.send((view_id, file_name)).unwrap();
     }
 
-    fn new_view_response(main_win: &Rc<Self>, file_name: Option<String>, value: &Value) {
+    fn new_view_response(main_win: &Rc<Self>, file_name: Option<String>, view_id: ViewId) {
         trace!("{}", gettext("Creating new EditView"));
         let mut old_ev = None;
 
-        if let Some(view_id) = value.as_str() {
-            let position = if let Some(curr_ev) = main_win.get_current_edit_view() {
-                if curr_ev.borrow().is_empty() {
-                    old_ev = Some(curr_ev.clone());
-                    if let Some(w) = main_win
-                        .view_id_to_w
-                        .borrow()
-                        .get(&curr_ev.borrow().view_id)
-                    {
-                        main_win.notebook.page_num(w)
-                    } else {
-                        None
-                    }
+        let position = if let Some(curr_ev) = main_win.get_current_edit_view() {
+            if curr_ev.borrow().is_empty() {
+                old_ev = Some(curr_ev.clone());
+                if let Some(w) = main_win
+                    .view_id_to_w
+                    .borrow()
+                    .get(&curr_ev.borrow().view_id)
+                {
+                    main_win.notebook.page_num(w)
                 } else {
                     None
                 }
             } else {
                 None
-            };
+            }
+        } else {
+            None
+        };
 
-            let hamburger_button = main_win.builder.get_object("hamburger_button").unwrap();
-            let edit_view = EditView::new(
-                &main_win.state,
-                &main_win.core,
-                &hamburger_button,
-                file_name,
-                view_id.to_string(),
-                &main_win.window,
+        let hamburger_button = main_win.builder.get_object("hamburger_button").unwrap();
+        let edit_view = EditView::new(
+            &main_win.state,
+            &main_win.core,
+            &hamburger_button,
+            file_name,
+            view_id,
+            &main_win.window,
+        );
+        {
+            let ev = edit_view.borrow();
+            let page_num = main_win.notebook.insert_page(
+                &ev.root_widget,
+                Some(&ev.top_bar.tab_widget),
+                position,
             );
-            {
-                let ev = edit_view.borrow();
-                let page_num = main_win.notebook.insert_page(
-                    &ev.root_widget,
-                    Some(&ev.top_bar.tab_widget),
-                    position,
-                );
-                if let Some(w) = main_win.notebook.get_nth_page(Some(page_num)) {
-                    main_win
-                        .w_to_ev
-                        .borrow_mut()
-                        .insert(w.clone(), edit_view.clone());
-                    main_win
-                        .view_id_to_w
-                        .borrow_mut()
-                        .insert(view_id.to_string(), w);
-                }
-
-                ev.top_bar
-                    .close_button
-                    .connect_clicked(enclose!((main_win, edit_view) move |_| {
-                        Self::close_view(&main_win, &edit_view);
-                    }));
+            if let Some(w) = main_win.notebook.get_nth_page(Some(page_num)) {
+                main_win
+                    .w_to_ev
+                    .borrow_mut()
+                    .insert(w.clone(), edit_view.clone());
+                main_win.view_id_to_w.borrow_mut().insert(view_id, w);
             }
 
-            main_win
-                .views
-                .borrow_mut()
-                .insert(view_id.to_string(), edit_view);
+            ev.top_bar
+                .close_button
+                .connect_clicked(enclose!((main_win, edit_view) move |_| {
+                    Self::close_view(&main_win, &edit_view);
+                }));
         }
+
+        main_win.views.borrow_mut().insert(view_id, edit_view);
         if let Some(empty_ev) = old_ev {
             Self::close_view(&main_win, &empty_ev);
         }
@@ -939,8 +844,9 @@ impl MainWin {
         };
         debug!("SaveAction: {:?}", save_action);
 
+        let view_id = edit_view.borrow().view_id;
+
         if save_action != SaveAction::Cancel {
-            let view_id = edit_view.borrow().view_id.clone();
             if let Some(w) = main_win
                 .view_id_to_w
                 .borrow()
@@ -983,7 +889,7 @@ pub fn new_settings() -> Settings {
     }
 }
 
-pub fn connect_settings_change(main_win: &Rc<MainWin>, core: &Core) {
+pub fn connect_settings_change(main_win: &Rc<MainWin>, core: &Client) {
     let gschema = main_win.state.borrow().settings.gschema.clone();
     gschema
         .settings
@@ -1022,21 +928,21 @@ pub fn connect_settings_change(main_win: &Rc<MainWin>, core: &Core) {
                     let val: bool = gschema.get_key("translate-tabs-to-spaces");
                     core.modify_user_config(
                         "general",
-                        &json!({ "translate_tabs_to_spaces": val })
+                        json!({ "translate_tabs_to_spaces": val })
                     );
                 }
                 "auto-indent" => {
                     let val: bool = gschema.get_key("auto-indent");
                     core.modify_user_config(
                         "general",
-                        &json!({ "autodetect_whitespace": val })
+                        json!({ "autodetect_whitespace": val })
                     );
                 }
                 "tab-size" => {
                     let val: u32 = gschema.get_key("tab-size");
                     core.modify_user_config(
                         "general",
-                        &json!({ "tab_size": val })
+                        json!({ "tab_size": val })
                     );
                     main_win.state.borrow_mut().settings.tab_size = val;
                     if let Some(ev) = main_win.get_current_edit_view() {
@@ -1051,7 +957,7 @@ pub fn connect_settings_change(main_win: &Rc<MainWin>, core: &Core) {
                         let font_size = size.parse::<f32>().unwrap();
                         core.modify_user_config(
                             "general",
-                            &json!({ "font_face": font_name, "font_size": font_size })
+                            json!({ "font_face": font_name, "font_size": font_size })
                         );
                         main_win.state.borrow_mut().settings.edit_font = val;
                         if let Some(ev) = main_win.get_current_edit_view() {
@@ -1063,14 +969,14 @@ pub fn connect_settings_change(main_win: &Rc<MainWin>, core: &Core) {
                     let val: bool = gschema.get_key("use-tab-stops");
                     core.modify_user_config(
                         "general",
-                        &json!({ "use_tab_stops": val })
+                        json!({ "use_tab_stops": val })
                     );
                 }
                 "word-wrap" => {
                     let val: bool = gschema.get_key("word-wrap");
                     core.modify_user_config(
                         "general",
-                        &json!({ "word_wrap": val })
+                        json!({ "word_wrap": val })
                     );
                 }
                 "theme-name" => {
