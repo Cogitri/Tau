@@ -609,7 +609,7 @@ dependencies = [
 [[package]]
 name = "gio"
 version = "0.6.0"
-source = "git+https://github.com/gtk-rs/gio#144987ae909bdde81b3f7e3ae7f101f0bbd1ea2a"
+source = "git+https://github.com/gtk-rs/gio#fb794fa4954385817152c5d7f41368adf3ee962b"
 dependencies = [
  "bitflags 1.0.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "fragile 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
