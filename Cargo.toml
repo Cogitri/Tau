@@ -3,9 +3,7 @@ members = [
     "src/editview",
     "src/gxi",
     "src/gxi-config-storage",
-    "src/gxi-peer",
 ]
-exclude = ["vendor/xi-editor/rust/core-lib", "vendor/xi-editor/rust/rpc"]
 
 [profile.release]
 lto = true

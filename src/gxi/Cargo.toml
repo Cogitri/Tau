@@ -22,6 +22,7 @@ editview = { path="../editview" }
 enclose = "1"
 env_logger = "0.6"
 failure = "0.1"
+futures = "0.1"
 gdk = { git="https://github.com/gtk-rs/gdk" }
 gettext-rs = { version="0.4", features=["gettext-system"] }
 gio = { git="https://github.com/gtk-rs/gio" }
@@ -31,7 +32,6 @@ gobject-sys = { git="https://github.com/gtk-rs/sys" }
 gtk = { git="https://github.com/gtk-rs/gtk", features = ["v3_20"] }
 gtk-sys = { git="https://github.com/gtk-rs/sys", features = ["v3_20"] }
 gxi-config-storage = { path="../gxi-config-storage" }
-gxi-peer = { path="../gxi-peer" }
 human-panic = "1"
 log = "0.4"
 pango = { git="https://github.com/gtk-rs/pango", features = ["v1_38"] }
@@ -41,6 +41,8 @@ serde = "1"
 serde_derive = "1"
 serde_json = "1"
 syntect = "3"
+tokio = "0.1.20"
+xrl = { path="/home/rasmus/Projects/xrl" }
 
 [dev-dependencies]
 cargo-husky = { version="1", default-features = false, features = ["user-hooks"] }

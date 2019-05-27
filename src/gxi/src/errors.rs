@@ -2,8 +2,13 @@ use gettextrs::gettext;
 use gio::prelude::*;
 use gtk::prelude::*;
 use gtk::*;
-use gxi_peer::ErrorMsg;
 use log::error;
+
+#[derive(Clone, Debug)]
+pub struct ErrorMsg {
+    pub msg: String,
+    pub fatal: bool,
+}
 
 /// A simple `ErrorDialog` used for if stuff goes south.
 pub struct ErrorDialog {

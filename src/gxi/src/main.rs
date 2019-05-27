@@ -69,26 +69,33 @@ extern crate enclose;
 
 mod about_win;
 mod errors;
+mod frontend;
 mod globals;
 mod main_win;
-mod panic_handler;
+//mod panic_handler;
 mod prefs_win;
 
+use crate::frontend::*;
 use crate::main_win::MainWin;
-use crate::panic_handler::PanicHandler;
+//use crate::panic_handler::PanicHandler;
+use futures::future::Future;
+use futures::stream::Stream;
 use gettextrs::{gettext, TextDomain, TextDomainError};
 use gio::{ApplicationExt, ApplicationExtManual, ApplicationFlags, FileExt};
 use glib::MainContext;
 use gtk::Application;
 use gxi_config_storage::pref_storage::GSchemaExt;
 use gxi_config_storage::GSchema;
-use gxi_peer::{Core, CoreMsg, ErrorMsg, SharedQueue, XiPeer};
 use log::{debug, info, warn};
-use serde_json::{json, Value};
+use serde_json::json;
+use std::cell::RefCell;
 use std::env::args;
+use std::rc::Rc;
+use std::thread;
+use xrl::{spawn as spawn_xi, Client, ViewId, XiEvent};
 
 fn main() {
-    PanicHandler::new();
+    //PanicHandler::new();
 
     // Only set Warn as loglevel if the user hasn't explicitly set something else
     if std::env::var_os("RUST_LOG").is_none() {
@@ -106,75 +113,72 @@ fn main() {
         env_logger::Builder::from_default_env().init();
     }
 
-    let shared_queue = SharedQueue::new();
-
-    let (err_tx, err_rx) = MainContext::channel::<ErrorMsg>(glib::PRIORITY_DEFAULT_IDLE);
-
-    let (xi_peer, xi_rx) = XiPeer::new();
-    let core = Core::new(xi_peer, xi_rx, err_tx, shared_queue.clone());
-
     let application = Application::new(
         Some("com.github.Cogitri.gxi"),
         ApplicationFlags::HANDLES_OPEN,
     )
     .unwrap_or_else(|_| panic!("Failed to create the GTK+ application"));
 
-    let main_context = MainContext::default();
-    main_context.acquire();
-    // Used to create error msgs from threads other than the main thread
-    err_rx.attach(Some(&main_context), |err_msg| {
-        crate::errors::ErrorDialog::new(err_msg);
-        glib::source::Continue(false)
+    let (new_view_tx, new_view_rx) = MainContext::channel::<ViewId>(glib::PRIORITY_LOW);
+    let (event_tx, event_rx) = MainContext::channel::<XiEvent>(glib::PRIORITY_HIGH);
+    let (core, core_stderr) = spawn_xi("xi-core", GxiFrontendBuilder { event_tx });
+
+    let log_core_errors = core_stderr
+        .for_each(|msg| {
+            eprintln!("xi-core stderr: {}", msg);
+            Ok(())
+        })
+        .map_err(|_| ());
+    thread::spawn(move || {
+        tokio::run(log_core_errors);
     });
 
-    application.connect_startup(enclose!((shared_queue, core) move |application| {
-        debug!("{}", gettext("Starting gxi"));
+    let new_view_rx_opt = Rc::new(RefCell::new(Some(new_view_rx)));
+    let event_rx_opt = Rc::new(RefCell::new(Some(event_rx)));
+    application.connect_startup(
+        enclose!((core, application, new_view_rx_opt, event_rx_opt, new_view_tx) move |_| {
+            debug!("{}", gettext("Starting gxi"));
 
-        glib::set_application_name("gxi");
+            glib::set_application_name("gxi");
 
-        // No need to gettext this, gettext doesn't work yet
-        match TextDomain::new("gxi")
-            .push(crate::globals::LOCALEDIR.unwrap_or("po"))
-            .init()
-        {
-            Ok(locale) => info!("Translation found, setting locale to {:?}", locale),
-            Err(TextDomainError::TranslationNotFound(lang)) => {
-                // We don't have an 'en' catalog since the messages are English by default
-                if lang != "en" {
-                    warn!("Translation not found for lang {}", lang)
+            // No need to gettext this, gettext doesn't work yet
+            match TextDomain::new("gxi")
+                .push(crate::globals::LOCALEDIR.unwrap_or("po"))
+                .init()
+            {
+                Ok(locale) => info!("Translation found, setting locale to {:?}", locale),
+                Err(TextDomainError::TranslationNotFound(lang)) => {
+                    // We don't have an 'en' catalog since the messages are English by default
+                    if lang != "en" {
+                        warn!("Translation not found for lang {}", lang)
+                    }
                 }
+                Err(TextDomainError::InvalidLocale(locale)) => warn!("Invalid locale {}", locale),
             }
-            Err(TextDomainError::InvalidLocale(locale)) => warn!("Invalid locale {}", locale),
-        }
 
-        core.client_started(None, crate::globals::PLUGIN_DIR.unwrap_or("/usr/local/libexec/gxi/plugins"));
+            tokio::run(core.client_started(None, crate::globals::PLUGIN_DIR).map_err(|_|()));
 
-        setup_config(&core);
+            setup_config(&core);
 
-        MainWin::new(
-            application,
-            shared_queue.clone(),
-            core.clone(),
-           );
-    }));
+            MainWin::new(
+                application.clone(),
+                core.clone(),
+                new_view_rx_opt.borrow_mut().take().unwrap(),
+                new_view_tx.clone(),
+                event_rx_opt.borrow_mut().take().unwrap(),
+            );
+        }),
+    );
 
-    application.connect_activate(enclose!((shared_queue, core) move |_| {
+    application.connect_activate(enclose!((core, new_view_tx) move |_| {
         debug!("{}", gettext("Activating new view"));
 
-        let mut params = json!({});
-        params["file_path"] = Value::Null;
+        let view_id = tokio::executor::current_thread::block_on_all(core.new_view(None)).unwrap();
 
-        let shared_queue = shared_queue.clone();
-        core.send_request("new_view", &params,
-            move |value| {
-                shared_queue.add_core_msg(CoreMsg::NewViewReply{
-                    file_name: None,
-                    value: value.clone(),
-                })
-            }
-        );
+        new_view_tx.send(view_id).unwrap();
     }));
 
+    /*
     application.connect_open(enclose!((shared_queue, core) move |_,files,_| {
         debug!("{}", gettext("Opening new file"));
 
@@ -196,7 +200,7 @@ fn main() {
                 );
             }
         }
-    }));
+    }));*/
 
     application.connect_shutdown(move |_| {
         debug!("{}", gettext("Shutting down…"));
@@ -205,7 +209,7 @@ fn main() {
     application.run(&args().collect::<Vec<_>>());
 }
 
-fn setup_config(core: &Core) {
+fn setup_config(core: &Client) {
     let gschema = GSchema::new("com.github.Cogitri.gxi");
 
     let tab_size: u32 = gschema.get_key("tab-size");
@@ -227,9 +231,9 @@ fn setup_config(core: &Core) {
     #[cfg(not(windows))]
     const LINE_ENDING: &str = "\n";
 
-    core.modify_user_config(
+    tokio::executor::current_thread::block_on_all(core.modify_user_config(
         "general",
-        &json!({
+        json!({
             "tab_size": tab_size,
             "autodetect_whitespace": autodetect_whitespace,
             "translate_tabs_to_spaces": translate_tabs_to_spaces,
@@ -239,5 +243,6 @@ fn setup_config(core: &Core) {
             "word_wrap": word_wrap,
             "line_ending": LINE_ENDING,
         }),
-    )
+    ))
+    .unwrap();
 }
