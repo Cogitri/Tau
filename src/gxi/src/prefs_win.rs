@@ -4,14 +4,14 @@ use gio::{Resource, SettingsBindFlags, SettingsExt};
 use glib::Bytes;
 use gtk::*;
 use gxi_config_storage::{GSchema, GSchemaExt};
-use gxi_peer::Core;
 use log::{debug, trace};
 use pango::*;
 use std::cell::RefCell;
 use std::rc::Rc;
+use xrl::Client;
 
 pub struct PrefsWin {
-    pub core: Core,
+    pub core: Client,
     pub window: Window,
 }
 
@@ -19,7 +19,7 @@ impl PrefsWin {
     pub fn new(
         parent: &ApplicationWindow,
         main_state: &Rc<RefCell<MainState>>,
-        core: &Core,
+        core: &Client,
         gschema: &GSchema,
     ) -> Self {
         let gbytes = Bytes::from_static(crate::main_win::RESOURCE);

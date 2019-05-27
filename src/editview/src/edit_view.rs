@@ -3,22 +3,21 @@ use crate::main_state::{MainState, Settings};
 use crate::theme::{color_from_u32, set_margin_source_color, set_source_color, PangoColor};
 use crate::view_item::*;
 use cairo::Context;
+use futures::future;
 use gdk::enums::key;
 use gdk::*;
 use gettextrs::gettext;
-use glib::{source, MainContext};
+use glib::source;
 use gtk::{self, *};
-use gxi_peer::Core;
-use log::{debug, error, trace, warn};
+use log::{debug, trace, warn};
 use pango::{self, ContextExt, LayoutExt, *};
 use pangocairo::functions::*;
-use serde_json::Value;
 use std::cell::RefCell;
 use std::cmp::{max, min};
 use std::rc::Rc;
 use std::u32;
 use xrl::StyleDef as StyleSpan;
-use xrl::{Line, LineCache, Update};
+use xrl::{Client, ConfigChanges, Line, LineCache, Query, Status, Update, ViewId};
 
 /// Returned by `EditView::get_text_size()` and used to adjust the scrollbars.
 pub struct TextSize {
@@ -34,9 +33,9 @@ pub struct TextSize {
 
 /// The EditView is the part of gxi that does the actual editing. This is where you edit documents.
 pub struct EditView {
-    core: Core,
+    core: Client,
     main_state: Rc<RefCell<MainState>>,
-    pub view_id: String,
+    pub view_id: ViewId,
     pub file_name: Option<String>,
     pub pristine: bool,
     pub root_widget: Grid,
@@ -54,11 +53,11 @@ impl EditView {
     /// the syntax lang and connects all events which might happen during usage (e.g. scrolling)
     pub fn new(
         main_state: &Rc<RefCell<MainState>>,
-        core: &Core,
+        core: &Client,
         // The FindReplace dialog is relative to this
         hamburger_button: &MenuButton,
         file_name: Option<String>,
-        view_id: String,
+        view_id: ViewId,
         parent: &ApplicationWindow,
     ) -> Rc<RefCell<Self>> {
         trace!("{}, '{}'", gettext("Creating new EditView"), view_id);
@@ -157,7 +156,7 @@ impl EditView {
     /// If xi-editor sends us a [config_changed](https://xi-editor.io/docs/frontend-protocol.html#config_changed)
     /// msg we process it here, e.g. setting the font face/size xi-editor tells us. Most configs don't
     /// need special handling by us though.
-    pub fn config_changed(&mut self, changes: &Value) {
+    pub fn config_changed(&mut self, changes: &ConfigChanges) {
         trace!(
             "{} 'config_changed' {} '{}': {:?}",
             gettext("Handling"),
@@ -165,64 +164,36 @@ impl EditView {
             self.view_id,
             changes
         );
-        if let Some(map) = changes.as_object() {
-            for (name, value) in map {
-                match name.as_ref() {
-                    "font_size" => {
-                        if let Some(font_size) = value.as_f64() {
-                            let pango_ctx = self.view_item.get_pango_ctx();
-                            self.edit_font
-                                .font_desc
-                                .set_size(font_size as i32 * pango::SCALE);
-                            // We've set the new fontsize previously, now we have to regenerate the font height/width etc.
-                            self.edit_font =
-                                Font::new(&pango_ctx, self.edit_font.font_desc.clone());
-                            self.view_item.edit_area.queue_draw();
-                        }
-                    }
-                    "font_face" => {
-                        if let Some(font_face) = value.as_str() {
-                            debug!("{}: {}", gettext("Setting edit font to"), font_face);
-                            let pango_ctx = self.view_item.get_pango_ctx();
-                            self.edit_font = Font::new(
-                                &pango_ctx,
-                                FontDescription::from_string(&format!(
-                                    "{} {}",
-                                    font_face,
-                                    self.edit_font.font_desc.get_size() / pango::SCALE
-                                )),
-                            );
-                            self.view_item.edit_area.queue_draw();
-                        }
-                    }
-                    "tab_size" => (),
-                    "auto_indent" => (),
-                    "autodetect_whitespace" => (),
-                    "plugin_search_path" => (),
-                    "scroll_past_end" => (),
-                    "translate_tabs_to_spaces" => (),
-                    "use_tab_stops" => (),
-                    "word_wrap" => (),
-                    "wrap_width" => (),
-                    "line_ending" => (),
-                    "surrounding_pairs" => (),
-                    "save_with_newline" => (),
-                    _ => {
-                        error!(
-                            "{}: {}",
-                            gettext("Unhandled config option, open a bug report!"),
-                            name
-                        );
-                    }
-                }
-            }
+
+        if let Some(font_size) = changes.font_size {
+            let pango_ctx = self.view_item.get_pango_ctx();
+            self.edit_font
+                .font_desc
+                .set_size(font_size as i32 * pango::SCALE);
+            // We've set the new fontsize previously, now we have to regenerate the font height/width etc.
+            self.edit_font = Font::new(&pango_ctx, self.edit_font.font_desc.clone());
+            self.view_item.edit_area.queue_draw();
+        }
+
+        if let Some(font_face) = &changes.font_face {
+            debug!("{}: {}", gettext("Setting edit font to"), font_face);
+            let pango_ctx = self.view_item.get_pango_ctx();
+            self.edit_font = Font::new(
+                &pango_ctx,
+                FontDescription::from_string(&format!(
+                    "{} {}",
+                    font_face,
+                    self.edit_font.font_desc.get_size() / pango::SCALE
+                )),
+            );
+            self.view_item.edit_area.queue_draw();
         }
     }
 
     /// If xi-editor sends us a [update](https://xi-editor.io/docs/frontend-protocol.html#config_changed)
     /// msg we process it here, setting the scrollbars upper limit accordingly, checking if the EditView
     /// is pristine (_does not_ has unsaved changes) and queue a new draw of the EditView.
-    pub fn update(&mut self, params: &Value) {
+    pub fn update(&mut self, params: &Update) {
         trace!(
             "{} 'update' {} '{}': {:?}",
             gettext("Handling"),
@@ -230,8 +201,7 @@ impl EditView {
             self.view_id,
             params
         );
-        let update: Update = serde_json::from_value(params.clone()).unwrap();
-        self.line_cache.update(update.clone());
+        self.line_cache.update(params.clone());
 
         // update scrollbars to the new text width and height
         let text_size = self.get_text_size();
@@ -250,10 +220,8 @@ impl EditView {
                 .set_size(text_width as u32, text_height as u32);
         }
 
-        self.pristine = update.pristine;
+        self.pristine = params.pristine;
         self.update_title();
-
-        // self.change_scrollbar_visibility();
 
         self.view_item.edit_area.queue_draw();
         self.view_item.linecount.queue_draw();
@@ -349,7 +317,6 @@ impl EditView {
         let da_width = f64::from(self.view_item.edit_area.get_allocated_width());
         let da_height = f64::from(self.view_item.edit_area.get_allocated_height());
         let num_lines = self.line_cache.height();
-        ();
 
         let all_text_height =
             num_lines as f64 * self.edit_font.font_height + self.edit_font.font_descent;
@@ -407,15 +374,7 @@ impl EditView {
         let da_width = self.view_item.edit_area.get_allocated_width();
         let da_height = self.view_item.edit_area.get_allocated_height();
 
-        //debug!("Drawing");
-        // cr.select_font_face("Mono", ::cairo::enums::FontSlant::Normal, ::cairo::enums::FontWeight::Normal);
-        // let mut font_options = cr.get_font_options();
-        // debug!("font options: {:?} {:?} {:?}", font_options, font_options.get_antialias(), font_options.get_hint_style());
-        // font_options.set_hint_style(HintStyle::Full);
-
-        // let (text_width, text_height) = self.get_text_size();
         let num_lines = self.line_cache.height();
-        ();
 
         let vadj = &self.view_item.vadj;
         let hadj = &self.view_item.hadj;
@@ -870,19 +829,19 @@ impl EditView {
         match eb.get_button() {
             1 => {
                 if eb.get_state().contains(ModifierType::SHIFT_MASK) {
-                    self.core.gesture_range_select(&self.view_id, line, col);
+                    self.core.click_range_select(&self.view_id, line, col);
                 } else if eb.get_state().contains(ModifierType::CONTROL_MASK) {
-                    self.core.gesture_toggle_sel(&self.view_id, line, col);
+                    self.core.click_toggle_sel(&self.view_id, line, col);
                 } else if eb.get_event_type() == EventType::DoubleButtonPress {
-                    self.core.gesture_word_select(&self.view_id, line, col);
+                    self.core.click_word_select(&self.view_id, line, col);
                 } else if eb.get_event_type() == EventType::TripleButtonPress {
-                    self.core.gesture_line_select(&self.view_id, line, col);
+                    self.core.click_line_select(&self.view_id, line, col);
                 } else {
-                    self.core.gesture_point_select(&self.view_id, line, col);
+                    self.core.click_point_select(&self.view_id, line, col);
                 }
             }
             2 => {
-                self.do_paste_primary(&self.view_id, line, col);
+                self.do_paste_primary(self.view_id, line, col);
             }
             _ => {}
         }
@@ -936,120 +895,74 @@ impl EditView {
         let norm = !alt && !ctrl && !meta;
 
         match ek.get_keyval() {
-            key::Delete if norm => self.core.delete_forward(view_id),
-            key::BackSpace if norm => self.core.delete_backward(view_id),
+            key::Delete if norm => self.core.delete(view_id),
+            key::BackSpace if norm => self.core.del(view_id),
             key::BackSpace if ctrl => self.core.delete_word_backward(view_id),
-            key::Return | key::KP_Enter => {
-                self.core.insert_newline(&view_id);
-            }
+            key::Return | key::KP_Enter => self.core.insert_newline(view_id),
             key::Tab if norm && !shift => self.core.insert_tab(view_id),
             key::Tab | key::ISO_Left_Tab if norm && shift => self.core.outdent(view_id),
-            key::Up if norm && !shift => self.core.move_up(view_id),
-            key::Down if norm && !shift => self.core.move_down(view_id),
-            key::Left if norm && !shift => self.core.move_left(view_id),
-            key::Right if norm && !shift => self.core.move_right(view_id),
-            key::Up if norm && shift => {
-                self.core.move_up_and_modify_selection(view_id);
-            }
-            key::Down if norm && shift => {
-                self.core.move_down_and_modify_selection(view_id);
-            }
-            key::Left if norm && shift => {
-                self.core.move_left_and_modify_selection(view_id);
-            }
-            key::Right if norm && shift => {
-                self.core.move_right_and_modify_selection(view_id);
-            }
-            key::Left if ctrl && !shift => {
-                self.core.move_word_left(view_id);
-            }
-            key::Right if ctrl && !shift => {
-                self.core.move_word_right(view_id);
-            }
-            key::Left if ctrl && shift => {
-                self.core.move_word_left_and_modify_selection(view_id);
-            }
-            key::Right if ctrl && shift => {
-                self.core.move_word_right_and_modify_selection(view_id);
-            }
-            key::Home if norm && !shift => {
-                self.core.move_to_left_end_of_line(view_id);
-            }
-            key::End if norm && !shift => {
-                self.core.move_to_right_end_of_line(view_id);
-            }
-            key::Home if norm && shift => {
-                self.core
-                    .move_to_left_end_of_line_and_modify_selection(view_id);
-            }
-            key::End if norm && shift => {
-                self.core
-                    .move_to_right_end_of_line_and_modify_selection(view_id);
-            }
-            key::Home if ctrl && !shift => {
-                self.core.move_to_beginning_of_document(view_id);
-            }
-            key::End if ctrl && !shift => {
-                self.core.move_to_end_of_document(view_id);
-            }
-            key::Home if ctrl && shift => {
-                self.core
-                    .move_to_beginning_of_document_and_modify_selection(view_id);
-            }
-            key::End if ctrl && shift => {
-                self.core
-                    .move_to_end_of_document_and_modify_selection(view_id);
-            }
-            key::Page_Up if norm && !shift => {
-                self.core.page_up(view_id);
-            }
-            key::Page_Down if norm && !shift => {
-                self.core.page_down(view_id);
-            }
-            key::Page_Up if norm && shift => {
-                self.core.page_up_and_modify_selection(view_id);
-            }
-            key::Page_Down if norm && shift => {
-                self.core.page_down_and_modify_selection(view_id);
-            }
+            key::Up if norm && !shift => self.core.up(view_id),
+            key::Down if norm && !shift => self.core.down(view_id),
+            key::Left if norm && !shift => self.core.left(view_id),
+            key::Right if norm && !shift => self.core.right(view_id),
+            key::Up if norm && shift => self.core.up_sel(view_id),
+            key::Down if norm && shift => self.core.down_sel(view_id),
+
+            key::Left if norm && shift => self.core.left_sel(view_id),
+
+            key::Right if norm && shift => self.core.right_sel(view_id),
+            key::Left if ctrl && !shift => self.core.move_word_left(view_id),
+            key::Right if ctrl && !shift => self.core.move_word_right(view_id),
+            key::Left if ctrl && shift => self.core.move_word_left_sel(view_id),
+            key::Right if ctrl && shift => self.core.move_word_right_sel(view_id),
+            key::Home if norm && !shift => self.core.line_start(view_id),
+            key::End if norm && !shift => self.core.line_end(view_id),
+            key::Home if norm && shift => self.core.line_start_sel(view_id),
+            key::End if norm && shift => self.core.line_end_sel(view_id),
+            key::Home if ctrl && !shift => self.core.document_begin(view_id),
+            key::End if ctrl && !shift => self.core.document_end(view_id),
+            key::Home if ctrl && shift => self.core.document_begin_sel(view_id),
+            key::End if ctrl && shift => self.core.document_end_sel(view_id),
+            key::Page_Up if norm && !shift => self.core.page_up(view_id),
+            key::Page_Down if norm && !shift => self.core.page_down(view_id),
+            key::Page_Up if norm && shift => self.core.page_up_sel(view_id),
+            key::Page_Down if norm && shift => self.core.page_down_sel(view_id),
             key::Escape => {
                 self.stop_search();
+                std::boxed::Box::new(future::ok(()))
             }
             _ => {
                 if let Some(ch) = ch {
                     match ch {
-                        'a' if ctrl => {
-                            self.core.select_all(view_id);
-                        }
+                        'a' if ctrl => self.core.select_all(view_id),
                         'c' if ctrl => {
-                            self.do_copy(view_id);
+                            self.do_copy(*view_id);
+                            std::boxed::Box::new(future::ok(()))
                         }
                         'v' if ctrl => {
-                            self.do_paste(view_id);
-                        }
-                        't' if ctrl => {
-                            // TODO new tab
+                            self.do_paste(*view_id);
+                            std::boxed::Box::new(future::ok(()))
                         }
                         'x' if ctrl => {
-                            self.do_cut(view_id);
+                            self.do_cut(*view_id);
+                            std::boxed::Box::new(future::ok(()))
                         }
-                        'z' if ctrl => {
-                            self.core.undo(view_id);
-                        }
-                        'Z' if ctrl && shift => {
-                            self.core.redo(view_id);
-                        }
+                        'z' if ctrl => self.core.undo(view_id),
+                        'Z' if ctrl && shift => self.core.redo(view_id),
                         c if (norm) && c >= '\u{0020}' => {
                             debug!("inserting key");
                             self.im_context.filter_keypress(ek);
+                            std::boxed::Box::new(future::ok(()))
                         }
                         _ => {
                             warn!("unhandled key: {:?}", ch);
+                            std::boxed::Box::new(future::ok(()))
                         }
                     }
                 } else {
                     debug!("Inserting non char key");
                     self.im_context.filter_keypress(ek);
+                    std::boxed::Box::new(future::ok(()))
                 }
             }
         };
@@ -1057,74 +970,70 @@ impl EditView {
     }
 
     /// Copies text to the clipboard
-    fn do_cut(&self, view_id: &str) {
-        debug!("{}", gettext("Cutting text"));
+    fn do_cut(&self, view_id: ViewId) {
+        debug!("{}", gettext("Adding cutting text op to idle queue"));
 
-        let (clipboard_tx, clipboard_rx) =
-            MainContext::channel::<Option<String>>(glib::PRIORITY_HIGH);
-        let main_context = MainContext::default();
+        let core = self.core.clone();
+        glib::idle_add(enclose!(
+            (view_id) move || {
+                let board_future = core.cut(&view_id);
 
-        clipboard_rx.attach(Some(&main_context), move |text_opt| {
-            if let Some(text) = text_opt {
-                Clipboard::get(&SELECTION_CLIPBOARD).set_text(&text);
+                let val = tokio::executor::current_thread::block_on_all(board_future).unwrap();
+                if let Some(ref text) = val.as_str() {
+                    Clipboard::get(&SELECTION_CLIPBOARD).set_text(&text);
+                }
+                source::Continue(false)
             }
-            source::Continue(false)
-        });
-
-        self.core.cut(view_id, clipboard_tx);
+        ));
     }
 
     /// Copies text to the clipboard
-    fn do_copy(&self, view_id: &str) {
-        debug!("{}", gettext("Copying text"));
-        let (clipboard_tx, clipboard_rx) =
-            MainContext::channel::<Option<String>>(glib::PRIORITY_HIGH);
-        let main_context = MainContext::default();
+    fn do_copy(&self, view_id: ViewId) {
+        debug!("{}", gettext("Adding copying text op to idle queue"));
 
-        clipboard_rx.attach(Some(&main_context), move |text_opt| {
-            if let Some(text) = text_opt {
-                Clipboard::get(&SELECTION_CLIPBOARD).set_text(&text);
+        let core = self.core.clone();
+        glib::idle_add(enclose!(
+            (view_id) move || {
+                let board_future = core.copy(&view_id);
+
+                let val = tokio::executor::current_thread::block_on_all(board_future).unwrap();
+                if let Some(ref text) = val.as_str() {
+                    Clipboard::get(&SELECTION_CLIPBOARD).set_text(&text);
+                }
+                source::Continue(false)
             }
-            source::Continue(false)
-        });
-
-        self.core.copy(view_id, clipboard_tx);
+        ));
     }
 
     /// Pastes text from the clipboard into the EditView
-    fn do_paste(&self, view_id: &str) {
+    fn do_paste(&self, view_id: ViewId) {
         // if let Some(text) = Clipboard::get(&SELECTION_CLIPBOARD).wait_for_text() {
         //     self.core.insert(view_id, &text);
         // }
         debug!("{}", gettext("Pasting text"));
-        let view_id2 = view_id.to_string().clone();
         let core = self.core.clone();
-        Clipboard::get(&SELECTION_CLIPBOARD).request_text(move |_, text| {
+        Clipboard::get(&SELECTION_CLIPBOARD).request_text(enclose!((view_id) move |_, text| {
             if let Some(clip_content) = text {
-                core.insert(&view_id2, &clip_content);
+                core.insert(&view_id, &clip_content);
             }
-        });
+        }));
     }
 
-    fn do_paste_primary(&self, view_id: &str, line: u64, col: u64) {
-        // if let Some(text) = Clipboard::get(&SELECTION_PRIMARY).wait_for_text() {
-        //     self.core.insert(view_id, &text);
-        // }
+    fn do_paste_primary(&self, view_id: ViewId, line: u64, col: u64) {
         debug!("{}", gettext("Pasting primary text"));
-        let view_id2 = view_id.to_string().clone();
         let core = self.core.clone();
-        Clipboard::get(&SELECTION_PRIMARY).request_text(move |_, text| {
-            core.gesture_point_select(&view_id2, line, col);
+        Clipboard::get(&SELECTION_PRIMARY).request_text(enclose!((view_id) move |_, text| {
+            core.click_point_select(&view_id, line, col);
             if let Some(clip_content) = text {
-                core.insert(&view_id2, &clip_content);
+                core.insert(&view_id, &clip_content);
             }
-        });
+        }));
     }
 
     /// Resize the EditView
-    pub(crate) fn do_resize(&self, view_id: &str, width: i32, height: i32) {
+    pub fn do_resize(&self, view_id: ViewId, width: i32, height: i32) {
         trace!("{} '{}'", gettext("Resizing EditView"), view_id);
-        self.core.resize(view_id, width, height);
+        self.core.resize(&view_id, width, height);
     }
 
     /// Opens the find dialog (Ctrl+F)
@@ -1220,37 +1129,31 @@ impl EditView {
     }
 
     /// Displays how many matches have been found in the find/replace dialog.
-    pub fn find_status(&self, queries: &Value) {
-        if let Some(queries) = queries.as_array() {
-            for query in queries {
-                if let Some(query_obj) = query.as_object() {
-                    if let Some(matches) = query_obj["matches"].as_u64() {
-                        self.find_replace
-                            .find_status_label
-                            .set_text(&format!("{} Results", matches));
-                    }
-                }
-                debug!("query {}", query);
-            }
+    pub fn find_status(&self, queries: &[Query]) {
+        for query in queries {
+            self.find_replace
+                .find_status_label
+                .set_text(&format!("{} Results", query.matches));
+            debug!("query {:?}", query);
         }
     }
 
     /// Displays what chars will be replaced in the replace dialog
     //TODO: Handle preserve_case
-    pub fn replace_status(&self, status: &Value) {
-        if let Some(chars) = status["chars"].as_str() {
-            self.find_replace.replace_entry.set_text(chars);
-        }
+    pub fn replace_status(&self, status: &Status) {
+        self.find_replace.replace_entry.set_text(&status.chars);
     }
 
     /// Go to the next match in the find/replace dialog
     pub fn find_next(&self) {
-        self.core.find_next(&self.view_id, Some(true), Some(true));
+        self.core
+            .find_next(&self.view_id, true, true, xrl::ModifySelection::None);
     }
 
     /// Go the to previous match in the find/replace dialog
     pub fn find_prev(&self) {
-        self.core.find_previous(&self.view_id, Some(true));
+        self.core
+            .find_prev(&self.view_id, true, true, xrl::ModifySelection::None);
     }
 
     /// Tells xi-editor that we're searching for a different string (or none) now
@@ -1291,33 +1194,31 @@ impl EditView {
         self.core.set_language(&self.view_id, &lang);
     }
 
-    pub fn language_changed(&self, syntax: Option<&str>) {
+    pub fn language_changed(&self, syntax: &str) {
         debug!("{} '{:?}'", gettext("Language has been changed to"), syntax);
-        if let Some(lang) = syntax {
-            // https://github.com/xi-editor/xi-editor/issues/1194
-            let lang = if lang == "" || lang == "Plain Text" {
-                gettext("Plain Text")
-            } else {
-                lang.to_string()
-            };
-            let syntax_treeview = &self.view_item.statusbar.syntax_treeview;
-            let lang_pos = self
-                .main_state
-                .borrow()
-                .avail_languages
-                .iter()
-                .position(|s| s == &lang);
-            if let Some(pos) = lang_pos {
-                syntax_treeview
-                    .get_selection()
-                    .select_path(&TreePath::new_from_string(&format!("{}", pos)));
-            } else {
-                warn!(
-                    "{}: '{}'",
-                    gettext("Couldn't determine what position the following language is in"),
-                    lang
-                )
-            }
+        // https://github.com/xi-editor/xi-editor/issues/1194
+        let lang = if syntax == "" || syntax == "Plain Text" {
+            gettext("Plain Text")
+        } else {
+            syntax.to_string()
+        };
+        let syntax_treeview = &self.view_item.statusbar.syntax_treeview;
+        let lang_pos = self
+            .main_state
+            .borrow()
+            .avail_languages
+            .iter()
+            .position(|s| s == &lang);
+        if let Some(pos) = lang_pos {
+            syntax_treeview
+                .get_selection()
+                .select_path(&TreePath::new_from_string(&format!("{}", pos)));
+        } else {
+            warn!(
+                "{}: '{}'",
+                gettext("Couldn't determine what position the following language is in"),
+                lang
+            )
         }
     }
 }

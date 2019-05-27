@@ -1,4 +1,3 @@
-use serde_derive::*;
 use syntect::highlighting::Color;
 
 /// Pango doesn't use rgb but values ranging fom 0 to 65535.
@@ -18,21 +17,6 @@ impl From<Color> for PangoColor {
             b: u16::from(c.b) << 8,
         }
     }
-}
-
-/// A LineStyle represents different styling options for a line
-#[derive(Clone, Copy, Debug, Deserialize)]
-pub struct LineStyle {
-    /// 32-bit RGBA value which sets the font color
-    pub fg_color: Option<u32>,
-    /// 32-bit RGBA value which sets the background of the Pango layout
-    pub bg_color: Option<u32>,
-    /// 100..900, default 400
-    pub weight: Option<u32>,
-    /// default false
-    pub italic: Option<bool>,
-    /// default false
-    pub underline: Option<bool>,
 }
 
 /// Helper function for cairo::Context::set_source_rgba which sets a sane default if the Color is None
