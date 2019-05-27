@@ -1,4 +1,3 @@
-use serde_derive::*;
 use syntect::highlighting::Color;
 
 /// Pango doesn't use rgb but values ranging fom 0 to 65535.

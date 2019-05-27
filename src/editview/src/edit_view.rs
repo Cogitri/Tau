@@ -7,18 +7,17 @@ use futures::future;
 use gdk::enums::key;
 use gdk::*;
 use gettextrs::gettext;
-use glib::{source, MainContext};
+use glib::source;
 use gtk::{self, *};
-use log::{debug, error, trace, warn};
+use log::{debug, trace, warn};
 use pango::{self, ContextExt, LayoutExt, *};
 use pangocairo::functions::*;
-use serde_json::Value;
 use std::cell::RefCell;
 use std::cmp::{max, min};
 use std::rc::Rc;
 use std::u32;
 use xrl::StyleDef as StyleSpan;
-use xrl::{Client, ConfigChanges, Line, LineCache, Query, Status, Update, ViewId, XiEvent::*};
+use xrl::{Client, ConfigChanges, Line, LineCache, Query, Status, Update, ViewId};
 
 /// Returned by `EditView::get_text_size()` and used to adjust the scrollbars.
 pub struct TextSize {

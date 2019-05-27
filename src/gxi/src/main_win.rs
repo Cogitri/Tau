@@ -8,7 +8,6 @@ use glib::{MainContext, Receiver, Sender};
 use gtk::*;
 use gxi_config_storage::{GSchema, GSchemaExt};
 use log::{debug, error, info, trace, warn};
-use serde_derive::*;
 use serde_json::{self, json};
 use std::cell::RefCell;
 use std::collections::{BTreeMap, HashMap};
@@ -73,7 +72,7 @@ pub struct MainWin {
     view_id_to_w: RefCell<HashMap<ViewId, Widget>>,
     state: Rc<RefCell<MainState>>,
     properties: RefCell<WinProp>,
-    new_view_tx: Sender<ViewId>,
+    new_view_tx: Sender<(ViewId, Option<String>)>,
 }
 
 const GLADE_SRC: &str = include_str!("ui/gxi.glade");
@@ -82,8 +81,8 @@ impl MainWin {
     pub fn new(
         application: Application,
         core: Client,
-        new_view_rx: Receiver<ViewId>,
-        new_view_tx: Sender<ViewId>,
+        new_view_rx: Receiver<(ViewId, Option<String>)>,
+        new_view_tx: Sender<(ViewId, Option<String>)>,
         event_rx: Receiver<XiEvent>,
     ) -> Rc<Self> {
         let glade_src = GLADE_SRC;
@@ -306,9 +305,8 @@ impl MainWin {
 
         new_view_rx.attach(
             Some(&main_context),
-            enclose!((main_win) move |view_id| {
-                // TODO: This isn't correct
-                MainWin::new_view_response(&main_win, None, &view_id);
+            enclose!((main_win) move |(view_id, path)| {
+                MainWin::new_view_response(&main_win, path, &view_id);
                 Continue(true)
             }),
         );
@@ -547,9 +545,9 @@ impl MainWin {
 
             if res == ResponseType::Accept {
                 for file in fcd.get_filenames() {
-                    let file_str = &file.to_string_lossy().into_owned();
-                    match &std::fs::File::open(file_str) {
-                        Ok(_) => main_win.req_new_view(Some(&file_str)),
+                    let file_str = file.to_string_lossy().into_owned();
+                    match std::fs::File::open(&file_str) {
+                        Ok(_) => main_win.req_new_view(Some(file_str)),
                         Err(e) => {
                             let err_msg = format!("{} '{}': {}", &gettext("Couldn't open file"), &file_str, &e.to_string());
                             ErrorDialog::new(ErrorMsg{msg: err_msg, fatal: false});
@@ -660,19 +658,15 @@ impl MainWin {
         None
     }
 
-    fn req_new_view(&self, file_name: Option<&str>) {
+    fn req_new_view(&self, file_name: Option<String>) {
         trace!("{}", gettext("Requesting new view"));
-        let mut params = json!({});
-        if let Some(file_name) = file_name {
-            params["file_path"] = json!(file_name);
-        }
 
         let view_id = tokio::executor::current_thread::block_on_all(
-            self.core.new_view(file_name.map(|s| s.to_string())),
+            self.core
+                .new_view(file_name.as_ref().map(|s| s.to_string())),
         )
         .unwrap();
-        //TODO!
-        self.new_view_tx.send(view_id).unwrap();
+        self.new_view_tx.send((view_id, file_name)).unwrap();
     }
 
     fn new_view_response(main_win: &Rc<Self>, file_name: Option<String>, view_id: &ViewId) {

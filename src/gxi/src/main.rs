@@ -97,21 +97,7 @@ use xrl::{spawn as spawn_xi, Client, ViewId, XiEvent};
 fn main() {
     //PanicHandler::new();
 
-    // Only set Warn as loglevel if the user hasn't explicitly set something else
-    if std::env::var_os("RUST_LOG").is_none() {
-        // Xi likes to return some not-so-necessary Warnings (e.g. if the config
-        // hasn't changed), so let's only turn on warnings for gxi.
-        env_logger::Builder::new()
-            .filter_module("gxi", log::LevelFilter::Warn)
-            .filter_module("editview", log::LevelFilter::Warn)
-            .filter_module("gxi-config-storage", log::LevelFilter::Warn)
-            .filter_module("gxi-linecache", log::LevelFilter::Warn)
-            .filter_module("gxi-peer", log::LevelFilter::Warn)
-            .default_format_timestamp(false)
-            .init();
-    } else {
-        env_logger::Builder::from_default_env().init();
-    }
+    env_logger::Builder::from_default_env().init();
 
     let application = Application::new(
         Some("com.github.Cogitri.gxi"),
@@ -119,7 +105,8 @@ fn main() {
     )
     .unwrap_or_else(|_| panic!("Failed to create the GTK+ application"));
 
-    let (new_view_tx, new_view_rx) = MainContext::channel::<ViewId>(glib::PRIORITY_LOW);
+    let (new_view_tx, new_view_rx) =
+        MainContext::channel::<(ViewId, Option<String>)>(glib::PRIORITY_LOW);
     let (event_tx, event_rx) = MainContext::channel::<XiEvent>(glib::PRIORITY_HIGH);
     let (core, core_stderr) = spawn_xi("xi-core", GxiFrontendBuilder { event_tx });
 
@@ -133,6 +120,8 @@ fn main() {
         tokio::run(log_core_errors);
     });
 
+    //FIXME: This is a hack to satisfy the borrowchecker. `connect_startup` is a FnMut even once it
+    // is only called once, so it's fine to move new_view_rx and event_rx into connect_startup
     let new_view_rx_opt = Rc::new(RefCell::new(Some(new_view_rx)));
     let event_rx_opt = Rc::new(RefCell::new(Some(event_rx)));
     application.connect_startup(
@@ -175,32 +164,19 @@ fn main() {
 
         let view_id = tokio::executor::current_thread::block_on_all(core.new_view(None)).unwrap();
 
-        new_view_tx.send(view_id).unwrap();
+        new_view_tx.send((view_id, None)).unwrap();
     }));
 
-    /*
-    application.connect_open(enclose!((shared_queue, core) move |_,files,_| {
+    application.connect_open(enclose!((core) move |_,files,_| {
         debug!("{}", gettext("Opening new file"));
 
         for file in files {
             if let Some(path) = file.get_path() {
-                let path = path.to_string_lossy().into_owned();
-
-                let mut params = json!({});
-                params["file_path"] = json!(path);
-
-                let shared_queue = shared_queue.clone();
-                core.send_request("new_view", &params,
-                    move |value| {
-                        shared_queue.add_core_msg(CoreMsg::NewViewReply{
-                            file_name: Some(path),
-                            value: value.clone(),
-                        })
-                    }
-                );
+                let view_id = tokio::executor::current_thread::block_on_all(core.new_view(None)).unwrap();
+                new_view_tx.send((view_id, path.to_str().map(|s| s.to_string()))).unwrap();
             }
         }
-    }));*/
+    }));
 
     application.connect_shutdown(move |_| {
         debug!("{}", gettext("Shutting down…"));
