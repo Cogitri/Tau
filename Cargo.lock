@@ -1075,7 +1075,7 @@ dependencies = [
 [[package]]
 name = "pango"
 version = "0.6.0"
-source = "git+https://github.com/gtk-rs/pango#b57c5744c7fc49359a287bec674d1c53857ca284"
+source = "git+https://github.com/gtk-rs/pango#fad20e0fb7d8357ea32a77050ee1326f094e3e8c"
 dependencies = [
  "bitflags 1.0.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "glib 0.7.0 (git+https://github.com/gtk-rs/glib)",
@@ -1089,7 +1089,7 @@ dependencies = [
 [[package]]
 name = "pango-sys"
 version = "0.8.0"
-source = "git+https://github.com/gtk-rs/sys#758341f571ac74117b53254813850e8fff440467"
+source = "git+https://github.com/gtk-rs/sys#c45adc74dd9432b22825fa8318a4028590eb9ec2"
 dependencies = [
  "glib-sys 0.8.0 (git+https://github.com/gtk-rs/sys)",
  "gobject-sys 0.8.0 (git+https://github.com/gtk-rs/sys)",
