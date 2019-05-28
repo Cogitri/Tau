@@ -21,8 +21,8 @@ gxi_podir = join_paths(meson.current_source_dir(), 'po')
 
 i18n = import('i18n')
 
-cargo = find_program('cargo', required: false)
-gresource = find_program('glib-compile-resources', required: false)
+cargo = find_program('cargo', required: true)
+gresource = find_program('glib-compile-resources', required: true)
 cargo_script = find_program('scripts/cargo.sh')
 
 sources = files(
