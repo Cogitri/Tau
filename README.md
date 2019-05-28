@@ -14,12 +14,7 @@ GTK frontend, written in Rust, for the [xi editor](https://github.com/google/xi-
 
 ## Contributing
 
-Please see the docs on https://gxi.cogitri.dev/docs to learn more about gxi's inner workings. 
-[gtk-rs' site](https://gtk-rs.org/) offers documentation and examples about how gtk-rs works.
-
-Visit [Weblate](https://hosted.weblate.org/engage/gxi/) to translate gxi.
-
-## Installing
+### Getting started
 
 You need the following dependencies installed:
 
@@ -28,25 +23,49 @@ You need the following dependencies installed:
 	* GLib-2.0 >= 2.36
 	* GTK+3>= 3.20
 	* Pango >= 1.38
-	* Meson >= 0.46
 	* Rust >= 1.31
 
-Run the following commands to install gxi if it's not available via your package manager:
+You have two ways of installing gxi:
+
+
+#### Installation with cargo (e.g. for developing)
+
+#### Installing the syntect plugin
 
 ```sh
-meson build
-ninja -C build
-sudo ninja -C build install
+# install the syntect plugin, which adds a lot of funtionality to gxi,
+# but isn't strictly required.
+export XI_CONFIG_DIR="${PWD}"
+make -C vendor/xi-editor/rust/syntect-plugin install
+
+glib-compile-schemas data
+env GSETTINGS_SCHEMA_DIR=data GXI_PLUGIN_DIR="${XI_CONFIG_DIR}/plugins" cargo run
 ```
 
-This will install the gxi binary to /usr/local/bin/gxi and the syntect plugin to /usr/local/lib/gxi/plugins/syntect.
-This plugin has to be installed for some functionality, such as syntax highlighting, auto indention and control
-whether or not tabs should be replaced with spaces. It has to be compiled of the same git rev as the xi-core-lib
-that's built into gxi, so please don't use `cargo` to install gxi, as that won't install syntect! Installing syntect
-from a different rev can lead to very weird bugs.
+This will launch gxi without you having to alter your system.
+
+#### Permanent(-ish) installs (e.g. for distro packaging/day-to-day usage)
 
 
-After these steps you should be able to run gxi simply by invoking `gxi`
+```sh
+meson --prefix=/usr/local build
+ninja -C build
+sudo -E ninja -C build install
+```
+
+This will install gxi and its components to `/usr/local`. If you wish to install to a different prefix change the `--prefix`
+argument you pass to meson. Do note that `sudo -E` isn't strictly necessary, but can avoid problems if you're using rustup.
+
+### Docs
+
+Please see the docs on https://gxi.cogitri.dev/docs to learn more about gxi's inner workings. 
+[gtk-rs' site](https://gtk-rs.org/) offers documentation and examples about how gtk-rs works.
+
+### Translating
+
+Visit [Weblate](https://hosted.weblate.org/engage/gxi/) to translate gxi.
+
+## Install on different platforms
 
 ### Installation on Arch/Manjaro
 
