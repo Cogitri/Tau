@@ -23,12 +23,37 @@ i18n = import('i18n')
 
 cargo = find_program('cargo', required: false)
 gresource = find_program('glib-compile-resources', required: false)
-cargo_vendor = find_program('cargo-vendor', required: false)
 cargo_script = find_program('scripts/cargo.sh')
-grabber = find_program('scripts/grabber.sh')
 
-c = run_command(grabber)
-sources = c.stdout().strip().split('\n')
+sources = files(
+  'src/gxi-config-storage/src/lib.rs',
+  'src/gxi-config-storage/src/pref_storage.rs',
+  'src/gxi-config-storage/src/errors.rs',
+  'src/gxi-config-storage/src/macros.rs',
+  'src/editview/src/main_state.rs',
+  'src/editview/src/edit_view.rs',
+  'src/editview/src/lib.rs',
+  'src/editview/src/view_item.rs',
+  'src/editview/src/fonts.rs',
+  'src/editview/src/theme.rs',
+  'src/gxi-peer/src/shared_queue.rs',
+  'src/gxi-peer/src/xi_thread.rs',
+  'src/gxi-peer/src/rpc.rs',
+  'src/gxi-peer/src/lib.rs',
+  'src/gxi-peer/src/errors.rs',
+  'src/gxi-linecache/benches/update.rs',
+  'src/gxi-linecache/src/lib.rs',
+  'src/gxi-linecache/src/linecache.rs',
+  'src/gxi/src/main_win.rs',
+  'src/gxi/src/main.rs',
+  'src/gxi/src/errors.rs',
+  'src/gxi/src/about_win.rs',
+  'src/gxi/src/prefs_win.rs',
+  'src/gxi/src/globals.rs',
+  'src/gxi/src/panic_handler.rs',
+  'Cargo.toml',
+  'Cargo.lock',
+)
 
 if meson.is_cross_build()
   cross_build='true'
@@ -89,7 +114,6 @@ endif
 custom_target('cargo-build-syntect',
                         build_by_default: true,
                         build_always_stale: true,
-                        input: sources,
                         output: ['xi-syntect-plugin'],
                         install: true,
                         install_dir: syntect_bindir,
