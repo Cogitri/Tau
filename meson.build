@@ -68,8 +68,6 @@ else
 endif
 
 custom_target('cargo-build-gxi',
-                        build_by_default: true,
-                        build_always_stale: true,
                         input: sources,
                         output: ['gxi'],
                         install: true,
@@ -111,9 +109,15 @@ if subdir_xi_check.returncode() != 0 or subdir_syntect_check.returncode() != 0
     endif
 endif
 
+syntect_plugin_files = files(
+  'vendor/xi-editor/rust/syntect-plugin/src/main.rs',
+  'vendor/xi-editor/rust/syntect-plugin/src/stackmap.rs',
+  'vendor/xi-editor/rust/syntect-plugin/Cargo.toml',
+  'vendor/xi-editor/rust/Cargo.lock',
+)
+
 custom_target('cargo-build-syntect',
-                        build_by_default: true,
-                        build_always_stale: true,
+                        input: syntect_plugin_files,
                         output: ['xi-syntect-plugin'],
                         install: true,
                         install_dir: syntect_bindir,
