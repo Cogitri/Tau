@@ -105,8 +105,11 @@ fn main() {
     )
     .unwrap_or_else(|_| panic!("Failed to create the GTK+ application"));
 
+    // The channel to signal MainWin to create a new tab with an EditView
     let (new_view_tx, new_view_rx) =
         MainContext::channel::<(ViewId, Option<String>)>(glib::PRIORITY_LOW);
+    // The channel through which all events from Xi are sent from `crate::frontend::GxiFrontend` to
+    // the MainWin
     let (event_tx, event_rx) = MainContext::sync_channel::<XiEvent>(glib::PRIORITY_HIGH, 5);
     let (core, core_stderr) = spawn_xi("xi-core", GxiFrontendBuilder { event_tx });
 
@@ -120,10 +123,11 @@ fn main() {
         tokio::run(log_core_errors);
     });
 
-    //FIXME: This is a hack to satisfy the borrowchecker. `connect_startup` is a FnMut even once it
-    // is only called once, so it's fine to move new_view_rx and event_rx into connect_startup
+    //FIXME: This is a hack to satisfy the borrowchecker. `connect_startup` is a FnMut even though
+    // it's only called once, so it's fine to move new_view_rx and event_rx into connect_startup
     let new_view_rx_opt = Rc::new(RefCell::new(Some(new_view_rx)));
     let event_rx_opt = Rc::new(RefCell::new(Some(event_rx)));
+
     application.connect_startup(
         enclose!((core, application, new_view_rx_opt, event_rx_opt, new_view_tx) move |_| {
             debug!("{}", gettext("Starting gxi"));
@@ -145,6 +149,7 @@ fn main() {
                 Err(TextDomainError::InvalidLocale(locale)) => warn!("Invalid locale {}", locale),
             }
 
+            // Start xi-editor
             tokio::run(core.client_started(None, crate::globals::PLUGIN_DIR).map_err(|_|()));
 
             setup_config(&core);
@@ -185,6 +190,7 @@ fn main() {
     application.run(&args().collect::<Vec<_>>());
 }
 
+/// Send the current config to xi-editor during startup
 fn setup_config(core: &Client) {
     let gschema = GSchema::new("com.github.Cogitri.gxi");
 

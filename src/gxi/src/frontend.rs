@@ -16,6 +16,7 @@ pub struct GxiFrontend {
 impl Frontend for GxiFrontend {
     /// Send `XiEvent`s to the thread GTK is running on
     fn handle_event(&mut self, ev: XiEvent) -> ServerResult<()> {
+        // Send all XiEvents to the MainWin
         self.event_tx.send(ev).unwrap();
 
         Box::new(future::ok(()))
