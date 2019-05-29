@@ -32,6 +32,46 @@
 	</provides>
 
 	<releases>
+		<release version="0.8.0" date="2019-05-29">
+		<p>
+			Please note that this release switches everything to the GSettings config backend!
+			This means that everything in HOME/.config/gxi won't be read anymore. As such
+			some settings have been reset, such as the font and wordwrapping.
+			Sorry for the inconvenience.
+		</p>
+		<p>Feature changes in this release</p>
+			<ul>
+				<li>(gxi-config-storage): add try_* functions for panic-safe access to GSettings</li>
+				<li>(editview): only draw number in linecount on actual line</li>
+				<li>(editview): add line&amp;column to statusbar</li>
+				<li>(editview): redirect EventScroll from linecount to ev_scroll_window</li>
+				<li>(editview): use ScrolledWindow for overlay scrollbars</li>
+				<li>(po): Add nl</li>
+				<li>(gxi|config_storage): save window state</li>
+				<li>(edit_view): use symbolic close button for tabs</li>
+				<li>(macros): add setup_gtk_panic macro</li>
+			</ul>
+		<p>Bugfixes in this release</p>
+			<ul>
+				<li>(editview): remove uneccesary event masks</li>
+				<li>(gxi): set default size instead of setting a size request on window state restoring</li>
+				<li>(editview): avoid rounding errors in cursor positioning</li>
+				<li>(editview): don't scroll down in scroll_to if vadj' page_size is 1</li>
+				<li>(i18n): update lang (Dutch)</li>
+				<li>(i18n): update lang (Norwegian Bokmål)</li>
+				<li>(editview): grab focus of ev_scrolled_window instead of edit_area</li>
+				<li>(edit_view): set Layout size instead of setting Scrollbar&#39;s upper</li>
+				<li>(i18n): update PO files</li>
+				<li>(gxi): log with timestamp when RUST_LOg sets a custom loglevel, makes for nicer debugging</li>
+				<li>(gxi): log for all crates in our workspace</li>
+				<li>(edit_view): don&#39;t warn on window-{height,maximized,width} GSettings key change</li>
+				<li>(gxi): allow PanicHandler::new to not return Self</li>
+				<li>(gxi-linecache|gxi-peer): derive Default if a new function is present</li>
+				<li>(data): set gettext domain in gschema</li>
+				<li>(main_win): don't include GLADE_SRC file twice</li>
+				<li>(i18n): update lang (German)</li>
+			</ul>
+		</release>
 		<release version="0.7.0" date="2019-05-09">
 			<description>
 				<p>Changes in this release:</p>

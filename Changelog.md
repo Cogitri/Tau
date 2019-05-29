@@ -1,3 +1,38 @@
+## Changes in v0.8.0
+
+### Feature changes
+
+ - (gxi-config-storage): add try_* functions for panic-safe access to GSettings
+ - (editview): only draw number in linecount on actual line
+ - (editview): add line&column to statusbar
+ - (editview): redirect EventScroll from linecount to ev_scroll_window
+ - (editview): use ScrolledWindow for overlay scrollbars
+ - (po): Add nl
+ - (gxi|config_storage): save window state
+ - (edit_view): use symbolic close button for tabs
+ - (macros): add setup_gtk_panic macro
+
+### Bugfixes
+
+ - (editview): remove uneccesary event masks
+ - (gxi): set default size instead of setting a size request on window state restoring
+ - (editview): avoid rounding errors in cursor positioning
+ - (editview): don't scroll down in scroll_to if vadj's page_size is 1
+ - (i18n): update lang (Dutch)
+ - (i18n): update lang (Norwegian Bokmål)
+ - (editview): grab focus of ev_scrolled_window instead of edit_area
+ - (edit_view): set Layout size instead of setting Scrollbar's upper
+ - (i18n): update PO files
+ - (gxi): log with timestamp when RUST_LOg sets a custom loglevel, makes for nicer debugging
+ - (gxi): log for all crates in our workspace
+ - (edit_view): don't warn on window-{height,maximized,width} GSettings key change
+ - (gxi): allow PanicHandler::new to not return Self
+ - (gxi-linecache|gxi-peer): derive Default if a new function is present
+ - (data): set gettext domain in gschema
+ - (main_win): don't include GLADE_SRC file twice
+ - (i18n): update lang (German)
+ - (i18n): update lang (German)
+
 ## Changes in v0.7.0
 
 ### Feature changes
