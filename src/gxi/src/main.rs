@@ -107,7 +107,7 @@ fn main() {
 
     let (new_view_tx, new_view_rx) =
         MainContext::channel::<(ViewId, Option<String>)>(glib::PRIORITY_LOW);
-    let (event_tx, event_rx) = MainContext::channel::<XiEvent>(glib::PRIORITY_HIGH);
+    let (event_tx, event_rx) = MainContext::sync_channel::<XiEvent>(glib::PRIORITY_HIGH, 5);
     let (core, core_stderr) = spawn_xi("xi-core", GxiFrontendBuilder { event_tx });
 
     let log_core_errors = core_stderr

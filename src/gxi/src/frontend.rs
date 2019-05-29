@@ -1,16 +1,16 @@
 use futures::future;
-use glib::Sender;
+use glib::SyncSender;
 use xrl::{Client, Frontend, FrontendBuilder, ServerResult, XiEvent};
 
 /// Struct that is passed into `xrl::spawn` to
 pub struct GxiFrontendBuilder {
-    pub event_tx: Sender<XiEvent>,
+    pub event_tx: SyncSender<XiEvent>,
 }
 
 /// This struct is only really there to satisfy the `xrl::Frontend` Trait. It holds the `event_tx`
 /// `Sender`, which sends `XiEvents` to our main thread where GTK will work on them.
 pub struct GxiFrontend {
-    pub event_tx: Sender<XiEvent>,
+    pub event_tx: SyncSender<XiEvent>,
 }
 
 impl Frontend for GxiFrontend {
