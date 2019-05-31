@@ -8,3 +8,9 @@ Icon=com.github.Cogitri.gxi
 Categories=GTK;GNOME;Utility;TextEditor;
 Terminal=false
 MimeType=text/plain;
+Actions=NewInstance;
+Keywords=Text;Editor;Plaintext;Write;
+
+[Desktop Action NewInstance]
+Name=Launch a new gxi instance
+Exec=gxi --new-instance

@@ -78,7 +78,7 @@ use crate::main_win::MainWin;
 use crate::panic_handler::PanicHandler;
 use gettextrs::{gettext, TextDomain, TextDomainError};
 use gio::{ApplicationExt, ApplicationExtManual, ApplicationFlags, FileExt};
-use glib::MainContext;
+use glib::{Char, MainContext};
 use gtk::Application;
 use gxi_config_storage::pref_storage::GSchemaExt;
 use gxi_config_storage::GSchema;
@@ -118,6 +118,15 @@ fn main() {
         ApplicationFlags::HANDLES_OPEN,
     )
     .unwrap_or_else(|_| panic!("Failed to create the GTK+ application"));
+
+    application.add_main_option(
+        "new-instance",
+        Char::new('n').unwrap(),
+        glib::OptionFlags::NONE,
+        glib::OptionArg::None,
+        &gettext("Start a new instance of the application"),
+        None,
+    );
 
     let main_context = MainContext::default();
     main_context.acquire();
@@ -202,7 +211,24 @@ fn main() {
         debug!("{}", gettext("Shutting down…"));
     });
 
-    application.run(&args().collect::<Vec<_>>());
+    let args = &args().collect::<Vec<_>>();
+    //FIXME: Use handle-local-options once https://github.com/gtk-rs/gtk/issues/580 is a thing
+    let mut new_instance = false;
+    for arg in args {
+        match arg.as_str() {
+            "-n" | "--new-instance" => new_instance = true,
+            _ => (),
+        }
+    }
+
+    if new_instance {
+        application.set_flags(
+            ApplicationFlags::HANDLES_OPEN |
+                ApplicationFlags::NON_UNIQUE,
+        );
+    }
+
+    application.run(args);
 }
 
 fn setup_config(core: &Core) {
