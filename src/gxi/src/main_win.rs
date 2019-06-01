@@ -2,6 +2,7 @@ use crate::about_win::AboutWin;
 use crate::errors::ErrorDialog;
 use crate::prefs_win::PrefsWin;
 use editview::{theme::u32_from_color, theme::LineStyle, EditView, MainState, Settings};
+use gdk_pixbuf::Pixbuf;
 use gettextrs::gettext;
 use gio::{ActionMapExt, ApplicationExt, Resource, SettingsExt, SimpleAction};
 use glib::{Bytes, MainContext};
@@ -97,6 +98,9 @@ impl MainWin {
 
         let properties = RefCell::new(WinProp::new(&application));
         let window: ApplicationWindow = builder.get_object("appwindow").unwrap();
+
+        let icon = Pixbuf::new_from_resource("/com/github/Cogitri/gxi/com.github.Cogitri.gxi.svg");
+        window.set_icon(icon.ok().as_ref());
 
         if properties.borrow().is_maximized {
             window.maximize();

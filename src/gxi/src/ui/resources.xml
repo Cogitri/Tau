@@ -3,5 +3,6 @@
   <gresource prefix="/com/github/Cogitri/gxi/">
       <file preprocess="xml-stripblanks">gxi.glade</file>
       <file preprocess="xml-stripblanks">prefs_win.glade</file>
+      <file>../../../../data/icons//hicolor/scalable/apps/com.github.Cogitri.gxi.svg</file>
   </gresource>
 </gresources>

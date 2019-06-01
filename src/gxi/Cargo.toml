@@ -24,6 +24,7 @@ enclose = "1"
 env_logger = "0.6"
 failure = "0.1"
 gdk = { git="https://github.com/gtk-rs/gdk" }
+gdk-pixbuf = { git="https://github.com/gtk-rs/gdk-pixbuf" }
 gettext-rs = { version="0.4", features=["gettext-system"] }
 gio = { git="https://github.com/gtk-rs/gio" }
 glib = { git="https://github.com/gtk-rs/glib" }
