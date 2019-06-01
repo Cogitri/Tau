@@ -222,10 +222,7 @@ fn main() {
     }
 
     if new_instance {
-        application.set_flags(
-            ApplicationFlags::HANDLES_OPEN |
-                ApplicationFlags::NON_UNIQUE,
-        );
+        application.set_flags(ApplicationFlags::HANDLES_OPEN | ApplicationFlags::NON_UNIQUE);
     }
 
     application.run(args);
