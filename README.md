@@ -16,6 +16,12 @@ GTK frontend, written in Rust, for the [xi editor](https://github.com/google/xi-
 
 ### Getting started
 
+Clone the repo and its submodules:
+
+```sh
+git clone --recurse-submodules https://github.com/Cogitri/gxi
+```
+
 You need the following dependencies installed:
 
 	* Cairo >= 1.16
