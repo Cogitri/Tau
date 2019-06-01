@@ -1,14 +1,13 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the gxi package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# Luuk van der Duim <luukvanderduim@gmail.com>, 2019.
 msgid ""
 msgstr ""
 "Project-Id-Version: gxi\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-05-21 15:01+0200\n"
-"PO-Revision-Date: 2019-05-23 15:07+0000\n"
+"PO-Revision-Date: 2019-06-01 17:47+0000\n"
 "Last-Translator: Luuk van der Duim <luukvanderduim@gmail.com>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/gxi/translation/nl/"
 ">\n"
@@ -132,7 +131,7 @@ msgstr "Hoofdlettergevoelig"
 
 #: src/editview/src/ui/find_replace.glade:220
 msgid "Match whole word only"
-msgstr "Alleen als hele woord overeen komt"
+msgstr "Uitsluitend gehele zoekterm"
 
 #: src/editview/src/ui/find_replace.glade:245
 msgid "No Results"
@@ -140,7 +139,7 @@ msgstr "Geen Resultaten"
 
 #: src/gxi/src/ui/prefs_win.glade:17 src/gxi/src/ui/gxi.glade:139
 msgid "Preferences"
-msgstr "Voorkeuren"
+msgstr "Instellingen"
 
 #: src/gxi/src/ui/prefs_win.glade:42 src/gxi/src/main_win.rs:439
 msgid "Theme"
@@ -168,15 +167,15 @@ msgstr "Behandel spaties net als tabs"
 
 #: src/gxi/src/ui/prefs_win.glade:183
 msgid "Scroll past the end of documents"
-msgstr "Voorbij het einde van het document kunnen scrollen"
+msgstr "Voorbij einde van document kunnen scrollen"
 
 #: src/gxi/src/ui/prefs_win.glade:198
 msgid "Wrap lines at the end of the view instead of offering scrolling"
-msgstr "Regels afbreken in plaats van een schuifbalk"
+msgstr "Regels afbreken in plaats van een horizontale schuifbalk"
 
 #: src/gxi/src/ui/prefs_win.glade:231
 msgid "Display right margin at the column:"
-msgstr "Toon rechtermarge bij kolom:"
+msgstr "Teken rechter margelijn  bij kolom:"
 
 #: src/gxi/src/ui/prefs_win.glade:269
 msgid "Highlight the current line"
@@ -208,7 +207,7 @@ msgstr "Automatisch inspringen"
 
 #: src/gxi/src/ui/gxi.glade:114
 msgid "Insert Spaces"
-msgstr "Spaties invoegen"
+msgstr "Spaties Invoegen"
 
 #: src/gxi/src/ui/gxi.glade:164
 msgid "Help"
@@ -232,7 +231,7 @@ msgstr "Afsluiten"
 
 #: src/gxi/src/ui/gxi.glade:265 src/gxi/src/main_win.rs:650
 msgid "Open"
-msgstr "Open"
+msgstr "Openen"
 
 #: src/gxi/src/ui/gxi.glade:306 src/gxi/src/main_win.rs:708
 #: src/gxi/src/main_win.rs:970
@@ -241,15 +240,15 @@ msgstr "Opslaan"
 
 #: src/gxi/src/ui/gxi.glade:321
 msgid "Syntax Selection"
-msgstr "Syntax Selectie"
+msgstr "Syntaxkeuze"
 
 #: src/editview/src/edit_view.rs:42
 msgid "Failed to load Pango font set"
-msgstr "Laden Pango lettertypecollectie mislukt"
+msgstr "Laden Pango lettertypezetter mislukt"
 
 #: src/editview/src/edit_view.rs:45
 msgid "Failed to load Pango font metrics"
-msgstr "Laden Pango lettertype-afmetingen mislukt"
+msgstr "Laden Pango lettertypematen mislukt"
 
 #: src/editview/src/edit_view.rs:50
 msgid "Pango font size"
@@ -257,11 +256,11 @@ msgstr "Pango lettertype grootte"
 
 #: src/editview/src/edit_view.rs:59
 msgid "Font metrics"
-msgstr "Lettertype afmetingen"
+msgstr "Lettertype maten"
 
 #: src/editview/src/edit_view.rs:121
 msgid "Connecting events of EditView"
-msgstr "Events van EditView verbinden"
+msgstr "'Events' van 'EditView' verbinden"
 
 #: src/editview/src/edit_view.rs:161
 msgid "Size changed to"
@@ -281,15 +280,15 @@ msgstr "Kon Pango context niet verkrijgen"
 
 #: src/editview/src/edit_view.rs:247
 msgid "Unknown key change event"
-msgstr "onbekend 'key change' event"
+msgstr "Onbekend toetsmutatie 'event'"
 
 #: src/editview/src/edit_view.rs:284 src/gxi/src/main_win.rs:811
 msgid "Creating new EditView"
-msgstr "Creëer nieuwe EditView"
+msgstr "Creëer nieuwe 'EditView'"
 
 #: src/editview/src/edit_view.rs:457
 msgid "Connecting FindReplace events for EditView"
-msgstr "Zoek/Vervang opdrachen verbinden met EditView"
+msgstr "Zoek/Vervang opdrachten verbinden met 'EditView'"
 
 #: src/editview/src/edit_view.rs:574
 msgid "Connecting"
@@ -297,7 +296,7 @@ msgstr "Verbinden"
 
 #: src/editview/src/edit_view.rs:575
 msgid "events for EditView"
-msgstr "'events' voor EditView"
+msgstr "'events' voor 'EditView'"
 
 #: src/editview/src/edit_view.rs:588 src/editview/src/edit_view.rs:590
 msgid "Untitled"
@@ -305,7 +304,7 @@ msgstr "Naamloos"
 
 #: src/editview/src/edit_view.rs:601
 msgid "Setting title for EditView"
-msgstr "EditView titel kiezen"
+msgstr "'EditView' titel kiezen"
 
 #: src/editview/src/edit_view.rs:614 src/editview/src/edit_view.rs:686
 #: src/editview/src/edit_view.rs:736 src/editview/src/edit_view.rs:780
@@ -329,7 +328,7 @@ msgstr "Behandeling"
 #: src/editview/src/edit_view.rs:1214 src/editview/src/edit_view.rs:1314
 #: src/editview/src/edit_view.rs:1361 src/editview/src/edit_view.rs:1404
 msgid "for EditView"
-msgstr "voor EditView"
+msgstr "voor 'EditView'"
 
 #: src/editview/src/edit_view.rs:636
 msgid "Setting edit font to"
@@ -341,11 +340,11 @@ msgstr "Tabgrootte instellen als"
 
 #: src/editview/src/edit_view.rs:671
 msgid "Unhandled config option, open a bug report!"
-msgstr "Niet afgehandeld configuratie item, meld deze bug!"
+msgstr "Niet afgehandeld configuratie-item. Maak er een bugmelding van!"
 
 #: src/editview/src/edit_view.rs:765
 msgid "Allocating DrawingArea size"
-msgstr "Geheugen van 'DrawingArea' grootte toewijzen"
+msgstr "Geheugen ter grootte van 'DrawingArea' toewijzen"
 
 #: src/editview/src/edit_view.rs:791
 msgid "Updating visible scroll region"
@@ -368,12 +367,12 @@ msgid ""
 "Couldn't update hscrollbar value because I couldn't get the line to scroll "
 "to!"
 msgstr ""
-"Kon 'hscrollbar' waarde niet bijwerken | Kon de regel waar naartoe niet "
-"verkrijgen!"
+"Kon horizontale schuifbalkwaarde niet bijwerken.  Kon de regel waar naartoe "
+"niet verkrijgen!"
 
 #: src/editview/src/edit_view.rs:1377
 msgid "Smooth scrolling failed"
-msgstr "Vloeiend schuiven mislukt"
+msgstr "Soepel scrollen mislukt"
 
 #: src/editview/src/edit_view.rs:1410
 msgid "Processing key press"
@@ -418,17 +417,16 @@ msgstr "Tekst invoegen"
 #. self.core.insert(view_id, &text);
 #. }
 #: src/editview/src/edit_view.rs:1606
-#, fuzzy
 msgid "Pasting primary text"
-msgstr "Tekst invoegen (primair)"
+msgstr "Tekst invoegen (primaire buffer)"
 
 #: src/editview/src/edit_view.rs:1619
 msgid "Resizing EditView"
-msgstr "'EditView' herschalen"
+msgstr "'EditView' verschalen"
 
 #: src/gxi/src/about_win.rs:17
 msgid "GTK frontend for the xi text editor, written in Rust"
-msgstr "GTK grafische schil voor de xi tekstbewerker, geschreven in Rust"
+msgstr "GTK grafische schil voor de xi tekst editor, geschreven in Rust"
 
 #: src/gxi/src/about_win.rs:25
 msgid "translator-credits"
@@ -440,7 +438,7 @@ msgstr "Toon 'over'-venster"
 
 #: src/gxi/src/errors.rs:19
 msgid "No default application"
-msgstr "Geen standaard programma opgegeven"
+msgstr "Geen standaard programma"
 
 #: src/gxi/src/errors.rs:21
 msgid "Default application has wrong type"
@@ -514,11 +512,11 @@ msgstr "Automatisch inspringen"
 
 #: src/gxi/src/main_win.rs:335
 msgid "Space indent"
-msgstr "Spatie inspringen"
+msgstr "Met spatie inspringen"
 
 #: src/gxi/src/main_win.rs:363
 msgid "Showing main window"
-msgstr "Toon hoofdvenster"
+msgstr "Tonen van het centrale venster"
 
 #: src/gxi/src/main_win.rs:382
 msgid "Handling CoreMsg"
@@ -526,11 +524,11 @@ msgstr "Afhandelen 'CoreMsg'"
 
 #: src/gxi/src/main_win.rs:407
 msgid "!!! UNHANDLED NOTIFICATION, PLEASE OPEN A BUGREPORT!"
-msgstr "!!! NIET AFGEHANDELD BERICHT, MAAK AUB MELDING VAN DEZE BUG!"
+msgstr "!!! NIET AFGEHANDELD BERICHT, MAAK HIER AUB EEN BUGMELDING VAN!"
 
 #: src/gxi/src/main_win.rs:441
 msgid "isn't available, setting to default"
-msgstr "Is niet beschikbaar, het standaard alternatief gekozen"
+msgstr "Is niet beschikbaar, val terug op standaardvariant"
 
 #: src/gxi/src/main_win.rs:459
 msgid "Failed to convert theme settings"
@@ -541,12 +539,12 @@ msgid ""
 "Couldn't find syntect plugin, functionality will be limited! Only found the "
 "following plugins"
 msgstr ""
-"Kon de 'syntect'-plugin niet vinden, functionaliteit is nu beperkt. Volgende "
-"plugings zijn gevonden"
+"Kon 'syntect'-plugin niet vinden. Hierdoor zijn sommige functies niet "
+"beschikbaar"
 
 #: src/gxi/src/main_win.rs:566
 msgid "has stopped due to an user-initiated exit"
-msgstr "Gestopt als gevolg van afsluiten door gebruiker"
+msgstr "Gestopt omdat de gebruiker voor afsluiten koos"
 
 #: src/gxi/src/main_win.rs:569
 msgid "has crashed with error code"
@@ -562,7 +560,7 @@ msgstr "Plugin"
 
 #: src/gxi/src/main_win.rs:581
 msgid "functionality will be limited"
-msgstr "functionaliteit zal beperkt zijn"
+msgstr "Sommige functies zullen niet beschikbaar zijn"
 
 #: src/gxi/src/main_win.rs:637
 msgid "Changing language to"
@@ -579,7 +577,7 @@ msgstr "Stoppen"
 
 #: src/gxi/src/main_win.rs:659
 msgid "FileChooserNative open response"
-msgstr "'FileChooserNative' open reactie"
+msgstr "'FileChooserNative' openingsreactie"
 
 #: src/gxi/src/main_win.rs:670
 msgid "Couldn't open file"
@@ -587,7 +585,7 @@ msgstr "Kon bestand niet openen"
 
 #: src/gxi/src/main_win.rs:705
 msgid "Save file"
-msgstr "Opslaan bestand"
+msgstr "Bestand opslaan"
 
 #: src/gxi/src/main_win.rs:717
 msgid "FileChooserNative save response"
@@ -606,13 +604,12 @@ msgid ""
 "Couldn't get current EditView. This may only mean that you don't have an "
 "editing tab open right now."
 msgstr ""
-"Kon huidige 'EditView' niet verkrijgen. Dit zou kunnen betekenen dat u nu "
-"geen bewerkingstabblad open hebt."
+"Kon huidige 'EditView' niet verkrijgen. Het zou kunnen dat u enkel geen "
+"tabblad open hebt."
 
 #: src/gxi/src/main_win.rs:793
-#, fuzzy
 msgid "Requesting new view"
-msgstr "Nieuwe aanblik aan het opvragen"
+msgstr "Opvragen schoon blad"
 
 #: src/gxi/src/main_win.rs:881
 msgid "Closing all EditViews"
@@ -620,28 +617,29 @@ msgstr "Alle 'EditView's aan het sluiten"
 
 #: src/gxi/src/main_win.rs:918
 msgid "Closing current Editview"
-msgstr "Sluiten huidige 'EditView'"
+msgstr "Huidige 'EditView' aan het sluiten"
 
 #: src/gxi/src/main_win.rs:929
 msgid "Closing Editview"
-msgstr "'EditView' wordt afgesloten"
+msgstr "'EditView' aan het sluiten"
 
 #: src/gxi/src/main_win.rs:959
 msgid "Save unsaved changes"
-msgstr "Opslaan nog niet opgeslagen bewerkingen"
+msgstr "Opslaan van onopgeslagen bewerkingen"
 
 #: src/gxi/src/main_win.rs:962
 msgid "Close Without Saving"
-msgstr "Sluiten Zonder Opslaan"
+msgstr "Sluiten zonder opslaan"
 
 #: src/gxi/src/main_win.rs:985
 msgid "Save dialog has been destroyed before the user clicked a button"
 msgstr ""
-"Het 'opslaan'-dialoogvenster is weg voor de gebruiker op een knop klikte"
+"Het 'opslaan'-dialoogvenster is verdwenen nog voordat de gebruiker op een "
+"knop klikte"
 
 #: src/gxi/src/panic_handler.rs:39
 msgid "gxi crash reporter"
-msgstr "gxi crash verslag"
+msgstr "gxi crash rapport"
 
 #: src/gxi/src/panic_handler.rs:49
 msgid "It seems like gxi has crashed, sorry!"
@@ -653,7 +651,7 @@ msgid ""
 "can fix it! Thank you =)"
 msgstr ""
 "Stuur alstublieft de inhoud van het onderstaande bestand naar onze GitHub "
-"'issue tracker' zodat we ermee aan de slag kunnen. Hartelijk dank  =)"
+"'issue tracker' zodat we ermee aan de slag kunnen. Alvast bedankt!  =)"
 
 #: src/gxi/src/panic_handler.rs:53
 msgid "File"
@@ -665,7 +663,7 @@ msgstr "URL"
 
 #: src/gxi/src/prefs_win.rs:55
 msgid "Setting font description"
-msgstr "Instellen lettertype beschrijving"
+msgstr "Instellen lettertypebeschrijving"
 
 #: src/gxi/src/prefs_win.rs:68
 msgid "Setting font to"
@@ -677,11 +675,11 @@ msgstr "Lettertype grootte instellen op"
 
 #: src/gxi/src/prefs_win.rs:87
 msgid "Setting active theme"
-msgstr "Instellen actieve thema"
+msgstr "Instellen huidige thema"
 
 #: src/gxi/src/prefs_win.rs:96
 msgid "Theme changed to"
-msgstr "Thema veranderd in"
+msgstr "Thema omgezet naar"
 
 #: src/gxi/src/prefs_win.rs:114
 msgid "Scrolling past end"
@@ -693,15 +691,15 @@ msgstr "Woordafbreking"
 
 #: src/gxi/src/prefs_win.rs:144
 msgid "Tab stops"
-msgstr "Tab stops"
+msgstr "Tabulator stops"
 
 #: src/gxi/src/prefs_win.rs:169
 msgid "Right hand margin"
-msgstr "Rechterzijde marge"
+msgstr "Rechtszijdige margerand"
 
 #: src/gxi/src/prefs_win.rs:187
 msgid "Right hand margin width"
-msgstr "Breedte rechterzijde marge"
+msgstr "Breedte rechtszijdige margerand"
 
 #: src/gxi/src/prefs_win.rs:202
 msgid "Setting tab size"
@@ -709,7 +707,7 @@ msgstr "Instellen tab grootte"
 
 #: src/gxi-config-storage/src/pref_storage.rs:83
 msgid "Failed to create the config dir"
-msgstr "Kon de 'config'-map niet aanmaken"
+msgstr "Kon de configuratiemap niet aanmaken"
 
 #: src/gxi-config-storage/src/pref_storage.rs:130
 msgid "Couldn't read config, falling back to the default XI-Editor config"
@@ -717,13 +715,13 @@ msgstr ""
 "Kon de configuratie niet lezen, val terug op standaardvariant van XI-Editor"
 
 #: src/gxi-config-storage/src/pref_storage.rs:141
-#, fuzzy
 msgid "Discovered config dir in home dir"
-msgstr "Configuratiemap gevonden in 'home'- map."
+msgstr "Configuratiemap gevonden in 'home'- map"
 
 #: src/gxi-config-storage/src/pref_storage.rs:149
 msgid "Couldn't determine home dir! Settings will be temporary"
-msgstr "Kon 'home'-map niet vaststellen! Instellingen zijn maar tijdelijk"
+msgstr ""
+"'Home'-map niet vast te stellen! Instellingen zijn hierdoor slechts tijdelijk"
 
 #: src/gxi-config-storage/src/pref_storage.rs:158
 msgid "Failed to create temporary config dir"
@@ -731,7 +729,7 @@ msgstr "Aanmaken tijdelijke instellingenmap niet gelukt"
 
 #: src/gxi-config-storage/src/pref_storage.rs:181
 msgid "Discovered config dir in temporary dir"
-msgstr "Instellingenmap ontdekt in tijdelijke map"
+msgstr "Instellingenmap gevonden in tijdelijke map"
 
 #: src/gxi-config-storage/src/pref_storage.rs:190
 msgid "Opening config file"
@@ -743,7 +741,7 @@ msgstr "Instellingen bestand  wordt gelezen"
 
 #: src/gxi-config-storage/src/pref_storage.rs:198
 msgid "Xi-Config"
-msgstr "Xi-Instellingen"
+msgstr "Xi-Configuratie"
 
 #: src/gxi-config-storage/src/pref_storage.rs:208
 msgid "Saving config to"
@@ -755,7 +753,7 @@ msgstr "Foutcode"
 
 #: src/gxi-peer/src/rpc.rs:91
 msgid "Calling callback"
-msgstr "'callback'-functie aanroepen"
+msgstr "'callback' aanroepen"
 
 #: src/gxi-peer/src/rpc.rs:94
 msgid "unexpected result"
@@ -771,15 +769,15 @@ msgstr "op RPC niveau"
 
 #: src/gxi-peer/src/shared_queue.rs:37
 msgid "Pushing message to rx queue"
-msgstr "Duw bericht op rx-rij"
+msgstr "Plaats bericht op rx-wachtrij"
 
 #: src/gxi-peer/src/shared_queue.rs:42
 msgid "Pushing message to tx queue"
-msgstr "Duw bericht op tx-rij"
+msgstr "Plaats bericht op tx-wachtrij"
 
 #: src/gxi-peer/src/xi_thread.rs:18
 msgid "Failed to send msg to Xi"
-msgstr "Bericht aan XI mislukt"
+msgstr "Kon XI geen bericht sturen"
 
 #: src/gxi-peer/src/xi_thread.rs:45
 msgid "Didn't expect xi-rpc to call read()"
@@ -803,4 +801,4 @@ msgstr "Onverwachte 'flush()' door 'xi-rpc'"
 
 #: src/gxi-peer/src/xi_thread.rs:88
 msgid "RPC rx thread lost"
-msgstr "RPC rx-thread verdwenen"
+msgstr "RPC ontvangstthread verdwenen"
