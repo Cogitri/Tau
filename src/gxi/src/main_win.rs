@@ -3,8 +3,8 @@ use crate::errors::ErrorDialog;
 use crate::prefs_win::PrefsWin;
 use editview::{theme::u32_from_color, theme::LineStyle, EditView, MainState, Settings};
 use gettextrs::gettext;
-use gio::{ActionMapExt, ApplicationExt, SettingsExt, SimpleAction};
-use glib::MainContext;
+use gio::{ActionMapExt, ApplicationExt, Resource, SettingsExt, SimpleAction};
+use glib::{Bytes, MainContext};
 use gtk::*;
 use gxi_config_storage::{GSchema, GSchemaExt};
 use gxi_peer::ErrorMsg;
@@ -17,6 +17,8 @@ use std::collections::{BTreeMap, HashMap};
 use std::rc::Rc;
 use std::thread;
 use syntect::highlighting::ThemeSettings;
+
+pub(crate) const RESOURCE: &[u8] = include_bytes!("ui/resources.gresource");
 
 /// Returned by an `ask_save_dialog` when we ask the user if he wants to either:
 /// - `Save`(save unsaved changes and close view)
@@ -85,12 +87,13 @@ pub struct MainWin {
     properties: RefCell<WinProp>,
 }
 
-const GLADE_SRC: &str = include_str!("ui/gxi.glade");
-
 impl MainWin {
     pub fn new(application: &Application, shared_queue: SharedQueue, core: Core) -> Rc<Self> {
-        let glade_src = GLADE_SRC;
-        let builder = Builder::new_from_string(glade_src);
+        let gbytes = Bytes::from_static(RESOURCE);
+        let resource = Resource::new_from_data(&gbytes).unwrap();
+        gio::resources_register(&resource);
+
+        let builder = Builder::new_from_resource("/com/github/Cogitri/gxi/gxi.glade");
 
         let properties = RefCell::new(WinProp::new(&application));
         let window: ApplicationWindow = builder.get_object("appwindow").unwrap();

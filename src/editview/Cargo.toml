@@ -10,6 +10,7 @@ keywords = ["gxi", "xi"]
 categories = ["GUI", "text-editors"]
 description = "The EditView GTK widget, backed by Xi"
 readme = "README.md"
+build = "build.rs"
 
 [dependencies]
 cairo-rs = { git="https://github.com/gtk-rs/cairo" }

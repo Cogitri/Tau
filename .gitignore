@@ -17,3 +17,4 @@ gxi/**
 repo/**
 cargo-vendor/**
 _build/**
+*.gresource

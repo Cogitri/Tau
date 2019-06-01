@@ -9,6 +9,7 @@ keywords = ["gxi", "xi"]
 categories = ["editor"]
 license = "MIT"
 edition = "2018"
+build = "build.rs"
 
 [features]
 default = []

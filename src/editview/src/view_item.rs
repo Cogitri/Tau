@@ -2,13 +2,14 @@ use crate::edit_view::EditView;
 use crate::main_state::MainState;
 use gdk::{Cursor, CursorType, DisplayManager, WindowExt};
 use gettextrs::gettext;
+use gio::Resource;
+use glib::Bytes;
 use gtk::*;
 use log::{debug, trace};
 use std::cell::RefCell;
 use std::rc::Rc;
 
-const TAB_GLADE_SRC: &str = include_str!("ui/close_tab.glade");
-const EV_GLADE_SRC: &str = include_str!("ui/ev.glade");
+const RESOURCE: &[u8] = include_bytes!("ui/resources.gresource");
 
 #[derive(Clone)]
 pub struct EvBar {
@@ -36,7 +37,11 @@ pub struct ViewItem {
 impl ViewItem {
     /// Sets up the drawing areas and scrollbars.
     pub fn new(main_state: &MainState) -> Self {
-        let builder = Builder::new_from_string(EV_GLADE_SRC);
+        let gbytes = Bytes::from_static(RESOURCE);
+        let resource = Resource::new_from_data(&gbytes).unwrap();
+        gio::resources_register(&resource);
+
+        let builder = Builder::new_from_resource("/com/github/Cogitri/editview/ev.glade");
 
         let hadj = builder.get_object("hadj").unwrap();
         let vadj = builder.get_object("vadj").unwrap();
@@ -184,7 +189,7 @@ pub struct TopBar {
 impl TopBar {
     /// Make the widgets for the tab
     pub fn new() -> Self {
-        let builder = Builder::new_from_string(TAB_GLADE_SRC);
+        let builder = Builder::new_from_resource("/com/github/Cogitri/editview/close_tab.glade");
         let tab_widget: Box = builder.get_object("tab_widget").unwrap();
         let label = builder.get_object("tab_label").unwrap();
         let close_button = builder.get_object("close_button").unwrap();
@@ -228,9 +233,7 @@ pub struct FindReplace {
 impl FindReplace {
     /// Loads the glade description of the window, and builds gtk-rs objects.
     pub fn new(btn: &MenuButton) -> Self {
-        const SRC: &str = include_str!("ui/find_replace.glade");
-
-        let builder = Builder::new_from_string(SRC);
+        let builder = Builder::new_from_resource("/com/github/Cogitri/editview/find_replace.glade");
         let search_bar = builder.get_object("search_bar").unwrap();
         let popover: Popover = builder.get_object("search_popover").unwrap();
         let replace_revealer: Revealer = builder.get_object("replace_revealer").unwrap();

@@ -1,6 +1,7 @@
 use editview::MainState;
 use gettextrs::gettext;
-use gio::{SettingsBindFlags, SettingsExt};
+use gio::{Resource, SettingsBindFlags, SettingsExt};
+use glib::Bytes;
 use gtk::*;
 use gxi_config_storage::{GSchema, GSchemaExt};
 use gxi_peer::Core;
@@ -14,8 +15,6 @@ pub struct PrefsWin {
     pub window: Window,
 }
 
-const SRC: &str = include_str!("ui/prefs_win.glade");
-
 impl PrefsWin {
     pub fn new(
         parent: &ApplicationWindow,
@@ -23,7 +22,11 @@ impl PrefsWin {
         core: &Core,
         gschema: &GSchema,
     ) -> Self {
-        let builder = Builder::new_from_string(SRC);
+        let gbytes = Bytes::from_static(crate::main_win::RESOURCE);
+        let resource = Resource::new_from_data(&gbytes).unwrap();
+        gio::resources_register(&resource);
+
+        let builder = Builder::new_from_resource("/com/github/Cogitri/gxi/prefs_win.glade");
 
         let window: Window = builder.get_object("prefs_win").unwrap();
         let font_chooser_widget: FontChooserWidget =
