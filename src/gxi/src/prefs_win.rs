@@ -44,6 +44,9 @@ impl PrefsWin {
         let highlight_line_checkbutton: ToggleButton =
             builder.get_object("highlight_line_checkbutton").unwrap();
         let tab_size_spinbutton: SpinButton = builder.get_object("tab_size_spinbutton").unwrap();
+        let draw_trailing_tabs_checkbutton: ToggleButton = builder
+            .get_object("draw_trailing_spaces_checkbutton")
+            .unwrap();
 
         let font_desc: &String = &gschema.get_key("font");
         font_chooser_widget.set_font_desc(&FontDescription::from_string(font_desc));
@@ -134,6 +137,13 @@ impl PrefsWin {
             "tab-size",
             &tab_size_spinbutton,
             "value",
+            SettingsBindFlags::DEFAULT,
+        );
+
+        gschema.settings.bind(
+            "draw-trailing-tabs",
+            &draw_trailing_tabs_checkbutton,
+            "active",
             SettingsBindFlags::DEFAULT,
         );
 

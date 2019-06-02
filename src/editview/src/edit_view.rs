@@ -18,6 +18,7 @@ use std::cmp::{max, min};
 use std::rc::Rc;
 use std::sync::{Arc, Mutex};
 use std::u32;
+use unicode_segmentation::UnicodeSegmentation;
 use xrl::StyleDef as StyleSpan;
 use xrl::{Client, ConfigChanges, Line, LineCache, Query, Status, Update, ViewId};
 
@@ -94,7 +95,6 @@ impl EditView {
         view_item.connect_events(&edit_view);
         find_replace.connect_events(&edit_view);
         EditView::connect_im_events(&edit_view, &im_context);
-        //edit_view.borrow().connect_gschema(&gschema);
 
         im_context.set_client_window(parent.get_window().as_ref());
 
@@ -476,7 +476,21 @@ impl EditView {
                 // It only thinks that the width of that char is 5, when it actually is 10 (like all
                 // other chars. So we have to replace it with some other char here to trick Pango into
                 // drawing the cursor at the correct position later on
-                layout.set_text(&layout.get_text().unwrap().replace("\u{b7}", " "));
+                if self.main_state.borrow().settings.trailing_tabs
+                    || self.main_state.borrow().settings.trailing_spaces
+                {
+                    let layout_text = layout.get_text().unwrap().to_string();
+                    let char_it = UnicodeSegmentation::graphemes(layout_text.as_str(), true);
+                    let num_tabs = char_it.filter(|c| c == &"→").count();
+
+                    let layout_render_text = layout_text.replace("\u{b7}", " ").replace("→", "");
+
+                    let layout_render_text = layout_render_text.trim_end();
+
+                    let tabs = (0..num_tabs as usize).map(|_| "\t").collect::<String>();
+
+                    layout.set_text(&format!("{}{}", layout_render_text, tabs));
+                }
 
                 let layout_line = layout.get_line(0);
                 if layout_line.is_none() {
@@ -643,13 +657,59 @@ impl EditView {
                 // Replace tabs here to make sure trim_end doesn't remove them
                 let last_char = line_view.replace("\t", "a").trim_end().len();
                 let (line_view_without_space, spaces) = line_view.split_at(last_char);
-                let space_range = std::ops::Range {
-                    start: 0,
-                    end: spaces.len(),
-                };
-                let highlighted_spaces: String = space_range.map(|_| "\u{b7}").collect();
+                let highlighted_spaces: String = (0..spaces.len()).map(|_| "\u{b7}").collect();
 
                 format!("{}{}", line_view_without_space, highlighted_spaces)
+            } else if self.main_state.borrow().settings.trailing_tabs && line_view.ends_with('\t') {
+                let last_char = line_view.trim_end().len();
+                let (line_view_without_tabs, tabs) = line_view.split_at(last_char);
+                let tab_size = self.main_state.borrow().settings.tab_size;
+                // The first tab can be smaller than the tab_size for alignment reasons (e.g. <space>\t)
+                // would only be 3 chars wide on a tab size of 4
+                let first_tab_modulo = last_char % tab_size as usize;
+                let first_tab_len = if first_tab_modulo == 0 {
+                    tab_size as usize
+                } else {
+                    first_tab_modulo
+                };
+
+                let tab_spacers = (0..(tab_size / 2) as usize)
+                    .map(|_| " ")
+                    .collect::<String>();
+
+                let even = tab_size % 2 == 0;
+                let highlighted_tabs = (1..tabs.len())
+                    .map(|_| {
+                        if even {
+                            format!(
+                                "{}→{}",
+                                tab_spacers,
+                                &tab_spacers.chars().skip(1).collect::<String>()
+                            )
+                        } else {
+                            format!("{}→{}", tab_spacers, tab_spacers)
+                        }
+                    })
+                    .collect::<String>();
+
+                let first_tab_spacers = (0..(first_tab_len / 2) as usize)
+                    .map(|_| " ")
+                    .collect::<String>();
+
+                let first_highlighted_tab = if first_tab_len % 2 == 0 {
+                    format!(
+                        "{}→{}",
+                        first_tab_spacers,
+                        &first_tab_spacers.chars().skip(1).collect::<String>()
+                    )
+                } else {
+                    format!("{}→{}", first_tab_spacers, first_tab_spacers)
+                };
+
+                format!(
+                    "{}{}{}",
+                    line_view_without_tabs, first_highlighted_tab, highlighted_tabs
+                )
             } else {
                 line_view.to_string()
             };
