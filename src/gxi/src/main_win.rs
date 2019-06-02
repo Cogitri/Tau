@@ -906,6 +906,7 @@ pub fn new_settings() -> Settings {
         column_right_margin: gschema.get_key("column-right-margin"),
         edit_font: gschema.get_key("font"),
         tab_size: gschema.get_key("tab-size"),
+        trailing_tabs: gschema.get_key("draw-trailing-tabs"),
         interface_font,
         gschema,
     }

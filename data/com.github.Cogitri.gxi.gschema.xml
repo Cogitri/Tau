@@ -93,6 +93,13 @@
             <summary>Wrap lines at the end of the document</summary>
         </key>
 
+        <key name="draw-trailing-tabs" type="b">
+            <default>false</default>
+            <summary>Draw trailing tabs</summary>
+            <description>
+                Draw tabs which are at the end of a line
+            </description>
+        </key>
     </schema>
 
 </schemalist>
