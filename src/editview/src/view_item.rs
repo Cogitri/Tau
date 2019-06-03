@@ -1,5 +1,4 @@
 use crate::edit_view::EditView;
-use crate::main_state::MainState;
 use gdk::{Cursor, CursorType, DisplayManager, WindowExt};
 use gettextrs::gettext;
 use gio::Resource;
@@ -20,6 +19,7 @@ pub struct EvBar {
     syntax_popover: Popover,
     pub line_label: Label,
     pub column_label: Label,
+    list_model: ListStore,
 }
 
 /// The ViewItem contains the various GTK parts related to the edit_area of the EditView
@@ -36,7 +36,7 @@ pub struct ViewItem {
 
 impl ViewItem {
     /// Sets up the drawing areas and scrollbars.
-    pub fn new(main_state: &MainState) -> Self {
+    pub fn new() -> Self {
         let gbytes = Bytes::from_static(RESOURCE);
         let resource = Resource::new_from_data(&gbytes).unwrap();
         gio::resources_register(&resource);
@@ -55,24 +55,8 @@ impl ViewItem {
             syntax_menu_button: builder.get_object("syntax_menu_button").unwrap(),
             line_label: builder.get_object("line_label").unwrap(),
             column_label: builder.get_object("column_label").unwrap(),
+            list_model: builder.get_object("syntax_liststore").unwrap(),
         };
-
-        // Creation of a model with two rows.
-        let list_model: ListStore = builder.get_object("syntax_liststore").unwrap();;
-
-        for lang in main_state.avail_languages.iter() {
-            // Localize 'Plain Text'
-            if lang == "Plain Text" {
-                let translated_plaintext = gettext("Plain Text");
-                statusbar.syntax_label.set_text(&translated_plaintext);
-                // Set Plain Text as selected item.
-                let iter = list_model.insert_with_values(None, &[0], &[&translated_plaintext]);
-                let path = list_model.get_path(&iter).unwrap();
-                statusbar.syntax_treeview.get_selection().select_path(&path);
-            } else {
-                list_model.insert_with_values(None, &[0], &[lang]);
-            }
-        }
 
         let ev_scrolled_window = builder.get_object("ev_scrolled_window").unwrap();
         let hbox: Grid = builder.get_object("ev_root_widget").unwrap();
@@ -176,6 +160,31 @@ impl ViewItem {
         self.edit_area
             .get_pango_context()
             .unwrap_or_else(|| panic!("{}", &gettext("Failed to get Pango context")))
+    }
+
+    pub fn set_avail_langs(&self, langs: &[&str]) {
+        for lang in langs {
+            // Localize 'Plain Text'
+            if lang == &"Plain Text" {
+                let translated_plaintext = gettext("Plain Text");
+                self.statusbar.syntax_label.set_text(&translated_plaintext);
+                // Set Plain Text as selected item.
+                let iter = self.statusbar.list_model.insert_with_values(
+                    None,
+                    &[0],
+                    &[&translated_plaintext],
+                );
+                let path = self.statusbar.list_model.get_path(&iter).unwrap();
+                self.statusbar
+                    .syntax_treeview
+                    .get_selection()
+                    .select_path(&path);
+            } else {
+                self.statusbar
+                    .list_model
+                    .insert_with_values(None, &[0], &[lang]);
+            }
+        }
     }
 }
 

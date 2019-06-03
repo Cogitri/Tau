@@ -530,6 +530,16 @@ impl MainWin {
         for lang in params.languages {
             main_state.avail_languages.push(lang.to_string());
         }
+
+        let langs: Vec<&str> = main_state
+            .avail_languages
+            .iter()
+            .map(AsRef::as_ref)
+            .collect::<Vec<&str>>();
+
+        for (_, ev) in self.views.borrow().iter() {
+            ev.borrow().view_item.set_avail_langs(&langs);
+        }
     }
 
     pub fn language_changed(&self, params: xrl::LanguageChanged) {
