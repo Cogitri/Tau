@@ -61,7 +61,7 @@ impl EditView {
         parent: &ApplicationWindow,
     ) -> Rc<RefCell<Self>> {
         trace!("{}, '{}'", gettext("Creating new EditView"), view_id);
-        let view_item = ViewItem::new(&main_state.borrow());
+        let view_item = ViewItem::new();
         let find_replace = FindReplace::new(&hamburger_button);
         let pango_ctx = view_item.get_pango_ctx();
         let im_context = IMContextSimple::new();
