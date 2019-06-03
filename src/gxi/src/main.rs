@@ -120,7 +120,10 @@ fn main() {
     // The channel through which all events from Xi are sent from `crate::frontend::GxiFrontend` to
     // the MainWin
     let (event_tx, event_rx) = MainContext::sync_channel::<XiEvent>(glib::PRIORITY_HIGH, 5);
-    let (core, core_stderr) = spawn_xi("xi-core", GxiFrontendBuilder { event_tx });
+    let (core, core_stderr) = spawn_xi(
+        crate::globals::XI_PATH.unwrap_or("xi-core"),
+        GxiFrontendBuilder { event_tx },
+    );
 
     let log_core_errors = core_stderr
         .for_each(|msg| {

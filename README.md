@@ -44,6 +44,10 @@ You have two ways of installing gxi:
 export XI_CONFIG_DIR="${PWD}"
 make -C vendor/xi-editor/rust/syntect-plugin install
 
+# Set accordingly if you want to use a custom xi-core binary. This will use
+# whatever xi-core is in PATH and is the default if you don't set this env var.
+export GXI_XI_BINARY_PATH="xi-core"
+
 glib-compile-schemas data
 env GSETTINGS_SCHEMA_DIR=data GXI_PLUGIN_DIR="${XI_CONFIG_DIR}/plugins" cargo run
 ```

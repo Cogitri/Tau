@@ -17,10 +17,10 @@ SRC=${MESON_SOURCE_ROOT}
 
 
 cd "${MESON_SOURCE_ROOT}"
-mkdir -p $DIST
+mkdir -p "${DIST}"
 
 ginst() {
-	cp -rf $@ $DIST
+	cp -rf $@ "${DIST}"
 }
 
 ginst build.rs \
@@ -36,22 +36,29 @@ ginst build.rs \
 	po \
 	data
 
+pushd "${SRC}"/vendor/xi-editor/rust
+mkdir -p "${DIST}"/vendor/xi-editor/rust/.cargo/
+cargo vendor xi-vendor --no-merge-sources | sed -r 's|(^directory = ).*(vendor.*)|\1"\2|g' > "${DIST}"/vendor/xi-editor/rust/.cargo/config
+ginst xi-vendor
+mv "${DIST}"/xi-vendor "${DIST}"/vendor/xi-editor/rust/
+popd
+
 # cargo vendor
-pushd $SRC/vendor/xi-editor/rust/syntect-plugin/
-mkdir -p $DIST/vendor/xi-editor/rust/syntect-plugin/.cargo/
+pushd "${SRC}"/vendor/xi-editor/rust/syntect-plugin/
+mkdir -p "${DIST}"/vendor/xi-editor/rust/syntect-plugin/.cargo/
 # Replace full path with relative path via sed
-cargo vendor --no-merge-sources | sed -r 's|(^directory = ).*(vendor.*)|\1"\2|g' > $DIST/vendor/xi-editor/rust/syntect-plugin/.cargo/config
+cargo vendor --no-merge-sources | sed -r 's|(^directory = ).*(vendor.*)|\1"\2|g' > "${DIST}"/vendor/xi-editor/rust/syntect-plugin/.cargo/config
 popd
 
 ginst vendor
 
-mkdir $DIST/.cargo
-cargo vendor cargo-vendor | sed 's/^directory = ".*"/directory = "cargo-vendor"/g' > $DIST/.cargo/config
+mkdir "${DIST}"/.cargo
+cargo vendor cargo-vendor | sed 's/^directory = ".*"/directory = "cargo-vendor"/g' > "${DIST}"/.cargo/config
 ginst cargo-vendor
 ginst .cargo
 
 # packaging
-cd $DEST/dist
+cd "${DEST}"/dist
 tar cJvf $PKGVER.tar.xz $PKGVER
 
 if type gpg; then
