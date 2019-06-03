@@ -1,3 +1,15 @@
+## Changes in v0.8.1
+
+### Feature changes
+
+ - (gxi): set gxi's icon as window icon
+ - (gxi): add option to launch new instance
+
+### Bugfixes
+
+ - (gxi): set gettext domain for glade files
+ - (i18n): update lang (Dutch)
+
 ## Changes in v0.8.0
 
 ### Feature changes

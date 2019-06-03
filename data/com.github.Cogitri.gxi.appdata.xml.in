@@ -32,6 +32,22 @@
 	</provides>
 
 	<releases>
+		<release version="0.8.1" date="2019-06-03">
+			<p>
+				Please not that this is the last relase of gxi which will use xi-editor backed
+				into gxi as a static lib. 0.9.0 will switch to using the global xi-core instance! :)
+			</p>
+		<p>Feature changes in this release:</p>
+			<ul>
+				<li>(gxi): set gxi's icon as window icon</li>
+				<li>(gxi): add option to launch new instance</li>
+			</ul>
+		<p>Bugfixes in this release</p>
+			<ul>
+			 	<li>(gxi): set gettext domain for glade files</li>
+ 				<li>(i18n): update lang (Dutch)</li>
+			</ul>
+		</release>		
 		<release version="0.8.0" date="2019-05-29">
 		<p>
 			Please note that this release switches everything to the GSettings config backend!
