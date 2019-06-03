@@ -116,7 +116,7 @@ fn main() {
 
     // The channel to signal MainWin to create a new tab with an EditView
     let (new_view_tx, new_view_rx) =
-        MainContext::channel::<(ViewId, Option<String>)>(glib::PRIORITY_LOW);
+        MainContext::channel::<(ViewId, Option<String>)>(glib::PRIORITY_HIGH);
     // The channel through which all events from Xi are sent from `crate::frontend::GxiFrontend` to
     // the MainWin
     let (event_tx, event_rx) = MainContext::sync_channel::<XiEvent>(glib::PRIORITY_HIGH, 5);
