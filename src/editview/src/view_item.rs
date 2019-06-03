@@ -130,6 +130,10 @@ impl ViewItem {
                 if let Some(syntax_tup) = ts.get_selected() {
                     let selected_syntax =  syntax_tup.0.get_value(&syntax_tup.1, 0);
                     if let Some(lang) = selected_syntax.get::<&str>() {
+                        // DONT set the lang if we already selected it, otherwise we way loop here!
+                        if lang == edit_view.borrow().view_item.statusbar.syntax_label.get_text().unwrap().as_str() {
+                            return;
+                        }
                         edit_view.borrow().view_item.statusbar.syntax_label.set_text(lang);
                         // We localized it ourselves, so we have to turn it into English again when sending it to Xi
                         if lang == gettext("Plain Text") {
