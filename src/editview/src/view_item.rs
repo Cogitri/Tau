@@ -14,7 +14,7 @@ const RESOURCE: &[u8] = include_bytes!("ui/resources.gresource");
 #[derive(Clone)]
 pub struct EvBar {
     statusbar: Statusbar,
-    syntax_menu_button: MenuButton,
+    pub syntax_menu_button: MenuButton,
     pub syntax_label: Label,
     pub syntax_treeview: TreeView,
     syntax_popover: Popover,

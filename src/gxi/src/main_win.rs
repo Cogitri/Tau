@@ -515,6 +515,18 @@ impl MainWin {
         debug!("{} 'available_languages' {:?}", gettext("Handling"), params);
         let mut main_state = self.state.borrow_mut();
         main_state.avail_languages.clear();
+
+        // If there are no syntaxes to choose from, disable the selection
+        if params.languages.is_empty() {
+            for (_, ev) in self.views.borrow().iter() {
+                ev.borrow().set_syntax_selection_sensitivity(false);
+            }
+        } else {
+            for (_, ev) in self.views.borrow().iter() {
+                ev.borrow().set_syntax_selection_sensitivity(true);
+            }
+        }
+
         for lang in params.languages {
             main_state.avail_languages.push(lang.to_string());
         }

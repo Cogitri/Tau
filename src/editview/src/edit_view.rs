@@ -1221,4 +1221,11 @@ impl EditView {
             )
         }
     }
+
+    pub fn set_syntax_selection_sensitivity(&self, state: bool) {
+        self.view_item
+            .statusbar
+            .syntax_menu_button
+            .set_sensitive(state);
+    }
 }
