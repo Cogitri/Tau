@@ -5,6 +5,11 @@ if ! [ "$MESON_BUILD_ROOT" ]; then
     exit 1
 fi
 
+if ! cargo vendor --help >/dev/null 2>&1; then
+	echo "Couldn't find cargo-vendor, exiting!"
+	exit 1
+fi
+
 PKGVER=$1-$2
 DEST=${MESON_BUILD_ROOT}
 DIST=$DEST/dist/$PKGVER
