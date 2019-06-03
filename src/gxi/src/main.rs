@@ -149,8 +149,11 @@ fn main() {
                 Err(TextDomainError::InvalidLocale(locale)) => warn!("Invalid locale {}", locale),
             }
 
-            // Start xi-editor
-            tokio::run(core.client_started(None, crate::globals::PLUGIN_DIR).map_err(|_|()));
+            let xi_config_dir = std::env::var("XI_CONFIG_DIR").ok();
+            tokio::run(
+                core.client_started(
+                    xi_config_dir.as_ref().map(String::as_str),
+                    crate::globals::PLUGIN_DIR).map_err(|_|()));
 
             setup_config(&core);
 
