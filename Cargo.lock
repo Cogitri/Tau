@@ -455,7 +455,7 @@ dependencies = [
 [[package]]
 name = "glib"
 version = "0.7.0"
-source = "git+https://github.com/gtk-rs/glib#679b8071b6d0022034c125a57267ad369c54ba19"
+source = "git+https://github.com/gtk-rs/glib#35b259ba552eab8cc3d989933c4e942b792d44f4"
 dependencies = [
  "bitflags 1.0.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "glib-sys 0.8.0 (git+https://github.com/gtk-rs/sys)",
