@@ -1,10 +1,24 @@
 use std::process::Command;
+use std::str::from_utf8;
 
 fn main() {
     // Compile Gresource
-    Command::new("glib-compile-resources")
+    let output = Command::new("glib-compile-resources")
         .args(&["--generate", "resources.xml"])
         .current_dir("src/ui")
-        .status()
+        .output()
         .unwrap();
+
+    if !output.status.success() {
+        println!("Failed to generate GResources!");
+        println!(
+            "glib-compile-resources stdout: {}",
+            from_utf8(&output.stdout).unwrap()
+        );
+        println!(
+            "glib-compile-resources stderr: {}",
+            from_utf8(&output.stderr).unwrap()
+        );
+        panic!("Can't continue build without GResources!");
+    }
 }
