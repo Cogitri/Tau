@@ -94,6 +94,7 @@ custom_target('cargo-build-gxi',
                                   gxi_localedir,
                                   meson.project_version(),
                                   xi_binary_path,
+                                  gresource.path(),
                                  ])
 
 git = find_program('git', native: true, required: false)

@@ -3,11 +3,12 @@ use std::str::from_utf8;
 
 fn main() {
     // Compile Gresource
-    let output = Command::new("glib-compile-resources")
-        .args(&["--generate", "resources.xml"])
-        .current_dir("src/ui")
-        .output()
-        .unwrap();
+    let output =
+        Command::new(option_env!("GRESOURCE_BINARY_PATH").unwrap_or("glib-compile-resources"))
+            .args(&["--generate", "resources.xml"])
+            .current_dir("src/ui")
+            .output()
+            .unwrap();
 
     if !output.status.success() {
         println!("Failed to generate GResources!");

@@ -17,6 +17,7 @@ export GXI_PLUGIN_DIR="${7}"
 export GXI_LOCALEDIR="${8}"
 export GXI_VERSION="${9}"
 export GXI_XI_BINARY_PATH="${10}"
+export GRESOURCE_BINARY_PATH="${11}"
 
 # ANSI codes for getting green colors and resetting it
 GREEN='\033[0;32m'
