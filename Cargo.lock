@@ -1657,7 +1657,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 [[package]]
 name = "xrl"
 version = "0.0.5"
-source = "git+https://github.com/Cogitri/xrl.git?branch=gxi-changes#bf40f0fd0adcb43e520072b2431a5607bf484ed5"
+source = "git+https://github.com/Cogitri/xrl.git?branch=gxi-changes#88814fc531489d03a7e490ce3be1145b092589d3"
 dependencies = [
  "bytes 0.4.12 (registry+https://github.com/rust-lang/crates.io-index)",
  "futures 0.1.27 (registry+https://github.com/rust-lang/crates.io-index)",

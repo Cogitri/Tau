@@ -98,7 +98,7 @@ impl EditView {
     fn connect_im_events(edit_view: &Rc<RefCell<EditView>>, im_context: &IMContextSimple) {
         im_context.connect_commit(enclose!((edit_view) move |_, text| {
             let ev = edit_view.borrow();
-            ev.core.insert(&ev.view_id, text);
+            ev.core.insert(ev.view_id, text);
         }));
     }
 
@@ -299,7 +299,7 @@ impl EditView {
             last_line
         );
 
-        self.core.scroll(&self.view_id, first_line, last_line);
+        self.core.scroll(self.view_id, first_line, last_line);
     }
 
     /// Returns the width&height of the entire document
@@ -829,15 +829,15 @@ impl EditView {
         match eb.get_button() {
             1 => {
                 if eb.get_state().contains(ModifierType::SHIFT_MASK) {
-                    self.core.click_range_select(&self.view_id, line, col);
+                    self.core.click_range_select(self.view_id, line, col);
                 } else if eb.get_state().contains(ModifierType::CONTROL_MASK) {
-                    self.core.click_toggle_sel(&self.view_id, line, col);
+                    self.core.click_toggle_sel(self.view_id, line, col);
                 } else if eb.get_event_type() == EventType::DoubleButtonPress {
-                    self.core.click_word_select(&self.view_id, line, col);
+                    self.core.click_word_select(self.view_id, line, col);
                 } else if eb.get_event_type() == EventType::TripleButtonPress {
-                    self.core.click_line_select(&self.view_id, line, col);
+                    self.core.click_line_select(self.view_id, line, col);
                 } else {
-                    self.core.click_point_select(&self.view_id, line, col);
+                    self.core.click_point_select(self.view_id, line, col);
                 }
             }
             2 => {
@@ -854,7 +854,7 @@ impl EditView {
         if em.get_state().contains(ModifierType::BUTTON1_MASK) {
             let (x, y) = em.get_position();
             let (col, line) = self.da_px_to_cell(x, y);
-            self.core.drag(&self.view_id, line, col);
+            self.core.drag(self.view_id, line, col);
         }
         Inhibit(false)
     }
@@ -885,7 +885,7 @@ impl EditView {
             gettext("unicode"),
             ::gdk::keyval_to_unicode(ek.get_keyval())
         );
-        let view_id = &self.view_id;
+        let view_id = self.view_id;
         let ch = ::gdk::keyval_to_unicode(ek.get_keyval());
 
         let alt = ek.get_state().contains(ModifierType::MOD1_MASK);
@@ -936,15 +936,15 @@ impl EditView {
                     match ch {
                         'a' if ctrl => self.core.select_all(view_id),
                         'c' if ctrl => {
-                            self.do_copy(*view_id);
+                            self.do_copy(view_id);
                             std::boxed::Box::new(future::ok(()))
                         }
                         'v' if ctrl => {
-                            self.do_paste(*view_id);
+                            self.do_paste(view_id);
                             std::boxed::Box::new(future::ok(()))
                         }
                         'x' if ctrl => {
-                            self.do_cut(*view_id);
+                            self.do_cut(view_id);
                             std::boxed::Box::new(future::ok(()))
                         }
                         'z' if ctrl => self.core.undo(view_id),
@@ -974,17 +974,15 @@ impl EditView {
         debug!("{}", gettext("Adding cutting text op to idle queue"));
 
         let core = self.core.clone();
-        glib::idle_add(enclose!(
-            (view_id) move || {
-                let board_future = core.cut(&view_id);
+        glib::idle_add(move || {
+            let board_future = core.cut(view_id);
 
-                let val = tokio::executor::current_thread::block_on_all(board_future).unwrap();
-                if let Some(ref text) = val.as_str() {
-                    Clipboard::get(&SELECTION_CLIPBOARD).set_text(&text);
-                }
-                source::Continue(false)
+            let val = tokio::executor::current_thread::block_on_all(board_future).unwrap();
+            if let Some(ref text) = val.as_str() {
+                Clipboard::get(&SELECTION_CLIPBOARD).set_text(&text);
             }
-        ));
+            source::Continue(false)
+        });
     }
 
     /// Copies text to the clipboard
@@ -992,17 +990,15 @@ impl EditView {
         debug!("{}", gettext("Adding copying text op to idle queue"));
 
         let core = self.core.clone();
-        glib::idle_add(enclose!(
-            (view_id) move || {
-                let board_future = core.copy(&view_id);
+        glib::idle_add(move || {
+            let board_future = core.copy(view_id);
 
-                let val = tokio::executor::current_thread::block_on_all(board_future).unwrap();
-                if let Some(ref text) = val.as_str() {
-                    Clipboard::get(&SELECTION_CLIPBOARD).set_text(&text);
-                }
-                source::Continue(false)
+            let val = tokio::executor::current_thread::block_on_all(board_future).unwrap();
+            if let Some(ref text) = val.as_str() {
+                Clipboard::get(&SELECTION_CLIPBOARD).set_text(&text);
             }
-        ));
+            source::Continue(false)
+        });
     }
 
     /// Pastes text from the clipboard into the EditView
@@ -1014,7 +1010,7 @@ impl EditView {
         let core = self.core.clone();
         Clipboard::get(&SELECTION_CLIPBOARD).request_text(enclose!((view_id) move |_, text| {
             if let Some(clip_content) = text {
-                core.insert(&view_id, &clip_content);
+                core.insert(view_id, &clip_content);
             }
         }));
     }
@@ -1023,9 +1019,9 @@ impl EditView {
         debug!("{}", gettext("Pasting primary text"));
         let core = self.core.clone();
         Clipboard::get(&SELECTION_PRIMARY).request_text(enclose!((view_id) move |_, text| {
-            core.click_point_select(&view_id, line, col);
+            core.click_point_select(view_id, line, col);
             if let Some(clip_content) = text {
-                core.insert(&view_id, &clip_content);
+                core.insert(view_id, &clip_content);
             }
         }));
     }
@@ -1033,7 +1029,7 @@ impl EditView {
     /// Resize the EditView
     pub fn do_resize(&self, view_id: ViewId, width: i32, height: i32) {
         trace!("{} '{}'", gettext("Resizing EditView"), view_id);
-        self.core.resize(&view_id, width, height);
+        self.core.resize(view_id, width, height);
     }
 
     /// Opens the find dialog (Ctrl+F)
@@ -1063,7 +1059,7 @@ impl EditView {
                 // No need to pass the actual values of case_sensitive etc. to Xi here, we as soon
                 // as we start typing something into the search box/flick one of the switches we call
                 // EditView::search_changed() anyway, which does that for us.
-                self.core.find(&self.view_id, &needle, false, false, false);
+                self.core.find(self.view_id, &needle, false, false, false);
             }
         }
     }
@@ -1147,13 +1143,13 @@ impl EditView {
     /// Go to the next match in the find/replace dialog
     pub fn find_next(&self) {
         self.core
-            .find_next(&self.view_id, true, true, xrl::ModifySelection::None);
+            .find_next(self.view_id, true, true, xrl::ModifySelection::None);
     }
 
     /// Go the to previous match in the find/replace dialog
     pub fn find_prev(&self) {
         self.core
-            .find_prev(&self.view_id, true, true, xrl::ModifySelection::None);
+            .find_prev(self.view_id, true, true, xrl::ModifySelection::None);
     }
 
     /// Tells xi-editor that we're searching for a different string (or none) now
@@ -1163,15 +1159,15 @@ impl EditView {
         let whole_worlds = self.find_replace.whole_word_button.get_active();
         let case_sensitive = self.find_replace.case_sensitive_button.get_active();
         self.core
-            .find(&self.view_id, &needle, case_sensitive, regex, whole_worlds);
+            .find(self.view_id, &needle, case_sensitive, regex, whole_worlds);
     }
 
     /// Replace _one_ match with the replacement string
     pub fn replace(&self) {
         if let Some(replace_chars) = self.find_replace.replace_entry.get_text() {
             self.core
-                .replace(&self.view_id, replace_chars.as_str(), false);
-            self.core.replace_next(&self.view_id);
+                .replace(self.view_id, replace_chars.as_str(), false);
+            self.core.replace_next(self.view_id);
         }
     }
 
@@ -1179,8 +1175,8 @@ impl EditView {
     pub fn replace_all(&self) {
         if let Some(replace_chars) = self.find_replace.replace_entry.get_text() {
             self.core
-                .replace(&self.view_id, replace_chars.as_str(), false);
-            self.core.replace_all(&self.view_id);
+                .replace(self.view_id, replace_chars.as_str(), false);
+            self.core.replace_all(self.view_id);
         }
     }
 
@@ -1191,7 +1187,7 @@ impl EditView {
 
     pub fn set_language(&self, lang: &str) {
         debug!("{} '{:?}'", gettext("Changing language to"), lang);
-        self.core.set_language(&self.view_id, &lang);
+        self.core.set_language(self.view_id, &lang);
     }
 
     pub fn language_changed(&self, syntax: &str) {
