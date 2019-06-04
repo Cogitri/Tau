@@ -594,7 +594,7 @@ impl MainWin {
             if edit_view.borrow().file_name.is_some() {
                 let ev = edit_view.borrow();
                 let core = main_win.core.clone();
-                core.save(&ev.view_id, ev.file_name.as_ref().unwrap());
+                core.save(ev.view_id, ev.file_name.as_ref().unwrap());
             } else {
                 Self::save_as(main_win, &edit_view);
             }
@@ -638,7 +638,7 @@ impl MainWin {
                                 debug!("{} {:?}", gettext("Saving file"), &file);
                                 let view_id = edit_view.borrow().view_id;
                                 let file = file.to_string_lossy();
-                                main_win.core.save(&view_id, &file);
+                                main_win.core.save(view_id, &file);
                                 edit_view.borrow_mut().set_file(&file);
                             }
                         Err(e) => {
@@ -882,7 +882,7 @@ impl MainWin {
             }
             main_win.view_id_to_w.borrow_mut().remove(&view_id);
             main_win.views.borrow_mut().remove(&view_id);
-            main_win.core.close_view(&view_id);
+            main_win.core.close_view(view_id);
         }
         save_action
     }
