@@ -65,12 +65,6 @@ sources = files(
   'Cargo.lock',
 )
 
-if meson.is_cross_build()
-  cross_build='true'
-else
-  cross_build='false'
-endif
-
 if opt_gtk3_22_dep.found()
   gtk3_22='true'
 else
@@ -95,7 +89,6 @@ custom_target('cargo-build-gxi',
                                   '@OUTPUT@',
                                   meson.current_build_dir(),
                                   'gxi',
-                                  cross_build,
                                   gtk3_22,
                                   gxi_plugin_dir,
                                   gxi_localedir,
@@ -136,7 +129,6 @@ if xi_opt == 'builtin'
                                     '@OUTPUT@',
                                     xi_vendor_target_dir,
                                     'xi-core',
-                                    cross_build,
                                     '',
                                     gxi_plugin_dir,
                                     gxi_localedir,
@@ -167,7 +159,6 @@ custom_target('cargo-build-syntect',
                                   '@OUTPUT@',
                                   xi_vendor_target_dir,
                                   'xi-syntect-plugin',
-                                  cross_build,
                                   '',
                                   gxi_plugin_dir,
                                   gxi_localedir,
