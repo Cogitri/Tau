@@ -192,6 +192,12 @@ impl ViewItem {
     }
 }
 
+impl Default for ViewItem {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 /// Contains the top part of the EditView, tab widget and top bar.
 pub struct TopBar {
     pub tab_widget: gtk::Box,

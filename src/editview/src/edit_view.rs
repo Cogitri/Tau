@@ -497,7 +497,6 @@ impl EditView {
         let linecount_height = self.view_item.linecount.get_allocated_height();
 
         let num_lines = self.line_cache.height();
-        ();
 
         let vadj = &self.view_item.vadj;
 
@@ -862,7 +861,7 @@ impl EditView {
     /// Handles all (special) key press events, e.g. copy, pasting, PgUp/Down etc.
     // Allow this to be a long function since splitting up the matching into multiple functions
     // would be a pain
-    #[allow(clippy::cyclomatic_complexity)]
+    #[allow(clippy::cognitive_complexity)]
     pub(crate) fn handle_key_press_event(&self, ek: &EventKey) -> Inhibit {
         trace!(
             "{} 'key_press_event' {} '{}': {:?}",
