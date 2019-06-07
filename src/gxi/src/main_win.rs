@@ -464,7 +464,7 @@ impl MainWin {
         trace!("{} 'update': {:?}", gettext("Handling"), params);
         let views = self.views.borrow();
         if let Some(ev) = views.get(&params.view_id) {
-            ev.borrow_mut().update(&params)
+            ev.borrow_mut().update(params)
         }
     }
 

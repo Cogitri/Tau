@@ -3,18 +3,20 @@ use crate::main_state::{MainState, Settings};
 use crate::theme::{color_from_u32, set_margin_source_color, set_source_color, PangoColor};
 use crate::view_item::*;
 use cairo::Context;
+use crossbeam_channel::{unbounded, Sender};
 use futures::future;
 use gdk::enums::key;
 use gdk::*;
 use gettextrs::gettext;
 use glib::source;
 use gtk::{self, *};
-use log::{debug, trace, warn};
+use log::{debug, error, trace, warn};
 use pango::{self, ContextExt, LayoutExt, *};
 use pangocairo::functions::*;
 use std::cell::RefCell;
 use std::cmp::{max, min};
 use std::rc::Rc;
+use std::sync::{Arc, Mutex};
 use std::u32;
 use xrl::StyleDef as StyleSpan;
 use xrl::{Client, ConfigChanges, Line, LineCache, Query, Status, Update, ViewId};
@@ -41,11 +43,12 @@ pub struct EditView {
     pub root_widget: Grid,
     pub top_bar: TopBar,
     pub view_item: ViewItem,
-    line_cache: LineCache,
+    line_cache: Arc<Mutex<LineCache>>,
     pub(crate) find_replace: FindReplace,
     edit_font: Font,
     interface_font: Font,
     im_context: IMContextSimple,
+    update_sender: Sender<Update>,
 }
 
 impl EditView {
@@ -67,6 +70,8 @@ impl EditView {
         let im_context = IMContextSimple::new();
         let interface_font = Self::get_interface_font(&main_state.borrow().settings, &pango_ctx);
 
+        let (update_sender, update_recv) = unbounded();
+
         let edit_view = Rc::new(RefCell::new(Self {
             core: core.clone(),
             main_state: main_state.clone(),
@@ -76,11 +81,12 @@ impl EditView {
             root_widget: view_item.root_box.clone(),
             top_bar: TopBar::new(),
             view_item: view_item.clone(),
-            line_cache: LineCache::default(),
+            line_cache: Arc::new(Mutex::new(LineCache::default())),
             edit_font: Self::get_edit_font(&pango_ctx, &main_state.borrow().settings.edit_font),
             interface_font,
             find_replace: find_replace.clone(),
             im_context: im_context.clone(),
+            update_sender,
         }));
 
         edit_view.borrow_mut().update_title();
@@ -91,6 +97,14 @@ impl EditView {
         //edit_view.borrow().connect_gschema(&gschema);
 
         im_context.set_client_window(parent.get_window().as_ref());
+
+        let linecache = edit_view.borrow().line_cache.clone();
+        std::thread::spawn(move || loop {
+            while let Ok(update) = update_recv.recv() {
+                linecache.lock().unwrap().update(update);
+            }
+            error!("{}", gettext("Xi-Update sender disconnected"));
+        });
 
         edit_view
     }
@@ -193,7 +207,7 @@ impl EditView {
     /// If xi-editor sends us a [update](https://xi-editor.io/docs/frontend-protocol.html#config_changed)
     /// msg we process it here, setting the scrollbars upper limit accordingly, checking if the EditView
     /// is pristine (_does not_ has unsaved changes) and queue a new draw of the EditView.
-    pub fn update(&mut self, params: &Update) {
+    pub fn update(&mut self, params: Update) {
         trace!(
             "{} 'update' {} '{}': {:?}",
             gettext("Handling"),
@@ -201,7 +215,8 @@ impl EditView {
             self.view_id,
             params
         );
-        self.line_cache.update(params.clone());
+
+        self.update_sender.send(params.clone()).unwrap();
 
         // update scrollbars to the new text width and height
         let text_size = self.get_text_size();
@@ -247,7 +262,13 @@ impl EditView {
             y = 0.0;
         }
         let line_num = (y / self.edit_font.font_height) as u64;
-        let index = if let Some(line) = self.line_cache.lines().get(line_num as usize) {
+        let index = if let Some(line) = self
+            .line_cache
+            .lock()
+            .unwrap()
+            .lines()
+            .get(line_num as usize)
+        {
             let pango_ctx = self.view_item.get_pango_ctx();
 
             let layout = self.create_layout_for_line(&pango_ctx, line, &self.get_tabs());
@@ -284,7 +305,7 @@ impl EditView {
             self.view_id
         );
         let da_height = self.view_item.edit_area.get_allocated_height();
-        let num_lines = self.line_cache.height();
+        let num_lines = self.line_cache.lock().unwrap().height();
         let vadj = &self.view_item.vadj;
         let first_line = (vadj.get_value() / self.edit_font.font_height) as u64;
         let last_line = min(
@@ -316,7 +337,7 @@ impl EditView {
 
         let da_width = f64::from(self.view_item.edit_area.get_allocated_width());
         let da_height = f64::from(self.view_item.edit_area.get_allocated_height());
-        let num_lines = self.line_cache.height();
+        let num_lines = self.line_cache.lock().unwrap().height();
 
         let all_text_height =
             num_lines as f64 * self.edit_font.font_height + self.edit_font.font_descent;
@@ -340,7 +361,7 @@ impl EditView {
         // Determine the longest line as per Pango. Creating layouts with Pango here is kind of expensive
         // here, but it's hard determining an accurate width otherwise.
         for i in first_line..last_line {
-            if let Some(line) = self.line_cache.lines().get(i as usize) {
+            if let Some(line) = self.line_cache.lock().unwrap().lines().get(i as usize) {
                 let layout = self.create_layout_for_line(&pango_ctx, line, &tabs);
                 max_width = max(max_width, layout.get_extents().1.width);
             }
@@ -374,7 +395,7 @@ impl EditView {
         let da_width = self.view_item.edit_area.get_allocated_width();
         let da_height = self.view_item.edit_area.get_allocated_height();
 
-        let num_lines = self.line_cache.height();
+        let num_lines = self.line_cache.lock().unwrap().height();
 
         let vadj = &self.view_item.vadj;
         let hadj = &self.view_item.hadj;
@@ -427,7 +448,7 @@ impl EditView {
 
         for i in first_line..last_line {
             // Keep track of the starting x position
-            if let Some(line) = self.line_cache.lines().get(i as usize) {
+            if let Some(line) = self.line_cache.lock().unwrap().lines().get(i as usize) {
                 if self.main_state.borrow().settings.highlight_line && !line.cursor.is_empty() {
                     set_source_color(cr, theme.line_highlight);
                     cr.rectangle(
@@ -496,7 +517,7 @@ impl EditView {
         let theme = &self.main_state.borrow().theme;
         let linecount_height = self.view_item.linecount.get_allocated_height();
 
-        let num_lines = self.line_cache.height();
+        let num_lines = self.line_cache.lock().unwrap().height();
 
         let vadj = &self.view_item.vadj;
 
@@ -533,7 +554,7 @@ impl EditView {
         set_source_color(cr, theme.foreground);
         for i in first_line..last_line {
             // Keep track of the starting x position
-            if let Some(line) = self.line_cache.lines().get(i as usize) {
+            if let Some(line) = self.line_cache.lock().unwrap().lines().get(i as usize) {
                 if line.line_num.is_some() {
                     current_line += 1;
                     cr.move_to(
@@ -751,7 +772,7 @@ impl EditView {
 
         {
             // Collect all styles with id 0/1 (selections/find results) to make sure they're in the frame
-            if let Some(line) = self.line_cache.lines().get(line as usize) {
+            if let Some(line) = self.line_cache.lock().unwrap().lines().get(line as usize) {
                 let line_selections: Vec<&StyleSpan> = line
                     .styles
                     .iter()
@@ -1181,7 +1202,7 @@ impl EditView {
 
     /// Returns true if this EditView is empty (contains no text)
     pub fn is_empty(&self) -> bool {
-        self.line_cache.is_empty()
+        self.line_cache.lock().unwrap().is_empty()
     }
 
     pub fn set_language(&self, lang: &str) {

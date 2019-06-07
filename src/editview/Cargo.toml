@@ -15,6 +15,7 @@ build = "build.rs"
 [dependencies]
 cairo-rs = { git="https://github.com/gtk-rs/cairo" }
 cairo-sys-rs = { git="https://github.com/gtk-rs/cairo" }
+crossbeam-channel = "0.3"
 enclose = "1"
 futures = "0.1"
 gdk = { git="https://github.com/gtk-rs/gdk" }
