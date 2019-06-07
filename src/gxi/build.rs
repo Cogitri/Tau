@@ -22,4 +22,9 @@ fn main() {
         );
         panic!("Can't continue build without GResources!");
     }
+
+    println!("cargo:rerun-if-env-changed=GXI_LOCALEDIR");
+    println!("cargo:rerun-if-env-changed=GXI_VERSION");
+    println!("cargo:rerun-if-env-changed=GXI_PLUGIN_DIR");
+    println!("cargo:rerun-if-env-changed=GXI_XI_BINARY_PATH");
 }
