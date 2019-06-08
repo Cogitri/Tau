@@ -11,7 +11,7 @@ use gettextrs::gettext;
 use glib::source;
 use gtk::{self, *};
 use log::{debug, error, trace, warn};
-use pango::{self, ContextExt, LayoutExt, *};
+use pango::{self, *};
 use pangocairo::functions::*;
 use std::cell::RefCell;
 use std::cmp::{max, min};
@@ -227,13 +227,9 @@ impl EditView {
             text_size.width + self.edit_font.font_width * 4.0
         };
 
-        {
-            // don't conflict with pango::LayoutExt;
-            use gtk::LayoutExt;
-            self.view_item
-                .edit_area
-                .set_size(text_width as u32, text_height as u32);
-        }
+        self.view_item
+            .edit_area
+            .set_size(text_width as u32, text_height as u32);
 
         self.pristine = params.pristine;
         self.update_title();
