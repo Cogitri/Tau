@@ -1,7 +1,14 @@
+use std::fs::remove_file;
+use std::path::Path;
 use std::process::Command;
 use std::str::from_utf8;
 
 fn main() {
+    // Remove old versions of the gresource to make sure we're using the latest version
+    if Path::new("src/ui/resources.gresource").exists() {
+        remove_file("src/ui/resources.gresource").unwrap();
+    }
+
     // Compile Gresource
     let output =
         Command::new(option_env!("GRESOURCE_BINARY_PATH").unwrap_or("glib-compile-resources"))

@@ -474,6 +474,11 @@ impl EditView {
                 update_layout(cr, &layout);
                 show_layout(cr, &layout);
 
+                // We (mis)use the caret theme color for both tab/spaces drawing and the cursor color.
+                // It'd be nicer if we could use `theme.accent` or similiar here, but sadly that's not
+                // a thing in xi's themes.
+                set_source_color(cr, theme.caret);
+
                 if self.main_state.borrow().settings.trailing_tabs
                     || self.main_state.borrow().settings.all_tabs
                     || self.main_state.borrow().settings.leading_tabs
@@ -510,15 +515,13 @@ impl EditView {
 
                     for index in tab_indexes.iter() {
                         let pos = layout.index_to_pos(*index);
-                        draw_invisible::draw_tab(
-                            cr,
-                            &draw_invisible::Rectangle {
-                                x: (pos.x / pango::SCALE).into(),
-                                y: (self.edit_font.font_height * i as f64 - vadj.get_value()),
-                                width: (pos.width / pango::SCALE).into(),
-                                height: (pos.height / pango::SCALE).into(),
-                            },
-                        );
+                        let rect = draw_invisible::Rectangle {
+                            x: (pos.x / pango::SCALE).into(),
+                            y: (self.edit_font.font_height * i as f64 - vadj.get_value()),
+                            width: (pos.width / pango::SCALE).into(),
+                            height: (pos.height / pango::SCALE).into(),
+                        };
+                        rect.draw_tab(cr)
                     }
                 }
 
@@ -558,22 +561,17 @@ impl EditView {
 
                     for index in space_indexes.iter() {
                         let pos = layout.index_to_pos(*index);
-                        draw_invisible::draw_space(
-                            cr,
-                            &draw_invisible::Rectangle {
-                                x: (pos.x / pango::SCALE).into(),
-                                y: (self.edit_font.font_height * i as f64 - vadj.get_value()),
-                                width: (pos.width / pango::SCALE).into(),
-                                height: (pos.height / pango::SCALE).into(),
-                            },
-                        );
+                        let rect = draw_invisible::Rectangle {
+                            x: (pos.x / pango::SCALE).into(),
+                            y: (self.edit_font.font_height * i as f64 - vadj.get_value()),
+                            width: (pos.width / pango::SCALE).into(),
+                            height: (pos.height / pango::SCALE).into(),
+                        };
+                        rect.draw_space(cr);
                     }
                 }
 
                 if let Some(layout_line) = layout.get_line(0) {
-                    // Set cursor color
-                    set_source_color(cr, theme.caret);
-
                     for c in &line.cursor {
                         let x = layout_line.index_to_x(*c as i32, false) / pango::SCALE;
                         // Draw the cursor
