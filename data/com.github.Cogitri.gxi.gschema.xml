@@ -20,6 +20,22 @@
             </description>
         </key>
 
+        <key name="draw-leading-spaces" type="b">
+            <default>false</default>
+            <summary>Draw leading spaces</summary>
+            <description>
+                Draw spaces which are at the beginning of a line
+            </description>
+        </key>
+
+        <key name="draw-all-spaces" type="b">
+            <default>false</default>
+            <summary>Draw all spaces</summary>
+            <description>
+                Draw spaces, no matter the position
+            </description>
+        </key>
+
         <key name="draw-right-margin" type="b">
             <default>false</default>
             <summary>Draw a right hand margin</summary>
@@ -98,6 +114,22 @@
             <summary>Draw trailing tabs</summary>
             <description>
                 Draw tabs which are at the end of a line
+            </description>
+        </key>
+
+        <key name="draw-leading-tabs" type="b">
+            <default>false</default>
+            <summary>Draw leading tabs</summary>
+            <description>
+                Draw tabs which are at the beginning of a line
+            </description>
+        </key>
+
+        <key name="draw-all-tabs" type="b">
+            <default>false</default>
+            <summary>Draw all tabs</summary>
+            <description>
+                Draw all tabs, no matter the position
             </description>
         </key>
     </schema>

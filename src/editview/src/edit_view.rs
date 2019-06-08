@@ -1,3 +1,4 @@
+use crate::draw_invisible;
 use crate::fonts::Font;
 use crate::main_state::{MainState, Settings};
 use crate::theme::{color_from_u32, set_margin_source_color, set_source_color, PangoColor};
@@ -386,6 +387,7 @@ impl EditView {
 
     /// Handles the drawing of the EditView. This is called when we get a update from xi-editor or if
     /// gtk requests us to draw the EditView. This draws the background, all lines and the cursor.
+    #[allow(clippy::cognitive_complexity)]
     pub fn handle_da_draw(&self, cr: &Context) -> Inhibit {
         const CURSOR_WIDTH: f64 = 2.0;
 
@@ -472,46 +474,118 @@ impl EditView {
                 update_layout(cr, &layout);
                 show_layout(cr, &layout);
 
-                // Well this is stupid, but (for some reason) Pango gets the width of "·" wrong!
-                // It only thinks that the width of that char is 5, when it actually is 10 (like all
-                // other chars. So we have to replace it with some other char here to trick Pango into
-                // drawing the cursor at the correct position later on
                 if self.main_state.borrow().settings.trailing_tabs
-                    || self.main_state.borrow().settings.trailing_spaces
+                    || self.main_state.borrow().settings.all_tabs
+                    || self.main_state.borrow().settings.leading_tabs
                 {
-                    let layout_text = layout.get_text().unwrap().to_string();
-                    let char_it = UnicodeSegmentation::graphemes(layout_text.as_str(), true);
-                    let num_tabs = char_it.filter(|c| c == &"→").count();
+                    let line_text = layout.get_text().unwrap();
+                    let mut tab_indexes = Vec::new();
 
-                    let layout_render_text = layout_text.replace("\u{b7}", " ").replace("→", "");
+                    if self.main_state.borrow().settings.all_tabs {
+                        let char_it = UnicodeSegmentation::graphemes(line_text.as_str(), true);
+                        for (i, char) in char_it.enumerate() {
+                            if char == "\t" {
+                                tab_indexes.push(i as i32)
+                            }
+                        }
+                    } else if self.main_state.borrow().settings.trailing_tabs
+                        && line_text.as_str().ends_with('\t')
+                    {
+                        let text = layout.get_text().unwrap().to_string();
+                        let last_char = text.replace(" ", "a").trim_end().len();
+                        let (text_without_tabs, tabs) = text.split_at(last_char);
+                        let char_count =
+                            UnicodeSegmentation::graphemes(text_without_tabs, true).count();
+                        for (i, _) in tabs.chars().enumerate() {
+                            tab_indexes.push((i + char_count) as i32)
+                        }
+                    } else if self.main_state.borrow().settings.leading_tabs {
+                        let text = layout.get_text().unwrap().to_string();
+                        let last_char = text.replace(" ", "a").trim_start().len();
+                        let (_, tabs) = text.split_at(last_char);
+                        for (i, _) in tabs.chars().enumerate() {
+                            tab_indexes.push((i) as i32)
+                        }
+                    }
 
-                    let layout_render_text = layout_render_text.trim_end();
-
-                    let tabs = (0..num_tabs as usize).map(|_| "\t").collect::<String>();
-
-                    layout.set_text(&format!("{}{}", layout_render_text, tabs));
+                    for index in tab_indexes.iter() {
+                        let pos = layout.index_to_pos(*index);
+                        draw_invisible::draw_tab(
+                            cr,
+                            &draw_invisible::Rectangle {
+                                x: (pos.x / pango::SCALE).into(),
+                                y: (self.edit_font.font_height * i as f64 - vadj.get_value()),
+                                width: (pos.width / pango::SCALE).into(),
+                                height: (pos.height / pango::SCALE).into(),
+                            },
+                        );
+                    }
                 }
 
-                let layout_line = layout.get_line(0);
-                if layout_line.is_none() {
-                    continue;
+                if self.main_state.borrow().settings.trailing_spaces
+                    || self.main_state.borrow().settings.all_spaces
+                    || self.main_state.borrow().settings.leading_spaces
+                {
+                    let line_text = layout.get_text().unwrap();
+                    let mut space_indexes = Vec::new();
+
+                    if self.main_state.borrow().settings.all_spaces {
+                        let char_it = UnicodeSegmentation::graphemes(line_text.as_str(), true);
+                        for (i, char) in char_it.enumerate() {
+                            if char == " " {
+                                space_indexes.push(i as i32)
+                            }
+                        }
+                    } else if self.main_state.borrow().settings.trailing_spaces
+                        && line_text.ends_with(' ')
+                    {
+                        let text = layout.get_text().unwrap().to_string();
+                        let last_char = text.replace("\t", "a").trim_end().len();
+                        let (text_without_spaces, spaces) = text.split_at(last_char);
+                        let char_count =
+                            UnicodeSegmentation::graphemes(text_without_spaces, true).count();
+                        for (i, _) in spaces.chars().enumerate() {
+                            space_indexes.push((i + char_count) as i32)
+                        }
+                    } else if self.main_state.borrow().settings.leading_spaces {
+                        let text = layout.get_text().unwrap().to_string();
+                        let last_char = text.replace("\t", "a").trim_start().len();
+                        let (_, spaces) = text.split_at(last_char);
+                        for (i, _) in spaces.chars().enumerate() {
+                            space_indexes.push(i as i32)
+                        }
+                    }
+
+                    for index in space_indexes.iter() {
+                        let pos = layout.index_to_pos(*index);
+                        draw_invisible::draw_space(
+                            cr,
+                            &draw_invisible::Rectangle {
+                                x: (pos.x / pango::SCALE).into(),
+                                y: (self.edit_font.font_height * i as f64 - vadj.get_value()),
+                                width: (pos.width / pango::SCALE).into(),
+                                height: (pos.height / pango::SCALE).into(),
+                            },
+                        );
+                    }
                 }
-                let layout_line = layout_line.unwrap();
 
-                // Set cursor color
-                set_source_color(cr, theme.caret);
+                if let Some(layout_line) = layout.get_line(0) {
+                    // Set cursor color
+                    set_source_color(cr, theme.caret);
 
-                for c in &line.cursor {
-                    let x = layout_line.index_to_x(*c as i32, false) / pango::SCALE;
-                    // Draw the cursor
-                    cr.rectangle(
-                        (f64::from(x)) - hadj.get_value(),
-                        (self.edit_font.font_ascent + self.edit_font.font_descent) * i as f64
-                            - vadj.get_value(),
-                        CURSOR_WIDTH,
-                        self.edit_font.font_ascent + self.edit_font.font_descent,
-                    );
-                    cr.fill();
+                    for c in &line.cursor {
+                        let x = layout_line.index_to_x(*c as i32, false) / pango::SCALE;
+                        // Draw the cursor
+                        cr.rectangle(
+                            (f64::from(x)) - hadj.get_value(),
+                            (self.edit_font.font_ascent + self.edit_font.font_descent) * i as f64
+                                - vadj.get_value(),
+                            CURSOR_WIDTH,
+                            self.edit_font.font_ascent + self.edit_font.font_descent,
+                        );
+                        cr.fill();
+                    }
                 }
             }
         }
@@ -644,81 +718,10 @@ impl EditView {
         line: &Line,
         tabs: &TabArray,
     ) -> pango::Layout {
-        let line_view = if line.text.ends_with('\n') {
-            &line.text[0..line.text.len() - 1]
-        } else {
-            &line.text
-        };
-
-        // Replace spaces with '·'. Do this here since we only want
-        // to draw this, we don't want to save the file like that.
-        let line_view =
-            if self.main_state.borrow().settings.trailing_spaces && line_view.ends_with(' ') {
-                // Replace tabs here to make sure trim_end doesn't remove them
-                let last_char = line_view.replace("\t", "a").trim_end().len();
-                let (line_view_without_space, spaces) = line_view.split_at(last_char);
-                let highlighted_spaces: String = (0..spaces.len()).map(|_| "\u{b7}").collect();
-
-                format!("{}{}", line_view_without_space, highlighted_spaces)
-            } else if self.main_state.borrow().settings.trailing_tabs && line_view.ends_with('\t') {
-                let last_char = line_view.trim_end().len();
-                let (line_view_without_tabs, tabs) = line_view.split_at(last_char);
-                let tab_size = self.main_state.borrow().settings.tab_size;
-                // The first tab can be smaller than the tab_size for alignment reasons (e.g. <space>\t)
-                // would only be 3 chars wide on a tab size of 4
-                let first_tab_modulo = last_char % tab_size as usize;
-                let first_tab_len = if first_tab_modulo == 0 {
-                    tab_size as usize
-                } else {
-                    first_tab_modulo
-                };
-
-                let tab_spacers = (0..(tab_size / 2) as usize)
-                    .map(|_| " ")
-                    .collect::<String>();
-
-                let even = tab_size % 2 == 0;
-                let highlighted_tabs = (1..tabs.len())
-                    .map(|_| {
-                        if even {
-                            format!(
-                                "{}→{}",
-                                tab_spacers,
-                                &tab_spacers.chars().skip(1).collect::<String>()
-                            )
-                        } else {
-                            format!("{}→{}", tab_spacers, tab_spacers)
-                        }
-                    })
-                    .collect::<String>();
-
-                let first_tab_spacers = (0..(first_tab_len / 2) as usize)
-                    .map(|_| " ")
-                    .collect::<String>();
-
-                let first_highlighted_tab = if first_tab_len % 2 == 0 {
-                    format!(
-                        "{}→{}",
-                        first_tab_spacers,
-                        &first_tab_spacers.chars().skip(1).collect::<String>()
-                    )
-                } else {
-                    format!("{}→{}", first_tab_spacers, first_tab_spacers)
-                };
-
-                format!(
-                    "{}{}{}",
-                    line_view_without_tabs, first_highlighted_tab, highlighted_tabs
-                )
-            } else {
-                line_view.to_string()
-            };
-
-        // let layout = create_layout(cr).unwrap();
         let layout = pango::Layout::new(pango_ctx);
         layout.set_tabs(Some(tabs));
         layout.set_font_description(Some(&self.edit_font.font_desc));
-        layout.set_text(&line_view);
+        layout.set_text(&line.text);
 
         let mut ix = 0;
         let attr_list = pango::AttrList::new();
