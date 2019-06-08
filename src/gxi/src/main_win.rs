@@ -15,7 +15,7 @@ use std::collections::{BTreeMap, HashMap};
 use std::rc::Rc;
 use xrl::{Client, Style, ViewId, XiEvent, XiEvent::*};
 
-pub(crate) const RESOURCE: &[u8] = include_bytes!("ui/resources.gresource");
+pub const RESOURCE: &[u8] = include_bytes!("ui/resources.gresource");
 
 /// Returned by an `ask_save_dialog` when we ask the user if he wants to either:
 /// - `Save`(save unsaved changes and close view)
