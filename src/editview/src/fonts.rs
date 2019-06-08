@@ -1,6 +1,6 @@
 use gettextrs::gettext;
 use log::debug;
-use pango::{ContextExt, FontDescription, FontsetExt, Language, LayoutExt};
+use pango::{FontDescription, FontsetExt, Language};
 
 /// The `Font` Struct holds all information about the font used in the `EditView` for the editing area
 /// or the interface font (used for the linecount)
