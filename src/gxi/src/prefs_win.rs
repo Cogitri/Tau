@@ -1,7 +1,6 @@
 use editview::MainState;
 use gettextrs::gettext;
-use gio::{Resource, SettingsBindFlags, SettingsExt};
-use glib::Bytes;
+use gio::{SettingsBindFlags, SettingsExt};
 use gtk::*;
 use gxi_config_storage::{GSchema, GSchemaExt};
 use log::{debug, trace};
@@ -22,10 +21,6 @@ impl PrefsWin {
         core: &Client,
         gschema: &GSchema,
     ) -> Self {
-        let gbytes = Bytes::from_static(crate::main_win::RESOURCE);
-        let resource = Resource::new_from_data(&gbytes).unwrap();
-        gio::resources_register(&resource);
-
         let builder = Builder::new_from_resource("/com/github/Cogitri/gxi/prefs_win.glade");
 
         let window: Window = builder.get_object("prefs_win").unwrap();
@@ -53,7 +48,7 @@ impl PrefsWin {
         let draw_leading_spaces_radio: RadioButton =
             builder.get_object("spaces_leading_radio_button").unwrap();
         let draw_all_spaces_radio: RadioButton =
-            builder.get_object("all_spaces_radio_button").unwrap();
+            builder.get_object("spaces_all_radio_button").unwrap();
 
         let font_desc: &String = &gschema.get_key("font");
         font_chooser_widget.set_font_desc(&FontDescription::from_string(font_desc));
