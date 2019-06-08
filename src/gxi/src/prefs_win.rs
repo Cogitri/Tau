@@ -36,17 +36,24 @@ impl PrefsWin {
             builder.get_object("tab_stops_checkbutton").unwrap();
         let word_wrap_checkbutton: ToggleButton =
             builder.get_object("word_wrap_checkbutton").unwrap();
-        let draw_trailing_spaces_checkbutton: ToggleButton = builder
-            .get_object("draw_trailing_spaces_checkbutton")
-            .unwrap();
         let margin_checkbutton: ToggleButton = builder.get_object("margin_checkbutton").unwrap();
         let margin_spinbutton: SpinButton = builder.get_object("margin_spinbutton").unwrap();
         let highlight_line_checkbutton: ToggleButton =
             builder.get_object("highlight_line_checkbutton").unwrap();
         let tab_size_spinbutton: SpinButton = builder.get_object("tab_size_spinbutton").unwrap();
-        let draw_trailing_tabs_checkbutton: ToggleButton = builder
-            .get_object("draw_trailing_spaces_checkbutton")
-            .unwrap();
+
+        let draw_trailing_tabs_radio: RadioButton =
+            builder.get_object("tabs_trailing_radio_button").unwrap();
+        let draw_leading_tabs_radio: RadioButton =
+            builder.get_object("tabs_leading_radio_button").unwrap();
+        let draw_all_tabs_radio: RadioButton = builder.get_object("tabs_all_radio_button").unwrap();
+
+        let draw_trailing_spaces_radio: RadioButton =
+            builder.get_object("spaces_trailing_radio_button").unwrap();
+        let draw_leading_spaces_radio: RadioButton =
+            builder.get_object("spaces_leading_radio_button").unwrap();
+        let draw_all_spaces_radio: RadioButton =
+            builder.get_object("all_spaces_radio_button").unwrap();
 
         let font_desc: &String = &gschema.get_key("font");
         font_chooser_widget.set_font_desc(&FontDescription::from_string(font_desc));
@@ -107,7 +114,21 @@ impl PrefsWin {
 
         gschema.settings.bind(
             "draw-trailing-spaces",
-            &draw_trailing_spaces_checkbutton,
+            &draw_trailing_spaces_radio,
+            "active",
+            SettingsBindFlags::DEFAULT,
+        );
+
+        gschema.settings.bind(
+            "draw-leading-spaces",
+            &draw_leading_spaces_radio,
+            "active",
+            SettingsBindFlags::DEFAULT,
+        );
+
+        gschema.settings.bind(
+            "draw-all-spaces",
+            &draw_all_spaces_radio,
             "active",
             SettingsBindFlags::DEFAULT,
         );
@@ -142,7 +163,21 @@ impl PrefsWin {
 
         gschema.settings.bind(
             "draw-trailing-tabs",
-            &draw_trailing_tabs_checkbutton,
+            &draw_trailing_tabs_radio,
+            "active",
+            SettingsBindFlags::DEFAULT,
+        );
+
+        gschema.settings.bind(
+            "draw-leading-tabs",
+            &draw_leading_tabs_radio,
+            "active",
+            SettingsBindFlags::DEFAULT,
+        );
+
+        gschema.settings.bind(
+            "draw-all-tabs",
+            &draw_all_tabs_radio,
             "active",
             SettingsBindFlags::DEFAULT,
         );

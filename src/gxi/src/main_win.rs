@@ -901,12 +901,16 @@ pub fn new_settings() -> Settings {
 
     Settings {
         trailing_spaces: gschema.get_key("draw-trailing-spaces"),
+        all_spaces: gschema.get_key("draw-all-spaces"),
+        leading_spaces: gschema.get_key("draw-leading-spaces"),
         highlight_line: gschema.get_key("highlight-line"),
         right_margin: gschema.get_key("draw-right-margin"),
         column_right_margin: gschema.get_key("column-right-margin"),
         edit_font: gschema.get_key("font"),
         tab_size: gschema.get_key("tab-size"),
         trailing_tabs: gschema.get_key("draw-trailing-tabs"),
+        all_tabs: gschema.get_key("draw-all-tabs"),
+        leading_tabs: gschema.get_key("draw-leading-tabs"),
         interface_font,
         gschema,
     }
@@ -922,6 +926,41 @@ pub fn connect_settings_change(main_win: &Rc<MainWin>, core: &Client) {
                 "draw-trailing-spaces" => {
                     let val = gschema.get_key("draw-trailing-spaces");
                     main_win.state.borrow_mut().settings.trailing_spaces = val;
+                    if let Some(ev) = main_win.get_current_edit_view() {
+                        ev.borrow().view_item.edit_area.queue_draw();
+                    }
+                }
+                "draw-leading-spaces" => {
+                    let val = gschema.get_key("draw-leading-spaces");
+                    main_win.state.borrow_mut().settings.leading_spaces = val;
+                    if let Some(ev) = main_win.get_current_edit_view() {
+                        ev.borrow().view_item.edit_area.queue_draw();
+                    }
+                }
+                "draw-all-spaces" => {
+                    let val = gschema.get_key("draw-all-spaces");
+                    main_win.state.borrow_mut().settings.all_spaces = val;
+                    if let Some(ev) = main_win.get_current_edit_view() {
+                        ev.borrow().view_item.edit_area.queue_draw();
+                    }
+                }
+                "draw-trailing-tabs" => {
+                    let val = gschema.get_key("draw-trailing-tabs");
+                    main_win.state.borrow_mut().settings.trailing_tabs = val;
+                    if let Some(ev) = main_win.get_current_edit_view() {
+                        ev.borrow().view_item.edit_area.queue_draw();
+                    }
+                }
+                "draw-leading-tabs" => {
+                    let val = gschema.get_key("draw-leading-tabs");
+                    main_win.state.borrow_mut().settings.leading_tabs = val;
+                    if let Some(ev) = main_win.get_current_edit_view() {
+                        ev.borrow().view_item.edit_area.queue_draw();
+                    }
+                }
+                "draw-all-tabs" => {
+                    let val = gschema.get_key("draw-all-tabs");
+                    main_win.state.borrow_mut().settings.all_tabs = val;
                     if let Some(ev) = main_win.get_current_edit_view() {
                         ev.borrow().view_item.edit_area.queue_draw();
                     }
