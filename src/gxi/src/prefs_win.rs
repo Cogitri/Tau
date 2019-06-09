@@ -91,14 +91,12 @@ impl PrefsWin {
             SettingsBindFlags::DEFAULT,
         );
 
-        /* https://github.com/xi-frontend/xrl/issues/25
         gschema.settings.bind(
             "word-wrap",
             &word_wrap_checkbutton,
             "active",
             SettingsBindFlags::DEFAULT,
-        );*/
-        word_wrap_checkbutton.set_sensitive(false);
+        );
 
         gschema.settings.bind(
             "use-tab-stops",

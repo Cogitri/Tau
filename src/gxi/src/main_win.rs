@@ -1,5 +1,6 @@
 use crate::about_win::AboutWin;
 use crate::errors::{ErrorDialog, ErrorMsg};
+use crate::frontend::{XiEvent, XiRequest};
 use crate::prefs_win::PrefsWin;
 use editview::{theme::u32_from_color, EditView, MainState, Settings};
 use gdk_pixbuf::Pixbuf;
@@ -13,7 +14,7 @@ use serde_json::{self, json};
 use std::cell::RefCell;
 use std::collections::{BTreeMap, HashMap};
 use std::rc::Rc;
-use xrl::{Client, Style, ViewId, XiEvent, XiEvent::*};
+use xrl::{Client, Style, ViewId, XiNotification::*};
 
 pub const RESOURCE: &[u8] = include_bytes!("ui/resources.gresource");
 
@@ -76,6 +77,7 @@ pub struct MainWin {
     state: Rc<RefCell<MainState>>,
     properties: RefCell<WinProp>,
     new_view_tx: Sender<(ViewId, Option<String>)>,
+    request_tx: crossbeam_channel::Sender<XiRequest>,
 }
 
 impl MainWin {
@@ -85,6 +87,7 @@ impl MainWin {
         new_view_rx: Receiver<(ViewId, Option<String>)>,
         new_view_tx: Sender<(ViewId, Option<String>)>,
         event_rx: Receiver<XiEvent>,
+        request_tx: crossbeam_channel::Sender<XiRequest>,
     ) -> Rc<Self> {
         let gbytes = Bytes::from_static(RESOURCE);
         let resource = Resource::new_from_data(&gbytes).unwrap();
@@ -133,6 +136,7 @@ impl MainWin {
             state: main_state.clone(),
             new_view_tx,
             properties,
+            request_tx,
         });
 
         connect_settings_change(&main_win, &core);
@@ -347,22 +351,24 @@ impl MainWin {
     fn handle_event(main_win: &Rc<Self>, ev: XiEvent) {
         trace!("{}: {:?}", gettext("Handling XiEvent"), ev);
         match ev {
-            Alert(alert) => main_win.alert(alert),
-            AvailableThemes(themes) => main_win.available_themes(themes),
-            AvailablePlugins(plugins) => main_win.available_plugins(plugins),
-            ConfigChanged(config) => main_win.config_changed(config),
-            DefStyle(style) => main_win.def_style(style),
-            FindStatus(status) => main_win.find_status(status),
-            ReplaceStatus(status) => main_win.replace_status(status),
-            Update(update) => main_win.update(update),
-            ScrollTo(scroll) => main_win.scroll_to(scroll),
-            ThemeChanged(theme) => main_win.theme_changed(theme),
-            //MeasureWidth(measure_width) => main_win.measure_width(&measure_width),
-            AvailableLanguages(langs) => main_win.available_languages(langs),
-            LanguageChanged(lang) => main_win.language_changed(lang),
-            PluginStarted(plugin) => main_win.plugin_started(plugin),
-            PluginStoped(plugin) => main_win.plugin_stopped(plugin),
-            _ => {}
+            XiEvent::Notification(notification) => match notification {
+                Alert(alert) => main_win.alert(alert),
+                AvailableThemes(themes) => main_win.available_themes(themes),
+                AvailablePlugins(plugins) => main_win.available_plugins(plugins),
+                ConfigChanged(config) => main_win.config_changed(config),
+                DefStyle(style) => main_win.def_style(style),
+                FindStatus(status) => main_win.find_status(status),
+                ReplaceStatus(status) => main_win.replace_status(status),
+                Update(update) => main_win.update(update),
+                ScrollTo(scroll) => main_win.scroll_to(scroll),
+                ThemeChanged(theme) => main_win.theme_changed(theme),
+                AvailableLanguages(langs) => main_win.available_languages(langs),
+                LanguageChanged(lang) => main_win.language_changed(lang),
+                PluginStarted(plugin) => main_win.plugin_started(plugin),
+                PluginStoped(plugin) => main_win.plugin_stopped(plugin),
+                _ => {}
+            },
+            XiEvent::MeasureWidth(measure_width) => main_win.measure_width(measure_width),
         }
     }
 
@@ -494,7 +500,6 @@ impl MainWin {
         });
     }
 
-    /*
     pub fn measure_width(&self, params: xrl::MeasureWidth) {
         trace!("{} 'measure_width' {:?}", gettext("Handling"), params);
         if let Some(ev) = self.get_current_edit_view() {
@@ -502,14 +507,15 @@ impl MainWin {
 
             for mes_width in params.0 {
                 for string in &mes_width.strings {
-                    widths.push(ev.borrow().line_width(string))
+                    widths.push(ev.borrow().line_width(string) as f32)
                 }
             }
-            //let widths: Vec<f64> = request.iter().map(|x| x.strings.iter().map(|v| edit_view.borrow().line_width(&v)).collect::<Vec<f64>>()).collect();
 
-             self.core.send_result(id, &vec![widths]);
+            self.request_tx
+                .send(XiRequest::MeasureWidth(vec![widths]))
+                .unwrap();
         }
-    }*/
+    }
 
     pub fn available_languages(&self, params: xrl::AvailableLanguages) {
         debug!("{} 'available_languages' {:?}", gettext("Handling"), params);
