@@ -78,6 +78,7 @@ mod prefs_win;
 use crate::frontend::*;
 use crate::main_win::MainWin;
 //use crate::panic_handler::PanicHandler;
+use crossbeam_channel::unbounded;
 use futures::future::Future;
 use futures::stream::Stream;
 use gettextrs::{gettext, TextDomain, TextDomainError};
@@ -92,7 +93,7 @@ use std::cell::RefCell;
 use std::env::args;
 use std::rc::Rc;
 use std::thread;
-use xrl::{spawn as spawn_xi, Client, ViewId, XiEvent};
+use xrl::{spawn as spawn_xi, Client, ViewId};
 
 fn main() {
     //PanicHandler::new();
@@ -114,6 +115,8 @@ fn main() {
         None,
     );
 
+    // The channel to send the result of a request back to Xi
+    let (request_tx, request_rx) = unbounded::<XiRequest>();
     // The channel to signal MainWin to create a new tab with an EditView
     let (new_view_tx, new_view_rx) =
         MainContext::channel::<(ViewId, Option<String>)>(glib::PRIORITY_HIGH);
@@ -122,7 +125,11 @@ fn main() {
     let (event_tx, event_rx) = MainContext::sync_channel::<XiEvent>(glib::PRIORITY_HIGH, 5);
     let (core, core_stderr) = spawn_xi(
         crate::globals::XI_PATH.unwrap_or("xi-core"),
-        GxiFrontendBuilder { event_tx },
+        GxiFrontendBuilder {
+            event_tx,
+            request_tx: request_tx.clone(),
+            request_rx,
+        },
     );
 
     let log_core_errors = core_stderr
@@ -141,7 +148,7 @@ fn main() {
     let event_rx_opt = Rc::new(RefCell::new(Some(event_rx)));
 
     application.connect_startup(
-        enclose!((core, application, new_view_rx_opt, event_rx_opt, new_view_tx) move |_| {
+        enclose!((core, application, new_view_rx_opt, event_rx_opt, new_view_tx, request_tx) move |_| {
             debug!("{}", gettext("Starting gxi"));
 
             glib::set_application_name("gxi");
@@ -175,6 +182,7 @@ fn main() {
                 new_view_rx_opt.borrow_mut().take().unwrap(),
                 new_view_tx.clone(),
                 event_rx_opt.borrow_mut().take().unwrap(),
+                request_tx.clone(),
             );
         }),
     );

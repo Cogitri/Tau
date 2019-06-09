@@ -19,6 +19,7 @@ gtk_v3_22 = ["gtk/v3_22"]
 [dependencies]
 cairo-rs = { git="https://github.com/gtk-rs/cairo" }
 cairo-sys-rs = { git="https://github.com/gtk-rs/cairo" }
+crossbeam-channel = "0.3"
 editview = { path="../editview" }
 enclose = "1"
 env_logger = "0.6"
@@ -44,7 +45,7 @@ serde_derive = "1"
 serde_json = "1"
 syntect = "3"
 tokio = "0.1"
-xrl = { git = "https://github.com/Cogitri/xrl.git", branch = "gxi-changes" }
+xrl = "0.0.6"
 
 [dev-dependencies]
 cargo-husky = { version="1", default-features = false, features = ["user-hooks"] }

@@ -37,4 +37,4 @@ serde_json = "1"
 syntect = "3"
 tokio = "0.1"
 unicode-segmentation = "1"
-xrl = { git = "https://github.com/Cogitri/xrl.git", branch = "gxi-changes" }
+xrl = "0.0.6"
