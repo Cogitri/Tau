@@ -879,7 +879,7 @@ dependencies = [
 [[package]]
 name = "pangocairo"
 version = "0.7.0"
-source = "git+https://github.com/gtk-rs/pangocairo#40a2d4ce9a6daff295c6cdb5cf0978411ad5200c"
+source = "git+https://github.com/gtk-rs/pangocairo#014fad66d4d85425d6b59ec1c92a6491ecec9ff8"
 dependencies = [
  "bitflags 1.0.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "cairo-rs 0.6.0 (git+https://github.com/gtk-rs/cairo)",
