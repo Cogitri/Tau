@@ -19,14 +19,17 @@ export GXI_VERSION="${9}"
 export GXI_XI_BINARY_PATH="${10}"
 export GRESOURCE_BINARY_PATH="${11}"
 
-# ANSI codes for getting green colors and resetting it
+# ANSI codes for getting colors and resetting it
+RED='\033[0;31m'
 GREEN='\033[0;32m'
 NO_COLOR='\033[0m'
 
-echo "\tGXI Plugindir: ${GREEN}${GXI_PLUGIN_DIR}${NO_COLOR}
-\tGXI Localedir:       ${GREEN}${GXI_LOCALEDIR}${NO_COLOR}
-\tGXI Version:         ${GREEN}${GXI_VERSION}${NO_COLOR}
-\tDetected GTK+3.22:   ${GREEN}${6}${NO_COLOR}
+echo -e \
+"
+\tGXI Plugindir:\t\t${GREEN}${GXI_PLUGIN_DIR}${NO_COLOR}
+\tGXI Localedir:\t\t${GREEN}${GXI_LOCALEDIR}${NO_COLOR}
+\tGXI Version:\t\t${GREEN}${GXI_VERSION}${NO_COLOR}
+\tDetected GTK+3.22:\t${GREEN}${6}${NO_COLOR}
 "
 
 cd "$1"
@@ -43,7 +46,7 @@ if [ -f "${4}/${RUST_TARGET}/release/${5}" ]; then
 elif [ -f "${4}/release/${5}" ]; then
     path="${4}/release/${5}"
 else
-    echo "Can't determine what dir cargo places compiled binaries in!"
+    echo "${RED}Can't determine what dir cargo places compiled binaries in!"{NO_COLOR}"
     exit 1
 fi
 
