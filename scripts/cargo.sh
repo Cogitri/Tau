@@ -46,7 +46,7 @@ if [ -f "${4}/${RUST_TARGET}/release/${5}" ]; then
 elif [ -f "${4}/release/${5}" ]; then
     path="${4}/release/${5}"
 else
-    echo "${RED}Can't determine what dir cargo places compiled binaries in!"{NO_COLOR}"
+    echo "${RED}Can't determine what dir cargo places compiled binaries in!${NO_COLOR}"
     exit 1
 fi
 
