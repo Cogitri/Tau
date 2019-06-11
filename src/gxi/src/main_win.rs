@@ -93,6 +93,15 @@ impl MainWin {
         let resource = Resource::new_from_data(&gbytes).unwrap();
         gio::resources_register(&resource);
 
+        let provider = gtk::CssProvider::new();
+        provider.load_from_resource("/com/github/Cogitri/gxi/app.css");
+        gtk::StyleContext::add_provider_for_screen(
+            &gdk::Screen::get_default()
+                .unwrap_or_else(|| panic!("{}", gettext("Failed to get default CssProvider!"))),
+            &provider,
+            gtk::STYLE_PROVIDER_PRIORITY_APPLICATION,
+        );
+
         let builder = Builder::new_from_resource("/com/github/Cogitri/gxi/gxi.glade");
 
         let properties = RefCell::new(WinProp::new(&application));

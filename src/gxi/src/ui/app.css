@@ -1,0 +1,10 @@
+statusbar button{
+	min-height: 0px;
+	padding-bottom: 0px;
+	padding-top: 0px;
+}
+
+statusbar label {
+	font-size: smaller;
+	font-weight: bold;
+}

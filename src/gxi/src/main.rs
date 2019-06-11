@@ -72,7 +72,7 @@ mod errors;
 mod frontend;
 mod globals;
 mod main_win;
-//mod panic_handler;
+//mod panic_handler
 mod prefs_win;
 
 use crate::frontend::*;
@@ -160,7 +160,7 @@ fn main() {
             {
                 Ok(locale) => info!("Translation found, setting locale to {:?}", locale),
                 Err(TextDomainError::TranslationNotFound(lang)) => {
-                    // We don't have an 'en' catalog since the messages are English by default
+                    // We don't have an 'en' catalog since the messages are English by defaul
                     if lang != "en" {
                         warn!("Translation not found for lang {}", lang)
                     }
