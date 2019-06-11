@@ -192,6 +192,9 @@ impl LineCache {
                     }
                 }
                 OperationType::Insert => {
+                    for _ in 0..new_invalid_after {
+                        new_lines.push(None)
+                    }
                     trace!("ins n={}", n);
                     new_invalid_after = 0;
                     for line in op.lines {
@@ -200,6 +203,10 @@ impl LineCache {
                 }
                 OperationType::Copy_ => {
                     trace!("copy n={}", n);
+
+                    for _ in 0..new_invalid_after {
+                        new_lines.push(None)
+                    }
 
                     new_invalid_after = 0;
 
