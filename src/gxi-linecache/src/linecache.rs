@@ -3,6 +3,7 @@ use serde::{self, Deserialize, Deserializer};
 use serde_derive::*;
 use serde_json::Value;
 use std::cmp::min;
+use xrl::{OperationType, Update};
 
 #[derive(Copy, Clone, Debug, Deserialize, Serialize)]
 pub struct StyleSpan {
@@ -12,6 +13,16 @@ pub struct StyleSpan {
     pub len: usize,
     #[serde(rename = "style_id")]
     pub id: usize,
+}
+
+impl From<&xrl::StyleDef> for StyleSpan {
+    fn from(x: &xrl::StyleDef) -> Self {
+        Self {
+            start: x.offset,
+            len: x.length as usize,
+            id: x.style_id as usize,
+        }
+    }
 }
 
 /// A Struct representing _one_ line which xi has sent us.
@@ -26,6 +37,19 @@ pub struct Line {
     cursor: Vec<u64>,
     pub styles: Vec<StyleSpan>,
     line_num: Option<u64>,
+}
+
+impl From<xrl::Line> for Line {
+    fn from(x: xrl::Line) -> Self {
+        let styles = x.styles.iter().map(|s| s.into()).collect();
+
+        Self {
+            text: x.text,
+            cursor: x.cursor,
+            styles,
+            line_num: x.line_num,
+        }
+    }
 }
 
 impl Line {
@@ -147,63 +171,48 @@ impl LineCache {
         }
         ret
     }
-    pub fn apply_update(&mut self, update: &Value) {
+    /// Handle an xi-core update.
+    pub fn apply_update(&mut self, update: Update) {
         let mut new_invalid_before = 0;
         let mut new_lines: Vec<Option<Line>> = Vec::new();
         let mut new_invalid_after = 0;
 
         let mut old_ix = 0_u64;
 
-        for op in update["operations"].as_array().unwrap() {
-            let op_type = &op["op"];
+        for op in update.operations {
             //debug!("lc before {}-- {} {:?} {}", op_type, new_invalid_before, new_lines, new_invalid_after);
-            let n = op["n"].as_u64().unwrap();
-            error!("{:?}", op_type);
-            match op_type.as_str().unwrap() {
-                "Invalidate" => {
-                    error!("invalidate n={}", n);
+            let n = op.nb_lines;
+            match op.operation_type {
+                OperationType::Invalidate => {
+                    trace!("invalidate n={}", n);
                     if new_lines.is_empty() {
                         new_invalid_before += n;
                     } else {
                         new_invalid_after += n;
                     }
                 }
-                "Insert" => {
-                    error!("ins n={}", n);
-                    for _ in 0..new_invalid_after {
-                        new_lines.push(None);
-                    }
+                OperationType::Insert => {
+                    trace!("ins n={}", n);
                     new_invalid_after = 0;
-                    for line in op["lines"].as_array().unwrap() {
-                        // xi only send 'ln' for actual lines
-                        let ln = line["ln"].as_u64();
-                        let line = Line::from_json(line, ln);
-                        new_lines.push(Some(Line {
-                            cursor: line.cursor.clone(),
-                            text: line.text.clone(),
-                            styles: line.styles.clone(),
-                            line_num: line.line_num,
-                        }));
+                    for line in op.lines {
+                        new_lines.push(Some(line.into()));
                     }
                 }
-                "Copy_" => {
-                    error!("copy n={}", n);
+                OperationType::Copy_ => {
+                    trace!("copy n={}", n);
 
-                    for _ in 0..new_invalid_after {
-                        new_lines.push(None);
-                    }
                     new_invalid_after = 0;
 
                     let mut n_remaining = n;
                     if old_ix < self.n_invalid_before {
-                        let n_invalid = min(n, self.n_invalid_before - old_ix);
+                        let invalid = min(n, self.n_invalid_before - old_ix);
                         if new_lines.is_empty() {
-                            new_invalid_before += n_invalid;
+                            new_invalid_before += invalid;
                         } else {
-                            new_invalid_after += n_invalid;
+                            new_invalid_after += invalid;
                         }
-                        old_ix += n_invalid;
-                        n_remaining -= n_invalid;
+                        old_ix += invalid;
+                        n_remaining -= invalid;
                     }
                     if n_remaining > 0 && old_ix < self.n_invalid_before + self.lines.len() as u64 {
                         let n_copy = min(
@@ -236,8 +245,8 @@ impl LineCache {
                     }
                     old_ix += n_remaining;
                 }
-                "Skip" => {
-                    error!("skip n={}", n);
+                OperationType::Skip => {
+                    trace!("skip n={}", n);
                     old_ix += n;
                 }
                 _ => {}

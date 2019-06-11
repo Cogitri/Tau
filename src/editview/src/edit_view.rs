@@ -230,14 +230,10 @@ impl EditView {
             params
         );
         let update = &params["update"];
-        error!("1 {:?}", update);
 
         let xrl_update: xrl::Update = serde_json::from_value(params.clone()).unwrap();
-        let update = serde_json::to_value(&xrl_update).unwrap();
 
-        error!("2 {:?}", update);
-
-        self.line_cache.apply_update(&update);
+        self.line_cache.apply_update(xrl_update);
 
         // update scrollbars to the new text width and height
         let text_size = self.get_text_size();
