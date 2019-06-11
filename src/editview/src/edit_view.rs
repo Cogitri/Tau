@@ -567,19 +567,16 @@ impl EditView {
                     }
                 }
 
-                if let Some(layout_line) = layout.get_line(0) {
-                    for c in &line.cursor {
-                        let x = layout_line.index_to_x(*c as i32, false) / pango::SCALE;
-                        // Draw the cursor
-                        cr.rectangle(
-                            (f64::from(x)) - hadj.get_value(),
-                            (self.edit_font.font_ascent + self.edit_font.font_descent) * i as f64
-                                - vadj.get_value(),
-                            CURSOR_WIDTH,
-                            self.edit_font.font_ascent + self.edit_font.font_descent,
-                        );
-                        cr.fill();
-                    }
+                for c in &line.cursor {
+                    let (strong_cursor, _) = layout.get_cursor_pos(*c as i32);
+                    // Draw the cursor
+                    cr.rectangle(
+                        (strong_cursor.x / pango::SCALE).into(),
+                        self.edit_font.font_height * i as f64 - vadj.get_value(),
+                        CURSOR_WIDTH,
+                        (strong_cursor.height / pango::SCALE).into(),
+                    );
+                    cr.fill();
                 }
             }
         }
