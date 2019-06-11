@@ -72,7 +72,7 @@ mod errors;
 mod frontend;
 mod globals;
 mod main_win;
-//mod panic_handler
+//mod panic_handler;
 mod prefs_win;
 
 use crate::frontend::*;
@@ -87,12 +87,11 @@ use glib::{Char, MainContext};
 use gtk::Application;
 use gxi_config_storage::pref_storage::GSchemaExt;
 use gxi_config_storage::GSchema;
-use log::{debug, info, warn};
+use log::{debug, error, info, warn};
 use serde_json::json;
 use std::cell::RefCell;
 use std::env::args;
 use std::rc::Rc;
-use std::thread;
 use xrl::{spawn as spawn_xi, Client, ViewId};
 
 fn main() {
@@ -115,41 +114,62 @@ fn main() {
         None,
     );
 
-    // The channel to send the result of a request back to Xi
-    let (request_tx, request_rx) = unbounded::<XiRequest>();
     // The channel to signal MainWin to create a new tab with an EditView
     let (new_view_tx, new_view_rx) =
         MainContext::channel::<(ViewId, Option<String>)>(glib::PRIORITY_HIGH);
-    // The channel through which all events from Xi are sent from `crate::frontend::GxiFrontend` to
-    // the MainWin
-    let (event_tx, event_rx) = MainContext::sync_channel::<XiEvent>(glib::PRIORITY_HIGH, 5);
-    let (core, core_stderr) = spawn_xi(
-        crate::globals::XI_PATH.unwrap_or("xi-core"),
-        GxiFrontendBuilder {
-            event_tx,
-            request_tx: request_tx.clone(),
-            request_rx,
-        },
-    );
-
-    let log_core_errors = core_stderr
-        .for_each(|msg| {
-            eprintln!("xi-core stderr: {}", msg);
-            Ok(())
-        })
-        .map_err(|_| ());
-    thread::spawn(move || {
-        tokio::run(log_core_errors);
-    });
+    // Set this to none here so we can move it into the closures without actually starting Xi every time.
+    // This significantly improves startup time when gxi is already opened and you open a new file via
+    // the CLI.
+    let core = Rc::new(RefCell::new(None));
 
     //FIXME: This is a hack to satisfy the borrowchecker. `connect_startup` is a FnMut even though
     // it's only called once, so it's fine to move new_view_rx and event_rx into connect_startup
     let new_view_rx_opt = Rc::new(RefCell::new(Some(new_view_rx)));
-    let event_rx_opt = Rc::new(RefCell::new(Some(event_rx)));
 
     application.connect_startup(
-        enclose!((core, application, new_view_rx_opt, event_rx_opt, new_view_tx, request_tx) move |_| {
+        enclose!((core, application, new_view_rx_opt, new_view_tx) move |_| {
             debug!("{}", gettext("Starting gxi"));
+
+        // The channel through which all events from Xi are sent from `crate::frontend::GxiFrontend` to
+        // the MainWin
+        let (event_tx, event_rx) = MainContext::sync_channel::<XiEvent>(glib::PRIORITY_HIGH, 5);
+
+        // The channel to send the result of a request back to Xi
+        let (request_tx, request_rx) = unbounded::<XiRequest>();
+
+        let (client, core_stderr) = spawn_xi(
+            crate::globals::XI_PATH.unwrap_or("xi-core"),
+            GxiFrontendBuilder {
+                event_tx,
+                request_tx: request_tx.clone(),
+                request_rx,
+            },
+        );
+
+        let log_core_errors = core_stderr
+            .for_each(|msg| {
+                if msg.contains("[ERROR]") {
+                    error!("{}", msg);
+                } else if msg.contains("[WARN]") {
+                    if msg.contains("deprecated") {
+                        info!("{}", msg)
+                    } else {
+                        warn!("{}", msg)
+                    }
+                } else if msg.contains("[INFO]") {
+                    info!("{}", msg);
+                }
+
+                Ok(())
+            })
+            .map_err(|_| ());
+
+        std::thread::spawn(move || {
+            tokio::run(log_core_errors);
+        });
+
+
+        core.replace(Some(client.clone()));
 
             glib::set_application_name("gxi");
 
@@ -160,7 +180,7 @@ fn main() {
             {
                 Ok(locale) => info!("Translation found, setting locale to {:?}", locale),
                 Err(TextDomainError::TranslationNotFound(lang)) => {
-                    // We don't have an 'en' catalog since the messages are English by defaul
+                    // We don't have an 'en' catalog since the messages are English by default
                     if lang != "en" {
                         warn!("Translation not found for lang {}", lang)
                     }
@@ -170,19 +190,19 @@ fn main() {
 
             let xi_config_dir = std::env::var("XI_CONFIG_DIR").ok();
             tokio::run(
-                core.client_started(
+                client.client_started(
                     xi_config_dir.as_ref().map(String::as_str),
                     crate::globals::PLUGIN_DIR).map_err(|_|()));
 
-            setup_config(&core);
+            setup_config(&client);
 
             MainWin::new(
                 application.clone(),
-                core.clone(),
+                client.clone(),
                 new_view_rx_opt.borrow_mut().take().unwrap(),
                 new_view_tx.clone(),
-                event_rx_opt.borrow_mut().take().unwrap(),
-                request_tx.clone(),
+                event_rx,
+                request_tx,
             );
         }),
     );
@@ -190,7 +210,7 @@ fn main() {
     application.connect_activate(enclose!((core, new_view_tx) move |_| {
         debug!("{}", gettext("Activating new view"));
 
-        let view_id = tokio::executor::current_thread::block_on_all(core.new_view(None)).unwrap();
+        let view_id = tokio::executor::current_thread::block_on_all(core.borrow().as_ref().unwrap().new_view(None)).unwrap();
 
         new_view_tx.send((view_id, None)).unwrap();
     }));
@@ -201,7 +221,7 @@ fn main() {
         for file in files {
             if let Some(path) = file.get_path() {
                 let file =  path.to_str().map(|s| s.to_string());
-                let view_id = tokio::executor::current_thread::block_on_all(core.new_view(file.clone())).unwrap();
+                let view_id = tokio::executor::current_thread::block_on_all(core.borrow().as_ref().unwrap().new_view(file.clone())).unwrap();
                 new_view_tx.send((view_id, file)).unwrap();
             }
         }
