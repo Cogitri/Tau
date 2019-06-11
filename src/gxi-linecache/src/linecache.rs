@@ -1,11 +1,16 @@
 use log::{error, trace};
+use serde::{self, Deserialize, Deserializer};
+use serde_derive::*;
 use serde_json::Value;
 use std::cmp::min;
 
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, Deserialize, Serialize)]
 pub struct StyleSpan {
+    #[serde(rename = "offset")]
     pub start: i64,
+    #[serde(rename = "length")]
     pub len: usize,
+    #[serde(rename = "style_id")]
     pub id: usize,
 }
 
@@ -46,12 +51,6 @@ impl Line {
                     i = 0;
                     styles.push(style_span);
                 }
-                match i {
-                    0 => style_span.start = c.as_i64().unwrap() as i64,
-                    1 => style_span.len = c.as_u64().unwrap() as usize,
-                    2 => style_span.id = c.as_u64().unwrap() as usize,
-                    _ => unreachable!(),
-                };
                 i += 1;
             }
             if i == 3 {
@@ -155,21 +154,22 @@ impl LineCache {
 
         let mut old_ix = 0_u64;
 
-        for op in update["ops"].as_array().unwrap() {
+        for op in update["operations"].as_array().unwrap() {
             let op_type = &op["op"];
             //debug!("lc before {}-- {} {:?} {}", op_type, new_invalid_before, new_lines, new_invalid_after);
             let n = op["n"].as_u64().unwrap();
+            error!("{:?}", op_type);
             match op_type.as_str().unwrap() {
-                "invalidate" => {
-                    trace!("invalidate n={}", n);
+                "Invalidate" => {
+                    error!("invalidate n={}", n);
                     if new_lines.is_empty() {
                         new_invalid_before += n;
                     } else {
                         new_invalid_after += n;
                     }
                 }
-                "ins" => {
-                    trace!("ins n={}", n);
+                "Insert" => {
+                    error!("ins n={}", n);
                     for _ in 0..new_invalid_after {
                         new_lines.push(None);
                     }
@@ -186,8 +186,8 @@ impl LineCache {
                         }));
                     }
                 }
-                "copy" => {
-                    trace!("copy n={}", n);
+                "Copy_" => {
+                    error!("copy n={}", n);
 
                     for _ in 0..new_invalid_after {
                         new_lines.push(None);
@@ -236,8 +236,8 @@ impl LineCache {
                     }
                     old_ix += n_remaining;
                 }
-                "skip" => {
-                    trace!("skip n={}", n);
+                "Skip" => {
+                    error!("skip n={}", n);
                     old_ix += n;
                 }
                 _ => {}

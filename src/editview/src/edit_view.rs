@@ -230,7 +230,14 @@ impl EditView {
             params
         );
         let update = &params["update"];
-        self.line_cache.apply_update(update);
+        error!("1 {:?}", update);
+
+        let xrl_update: xrl::Update = serde_json::from_value(params.clone()).unwrap();
+        let update = serde_json::to_value(&xrl_update).unwrap();
+
+        error!("2 {:?}", update);
+
+        self.line_cache.apply_update(&update);
 
         // update scrollbars to the new text width and height
         let text_size = self.get_text_size();
@@ -434,7 +441,6 @@ impl EditView {
         let first_line = (vadj.get_value() / self.edit_font.font_height) as u64;
         let last_line =
             ((vadj.get_value() + f64::from(da_height)) / self.edit_font.font_height) as u64 + 1;
-        let last_line = min(last_line, num_lines);
 
         let pango_ctx = self.view_item.get_pango_ctx();
         pango_ctx.set_font_description(&self.edit_font.font_desc);

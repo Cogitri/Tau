@@ -88,8 +88,6 @@ use serde_json::{json, Value};
 use std::env::args;
 
 fn main() {
-    PanicHandler::new();
-
     // Only set Warn as loglevel if the user hasn't explicitly set something else
     if std::env::var_os("RUST_LOG").is_none() {
         // Xi likes to return some not-so-necessary Warnings (e.g. if the config
