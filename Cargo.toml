@@ -3,6 +3,7 @@ members = [
     "src/editview",
     "src/gxi",
     "src/gxi-config-storage",
+    "src/gxi-linecache",
 ]
 
 [profile.release]
