@@ -276,7 +276,7 @@ dependencies = [
  "syntect 3.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "tokio 0.1.21 (registry+https://github.com/rust-lang/crates.io-index)",
  "unicode-segmentation 1.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "xrl 0.0.6 (registry+https://github.com/rust-lang/crates.io-index)",
+ "xrl 0.0.6 (git+https://github.com/xi-frontend/xrl)",
 ]
 
 [[package]]
@@ -571,7 +571,7 @@ dependencies = [
  "serde_json 1.0.39 (registry+https://github.com/rust-lang/crates.io-index)",
  "syntect 3.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "tokio 0.1.21 (registry+https://github.com/rust-lang/crates.io-index)",
- "xrl 0.0.6 (registry+https://github.com/rust-lang/crates.io-index)",
+ "xrl 0.0.6 (git+https://github.com/xi-frontend/xrl)",
 ]
 
 [[package]]
@@ -590,7 +590,7 @@ name = "gxi-linecache"
 version = "0.1.0"
 dependencies = [
  "log 0.4.6 (registry+https://github.com/rust-lang/crates.io-index)",
- "xrl 0.0.6 (registry+https://github.com/rust-lang/crates.io-index)",
+ "xrl 0.0.6 (git+https://github.com/xi-frontend/xrl)",
 ]
 
 [[package]]
@@ -1683,7 +1683,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 [[package]]
 name = "xrl"
 version = "0.0.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
+source = "git+https://github.com/xi-frontend/xrl#d17245691bdfb7d008c157d3a1fb069c1b2025a3"
 dependencies = [
  "bytes 0.4.12 (registry+https://github.com/rust-lang/crates.io-index)",
  "futures 0.1.27 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -1880,5 +1880,5 @@ dependencies = [
 "checksum wincolor 1.0.1 (registry+https://github.com/rust-lang/crates.io-index)" = "561ed901ae465d6185fa7864d63fbd5720d0ef718366c9a4dc83cf6170d7e9ba"
 "checksum ws2_32-sys 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)" = "d59cefebd0c892fa2dd6de581e937301d8552cb44489cdff035c6187cb63fa5e"
 "checksum xml-rs 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)" = "541b12c998c5b56aa2b4e6f18f03664eef9a4fd0a246a55594efae6cc2d964b5"
-"checksum xrl 0.0.6 (registry+https://github.com/rust-lang/crates.io-index)" = "03ab783cdeb081583d563828518b491e751cc9cd16ef1f1ce808339663cef939"
+"checksum xrl 0.0.6 (git+https://github.com/xi-frontend/xrl)" = "<none>"
 "checksum yaml-rust 0.4.3 (registry+https://github.com/rust-lang/crates.io-index)" = "65923dd1784f44da1d2c3dbbc5e822045628c590ba72123e1c73d3c230c4434d"

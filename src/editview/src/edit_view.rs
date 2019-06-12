@@ -378,7 +378,7 @@ impl EditView {
     /// Handles the drawing of the EditView. This is called when we get a update from xi-editor or if
     /// gtk requests us to draw the EditView. This draws the background, all lines and the cursor.
     #[allow(clippy::cognitive_complexity)]
-    pub fn handle_da_draw(&self, cr: &Context) -> Inhibit {
+    pub fn handle_da_draw(&mut self, cr: &Context) -> Inhibit {
         const CURSOR_WIDTH: f64 = 2.0;
 
         // let foreground = self.main_state.borrow().theme.foreground;
@@ -406,6 +406,21 @@ impl EditView {
         let last_line =
             ((vadj.get_value() + f64::from(da_height)) / self.edit_font.font_height) as u64 + 1;
         let last_line = min(last_line, num_lines as u64);
+        let view_lines = f64::from(da_height) / self.edit_font.font_height;
+
+        // Prefetch a few lines in front of our view for (somewhat) seamless scrolling
+        self.core.request_lines(
+            self.view_id,
+            first_line.saturating_sub((view_lines / 0.15) as u64),
+            first_line,
+        );
+
+        // Same as above, but for lines behind our view
+        self.core.request_lines(
+            self.view_id,
+            last_line,
+            last_line.saturating_add((view_lines / 0.15) as u64),
+        );
 
         let pango_ctx = self.view_item.get_pango_ctx();
         pango_ctx.set_font_description(&self.edit_font.font_desc);
@@ -1211,13 +1226,13 @@ impl EditView {
     /// Go to the next match in the find/replace dialog
     pub fn find_next(&self) {
         self.core
-            .find_next(self.view_id, true, true, xrl::ModifySelection::None);
+            .find_next(self.view_id, true, true, xrl::ModifySelection::Set);
     }
 
     /// Go the to previous match in the find/replace dialog
     pub fn find_prev(&self) {
         self.core
-            .find_prev(self.view_id, true, true, xrl::ModifySelection::None);
+            .find_prev(self.view_id, true, true, xrl::ModifySelection::Set);
     }
 
     /// Tells xi-editor that we're searching for a different string (or none) now
