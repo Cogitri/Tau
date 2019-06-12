@@ -11,6 +11,7 @@ use gdk::*;
 use gettextrs::gettext;
 use glib::source;
 use gtk::{self, *};
+use gxi_linecache::*;
 use log::{debug, error, trace, warn};
 use pango::{self, *};
 use pangocairo::functions::*;
@@ -20,8 +21,7 @@ use std::rc::Rc;
 use std::sync::{Arc, Mutex};
 use std::u32;
 use unicode_segmentation::UnicodeSegmentation;
-use xrl::StyleDef as StyleSpan;
-use xrl::{Client, ConfigChanges, Line, LineCache, Query, Status, Update, ViewId};
+use xrl::{Client, ConfigChanges, Query, Status, Update, ViewId};
 
 /// Returned by `EditView::get_text_size()` and used to adjust the scrollbars.
 pub struct TextSize {
@@ -83,7 +83,7 @@ impl EditView {
             root_widget: view_item.root_box.clone(),
             top_bar: TopBar::new(),
             view_item: view_item.clone(),
-            line_cache: Arc::new(Mutex::new(LineCache::default())),
+            line_cache: Arc::new(Mutex::new(LineCache::new())),
             edit_font: Self::get_edit_font(&pango_ctx, &main_state.borrow().settings.edit_font),
             interface_font,
             find_replace: find_replace.clone(),
@@ -217,7 +217,10 @@ impl EditView {
             params
         );
 
-        self.update_sender.send(params.clone()).unwrap();
+        self.pristine = params.pristine;
+        self.update_title();
+
+        self.update_sender.send(params).unwrap();
 
         // update scrollbars to the new text width and height
         let text_size = self.get_text_size();
@@ -231,9 +234,6 @@ impl EditView {
         self.view_item
             .edit_area
             .set_size(text_width as u32, text_height as u32);
-
-        self.pristine = params.pristine;
-        self.update_title();
 
         self.view_item.edit_area.queue_draw();
         self.view_item.linecount.queue_draw();
@@ -259,13 +259,7 @@ impl EditView {
             y = 0.0;
         }
         let line_num = (y / self.edit_font.font_height) as u64;
-        let index = if let Some(line) = self
-            .line_cache
-            .lock()
-            .unwrap()
-            .lines()
-            .get(line_num as usize)
-        {
+        let index = if let Some(line) = self.line_cache.lock().unwrap().get_line(line_num) {
             let pango_ctx = self.view_item.get_pango_ctx();
 
             let layout = self.create_layout_for_line(&pango_ctx, line, &self.get_tabs());
@@ -358,7 +352,7 @@ impl EditView {
         // Determine the longest line as per Pango. Creating layouts with Pango here is kind of expensive
         // here, but it's hard determining an accurate width otherwise.
         for i in first_line..last_line {
-            if let Some(line) = self.line_cache.lock().unwrap().lines().get(i as usize) {
+            if let Some(line) = self.line_cache.lock().unwrap().get_line(i) {
                 let layout = self.create_layout_for_line(&pango_ctx, line, &tabs);
                 max_width = max(max_width, layout.get_extents().1.width);
             }
@@ -446,7 +440,7 @@ impl EditView {
 
         for i in first_line..last_line {
             // Keep track of the starting x position
-            if let Some(line) = self.line_cache.lock().unwrap().lines().get(i as usize) {
+            if let Some(line) = self.line_cache.lock().unwrap().get_line(i) {
                 if self.main_state.borrow().settings.highlight_line && !line.cursor.is_empty() {
                     set_source_color(cr, theme.line_highlight);
                     cr.rectangle(
@@ -633,7 +627,7 @@ impl EditView {
         set_source_color(cr, theme.foreground);
         for i in first_line..last_line {
             // Keep track of the starting x position
-            if let Some(line) = self.line_cache.lock().unwrap().lines().get(i as usize) {
+            if let Some(line) = self.line_cache.lock().unwrap().get_line(i) {
                 if line.line_num.is_some() {
                     current_line += 1;
                     cr.move_to(
@@ -826,8 +820,8 @@ impl EditView {
 
         {
             // Collect all styles with id 0/1 (selections/find results) to make sure they're in the frame
-            if let Some(line) = self.line_cache.lock().unwrap().lines().get(line as usize) {
-                let line_selections: Vec<&StyleSpan> = line
+            if let Some(line) = self.line_cache.lock().unwrap().get_line(line) {
+                let line_selections: Vec<_> = line
                     .styles
                     .iter()
                     .filter(|s| s.style_id == 0 || s.style_id == 1)

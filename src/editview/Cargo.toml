@@ -27,6 +27,7 @@ gobject-sys = { git="https://github.com/gtk-rs/sys" }
 gtk = { git="https://github.com/gtk-rs/gtk", features = ["v3_20"] }
 gtk-sys = { git="https://github.com/gtk-rs/sys", features = ["v3_20"] }
 gxi-config-storage = { path="../gxi-config-storage" }
+gxi-linecache = { path="../gxi-linecache" }
 log = "0.4"
 pango = { git="https://github.com/gtk-rs/pango", features = ["v1_38"] }
 pango-sys = { git="https://github.com/gtk-rs/sys", features = ["v1_38"]}
