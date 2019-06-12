@@ -38,4 +38,4 @@ serde_json = "1"
 syntect = "3"
 tokio = "0.1"
 unicode-segmentation = "1"
-xrl = "0.0.6"
+xrl = { git="https://github.com/xi-frontend/xrl" }
