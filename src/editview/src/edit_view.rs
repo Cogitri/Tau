@@ -969,7 +969,6 @@ impl EditView {
             ::gdk::keyval_to_unicode(ek.get_keyval())
         );
         let view_id = self.view_id;
-        let ch = ::gdk::keyval_to_unicode(ek.get_keyval());
 
         let alt = ek.get_state().contains(ModifierType::MOD1_MASK);
         let ctrl = ek.get_state().contains(ModifierType::CONTROL_MASK);
@@ -978,75 +977,73 @@ impl EditView {
         let norm = !alt && !ctrl && !meta;
 
         match ek.get_keyval() {
-            key::Delete if norm => self.core.delete(view_id),
+            key::Delete if !shift => self.core.delete(view_id),
+            key::KP_Delete | key::Delete if norm && shift => {
+                self.do_cut(view_id);
+                std::boxed::Box::new(future::ok(()))
+            }
+            key::KP_Insert | key::Insert if !alt && !meta && !shift && ctrl => {
+                self.do_copy(view_id);
+                std::boxed::Box::new(future::ok(()))
+            }
+            key::KP_Insert | key::Insert if norm && shift => {
+                self.do_paste(view_id);
+                std::boxed::Box::new(future::ok(()))
+            }
             key::BackSpace if norm => self.core.del(view_id),
             key::BackSpace if ctrl => self.core.delete_word_backward(view_id),
             key::Return | key::KP_Enter => self.core.insert_newline(view_id),
             key::Tab if norm && !shift => self.core.insert_tab(view_id),
             key::Tab | key::ISO_Left_Tab if norm && shift => self.core.outdent(view_id),
-            key::Up if norm && !shift => self.core.up(view_id),
-            key::Down if norm && !shift => self.core.down(view_id),
-            key::Left if norm && !shift => self.core.left(view_id),
-            key::Right if norm && !shift => self.core.right(view_id),
-            key::Up if norm && shift => self.core.up_sel(view_id),
-            key::Down if norm && shift => self.core.down_sel(view_id),
+            key::Up | key::KP_Up if norm && !shift => self.core.up(view_id),
+            key::Down | key::KP_Down if norm && !shift => self.core.down(view_id),
+            key::Left | key::KP_Left if norm && !shift => self.core.left(view_id),
+            key::Right | key::KP_Right if norm && !shift => self.core.right(view_id),
+            key::Up | key::KP_Up if norm && shift => self.core.up_sel(view_id),
+            key::Down | key::KP_Down if norm && shift => self.core.down_sel(view_id),
 
-            key::Left if norm && shift => self.core.left_sel(view_id),
+            key::Left | key::KP_Left if norm && shift => self.core.left_sel(view_id),
 
-            key::Right if norm && shift => self.core.right_sel(view_id),
-            key::Left if ctrl && !shift => self.core.move_word_left(view_id),
-            key::Right if ctrl && !shift => self.core.move_word_right(view_id),
-            key::Left if ctrl && shift => self.core.move_word_left_sel(view_id),
-            key::Right if ctrl && shift => self.core.move_word_right_sel(view_id),
-            key::Home if norm && !shift => self.core.line_start(view_id),
-            key::End if norm && !shift => self.core.line_end(view_id),
-            key::Home if norm && shift => self.core.line_start_sel(view_id),
-            key::End if norm && shift => self.core.line_end_sel(view_id),
-            key::Home if ctrl && !shift => self.core.document_begin(view_id),
-            key::End if ctrl && !shift => self.core.document_end(view_id),
-            key::Home if ctrl && shift => self.core.document_begin_sel(view_id),
-            key::End if ctrl && shift => self.core.document_end_sel(view_id),
-            key::Page_Up if norm && !shift => self.core.page_up(view_id),
-            key::Page_Down if norm && !shift => self.core.page_down(view_id),
-            key::Page_Up if norm && shift => self.core.page_up_sel(view_id),
-            key::Page_Down if norm && shift => self.core.page_down_sel(view_id),
+            key::Right | key::KP_Right if norm && shift => self.core.right_sel(view_id),
+            key::Left | key::KP_Left if ctrl && !shift => self.core.move_word_left(view_id),
+            key::Right | key::KP_Right if ctrl && !shift => self.core.move_word_right(view_id),
+            key::Left | key::KP_Left if ctrl && shift => self.core.move_word_left_sel(view_id),
+            key::Right | key::KP_Right if ctrl && shift => self.core.move_word_right_sel(view_id),
+            key::Home | key::KP_Home if norm && !shift => self.core.line_start(view_id),
+            key::End | key::KP_End if norm && !shift => self.core.line_end(view_id),
+            key::Home | key::KP_Home if norm && shift => self.core.line_start_sel(view_id),
+            key::End | key::KP_End if norm && shift => self.core.line_end_sel(view_id),
+            key::Home | key::KP_Home if ctrl && !shift => self.core.document_begin(view_id),
+            key::End | key::KP_End if ctrl && !shift => self.core.document_end(view_id),
+            key::Home | key::KP_Home if ctrl && shift => self.core.document_begin_sel(view_id),
+            key::End | key::KP_End if ctrl && shift => self.core.document_end_sel(view_id),
+            key::Page_Up | key::KP_Page_Up if norm && !shift => self.core.page_up(view_id),
+            key::Page_Down | key::KP_Page_Down if norm && !shift => self.core.page_down(view_id),
+            key::Page_Up | key::KP_Page_Up if norm && shift => self.core.page_up_sel(view_id),
+            key::Page_Down | key::KP_Page_Down if norm && shift => self.core.page_down_sel(view_id),
             key::Escape => {
                 self.stop_search();
                 std::boxed::Box::new(future::ok(()))
             }
+            key::a | key::backslash | key::slash if ctrl => self.core.select_all(view_id),
+            key::c if ctrl => {
+                self.do_copy(view_id);
+                std::boxed::Box::new(future::ok(()))
+            }
+            key::v if ctrl => {
+                self.do_paste(view_id);
+                std::boxed::Box::new(future::ok(()))
+            }
+            key::x if ctrl => {
+                self.do_cut(view_id);
+                std::boxed::Box::new(future::ok(()))
+            }
+            key::z if ctrl => self.core.undo(view_id),
+            key::z if ctrl && shift => self.core.redo(view_id),
             _ => {
-                if let Some(ch) = ch {
-                    match ch {
-                        'a' if ctrl => self.core.select_all(view_id),
-                        'c' if ctrl => {
-                            self.do_copy(view_id);
-                            std::boxed::Box::new(future::ok(()))
-                        }
-                        'v' if ctrl => {
-                            self.do_paste(view_id);
-                            std::boxed::Box::new(future::ok(()))
-                        }
-                        'x' if ctrl => {
-                            self.do_cut(view_id);
-                            std::boxed::Box::new(future::ok(()))
-                        }
-                        'z' if ctrl => self.core.undo(view_id),
-                        'Z' if ctrl && shift => self.core.redo(view_id),
-                        c if (norm) && c >= '\u{0020}' => {
-                            debug!("inserting key");
-                            self.im_context.filter_keypress(ek);
-                            std::boxed::Box::new(future::ok(()))
-                        }
-                        _ => {
-                            warn!("unhandled key: {:?}", ch);
-                            std::boxed::Box::new(future::ok(()))
-                        }
-                    }
-                } else {
-                    debug!("Inserting non char key");
-                    self.im_context.filter_keypress(ek);
-                    std::boxed::Box::new(future::ok(()))
-                }
+                debug!("Inserting non char key");
+                self.im_context.filter_keypress(ek);
+                std::boxed::Box::new(future::ok(()))
             }
         };
         Inhibit(true)
