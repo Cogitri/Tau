@@ -1,9 +1,5 @@
-use futures::future;
-use gettextrs::gettext;
 use glib::SyncSender;
-use xrl::{
-    Client, Frontend, FrontendBuilder, MeasureWidth, ServerError, ServerResult, XiNotification,
-};
+use xrl::{Client, Frontend, FrontendBuilder, MeasureWidth, XiNotification};
 
 /// wrapper enum to use one rx/tx pair for all XiNotifications and requests
 #[derive(Debug)]
@@ -33,31 +29,34 @@ pub struct GxiFrontend {
 }
 
 impl Frontend for GxiFrontend {
+    type NotificationResult = Result<(), ()>;
+    type MeasureWidthResult = Result<Vec<Vec<f32>>, ()>;
+
     /// Send `XiNotification`s to the thread GTK is running on
-    fn handle_notification(&mut self, ev: XiNotification) -> ServerResult<()> {
+    fn handle_notification(&mut self, ev: XiNotification) -> Self::NotificationResult {
         // Send all XiNotifications to the MainWin
         self.event_tx.send(XiEvent::Notification(ev)).unwrap();
 
-        Box::new(future::ok(()))
+        Ok(())
     }
 
-    fn handle_measure_width(&mut self, request: MeasureWidth) -> ServerResult<Vec<Vec<f32>>> {
+    fn handle_measure_width(&mut self, request: MeasureWidth) -> Self::MeasureWidthResult {
         self.event_tx.send(XiEvent::MeasureWidth(request)).unwrap();
 
         if let Ok(res) = self.request_rx.recv() {
             match res {
-                XiRequest::MeasureWidth(width) => Box::new(future::ok(width)),
+                XiRequest::MeasureWidth(width) => Ok(width),
             }
         } else {
-            Box::new(future::err(ServerError::Other(gettext(
-                "Couldn't receive MeasureWidth!",
-            ))))
+            Err(())
         }
     }
 }
 
-impl FrontendBuilder<GxiFrontend> for GxiFrontendBuilder {
-    fn build(self, _client: Client) -> GxiFrontend {
+impl FrontendBuilder for GxiFrontendBuilder {
+    type Frontend = GxiFrontend;
+
+    fn build(self, _client: Client) -> Self::Frontend {
         GxiFrontend {
             event_tx: self.event_tx,
             request_rx: self.request_rx,

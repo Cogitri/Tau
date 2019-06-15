@@ -12,4 +12,4 @@ repository = "https://github.com/Cogitri/gxi"
 
 [dependencies]
 log = "0.4"
-xrl = { git="https://github.com/xi-frontend/xrl" }
+xrl = { git = "https://github.com/little-dude/xrl", branch = "unbox" }

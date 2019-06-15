@@ -79,8 +79,8 @@ use crate::frontend::*;
 use crate::main_win::MainWin;
 //use crate::panic_handler::PanicHandler;
 use crossbeam_channel::unbounded;
-use futures::future::Future;
 use futures::stream::Stream;
+use futures::{future, future::Future};
 use gettextrs::{gettext, TextDomain, TextDomainError};
 use gio::{ApplicationExt, ApplicationExtManual, ApplicationFlags, FileExt};
 use glib::{Char, MainContext};
@@ -137,39 +137,41 @@ fn main() {
         // The channel to send the result of a request back to Xi
         let (request_tx, request_rx) = unbounded::<XiRequest>();
 
-        let (client, core_stderr) = spawn_xi(
-            crate::globals::XI_PATH.unwrap_or("xi-core"),
-            GxiFrontendBuilder {
-                event_tx,
-                request_tx: request_tx.clone(),
-                request_rx,
-            },
+        let (client_tx, client_rx) = MainContext::channel::<Client>(glib::PRIORITY_HIGH);
+
+        std::thread::spawn(enclose!((request_tx) move || {
+            let xi_config_dir = std::env::var("XI_CONFIG_DIR").ok();
+            let (client, core_stderr) = spawn_xi(
+                crate::globals::XI_PATH.unwrap_or("xi-core"),
+                GxiFrontendBuilder {
+                    request_rx,
+                    event_tx,
+                    request_tx: request_tx.clone(),
+                },
+            );
+
+            client_tx.send(client.clone()).unwrap();
+
+            tokio::run(future::lazy( move || {
+                error!("starting spawn");
+
+                tokio::spawn(
+            core_stderr
+                .for_each(|msg| {
+                    println!("xi-core stderr: {}", msg);
+                    Ok(())
+                })
+                .map_err(|_| ()),
         );
 
-        let log_core_errors = core_stderr
-            .for_each(|msg| {
-                if msg.contains("[ERROR]") {
-                    error!("{}", msg);
-                } else if msg.contains("[WARN]") {
-                    if msg.contains("deprecated") {
-                        info!("{}", msg)
-                    } else {
-                        warn!("{}", msg)
-                    }
-                } else if msg.contains("[INFO]") {
-                    info!("{}", msg);
-                }
+                        client.client_started(
+                            xi_config_dir.as_ref().map(String::as_str),
+                            crate::globals::PLUGIN_DIR,
+                        );
 
-                Ok(())
-            })
-            .map_err(|_| ());
-
-        std::thread::spawn(move || {
-            tokio::run(log_core_errors);
-        });
-
-
-        core.replace(Some(client.clone()));
+                        future::ok(())
+                    }));
+            }));
 
             glib::set_application_name("gxi");
 
@@ -188,24 +190,28 @@ fn main() {
                 Err(TextDomainError::InvalidLocale(locale)) => warn!("Invalid locale {}", locale),
             }
 
-            let xi_config_dir = std::env::var("XI_CONFIG_DIR").ok();
-            tokio::run(
-                client.client_started(
-                    xi_config_dir.as_ref().map(String::as_str),
-                    crate::globals::PLUGIN_DIR).map_err(|_|()));
+            // See above comment for new_view_rx_opt
+            let event_rx_opt = Rc::new(RefCell::new(Some(event_rx)));
 
-            setup_config(&client);
+            let main_context = MainContext::default();
 
-            MainWin::new(
-                application.clone(),
-                client.clone(),
-                new_view_rx_opt.borrow_mut().take().unwrap(),
-                new_view_tx.clone(),
-                event_rx,
-                request_tx,
-            );
-        }),
-    );
+            client_rx.attach(Some(&main_context), enclose!((core, request_tx, application, new_view_tx, new_view_rx_opt, event_rx_opt) move |client| {
+                core.replace(Some(client.clone()));
+
+                setup_config(&client);
+
+                MainWin::new(
+                    application.clone(),
+                    client.clone(),
+                    new_view_rx_opt.borrow_mut().take().unwrap(),
+                    new_view_tx.clone(),
+                    event_rx_opt.borrow_mut().take().unwrap(),
+                    request_tx.clone(),
+                );
+
+                glib::source::Continue(false)
+        }));
+    }));
 
     application.connect_activate(enclose!((core, new_view_tx) move |_| {
         debug!("{}", gettext("Activating new view"));

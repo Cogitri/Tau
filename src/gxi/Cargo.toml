@@ -45,7 +45,7 @@ serde_derive = "1"
 serde_json = "1"
 syntect = "3"
 tokio = "0.1"
-xrl = { git="https://github.com/xi-frontend/xrl" }
+xrl = { git = "https://github.com/little-dude/xrl", branch = "unbox" }
 
 [dev-dependencies]
 cargo-husky = { version="1", default-features = false, features = ["user-hooks"] }
