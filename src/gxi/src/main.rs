@@ -79,19 +79,22 @@ use crate::frontend::*;
 use crate::main_win::MainWin;
 //use crate::panic_handler::PanicHandler;
 use crossbeam_channel::unbounded;
-use futures::future::Future;
 use futures::stream::Stream;
+use futures::{future, future::Future};
 use gettextrs::{gettext, TextDomain, TextDomainError};
 use gio::{ApplicationExt, ApplicationExtManual, ApplicationFlags, FileExt};
 use glib::{Char, MainContext};
 use gtk::Application;
 use gxi_config_storage::pref_storage::GSchemaExt;
 use gxi_config_storage::GSchema;
-use log::{debug, error, info, warn};
+use log::{debug, info, warn};
+use parking_lot::Mutex;
 use serde_json::json;
 use std::cell::RefCell;
 use std::env::args;
 use std::rc::Rc;
+use std::sync::Arc;
+use std::thread;
 use xrl::{spawn as spawn_xi, Client, ViewId};
 
 fn main() {
@@ -120,7 +123,7 @@ fn main() {
     // Set this to none here so we can move it into the closures without actually starting Xi every time.
     // This significantly improves startup time when gxi is already opened and you open a new file via
     // the CLI.
-    let core = Rc::new(RefCell::new(None));
+    let core = Arc::new(Mutex::new(None));
 
     //FIXME: This is a hack to satisfy the borrowchecker. `connect_startup` is a FnMut even though
     // it's only called once, so it's fine to move new_view_rx and event_rx into connect_startup
@@ -128,48 +131,47 @@ fn main() {
 
     application.connect_startup(
         enclose!((core, application, new_view_rx_opt, new_view_tx) move |_| {
-            debug!("{}", gettext("Starting gxi"));
+                debug!("{}", gettext("Starting gxi"));
 
-        // The channel through which all events from Xi are sent from `crate::frontend::GxiFrontend` to
-        // the MainWin
-        let (event_tx, event_rx) = MainContext::sync_channel::<XiEvent>(glib::PRIORITY_HIGH, 5);
+            // The channel through which all events from Xi are sent from `crate::frontend::GxiFrontend` to
+            // the MainWin
+            let (event_tx, event_rx) = MainContext::sync_channel::<XiEvent>(glib::PRIORITY_HIGH, 5);
 
-        // The channel to send the result of a request back to Xi
-        let (request_tx, request_rx) = unbounded::<XiRequest>();
+            // The channel to send the result of a request back to Xi
+            let (request_tx, request_rx) = unbounded::<XiRequest>();
 
-        let (client, core_stderr) = spawn_xi(
-            crate::globals::XI_PATH.unwrap_or("xi-core"),
-            GxiFrontendBuilder {
-                event_tx,
-                request_tx: request_tx.clone(),
-                request_rx,
-            },
-        );
+            thread::spawn(enclose!((request_tx, core) move || {
+                let xi_config_dir = std::env::var("XI_CONFIG_DIR").ok();
 
-        let log_core_errors = core_stderr
-            .for_each(|msg| {
-                if msg.contains("[ERROR]") {
-                    error!("{}", msg);
-                } else if msg.contains("[WARN]") {
-                    if msg.contains("deprecated") {
-                        info!("{}", msg)
-                    } else {
-                        warn!("{}", msg)
-                    }
-                } else if msg.contains("[INFO]") {
-                    info!("{}", msg);
-                }
+                tokio::run(future::lazy(move || {
+                    let (client, core_stderr) = spawn_xi(
+                        crate::globals::XI_PATH.unwrap_or("xi-core"),
+                        GxiFrontendBuilder {
+                            request_rx,
+                            event_tx,
+                            request_tx: request_tx.clone(),
+                        },
+                    );
 
-                Ok(())
-            })
-            .map_err(|_| ());
+                    core.lock().replace(Some(client.clone()));
 
-        std::thread::spawn(move || {
-            tokio::run(log_core_errors);
-        });
+                    client.client_started(
+                        xi_config_dir.as_ref().map(String::as_str),
+                        crate::globals::PLUGIN_DIR,
+                    );
 
+                    tokio::spawn(
+                        core_stderr
+                            .for_each(|msg| {
+                                println!("{}", msg);
+                                Ok(())
+                            })
+                            .map_err(|_| ()),
+                    );
 
-        core.replace(Some(client.clone()));
+                    future::ok(())
+                }));
+            }));
 
             glib::set_application_name("gxi");
 
@@ -188,21 +190,20 @@ fn main() {
                 Err(TextDomainError::InvalidLocale(locale)) => warn!("Invalid locale {}", locale),
             }
 
-            let xi_config_dir = std::env::var("XI_CONFIG_DIR").ok();
-            tokio::run(
-                client.client_started(
-                    xi_config_dir.as_ref().map(String::as_str),
-                    crate::globals::PLUGIN_DIR).map_err(|_|()));
+            // Make sure we wait for the tokio thread to set the core
+            while core.lock().is_none() {
+                thread::sleep(std::time::Duration::from_millis(1));
+            }
 
-            setup_config(&client);
+            setup_config(&core.lock().as_ref().unwrap().as_ref().unwrap());
 
             MainWin::new(
                 application.clone(),
-                client.clone(),
+                core.lock().as_ref().unwrap().as_ref().unwrap().clone(),
                 new_view_rx_opt.borrow_mut().take().unwrap(),
                 new_view_tx.clone(),
                 event_rx,
-                request_tx,
+                request_tx.clone(),
             );
         }),
     );
@@ -210,7 +211,7 @@ fn main() {
     application.connect_activate(enclose!((core, new_view_tx) move |_| {
         debug!("{}", gettext("Activating new view"));
 
-        let view_id = tokio::executor::current_thread::block_on_all(core.borrow().as_ref().unwrap().new_view(None)).unwrap();
+        let view_id = tokio::executor::current_thread::block_on_all(core.lock().as_ref().unwrap().as_ref().unwrap().new_view(None)).unwrap();
 
         new_view_tx.send((view_id, None)).unwrap();
     }));
@@ -221,7 +222,7 @@ fn main() {
         for file in files {
             if let Some(path) = file.get_path() {
                 let file =  path.to_str().map(|s| s.to_string());
-                let view_id = tokio::executor::current_thread::block_on_all(core.borrow().as_ref().unwrap().new_view(file.clone())).unwrap();
+                let view_id = tokio::executor::current_thread::block_on_all(core.lock().as_ref().unwrap().as_ref().unwrap().new_view(file.clone())).unwrap();
                 new_view_tx.send((view_id, file)).unwrap();
             }
         }

@@ -40,12 +40,13 @@ log = "0.4"
 pango = { git="https://github.com/gtk-rs/pango", features = ["v1_38"] }
 pango-sys = { git="https://github.com/gtk-rs/sys", features = ["v1_38"]}
 pangocairo = { git="https://github.com/gtk-rs/pangocairo" }
+parking_lot = "0.8"
 serde = "1"
 serde_derive = "1"
 serde_json = "1"
 syntect = "3"
 tokio = "0.1"
-xrl = { git="https://github.com/xi-frontend/xrl" }
+xrl = "0.0.7"
 
 [dev-dependencies]
 cargo-husky = { version="1", default-features = false, features = ["user-hooks"] }
