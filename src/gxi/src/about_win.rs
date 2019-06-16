@@ -2,16 +2,15 @@ use crate::globals;
 use gettextrs::gettext;
 use gtk::*;
 use log::trace;
-use std::cell::RefCell;
-use std::rc::Rc;
 
 /// The about window, which displays some simple info about gxi
+#[derive(Clone)]
 pub struct AboutWin {
     pub about_dialog: AboutDialog,
 }
 
 impl AboutWin {
-    pub fn new(parent: &ApplicationWindow) -> Rc<RefCell<Self>> {
+    pub fn new(parent: &ApplicationWindow) -> Self {
         let about_dialog = gtk::AboutDialog::new();
         about_dialog.set_comments(Some(
             gettext("GTK frontend for the xi text editor, written in Rust").as_str(),
@@ -31,8 +30,8 @@ impl AboutWin {
         trace!("{}", gettext("Showing about window"));
         about_dialog.show_all();
 
-        Rc::new(RefCell::new(Self {
+        Self {
             about_dialog: about_dialog.clone(),
-        }))
+        }
     }
 }
