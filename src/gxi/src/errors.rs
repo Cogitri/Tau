@@ -4,15 +4,21 @@ use gtk::prelude::*;
 use gtk::*;
 use log::error;
 
+/// A struct holding the error message to be displayed
 #[derive(Clone, Debug)]
 pub struct ErrorMsg {
+    /// The error message
     pub msg: String,
+    /// Whether or not the program should terminate after the error message has been shown.
     pub fatal: bool,
 }
 
 /// A simple `ErrorDialog` used for if stuff goes south.
+#[derive(Clone)]
 pub struct ErrorDialog {
+    /// The GTK `MessageDialog`, if we have to do something custom
     pub dialog: MessageDialog,
+    /// The text of the `MessageDialog`
     pub msg: ErrorMsg,
 }
 
