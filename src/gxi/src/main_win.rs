@@ -3,6 +3,7 @@ use crate::errors::{ErrorDialog, ErrorMsg};
 use crate::frontend::{XiEvent, XiRequest};
 use crate::prefs_win::PrefsWin;
 use editview::{theme::u32_from_color, EditView, MainState, Settings};
+use futures::future::Future;
 use gdk_pixbuf::Pixbuf;
 use gettextrs::gettext;
 use gio::{ActionMapExt, ApplicationExt, Resource, SettingsExt, SimpleAction};
@@ -14,6 +15,7 @@ use serde_json::{self, json};
 use std::cell::RefCell;
 use std::collections::{BTreeMap, HashMap};
 use std::rc::Rc;
+use tokio::runtime::Runtime;
 use xrl::{Client, Style, ViewId, XiNotification::*};
 
 pub const RESOURCE: &[u8] = include_bytes!("ui/resources.gresource");
@@ -88,6 +90,7 @@ impl MainWin {
         new_view_tx: Sender<(ViewId, Option<String>)>,
         event_rx: Receiver<XiEvent>,
         request_tx: crossbeam_channel::Sender<XiRequest>,
+        tokio_runtime: Rc<RefCell<Option<Runtime>>>,
     ) -> Rc<Self> {
         let gbytes = Bytes::from_static(RESOURCE);
         let resource = Resource::new_from_data(&gbytes).unwrap();
@@ -153,7 +156,7 @@ impl MainWin {
         window.set_application(Some(&application));
 
         //This is called when the window is closed with the 'X' or via the application menu, etc.
-        window.connect_delete_event(enclose!((main_win, window) move |_, _| {
+        window.connect_delete_event(enclose!((main_win, window, tokio_runtime) move |_, _| {
             // Only destroy the window when the user has saved the changes or closes without saving
             if Self::close_all(main_win.clone()) == SaveAction::Cancel {
                 debug!("{}", gettext("User chose to cancel exiting"));
@@ -161,6 +164,9 @@ impl MainWin {
             } else {
                 debug!("{}", gettext("User chose to close the application"));
                 main_win.properties.borrow().save();
+                if let Some(runtime) = tokio_runtime.borrow_mut().take() {
+                    runtime.shutdown_now().wait().unwrap();
+                }
                 window.destroy();
                 Inhibit(false)
             }

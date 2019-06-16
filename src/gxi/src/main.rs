@@ -95,6 +95,7 @@ use std::env::args;
 use std::rc::Rc;
 use std::sync::Arc;
 use std::thread;
+use tokio::runtime::Runtime;
 use xrl::{spawn as spawn_xi, Client, ViewId};
 
 fn main() {
@@ -140,38 +141,37 @@ fn main() {
             // The channel to send the result of a request back to Xi
             let (request_tx, request_rx) = unbounded::<XiRequest>();
 
-            thread::spawn(enclose!((request_tx, core) move || {
-                let xi_config_dir = std::env::var("XI_CONFIG_DIR").ok();
+            let xi_config_dir = std::env::var("XI_CONFIG_DIR").ok();
 
-                tokio::run(future::lazy(move || {
-                    let (client, core_stderr) = spawn_xi(
-                        crate::globals::XI_PATH.unwrap_or("xi-core"),
-                        GxiFrontendBuilder {
-                            request_rx,
-                            event_tx,
-                            request_tx: request_tx.clone(),
-                        },
-                    );
+            let mut runtime = Runtime::new().unwrap();
+            runtime.spawn(future::lazy(enclose!((request_tx, core) move || {
+                let (client, core_stderr) = spawn_xi(
+                    crate::globals::XI_PATH.unwrap_or("xi-core"),
+                    GxiFrontendBuilder {
+                        request_rx,
+                        event_tx,
+                        request_tx: request_tx.clone(),
+                    },
+                );
 
-                    core.lock().replace(Some(client.clone()));
+                client.client_started(
+                    xi_config_dir.as_ref().map(String::as_str),
+                    crate::globals::PLUGIN_DIR,
+                );
 
-                    client.client_started(
-                        xi_config_dir.as_ref().map(String::as_str),
-                        crate::globals::PLUGIN_DIR,
-                    );
+                core.lock().replace(Some(client.clone()));
 
-                    tokio::spawn(
-                        core_stderr
-                            .for_each(|msg| {
-                                println!("{}", msg);
-                                Ok(())
-                            })
-                            .map_err(|_| ()),
-                    );
+                tokio::spawn(
+                    core_stderr
+                        .for_each(|msg| {
+                            println!("{}", msg);
+                            Ok(())
+                        })
+                        .map_err(|_| ()),
+                );
 
-                    future::ok(())
-                }));
-            }));
+                future::ok(())
+            })));
 
             glib::set_application_name("gxi");
 
@@ -204,6 +204,7 @@ fn main() {
                 new_view_tx.clone(),
                 event_rx,
                 request_tx.clone(),
+                Rc::new(RefCell::new(Some(runtime))),
             );
         }),
     );
