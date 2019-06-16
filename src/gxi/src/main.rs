@@ -4,12 +4,12 @@
 //! gxi's structure can be simplified like this:
 //!
 //!```
-//! ----------            -----------                 ----------
-//! |        |   spawns   |         |changes MainState|        |
-//! |  Core  |<-----------| MainWin |<----------------|EditView|
-//! | thread | sends msgs |MainState|  forwards msgs  |        |
-//! |        |----------->|         |---------------->|        |
-//! ----------            ----------- related to edit ----------
+//! ---------  spawns w/    -----------                 ----------
+//! |       |    tokio      |         |changes MainState|        |
+//! |  xrl  |<--------------| MainWin |<----------------|EditView|
+//! |Client |  XiRequest    |MainState|  forwards msgs  |        |
+//! |       |-------------->|         |---------------->|        |
+//! ---------XiNotification ----------- related to edit ----------
 //! ^   ^                                                  |
 //! |   |---------                                         |
 //! |            |                                         |
@@ -17,7 +17,7 @@
 //! sends        |                                         |
 //! msgs         |------------------------------------------
 //!              sends editing events to RPC, which forwards
-//!                      them to xi to process them
+//!                      them to xi to process
 //!```
 //!
 //! Now onto more detailed explanation:
@@ -27,36 +27,35 @@
 //!               button and window controls. It also has a `Notebook` inside of it, which holds `EditView`s.
 //!               The `Notebook` shows a tab for every open `EditView`, allowing the user to open multiple
 //!               documents at once.
-//!               The `MainWin` also has another important feature: It deals with so called `CoreMsg`s.
-//!               It grabs them from a `SharedQueue` which is `crossbeam_deque::Injector` under the hood.
-//!               They are messages xi-editor sends us, telling us stuff like config changes by the user
-//!               (e.g. the font size has been changed) or that we should measure the view's size for it,
-//!               for word wrapping. Please see [the xi-frontend docs](https://xi-editor.io/docs/frontend-protocol.html)
+//!               The `MainWin` also manages the `XiNotifications` and `XiRequests` it receives from
+//!               `xrl`, the RPC lib which deals with communicating with Xi in an async way. It receives
+//!               messages (`XiNotifications`, meaning Xi tells us something, e.g. and `Update` when
+//!               the text has changed due to user input) and requests (`XiRequest`, meaning Xi wants
+//!               some information from us, e.g. how wide a string of text is for word wrapping) via
+//!               a `crossbeam_channel` pair. Some of these messages are dealt with in the `MainWin`
+//!               already, like `alert`, which opens an error dialog, e.g. when an unreadable files
+//!               is attempted to be opened. Other messages are forwarded to the respective `EditView`
+//!               they're meant for, e.g. `update`, which updates the text/styling of the document.
+//!               Please see [the xi-frontend docs](https://xi-editor.io/docs/frontend-protocol.html)
 //!               for more info.
-//!               `MainWin` processes some messages by itself, e.g. displaying an error message if xi
-//!               sends us an `alert`. It sends editing related messages to the appropriate `EditView`.
-//!               `MainWin` also holds the `MainState`, which holds stuff the `EditView` might need too,
-//!               e.g. the selected font face&font size, which syntax or theme has been selected etc.
+//!               The `MainWin` also holds a `SharedState`, which includes settings like the fontsize,
+//!               fontname etc. which is shared among all `EditView`s.
 //!
-//! - `EditView`: This is where all the actual editing takes place. Since this is a GTK `DrawingArea`
+//! - `EditView`: This is where all the actual editing takes place. Since this is a `GtkLayout`
 //!               we have to handle everything ourselves: Scrolling to the right lines, setting editing
 //!               shortcuts (e.g. copy&paste), drawing each line and sending changes to xi-editor.
-//!               It also processes the `CoreMsg`s it receives from `MainWin`, e.g. setting the appropriate
-//!               font size&font face.
+//!               It also processes the `XiNotifications` and `XiRequests` it receives from the `MainWin`,
+//!               updating the visible text or its styling and much more.
 //!
-//! - `Core`:     This deals with receiving messages from xi-editor (via a new thread) and adding them
-//!               to the `SharedQueue` for `MainWin` to deal with later on. It also contains the functions
-//!               to send messages back to xi-editor, e.g. for notifying it about new editing events
-//!               such as us inserting a character. Again, Please see [the xi-frontend docs](https://xi-editor.io/docs/frontend-protocol.html)
-//!               for more info on how this works and what messages can be exchanged and how the RPC works.
+//! - `Client`:   This is a Struct of `xrl`. It interfaces with `xi-editor`. Please see its docs for more
+//!               info on `xrl`.
 //!
 //! gxi also contains some more minor modules, please see their documentation for more info:
 //!
 //! - [AboutWin](about_win/struct.AboutWin.html)
-//! - [Config](pref_storage/struct.Config.html) and [XiConfig](pref_storage/struct.XiConfig.html)
 //! - [ErrWin](errors/struct.ErrorDialog.html)
+//! - [Frontend](frontend/struct.GxiFrontend.html)
 //! - [PrefsWin](prefs_win/struct.PrefsWin.html)
-//! - [SharedQueue](shared_queue/struct.SharedQueue.html)
 //!
 //! I can very much recommend you to look at [the following tutorial](https://mmstick.github.io/gtkrs-tutorials/) if you don't
 //! know gtk-rs yet!
