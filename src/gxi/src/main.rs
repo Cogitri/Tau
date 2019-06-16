@@ -87,11 +87,12 @@ use glib::{Char, MainContext};
 use gtk::Application;
 use gxi_config_storage::pref_storage::GSchemaExt;
 use gxi_config_storage::GSchema;
-use log::{debug, error, info, warn};
+use log::{debug, info, warn};
 use serde_json::json;
 use std::cell::RefCell;
 use std::env::args;
 use std::rc::Rc;
+use std::sync::{Arc, Mutex};
 use xrl::{spawn as spawn_xi, Client, ViewId};
 
 fn main() {
@@ -120,7 +121,7 @@ fn main() {
     // Set this to none here so we can move it into the closures without actually starting Xi every time.
     // This significantly improves startup time when gxi is already opened and you open a new file via
     // the CLI.
-    let core = Rc::new(RefCell::new(None));
+    let core = Arc::new(Mutex::new(None));
 
     //FIXME: This is a hack to satisfy the borrowchecker. `connect_startup` is a FnMut even though
     // it's only called once, so it's fine to move new_view_rx and event_rx into connect_startup
@@ -128,49 +129,46 @@ fn main() {
 
     application.connect_startup(
         enclose!((core, application, new_view_rx_opt, new_view_tx) move |_| {
-            debug!("{}", gettext("Starting gxi"));
+                debug!("{}", gettext("Starting gxi"));
 
-        // The channel through which all events from Xi are sent from `crate::frontend::GxiFrontend` to
-        // the MainWin
-        let (event_tx, event_rx) = MainContext::sync_channel::<XiEvent>(glib::PRIORITY_HIGH, 5);
+            // The channel through which all events from Xi are sent from `crate::frontend::GxiFrontend` to
+            // the MainWin
+            let (event_tx, event_rx) = MainContext::sync_channel::<XiEvent>(glib::PRIORITY_HIGH, 5);
 
-        // The channel to send the result of a request back to Xi
-        let (request_tx, request_rx) = unbounded::<XiRequest>();
+            // The channel to send the result of a request back to Xi
+            let (request_tx, request_rx) = unbounded::<XiRequest>();
 
-        let (client_tx, client_rx) = MainContext::channel::<Client>(glib::PRIORITY_HIGH);
+            std::thread::spawn(enclose!((request_tx, core) move || {
+                let xi_config_dir = std::env::var("XI_CONFIG_DIR").ok();
 
-        std::thread::spawn(enclose!((request_tx) move || {
-            let xi_config_dir = std::env::var("XI_CONFIG_DIR").ok();
-            let (client, core_stderr) = spawn_xi(
-                crate::globals::XI_PATH.unwrap_or("xi-core"),
-                GxiFrontendBuilder {
-                    request_rx,
-                    event_tx,
-                    request_tx: request_tx.clone(),
-                },
-            );
+                tokio::run(future::lazy(move || {
+                    let (client, core_stderr) = spawn_xi(
+                        crate::globals::XI_PATH.unwrap_or("xi-core"),
+                        GxiFrontendBuilder {
+                            request_rx,
+                            event_tx,
+                            request_tx: request_tx.clone(),
+                        },
+                    );
 
-            client_tx.send(client.clone()).unwrap();
+                    core.lock().unwrap().replace(Some(client.clone()));
 
-            tokio::run(future::lazy( move || {
-                error!("starting spawn");
+                    client.client_started(
+                        xi_config_dir.as_ref().map(String::as_str),
+                        crate::globals::PLUGIN_DIR,
+                    );
 
-                tokio::spawn(
-            core_stderr
-                .for_each(|msg| {
-                    println!("xi-core stderr: {}", msg);
-                    Ok(())
-                })
-                .map_err(|_| ()),
-        );
+                    tokio::spawn(
+                        core_stderr
+                            .for_each(|msg| {
+                            println!("{}", msg);
+                            Ok(())
+                        })
+                        .map_err(|_| ()),
+                    );
 
-                        client.client_started(
-                            xi_config_dir.as_ref().map(String::as_str),
-                            crate::globals::PLUGIN_DIR,
-                        );
-
-                        future::ok(())
-                    }));
+                    future::ok(())
+                }));
             }));
 
             glib::set_application_name("gxi");
@@ -190,33 +188,23 @@ fn main() {
                 Err(TextDomainError::InvalidLocale(locale)) => warn!("Invalid locale {}", locale),
             }
 
-            // See above comment for new_view_rx_opt
-            let event_rx_opt = Rc::new(RefCell::new(Some(event_rx)));
-
-            let main_context = MainContext::default();
-
-            client_rx.attach(Some(&main_context), enclose!((core, request_tx, application, new_view_tx, new_view_rx_opt, event_rx_opt) move |client| {
-                core.replace(Some(client.clone()));
-
-                setup_config(&client);
+            setup_config(&core.lock().unwrap().as_ref().unwrap().as_ref().unwrap());
 
                 MainWin::new(
                     application.clone(),
-                    client.clone(),
+                    core.lock().unwrap().as_ref().unwrap().as_ref().unwrap().clone(),
                     new_view_rx_opt.borrow_mut().take().unwrap(),
                     new_view_tx.clone(),
-                    event_rx_opt.borrow_mut().take().unwrap(),
+                    event_rx,
                     request_tx.clone(),
                 );
-
-                glib::source::Continue(false)
-        }));
-    }));
+        }),
+    );
 
     application.connect_activate(enclose!((core, new_view_tx) move |_| {
         debug!("{}", gettext("Activating new view"));
 
-        let view_id = tokio::executor::current_thread::block_on_all(core.borrow().as_ref().unwrap().new_view(None)).unwrap();
+        let view_id = tokio::executor::current_thread::block_on_all(core.lock().unwrap().as_ref().unwrap().as_ref().unwrap().new_view(None)).unwrap();
 
         new_view_tx.send((view_id, None)).unwrap();
     }));
@@ -227,7 +215,7 @@ fn main() {
         for file in files {
             if let Some(path) = file.get_path() {
                 let file =  path.to_str().map(|s| s.to_string());
-                let view_id = tokio::executor::current_thread::block_on_all(core.borrow().as_ref().unwrap().new_view(file.clone())).unwrap();
+                let view_id = tokio::executor::current_thread::block_on_all(core.lock().unwrap().as_ref().unwrap().as_ref().unwrap().new_view(file.clone())).unwrap();
                 new_view_tx.send((view_id, file)).unwrap();
             }
         }
