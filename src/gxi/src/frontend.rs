@@ -1,27 +1,29 @@
 use glib::SyncSender;
 use xrl::{Client, Frontend, FrontendBuilder, MeasureWidth, XiNotification};
 
-/// wrapper enum to use one rx/tx pair for all XiNotifications and requests
+/// Wrapper enum to use one rx/tx pair for all XiNotifications and requests
 #[derive(Debug)]
 pub enum XiEvent {
     Notification(XiNotification),
     MeasureWidth(MeasureWidth),
 }
 
+/// Wrapper enum to use one rx/tx pair for all XiRequest results we send back to Xi.
 #[derive(Debug)]
 pub enum XiRequest {
     MeasureWidth(Vec<Vec<f32>>),
 }
 
-/// Struct that is passed into `xrl::spawn` to
+/// Struct that is passed into `xrl::spawn` to start it. See `GxiFrontend` for more
 pub struct GxiFrontendBuilder {
     pub event_tx: SyncSender<XiEvent>,
     pub request_rx: crossbeam_channel::Receiver<XiRequest>,
     pub request_tx: crossbeam_channel::Sender<XiRequest>,
 }
 
-/// This struct is only really there to satisfy the `xrl::Frontend` Trait. It holds the `event_tx`
-/// `Sender`, which sends `XiNotifications` to our main thread where GTK will work on them.
+/// This struct is only really there to satisfy the `xrl::Frontend` Trait. It holds `event_tx`,
+/// which sends `XiNotifications` and the `request_rx`/`request_tx` pair, which sends
+/// `XiRequests`to our main thread where `MainWin` deals with them.
 pub struct GxiFrontend {
     pub event_tx: SyncSender<XiEvent>,
     pub request_rx: crossbeam_channel::Receiver<XiRequest>,
@@ -48,6 +50,7 @@ impl Frontend for GxiFrontend {
                 XiRequest::MeasureWidth(width) => Ok(width),
             }
         } else {
+            // xrl doesn't do anything meaningful with errors yet and we can't really fail at this stage.
             Err(())
         }
     }
