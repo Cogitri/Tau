@@ -63,6 +63,9 @@
 
 #![recursion_limit = "128"]
 #![deny(clippy::all)]
+// Below we log xi's log messages depending on what log level is selected which clippy doesn't like
+// because we use the same println! for all of these.
+#![allow(clippy::if_same_then_else)]
 
 #[macro_use]
 extern crate enclose;
@@ -87,7 +90,7 @@ use glib::{Char, MainContext};
 use gtk::Application;
 use gxi_config_storage::pref_storage::GSchemaExt;
 use gxi_config_storage::GSchema;
-use log::{debug, error, info, warn};
+use log::{debug, error, info, max_level as log_level, warn, LevelFilter};
 use parking_lot::{Condvar, Mutex};
 use serde_json::json;
 use std::cell::RefCell;
@@ -170,7 +173,21 @@ fn main() {
                 tokio::spawn(
                     core_stderr
                         .for_each(|msg| {
-                            println!("{}", msg);
+                            if msg.contains("[ERROR]") {
+                                println!("{}", msg)
+                            } else if msg.contains("[WARN]") {
+                                if log_level() >= LevelFilter::Warn {
+                                    println!("{}", msg)
+                                } else if log_level() >= LevelFilter::Info && msg.contains("deprecated") {
+                                    println!("{}", msg)
+                                }
+                            } else if msg.contains("[INFO]") && log_level() >= LevelFilter::Info {
+                                println!("{}", msg)
+                            } else if msg.contains("[DEBUG]") && log_level() >= LevelFilter::Debug {
+                                println!("{}", msg)
+                            } else if msg.contains("[TRACE]") && log_level() >= LevelFilter::Trace {
+                                println!("{}", msg)
+                            }
                             Ok(())
                         })
                         .map_err(|_| ()),
