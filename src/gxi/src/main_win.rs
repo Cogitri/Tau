@@ -35,6 +35,7 @@ enum SaveAction {
 impl TryFrom<i32> for SaveAction {
     type Error = String;
 
+    /// Try to convert from an i32 to `SaveAction`, used to check what the `SaveDialog` has returned.
     fn try_from(value: i32) -> Result<Self, Self::Error> {
         match value {
             100 => Ok(SaveAction::Save),
@@ -48,6 +49,8 @@ impl TryFrom<i32> for SaveAction {
     }
 }
 
+/// The `WinProp` struct, which holds some information about the current state of the Window. It's
+/// saved to GSettings during shutdown to restore the window state when it's started again.
 struct WinProp {
     height: i32,
     width: i32,
@@ -65,6 +68,7 @@ impl WinProp {
             gschema,
         }
     }
+
     pub fn save(&self) {
         self.gschema.set_key("window-height", self.height).unwrap();
         self.gschema.set_key("window-width", self.width).unwrap();
@@ -74,17 +78,31 @@ impl WinProp {
     }
 }
 
+/// The `MainWin` is (as the name suggests) gxi's main window. It holds buttons like `Open` and `Save`
+/// and holds the `EditViews`, which do the actual editing. Refer to [the module level docs](main/index.html)
+/// for more information.
 pub struct MainWin {
+    /// The handle to communicate with Xi.
     core: Client,
+    /// The GTK Window.
     window: ApplicationWindow,
+    /// The Notebook holding all `EditView`s.
     notebook: Notebook,
+    /// The `Builder` from which we build the GTK Widgets.
     builder: Builder,
+    /// A Map mapping `ViewId`s to `EditView`s.
     views: RefCell<BTreeMap<ViewId, Rc<RefCell<EditView>>>>,
+    /// A Map mapping GTK `Widget`s to `EditView`s.
     w_to_ev: RefCell<HashMap<Widget, Rc<RefCell<EditView>>>>,
+    /// A map mapping `ViewId`s to GTK `Widget`s.
     view_id_to_w: RefCell<HashMap<ViewId, Widget>>,
+    /// The `MainState`, which are common settings among all `EditView`s.
     state: Rc<RefCell<MainState>>,
+    /// The `WinProp` Struct, used for saving the window state during shutdown
     properties: RefCell<WinProp>,
+    /// A glib `Sender` from whom we receive something when we should create new `EditView`s.
     new_view_tx: Sender<(ViewId, Option<String>)>,
+    /// A crossbeam_channel `Sender` from whom we receive something when Xi requests something.
     request_tx: crossbeam_channel::Sender<XiRequest>,
 }
 
