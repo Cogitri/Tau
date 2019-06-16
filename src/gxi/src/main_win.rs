@@ -14,6 +14,7 @@ use log::{debug, error, info, trace, warn};
 use serde_json::{self, json};
 use std::cell::RefCell;
 use std::collections::{BTreeMap, HashMap};
+use std::convert::TryFrom;
 use std::rc::Rc;
 use tokio::runtime::Runtime;
 use xrl::{Client, Style, ViewId, XiNotification::*};
@@ -31,13 +32,18 @@ enum SaveAction {
     Cancel = 102,
 }
 
-impl SaveAction {
-    fn from_i32(value: i32) -> Option<Self> {
+impl TryFrom<i32> for SaveAction {
+    type Error = String;
+
+    fn try_from(value: i32) -> Result<Self, Self::Error> {
         match value {
-            100 => Some(SaveAction::Save),
-            101 => Some(SaveAction::CloseWithoutSave),
-            102 => Some(SaveAction::Cancel),
-            _ => None,
+            100 => Ok(SaveAction::Save),
+            101 => Ok(SaveAction::CloseWithoutSave),
+            102 => Ok(SaveAction::Cancel),
+            _ => Err(format!(
+                "The i32 '{}' doesn't match any of the variants of the enum!",
+                value
+            )),
         }
     }
 }
@@ -867,15 +873,15 @@ impl MainWin {
                 ResponseType::Other(SaveAction::Save as u16),
             );
             ask_save_dialog.set_default_response(ResponseType::Other(SaveAction::Cancel as u16));
-            let ret = ask_save_dialog.run();
+            let ret: i32 = ask_save_dialog.run().into();
             ask_save_dialog.destroy();
-            match SaveAction::from_i32(ret.into()) {
-                Some(SaveAction::Save) => {
+            match SaveAction::try_from(ret) {
+                Ok(SaveAction::Save) => {
                     Self::handle_save_button(main_win);
                     SaveAction::Save
                 }
-                Some(SaveAction::CloseWithoutSave) => SaveAction::CloseWithoutSave,
-                None => {
+                Ok(SaveAction::CloseWithoutSave) => SaveAction::CloseWithoutSave,
+                Err(_) => {
                     warn!(
                         "{}",
                         &gettext("Save dialog has been destroyed before the user clicked a button")
