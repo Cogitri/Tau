@@ -8,7 +8,7 @@ use crossbeam_channel::{unbounded, Sender};
 use gdk::enums::key;
 use gdk::*;
 use gettextrs::gettext;
-use glib::{source, MainContext};
+use glib::{source::Continue, MainContext, PRIORITY_HIGH};
 use gtk::{self, *};
 use gxi_linecache::*;
 use log::{debug, error, trace, warn};
@@ -1111,30 +1111,49 @@ impl EditView {
     fn do_cut(&self, view_id: ViewId) {
         debug!("{}", gettext("Adding cutting text op to idle queue"));
 
-        let core = self.core.clone();
-        glib::idle_add(move || {
-            let board_future = core.cut(view_id);
+        let (clipboard_tx, clipboard_rx) =
+            MainContext::sync_channel::<serde_json::value::Value>(PRIORITY_HIGH, 1);
 
-            let val = tokio::executor::current_thread::block_on_all(board_future).unwrap();
+        clipboard_rx.attach(None, move |val| {
             if let Some(ref text) = val.as_str() {
                 Clipboard::get(&SELECTION_CLIPBOARD).set_text(&text);
             }
-            source::Continue(false)
+
+            Continue(false)
+        });
+
+        let core = self.core.clone();
+        //TODO: Spawn a future on glib's mainloop instead once that is stable.
+        std::thread::spawn(move || {
+            let board_future = core.cut(view_id);
+
+            let val = tokio::runtime::current_thread::block_on_all(board_future).unwrap();
+            clipboard_tx.send(val).unwrap();
         });
     }
 
     /// Copies text to the clipboard
     fn do_copy(&self, view_id: ViewId) {
         debug!("{}", gettext("Adding copying text op to idle queue"));
-        let core = self.core.clone();
-        glib::idle_add(move || {
-            let board_future = core.copy(view_id);
 
-            let val = tokio::executor::current_thread::block_on_all(board_future).unwrap();
+        let (clipboard_tx, clipboard_rx) =
+            MainContext::sync_channel::<serde_json::value::Value>(PRIORITY_HIGH, 1);
+
+        clipboard_rx.attach(None, move |val| {
             if let Some(ref text) = val.as_str() {
                 Clipboard::get(&SELECTION_CLIPBOARD).set_text(&text);
             }
-            source::Continue(false)
+
+            Continue(false)
+        });
+
+        let core = self.core.clone();
+        //TODO: Spawn a future on glib's mainloop instead once that is stable.
+        std::thread::spawn(move || {
+            let board_future = core.copy(view_id);
+
+            let val = tokio::runtime::current_thread::block_on_all(board_future).unwrap();
+            clipboard_tx.send(val).unwrap();
         });
     }
 
