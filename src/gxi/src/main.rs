@@ -87,14 +87,13 @@ use glib::{Char, MainContext};
 use gtk::Application;
 use gxi_config_storage::pref_storage::GSchemaExt;
 use gxi_config_storage::GSchema;
-use log::{debug, info, warn};
-use parking_lot::Mutex;
+use log::{debug, error, info, warn};
+use parking_lot::{Condvar, Mutex};
 use serde_json::json;
 use std::cell::RefCell;
 use std::env::args;
 use std::rc::Rc;
 use std::sync::Arc;
-use std::thread;
 use tokio::runtime::Runtime;
 use xrl::{spawn as spawn_xi, Client, ViewId};
 
@@ -124,14 +123,16 @@ fn main() {
     // Set this to none here so we can move it into the closures without actually starting Xi every time.
     // This significantly improves startup time when gxi is already opened and you open a new file via
     // the CLI.
-    let core = Arc::new(Mutex::new(None));
+    let core_opt = Arc::new(Mutex::new(None));
 
     //FIXME: This is a hack to satisfy the borrowchecker. `connect_startup` is a FnMut even though
     // it's only called once, so it's fine to move new_view_rx and event_rx into connect_startup
     let new_view_rx_opt = Rc::new(RefCell::new(Some(new_view_rx)));
 
+    let core_ready = Arc::new((Mutex::new(false), Condvar::new()));
+
     application.connect_startup(
-        enclose!((core, application, new_view_rx_opt, new_view_tx) move |_| {
+        enclose!((core_opt, application, new_view_rx_opt, new_view_tx) move |_| {
                 debug!("{}", gettext("Starting gxi"));
 
             // The channel through which all events from Xi are sent from `crate::frontend::GxiFrontend` to
@@ -144,7 +145,7 @@ fn main() {
             let xi_config_dir = std::env::var("XI_CONFIG_DIR").ok();
 
             let mut runtime = Runtime::new().unwrap();
-            runtime.spawn(future::lazy(enclose!((request_tx, core) move || {
+            runtime.spawn(future::lazy(enclose!((request_tx, core_opt, core_ready) move || {
                 let (client, core_stderr) = spawn_xi(
                     crate::globals::XI_PATH.unwrap_or("xi-core"),
                     GxiFrontendBuilder {
@@ -159,7 +160,12 @@ fn main() {
                     crate::globals::PLUGIN_DIR,
                 );
 
-                core.lock().replace(Some(client.clone()));
+                core_opt.lock().replace(Some(client.clone()));
+
+                let &(ref lock, ref cvar) = &*core_ready;
+                let mut started = lock.lock();
+                * started = true;
+                cvar.notify_one();
 
                 tokio::spawn(
                     core_stderr
@@ -191,15 +197,22 @@ fn main() {
             }
 
             // Make sure we wait for the tokio thread to set the core
-            while core.lock().is_none() {
-                thread::sleep(std::time::Duration::from_millis(1));
+            // wait for the thread to start up
+            let &(ref lock, ref cvar) = &*core_ready;
+            let mut started = lock.lock();
+            while !*started {
+                cvar.wait(&mut started);
             }
 
-            setup_config(&core.lock().as_ref().unwrap().as_ref().unwrap());
+            // It's fine to unwrap here - we already made sure that the core has been set to Some
+            // above.
+            let core = core_opt.lock().as_ref().unwrap().as_ref().unwrap().clone();
+
+            setup_config(&core);
 
             MainWin::new(
                 application.clone(),
-                core.lock().as_ref().unwrap().as_ref().unwrap().clone(),
+                core,
                 new_view_rx_opt.borrow_mut().take().unwrap(),
                 new_view_tx.clone(),
                 event_rx,
@@ -209,22 +222,31 @@ fn main() {
         }),
     );
 
-    application.connect_activate(enclose!((core, new_view_tx) move |_| {
+    application.connect_activate(enclose!((core_opt, new_view_tx) move |_| {
         debug!("{}", gettext("Activating new view"));
 
-        let view_id = tokio::executor::current_thread::block_on_all(core.lock().as_ref().unwrap().as_ref().unwrap().new_view(None)).unwrap();
+        // It's fine to unwrap here - we already made sure this is Some in connect_startup.
+        let core_locked = core_opt.lock().clone().unwrap().unwrap();
 
-        new_view_tx.send((view_id, None)).unwrap();
+        match tokio::executor::current_thread::block_on_all(core_locked.new_view(None)) {
+            Ok(view_id) => new_view_tx.send((view_id, None)).unwrap(),
+            Err(e) => error!("{}: '{}'", gettext("Failed to open new, empty view due to error"), e),
+        }
     }));
 
-    application.connect_open(enclose!((core) move |_,files,_| {
+    application.connect_open(enclose!((core_opt) move |_,files,_| {
         debug!("{}", gettext("Opening new file"));
+
+        // See above for why it's fine to unwrap here.
+        let core_locked = core_opt.lock().clone().unwrap().unwrap();
 
         for file in files {
             if let Some(path) = file.get_path() {
                 let file =  path.to_str().map(|s| s.to_string());
-                let view_id = tokio::executor::current_thread::block_on_all(core.lock().as_ref().unwrap().as_ref().unwrap().new_view(file.clone())).unwrap();
-                new_view_tx.send((view_id, file)).unwrap();
+                match tokio::executor::current_thread::block_on_all(core_locked.new_view(file.clone())) {
+                    Ok(view_id) => new_view_tx.send((view_id, file)).unwrap(),
+                    Err(e) => error!("{}: '{}'; {}: {:#?}", gettext("Failed to open new due to error"), e, gettext("Path"), file),
+                }
             }
         }
     }));
