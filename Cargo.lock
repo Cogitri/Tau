@@ -262,9 +262,9 @@ dependencies = [
  "glib 0.7.0 (git+https://github.com/gtk-rs/glib)",
  "glib-sys 0.8.0 (git+https://github.com/gtk-rs/sys)",
  "gobject-sys 0.8.0 (git+https://github.com/gtk-rs/sys)",
+ "gschema-config-storage 0.3.0",
  "gtk 0.6.0 (git+https://github.com/gtk-rs/gtk)",
  "gtk-sys 0.8.0 (git+https://github.com/gtk-rs/sys)",
- "gxi-config-storage 0.2.0",
  "gxi-linecache 0.1.0",
  "log 0.4.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "pango 0.6.0 (git+https://github.com/gtk-rs/pango)",
@@ -496,6 +496,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "gschema-config-storage"
+version = "0.3.0"
+dependencies = [
+ "failure 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)",
+ "gio 0.6.0 (git+https://github.com/gtk-rs/gio)",
+ "gio-sys 0.8.0 (git+https://github.com/gtk-rs/sys)",
+ "glib 0.7.0 (git+https://github.com/gtk-rs/glib)",
+ "glib-sys 0.8.0 (git+https://github.com/gtk-rs/sys)",
+]
+
+[[package]]
 name = "gtk"
 version = "0.6.0"
 source = "git+https://github.com/gtk-rs/gtk#40a90fddcb21eb73a5a7bd6bd17da29beb62192e"
@@ -536,17 +547,6 @@ dependencies = [
  "libc 0.2.58 (registry+https://github.com/rust-lang/crates.io-index)",
  "pango-sys 0.8.0 (git+https://github.com/gtk-rs/sys)",
  "pkg-config 0.3.14 (registry+https://github.com/rust-lang/crates.io-index)",
-]
-
-[[package]]
-name = "gxi-config-storage"
-version = "0.2.0"
-dependencies = [
- "failure 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)",
- "gio 0.6.0 (git+https://github.com/gtk-rs/gio)",
- "gio-sys 0.8.0 (git+https://github.com/gtk-rs/sys)",
- "glib 0.7.0 (git+https://github.com/gtk-rs/glib)",
- "glib-sys 0.8.0 (git+https://github.com/gtk-rs/sys)",
 ]
 
 [[package]]
@@ -1334,9 +1334,9 @@ dependencies = [
  "glib 0.7.0 (git+https://github.com/gtk-rs/glib)",
  "glib-sys 0.8.0 (git+https://github.com/gtk-rs/sys)",
  "gobject-sys 0.8.0 (git+https://github.com/gtk-rs/sys)",
+ "gschema-config-storage 0.3.0",
  "gtk 0.6.0 (git+https://github.com/gtk-rs/gtk)",
  "gtk-sys 0.8.0 (git+https://github.com/gtk-rs/sys)",
- "gxi-config-storage 0.2.0",
  "human-panic 1.0.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "log 0.4.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "pango 0.6.0 (git+https://github.com/gtk-rs/pango)",

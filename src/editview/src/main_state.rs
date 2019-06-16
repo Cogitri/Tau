@@ -1,4 +1,4 @@
-use gxi_config_storage::GSchema;
+use gschema_config_storage::GSchema;
 use std::collections::HashMap;
 use syntect::highlighting::ThemeSettings;
 

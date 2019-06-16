@@ -1,8 +1,8 @@
 use editview::MainState;
 use gettextrs::gettext;
 use gio::{SettingsBindFlags, SettingsExt};
+use gschema_config_storage::{GSchema, GSchemaExt};
 use gtk::*;
-use gxi_config_storage::{GSchema, GSchemaExt};
 use log::{debug, trace};
 use pango::*;
 use std::cell::RefCell;

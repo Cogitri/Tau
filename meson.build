@@ -44,10 +44,10 @@ elif xi_opt == 'system'
 endif
 
 sources = files(
-  'src/gxi-config-storage/src/lib.rs',
-  'src/gxi-config-storage/src/pref_storage.rs',
-  'src/gxi-config-storage/src/errors.rs',
-  'src/gxi-config-storage/src/macros.rs',
+  'src/gschema-config-storage/src/lib.rs',
+  'src/gschema-config-storage/src/pref_storage.rs',
+  'src/gschema-config-storage/src/errors.rs',
+  'src/gschema-config-storage/src/macros.rs',
   'src/editview/src/main_state.rs',
   'src/editview/src/edit_view.rs',
   'src/editview/src/lib.rs',

@@ -32,9 +32,9 @@ gio = { git="https://github.com/gtk-rs/gio" }
 glib = { git="https://github.com/gtk-rs/glib" }
 glib-sys = { git="https://github.com/gtk-rs/sys", features = ["v2_44"] }
 gobject-sys = { git="https://github.com/gtk-rs/sys" }
+gschema-config-storage = { path="../gschema-config-storage" }
 gtk = { git="https://github.com/gtk-rs/gtk", features = ["v3_20"] }
 gtk-sys = { git="https://github.com/gtk-rs/sys", features = ["v3_20"] }
-gxi-config-storage = { path="../gxi-config-storage" }
 human-panic = "1"
 log = "0.4"
 pango = { git="https://github.com/gtk-rs/pango", features = ["v1_38"] }

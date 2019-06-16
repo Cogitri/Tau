@@ -2,7 +2,7 @@
 members = [
     "src/editview",
     "src/tau",
-    "src/gxi-config-storage",
+    "src/gschema-config-storage",
     "src/gxi-linecache",
 ]
 

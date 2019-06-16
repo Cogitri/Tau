@@ -1,15 +1,15 @@
 [package]
-name = "gxi-config-storage"
-version = "0.2.0"
+name = "gschema-config-storage"
+version = "0.3.0"
 authors = ["Rasmus Thomsen <oss@cogitri.dev>"]
 edition = "2018"
 categories = ["config"]
-keywords = ["gxi", "xi", "glib", "gschema"]
+keywords = ["gxi", "xi", "glib", "gschema", "tau", "wrapper"]
 license = "MIT"
 readme = "README.md"
 homepage = "https://gxi.cogitri.dev"
-repository = "https://github.com/Cogitri/gxi"
-description = "gxi's config backend, with comfortability functions for GSettings"
+repository = "https://gitlab.gnome.org/World/tau"
+description = "Comfortability functions for GSettings"
 
 [dependencies]
 failure = "0.1"
