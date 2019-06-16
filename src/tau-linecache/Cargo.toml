@@ -1,0 +1,15 @@
+[package]
+name = "tau-linecache"
+version = "0.2.0"
+authors = ["Rasmus Thomsen <oss@cogitri.dev>"]
+edition = "2018"
+description = "Tau's linecache, used to cache Lines received from Xi-Editor"
+keywords = ["gxi", "xi", "tau"]
+categories = ["caching"]
+license = "MIT"
+homepage = "https://gxi.cogitri.dev"
+repository = "https://gitlab.gnome.org/World/tau"
+
+[dependencies]
+log = "0.4"
+xrl = "0.0.7"

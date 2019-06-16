@@ -3,7 +3,7 @@ members = [
     "src/editview",
     "src/tau",
     "src/gschema-config-storage",
-    "src/gxi-linecache",
+    "src/tau-linecache",
 ]
 
 [profile.release]

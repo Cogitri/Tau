@@ -10,7 +10,6 @@ use gdk::*;
 use gettextrs::gettext;
 use glib::{source::Continue, MainContext, PRIORITY_HIGH};
 use gtk::{self, *};
-use gxi_linecache::*;
 use log::{debug, error, trace, warn};
 use pango::{self, *};
 use pangocairo::functions::*;
@@ -19,6 +18,7 @@ use std::cmp::{max, min};
 use std::rc::Rc;
 use std::sync::{Arc, Mutex};
 use std::u32;
+use tau_linecache::*;
 use unicode_segmentation::UnicodeSegmentation;
 use xrl::{Client, ConfigChanges, Query, Status, Update, ViewId};
 
