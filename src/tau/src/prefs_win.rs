@@ -21,7 +21,7 @@ impl PrefsWin {
         core: &Client,
         gschema: &GSchema,
     ) -> Self {
-        let builder = Builder::new_from_resource("/com/github/Cogitri/gxi/prefs_win.glade");
+        let builder = Builder::new_from_resource("/org/gnome/Tau/prefs_win.glade");
 
         let window: Window = builder.get_object("prefs_win").unwrap();
         let font_chooser_widget: FontChooserWidget =

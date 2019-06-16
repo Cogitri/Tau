@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<gresources>
-  <gresource prefix="/com/github/Cogitri/gxi/">
-      <file preprocess="xml-stripblanks">gxi.glade</file>
-      <file preprocess="xml-stripblanks">prefs_win.glade</file>
-      <file alias="com.github.Cogitri.gxi.svg">../../../../data/icons//hicolor/scalable/apps/com.github.Cogitri.gxi.svg</file>
-      <file>app.css</file>
-  </gresource>
-</gresources>

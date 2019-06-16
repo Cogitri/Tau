@@ -78,7 +78,7 @@ impl WinProp {
     }
 }
 
-/// The `MainWin` is (as the name suggests) gxi's main window. It holds buttons like `Open` and `Save`
+/// The `MainWin` is (as the name suggests) tau's main window. It holds buttons like `Open` and `Save`
 /// and holds the `EditViews`, which do the actual editing. Refer to [the module level docs](main/index.html)
 /// for more information.
 pub struct MainWin {
@@ -121,7 +121,7 @@ impl MainWin {
         gio::resources_register(&resource);
 
         let provider = gtk::CssProvider::new();
-        provider.load_from_resource("/com/github/Cogitri/gxi/app.css");
+        provider.load_from_resource("/org/gnome/Tau/app.css");
         gtk::StyleContext::add_provider_for_screen(
             &gdk::Screen::get_default()
                 .unwrap_or_else(|| panic!("{}", gettext("Failed to get default CssProvider!"))),
@@ -129,12 +129,12 @@ impl MainWin {
             gtk::STYLE_PROVIDER_PRIORITY_APPLICATION,
         );
 
-        let builder = Builder::new_from_resource("/com/github/Cogitri/gxi/gxi.glade");
+        let builder = Builder::new_from_resource("/org/gnome/Tau/tau.glade");
 
         let properties = RefCell::new(WinProp::new(&application));
         let window: ApplicationWindow = builder.get_object("appwindow").unwrap();
 
-        let icon = Pixbuf::new_from_resource("/com/github/Cogitri/gxi/com.github.Cogitri.gxi.svg");
+        let icon = Pixbuf::new_from_resource("/org/gnome/Tau/org.gnome.Tau.svg");
         window.set_icon(icon.ok().as_ref());
 
         if properties.borrow().is_maximized {
@@ -934,7 +934,7 @@ impl MainWin {
 }
 
 pub fn new_settings() -> Settings {
-    let gschema = GSchema::new("com.github.Cogitri.gxi");
+    let gschema = GSchema::new("org.gnome.Tau");
     let interface_font = {
         use gtk::SettingsExt;
         let gtk_settings = gtk::Settings::get_default().unwrap();

@@ -34,7 +34,7 @@ pub struct TextSize {
     contained_width: bool,
 }
 
-/// The EditView is the part of gxi that does the actual editing. This is where you edit documents.
+/// The EditView is the part of Tau that does the actual editing. This is where you edit documents.
 pub struct EditView {
     core: Client,
     main_state: Rc<RefCell<MainState>>,

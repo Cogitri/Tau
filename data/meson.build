@@ -1,10 +1,10 @@
 desktop_file = i18n.merge_file ('desktop-file',
   type: 'desktop',
-  input: 'com.github.Cogitri.gxi.desktop.in',
-  output: 'com.github.Cogitri.gxi.desktop',
-  po_dir: gxi_podir,
+  input: 'org.gnome.Tau.desktop.in',
+  output: 'org.gnome.Tau.desktop',
+  po_dir: tau_podir,
   install: true,
-  install_dir: join_paths (gxi_datadir, 'applications'),
+  install_dir: join_paths (tau_datadir, 'applications'),
 )
 
 desktop_file_validate = find_program('desktop-file-validate', required: false)
@@ -19,13 +19,12 @@ if desktop_file_validate.found()
 endif
 
 appdata_file = i18n.merge_file ('appdata-file',
-  input: 'com.github.Cogitri.gxi.appdata.xml.in',
-  output: 'com.github.Cogitri.gxi.appdata.xml',
-  po_dir: gxi_podir,
+input: 'org.gnome.Tau.appdata.xml.in',
+  output: 'org.gnome.Tau.appdata.xml',
+  po_dir: tau_podir,
   install: true,
-  install_dir: join_paths (gxi_datadir, 'metainfo'),
+  install_dir: join_paths (tau_datadir, 'metainfo'),
 )
-
 
 appstream_util = find_program('appstream-util', required: false)
 
@@ -50,5 +49,5 @@ if appstream_util.found()
    endif
 endif
 
-install_subdir('icons', install_dir: gxi_datadir)
-install_data('com.github.Cogitri.gxi.gschema.xml', install_dir: join_paths(gxi_datadir, 'glib-2.0', 'schemas'))
+install_subdir('icons', install_dir: tau_datadir)
+install_data('org.gnome.Tau.gschema.xml', install_dir: join_paths(tau_datadir, 'glib-2.0', 'schemas'))

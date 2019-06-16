@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Copyright 2019 Rasmus Thomsen <oss@cogitri.dev> -->
 <component type="desktop-application">
-	<id>com.github.Cogitri.gxi</id>
+	<id>org.gnome.Tau</id>
 	<metadata_license>CC0-1.0</metadata_license>
 	<project_license>MIT</project_license>
-	<name>gxi</name>
+	<name>Tau</name>
 	<summary>GTK frontend for the xi text editor</summary>
-	<translation type="gettext">gxi</translation>
+	<translation type="gettext">Tau</translation>
 
 	<description>
 		<p>
-			gxi is a GTK frontend for the xi text editor written in Rust. It's a very
+			Tau is a GTK frontend for the xi text editor written in Rust. It's a very
 			fast plain text editor.
 		</p>
 	</description>
 
-	<launchable type="desktop-id">com.github.Cogitri.gxi.desktop</launchable>
+	<launchable type="desktop-id">org.gnome.Tau.desktop</launchable>
 ​
 	<screenshots>
 		<screenshot type="default">
-			<image>https://github.com/Cogitri/gxi/raw/master/data/screenshot.png</image>
+			<image>https://gitlab.gnome.org/World/tau/raw/master/data/screenshot.png</image>
 		</screenshot>
 	</screenshots>
 
-	<url type="homepage">https://github.com/Cogitri/gxi</url>
+	<url type="homepage">https://gxi.cogitri.dev</url>
 	<developer_name>Rasmus "Cogitri" Thomsen</developer_name>
 	<update_contact>oss@cogitri.dev</update_contact>
 
 	<provides>
-		<binary>gxi</binary>
+		<binary>tau</binary>
 	</provides>
 
 	<releases>

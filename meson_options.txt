@@ -1,5 +1,5 @@
 option('xi-core',
-  description: 'Whether to use a copy of xi-core distributed with gxi or the system\'s one',
+  description: 'Whether to use a copy of xi-core distributed with Tau or the system\'s one',
   type: 'combo',
   choices: ['auto', 'builtin', 'system'],
 )

@@ -1,16 +1,16 @@
 [Desktop Entry]
-Name=gxi
-Exec=gxi %U
-Comment=The gxi text editor
+Name=Tau
+Exec=tau %U
+Comment=The Tau text editor
 Encoding=UTF-8
 Type=Application
-Icon=com.github.Cogitri.gxi
+Icon=org.gnome.Tau
 Categories=GTK;GNOME;Utility;TextEditor;
 Terminal=false
 MimeType=text/plain;
 Actions=NewInstance;
-Keywords=Text;Editor;Plaintext;Write;
+Keywords=Text;Editor;Plaintext;Write;gxi;
 
 [Desktop Action NewInstance]
-Name=Launch a new gxi instance
-Exec=gxi --new-instance
+Name=Launch a new Tau instance
+Exec=tau --new-instance

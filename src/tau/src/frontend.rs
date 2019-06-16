@@ -15,7 +15,7 @@ pub enum XiRequest {
 }
 
 /// Struct that is passed into `xrl::spawn` to start it. See `GxiFrontend` for more
-pub struct GxiFrontendBuilder {
+pub struct TauFrontendBuilder {
     pub event_tx: SyncSender<XiEvent>,
     pub request_rx: crossbeam_channel::Receiver<XiRequest>,
     pub request_tx: crossbeam_channel::Sender<XiRequest>,
@@ -24,13 +24,13 @@ pub struct GxiFrontendBuilder {
 /// This struct is only really there to satisfy the `xrl::Frontend` Trait. It holds `event_tx`,
 /// which sends `XiNotifications` and the `request_rx`/`request_tx` pair, which sends
 /// `XiRequests`to our main thread where `MainWin` deals with them.
-pub struct GxiFrontend {
+pub struct TauFrontend {
     pub event_tx: SyncSender<XiEvent>,
     pub request_rx: crossbeam_channel::Receiver<XiRequest>,
     pub request_tx: crossbeam_channel::Sender<XiRequest>,
 }
 
-impl Frontend for GxiFrontend {
+impl Frontend for TauFrontend {
     type NotificationResult = Result<(), ()>;
     type MeasureWidthResult = Result<Vec<Vec<f32>>, ()>;
 
@@ -56,11 +56,11 @@ impl Frontend for GxiFrontend {
     }
 }
 
-impl FrontendBuilder for GxiFrontendBuilder {
-    type Frontend = GxiFrontend;
+impl FrontendBuilder for TauFrontendBuilder {
+    type Frontend = TauFrontend;
 
     fn build(self, _client: Client) -> Self::Frontend {
-        GxiFrontend {
+        TauFrontend {
             event_tx: self.event_tx,
             request_rx: self.request_rx,
             request_tx: self.request_tx,

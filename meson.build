@@ -1,6 +1,6 @@
 project(
-  'gxi', 'rust',
-  version: '0.8.1',
+  'tau', 'rust',
+  version: '0.9.0',
   license: 'MIT',
 )
 
@@ -12,13 +12,13 @@ dependency('gtk+-3.0', version: '>= 3.20')
 # This is only used to decide what transition code to use for the search/replace Popover
 opt_gtk3_22_dep = dependency('gtk+-3.0', version: '>= 3.22', required: false)
 
-gxi_prefix = get_option('prefix')
-gxi_bindir = join_paths(gxi_prefix, get_option('bindir'))
-gxi_datadir = get_option('datadir')
-gxi_localedir = join_paths(gxi_prefix, get_option('localedir'))
-gxi_libexecdir = join_paths(gxi_prefix, get_option('libexecdir'), 'gxi')
-gxi_plugin_dir = join_paths(gxi_libexecdir, 'gxi', 'plugins')
-gxi_podir = join_paths(meson.current_source_dir(), 'po')
+tau_prefix = get_option('prefix')
+tau_bindir = join_paths(tau_prefix, get_option('bindir'))
+tau_datadir = get_option('datadir')
+tau_localedir = join_paths(tau_prefix, get_option('localedir'))
+tau_libexecdir = join_paths(tau_prefix, get_option('libexecdir'), 'tau')
+tau_plugin_dir = join_paths(tau_libexecdir, 'tau', 'plugins')
+tau_podir = join_paths(meson.current_source_dir(), 'po')
 
 i18n = import('i18n')
 
@@ -54,13 +54,13 @@ sources = files(
   'src/editview/src/view_item.rs',
   'src/editview/src/fonts.rs',
   'src/editview/src/theme.rs',
-  'src/gxi/src/main_win.rs',
-  'src/gxi/src/main.rs',
-  'src/gxi/src/errors.rs',
-  'src/gxi/src/about_win.rs',
-  'src/gxi/src/prefs_win.rs',
-  'src/gxi/src/globals.rs',
-  'src/gxi/src/panic_handler.rs',
+  'src/tau/src/main_win.rs',
+  'src/tau/src/main.rs',
+  'src/tau/src/errors.rs',
+  'src/tau/src/about_win.rs',
+  'src/tau/src/prefs_win.rs',
+  'src/tau/src/globals.rs',
+  'src/tau/src/panic_handler.rs',
   'Cargo.toml',
   'Cargo.lock',
 )
@@ -72,26 +72,26 @@ else
 endif
 
 if xi_opt == 'builtin'
-  xi_binary_path = join_paths(gxi_libexecdir, 'xi-core')
+xi_binary_path = join_paths(tau_libexecdir, 'xi-core')
 else
   xi_binary_path = 'xi-core'
 endif
 
-custom_target('cargo-build-gxi',
+custom_target('cargo-build-tau',
                         input: sources,
-                        output: ['gxi'],
+                        output: ['tau'],
                         install: true,
-                        install_dir: gxi_bindir,
+                        install_dir: tau_bindir,
                         console: true,
                         command: [cargo_script,
                                   meson.current_source_dir(),
                                   join_paths(meson.build_root(),'@OUTDIR@'),
                                   '@OUTPUT@',
                                   meson.current_build_dir(),
-                                  'gxi',
+                                  'tau',
                                   gtk3_22,
-                                  gxi_plugin_dir,
-                                  gxi_localedir,
+                                  tau_plugin_dir,
+                                  tau_localedir,
                                   meson.project_version(),
                                   xi_binary_path,
                                   gresource.path(),
@@ -122,7 +122,7 @@ if xi_opt == 'builtin'
   custom_target('cargo-build-xi-core',
                           output: ['xi-core'],
                           install: true,
-                          install_dir: gxi_libexecdir,
+                          install_dir: tau_libexecdir,
                           console: true,
                           command: [cargo_script,
                                     xi_build_path,
@@ -131,14 +131,14 @@ if xi_opt == 'builtin'
                                     xi_vendor_target_dir,
                                     'xi-core',
                                     '',
-                                    gxi_plugin_dir,
-                                    gxi_localedir,
+                                    tau_plugin_dir,
+                                    tau_localedir,
                                     meson.project_version(),
                                    ])
 endif
 
 syntect_build_path = join_paths(meson.current_source_dir(), 'vendor', 'xi-editor', 'rust', 'syntect-plugin')
-syntect_dir = join_paths(gxi_plugin_dir, 'syntect')
+syntect_dir = join_paths(tau_plugin_dir, 'syntect')
 syntect_bindir = join_paths(syntect_dir, 'bin')
 
 syntect_plugin_files = files(
@@ -161,8 +161,8 @@ custom_target('cargo-build-syntect',
                                   xi_vendor_target_dir,
                                   'xi-syntect-plugin',
                                   '',
-                                  gxi_plugin_dir,
-                                  gxi_localedir,
+                                  tau_plugin_dir,
+                                  tau_localedir,
                                   meson.project_version(),
                                  ])
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Generated with glade 3.22.1 -->
-<interface domain="gxi">
+<interface domain="Tau">
   <requires lib="gtk+" version="3.16"/>
   <object class="GtkPopoverMenu" id="hamburger_popover">
     <property name="can_focus">False</property>
@@ -250,7 +250,7 @@
   </object>
   <object class="GtkApplicationWindow" id="appwindow">
     <property name="can_focus">False</property>
-    <property name="role">com.github.Cogitri.gxi</property>
+    <property name="role">org.gnome.Tau</property>
     <property name="default_width">1150</property>
     <property name="default_height">750</property>
     <property name="icon_name">text-x-generic</property>
@@ -258,7 +258,7 @@
       <object class="GtkHeaderBar" id="header_bar">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="title">gxi</property>
+        <property name="title">Tau</property>
         <property name="show_close_button">True</property>
         <child>
           <object class="GtkButton" id="open_button">

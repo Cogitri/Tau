@@ -4,19 +4,19 @@ set -e
 
 # $1 -> @CURRENT_SOURCE_DIR@ as replaced by meson or syntect_plugin_path, we cd into it
 # $2 -> Directory to place the finished binaries, meson replaces @OUTDIR@
-# $3 -> The final name of the gxi binary, set output: ['name'] in meson.build
+# $3 -> The final name of the tau binary, set output: ['name'] in meson.build
 # to change it.
 # $4 -> passed to cargo --target-dir, .current_build_dir() from meson
 # $5 -> Name of the binary created by cargo inside target/
 # $6 -> Whether we should enable gtk3_22 support, enabled automatically
 # if we have gtk+-3.0 >= 3.22
 
-# These variables are used by gxi itself in src/globals.rs
+# These variables are used by Tau itself in src/globals.rs
 # to decide where to look for certain system components
-export GXI_PLUGIN_DIR="${7}"
-export GXI_LOCALEDIR="${8}"
-export GXI_VERSION="${9}"
-export GXI_XI_BINARY_PATH="${10}"
+export TAU_PLUGIN_DIR="${7}"
+export TAU_LOCALEDIR="${8}"
+export TAU_VERSION="${9}"
+export TAU_XI_BINARY_PATH="${10}"
 export GRESOURCE_BINARY_PATH="${11}"
 
 # ANSI codes for getting colors and resetting it
@@ -26,9 +26,9 @@ NO_COLOR='\033[0m'
 
 echo -e \
 "
-\tGXI Plugindir:\t\t${GREEN}${GXI_PLUGIN_DIR}${NO_COLOR}
-\tGXI Localedir:\t\t${GREEN}${GXI_LOCALEDIR}${NO_COLOR}
-\tGXI Version:\t\t${GREEN}${GXI_VERSION}${NO_COLOR}
+\tTau Plugindir:\t\t${GREEN}${TAU_PLUGIN_DIR}${NO_COLOR}
+\tTau Localedir:\t\t${GREEN}${TAU_LOCALEDIR}${NO_COLOR}
+\tTau Version:\t\t${GREEN}${TAU_VERSION}${NO_COLOR}
 \tDetected GTK+3.22:\t${GREEN}${6}${NO_COLOR}
 "
 

@@ -1,7 +1,7 @@
 [workspace]
 members = [
     "src/editview",
-    "src/gxi",
+    "src/tau",
     "src/gxi-config-storage",
     "src/gxi-linecache",
 ]

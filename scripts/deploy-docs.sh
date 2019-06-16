@@ -4,18 +4,16 @@ write_index() {
 	cat > target/doc/index.html <<EOF
 	<a href="editview/index.html">EditView docs</a>
 	<br>
-	<a href="gxi/index.html">gxi docs</a>
+	<a href="tau/index.html">Tau docs</a>
 	<br>
 	<a href="gxi_config_storage/index.html">gxi-config-storage docs</a>
 	<br>
-	<a href="gxi_linecache/index.html">gxi-linecache docs</a>
-	<br>
-	<a href="gxi_peer/index.html">gxi-peer</a>
+	<a href="gxi_linecache/index.html">gxi-linecache docs</a
 EOF
 }
 
 write_index &&
-mv target/doc/gxi target/doc/docs &&
+mv target/doc/tau target/doc/docs &&
 chmod 600 .ci/id_ed25519 &&
 eval "$(ssh-agent -s)" &&
 ssh-add .ci/id_ed25519 &&

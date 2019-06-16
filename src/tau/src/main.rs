@@ -1,7 +1,7 @@
-//! Welcome to the gxi docs!
-//! Since gxi isn't a library these docs are meant to help contributors understand gxi's code.
+//! Welcome to the tau docs!
+//! Since tau isn't a library these docs are meant to help contributors understand tau's code.
 //!
-//! gxi's structure can be simplified like this:
+//! tau's structure can be simplified like this:
 //!
 //!```
 //! ---------  spawns w/    -----------                 ----------
@@ -23,7 +23,7 @@
 //! Now onto more detailed explanation:
 //!
 //! - `MainWin`:  This is main window (as the name suggests). It holds all buttons you can see when
-//!               opening gxi, such as the open button, new tab button, the syntax selection, the save
+//!               opening tau, such as the open button, new tab button, the syntax selection, the save
 //!               button and window controls. It also has a `Notebook` inside of it, which holds `EditView`s.
 //!               The `Notebook` shows a tab for every open `EditView`, allowing the user to open multiple
 //!               documents at once.
@@ -50,11 +50,11 @@
 //! - `Client`:   This is a Struct of `xrl`. It interfaces with `xi-editor`. Please see its docs for more
 //!               info on `xrl`.
 //!
-//! gxi also contains some more minor modules, please see their documentation for more info:
+//! tau also contains some more minor modules, please see their documentation for more info:
 //!
 //! - [AboutWin](about_win/struct.AboutWin.html)
 //! - [ErrWin](errors/struct.ErrorDialog.html)
-//! - [Frontend](frontend/struct.GxiFrontend.html)
+//! - [Frontend](frontend/struct.TauFrontend.html)
 //! - [PrefsWin](prefs_win/struct.PrefsWin.html)
 //!
 //! I can very much recommend you to look at [the following tutorial](https://mmstick.github.io/gtkrs-tutorials/) if you don't
@@ -104,11 +104,8 @@ fn main() {
 
     env_logger::Builder::from_default_env().init();
 
-    let application = Application::new(
-        Some("com.github.Cogitri.gxi"),
-        ApplicationFlags::HANDLES_OPEN,
-    )
-    .unwrap_or_else(|_| panic!("Failed to create the GTK+ application"));
+    let application = Application::new(Some("org.gnome.Tau"), ApplicationFlags::HANDLES_OPEN)
+        .unwrap_or_else(|_| panic!("Failed to create the GTK+ application"));
 
     application.add_main_option(
         "new-instance",
@@ -123,7 +120,7 @@ fn main() {
     let (new_view_tx, new_view_rx) =
         MainContext::channel::<(ViewId, Option<String>)>(glib::PRIORITY_HIGH);
     // Set this to none here so we can move it into the closures without actually starting Xi every time.
-    // This significantly improves startup time when gxi is already opened and you open a new file via
+    // This significantly improves startup time when Tau is already opened and you open a new file via
     // the CLI.
     let core_opt = Arc::new(Mutex::new(None));
 
@@ -135,9 +132,9 @@ fn main() {
 
     application.connect_startup(
         enclose!((core_opt, application, new_view_rx_opt, new_view_tx) move |_| {
-                debug!("{}", gettext("Starting gxi"));
+                debug!("{}", gettext("Starting Tau"));
 
-            // The channel through which all events from Xi are sent from `crate::frontend::GxiFrontend` to
+            // The channel through which all events from Xi are sent from `crate::frontend::TauFrontend` to
             // the MainWin
             let (event_tx, event_rx) = MainContext::sync_channel::<XiEvent>(glib::PRIORITY_HIGH, 5);
 
@@ -150,7 +147,7 @@ fn main() {
             runtime.spawn(future::lazy(enclose!((request_tx, core_opt, core_ready) move || {
                 let (client, core_stderr) = spawn_xi(
                     crate::globals::XI_PATH.unwrap_or("xi-core"),
-                    GxiFrontendBuilder {
+                    TauFrontendBuilder {
                         request_rx,
                         event_tx,
                         request_tx: request_tx.clone(),
@@ -195,10 +192,10 @@ fn main() {
                 future::ok(())
             })));
 
-            glib::set_application_name("gxi");
+            glib::set_application_name("Tau");
 
             // No need to gettext this, gettext doesn't work yet
-            match TextDomain::new("gxi")
+            match TextDomain::new("Tau")
                 .push(crate::globals::LOCALEDIR.unwrap_or("po"))
                 .init()
             {
@@ -290,7 +287,7 @@ fn main() {
 
 /// Send the current config to xi-editor during startup
 fn setup_config(core: &Client) {
-    let gschema = GSchema::new("com.github.Cogitri.gxi");
+    let gschema = GSchema::new("org.gnome.Tau");
 
     let tab_size: u32 = gschema.get_key("tab-size");
     let autodetect_whitespace: bool = gschema.get_key("auto-indent");
