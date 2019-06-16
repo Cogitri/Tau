@@ -1,12 +1,12 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the gxi package.
+# This file is distributed under the same license as the Tau package.
 # Luuk van der Duim <luukvanderduim@gmail.com>, 2019.
 msgid ""
 msgstr ""
-"Project-Id-Version: gxi\n"
+"Project-Id-Version: Tau\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-21 15:01+0200\n"
+"POT-Creation-Date: 2019-06-17 00:36+0200\n"
 "PO-Revision-Date: 2019-06-01 17:47+0000\n"
 "Last-Translator: Luuk van der Duim <luukvanderduim@gmail.com>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/gxi/translation/nl/"
@@ -18,69 +18,100 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 3.7-dev\n"
 
-#: data/com.github.Cogitri.gxi.appdata.xml.in:7
-#: data/com.github.Cogitri.gxi.desktop.in:3
-msgid "gxi"
-msgstr "gxi"
+#: data/org.gnome.Tau.appdata.xml.in:7 data/org.gnome.Tau.desktop.in:3
+msgid "Tau"
+msgstr ""
 
-#: data/com.github.Cogitri.gxi.appdata.xml.in:8
+#: data/org.gnome.Tau.appdata.xml.in:8
 msgid "GTK frontend for the xi text editor"
 msgstr "GTK grafische schil voor de xi tekst bewerker"
 
-#: data/com.github.Cogitri.gxi.appdata.xml.in:12
+#: data/org.gnome.Tau.appdata.xml.in:12
+#, fuzzy
 msgid ""
-"gxi is a GTK frontend for the xi text editor written in Rust. It's a very "
+"Tau is a GTK frontend for the xi text editor written in Rust. It's a very "
 "fast plain text editor."
 msgstr ""
-"gxi is de GTK grafische schil voor de  xi tekst editor, geschreven in Rust, "
+"Tau is de GTK grafische schil voor de  xi tekst editor, geschreven in Rust, "
 "een heel snelle platte tekst editor."
 
-#: data/com.github.Cogitri.gxi.desktop.in:5
-msgid "The gxi text editor"
-msgstr "De gxi tekst editor"
+#: data/org.gnome.Tau.appdata.xml.in:27
+msgid "Rasmus \"Cogitri\" Thomsen"
+msgstr ""
 
-#: data/com.github.Cogitri.gxi.desktop.in:8
-msgid "com.github.Cogitri.gxi"
-msgstr "com.github.Cogitri.gxi"
+#: data/org.gnome.Tau.desktop.in:5
+#, fuzzy
+msgid "The Tau text editor"
+msgstr "De Tau tekst editor"
 
-#: data/com.github.Cogitri.gxi.gschema.xml:9
+#: data/org.gnome.Tau.desktop.in:8
+msgid "org.gnome.Tau"
+msgstr ""
+
+#: data/org.gnome.Tau.desktop.in:13
+msgid "Text;Editor;Plaintext;Write;gxi;"
+msgstr ""
+
+#: data/org.gnome.Tau.desktop.in:16
+msgid "Launch a new Tau instance"
+msgstr ""
+
+#: data/org.gnome.Tau.gschema.xml:9
 msgid "Xi-Editor's theme"
 msgstr "Xi-Editors thema"
 
-#: data/com.github.Cogitri.gxi.gschema.xml:10
+#: data/org.gnome.Tau.gschema.xml:10
 msgid "Sets the theme used for the editing area"
 msgstr "Selecteert het thema voor het tekstgebied"
 
-#: data/com.github.Cogitri.gxi.gschema.xml:17
-#: src/gxi/src/ui/prefs_win.glade:213
+#: data/org.gnome.Tau.gschema.xml:17
 msgid "Draw trailing spaces"
 msgstr "Teken navolgende spaties"
 
-#: data/com.github.Cogitri.gxi.gschema.xml:18
+#: data/org.gnome.Tau.gschema.xml:18
 msgid "Draw spaces which are at the end of a line"
 msgstr "Teken loze spaties aan het eind van de regel"
 
-#: data/com.github.Cogitri.gxi.gschema.xml:25
+#: data/org.gnome.Tau.gschema.xml:25
+#, fuzzy
+msgid "Draw leading spaces"
+msgstr "Teken navolgende spaties"
+
+#: data/org.gnome.Tau.gschema.xml:26
+#, fuzzy
+msgid "Draw spaces which are at the beginning of a line"
+msgstr "Teken loze spaties aan het eind van de regel"
+
+#: data/org.gnome.Tau.gschema.xml:33
+#, fuzzy
+msgid "Draw all spaces"
+msgstr "Teken navolgende spaties"
+
+#: data/org.gnome.Tau.gschema.xml:34
+msgid "Draw spaces, no matter the position"
+msgstr ""
+
+#: data/org.gnome.Tau.gschema.xml:41
 msgid "Draw a right hand margin"
 msgstr "Teken een rechterzijde margelijn"
 
-#: data/com.github.Cogitri.gxi.gschema.xml:26
+#: data/org.gnome.Tau.gschema.xml:42
 msgid "Draw a right hand margin to limit the text width"
 msgstr "Teken een rechter margelijn om de tekstbreedte te begrenzen"
 
-#: data/com.github.Cogitri.gxi.gschema.xml:33
+#: data/org.gnome.Tau.gschema.xml:49
 msgid "At what column to display the margin"
 msgstr "Op welke kolom de margelijn getekend zal worden"
 
-#: data/com.github.Cogitri.gxi.gschema.xml:34
+#: data/org.gnome.Tau.gschema.xml:50
 msgid "Sets the column at which the margin should be drawn"
 msgstr "Selecteert de kolom waar de margelijn getekend wordt"
 
-#: data/com.github.Cogitri.gxi.gschema.xml:41
+#: data/org.gnome.Tau.gschema.xml:57
 msgid "Whether the current line should be highlighted"
 msgstr "Of de huidige regel gemarkeerd moet worden"
 
-#: data/com.github.Cogitri.gxi.gschema.xml:42
+#: data/org.gnome.Tau.gschema.xml:58
 msgid ""
 "Sets if the current line should be highlighted, which eases navigation "
 "through the document"
@@ -88,17 +119,101 @@ msgstr ""
 "Selecteert het markeren van de huidige regel, vergemakkelijkt het doorlopen "
 "van het  document"
 
-#: data/com.github.Cogitri.gxi.gschema.xml:49
+#: data/org.gnome.Tau.gschema.xml:65
 msgid "Sets the height of the window in the next startup"
 msgstr "Selecteert de hoogte van het venster na herstart"
 
-#: data/com.github.Cogitri.gxi.gschema.xml:54
+#: data/org.gnome.Tau.gschema.xml:70
 msgid "Sets the width of the window in the next startup"
 msgstr "Selecteert de breedte van het venster na herstart"
 
-#: data/com.github.Cogitri.gxi.gschema.xml:59
+#: data/org.gnome.Tau.gschema.xml:75
 msgid "Sets if the window should be maximized during the next startup"
 msgstr "Selecteert venstermaximalisatie na herstart"
+
+#: data/org.gnome.Tau.gschema.xml:80 src/tau/src/ui/prefs_win.glade:149
+msgid "Tab size"
+msgstr "Tab grootte"
+
+#: data/org.gnome.Tau.gschema.xml:81
+msgid "Amount of spaces that a tab is wide"
+msgstr ""
+
+#: data/org.gnome.Tau.gschema.xml:87
+#, fuzzy
+msgid "Insert spaces instead of tabs"
+msgstr "Behandel spaties net als tabs"
+
+#: data/org.gnome.Tau.gschema.xml:88
+msgid "Whether spaces should be inserted instead of tabs"
+msgstr ""
+
+#: data/org.gnome.Tau.gschema.xml:93
+#, fuzzy
+msgid "Treat indention with spaces like tabs"
+msgstr "Behandel spaties net als tabs"
+
+#: data/org.gnome.Tau.gschema.xml:94
+msgid ""
+"If translate-tabs-to-spaces is true, backspaces will delete multiple spaces, "
+"up to the previous tab stop"
+msgstr ""
+
+#: data/org.gnome.Tau.gschema.xml:99
+msgid "Automatically match document's indention on newlines"
+msgstr ""
+
+#: data/org.gnome.Tau.gschema.xml:104
+#, fuzzy
+msgid "The font used for editing"
+msgstr "Selecteert het thema voor het tekstgebied"
+
+#: data/org.gnome.Tau.gschema.xml:109 src/tau/src/ui/prefs_win.glade:184
+#, fuzzy
+msgid "Wrap lines at the end of the document"
+msgstr "Voorbij einde van document kunnen scrollen"
+
+#: data/org.gnome.Tau.gschema.xml:114
+#, fuzzy
+msgid "Draw trailing tabs"
+msgstr "Teken navolgende spaties"
+
+#: data/org.gnome.Tau.gschema.xml:115
+#, fuzzy
+msgid "Draw tabs which are at the end of a line"
+msgstr "Teken loze spaties aan het eind van de regel"
+
+#: data/org.gnome.Tau.gschema.xml:122
+#, fuzzy
+msgid "Draw leading tabs"
+msgstr "Teken navolgende spaties"
+
+#: data/org.gnome.Tau.gschema.xml:123
+#, fuzzy
+msgid "Draw tabs which are at the beginning of a line"
+msgstr "Teken loze spaties aan het eind van de regel"
+
+#: data/org.gnome.Tau.gschema.xml:130
+#, fuzzy
+msgid "Draw all tabs"
+msgstr "Teken navolgende spaties"
+
+#: data/org.gnome.Tau.gschema.xml:131
+msgid "Draw all tabs, no matter the position"
+msgstr ""
+
+#: src/editview/src/ui/ev.glade:97
+msgid "document-text"
+msgstr ""
+
+#: src/editview/src/ui/ev.glade:104 src/editview/src/ui/ev.glade:219
+msgid "text"
+msgstr ""
+
+#: src/editview/src/ui/ev.glade:180 src/editview/src/ui/ev.glade:192
+#: src/tau/src/ui/prefs_win.glade:133
+msgid "0"
+msgstr "0"
 
 #: src/editview/src/ui/find_replace.glade:32
 msgid "Find"
@@ -137,232 +252,204 @@ msgstr "Uitsluitend gehele zoekterm"
 msgid "No Results"
 msgstr "Geen Resultaten"
 
-#: src/gxi/src/ui/prefs_win.glade:17 src/gxi/src/ui/gxi.glade:139
+#: src/tau/src/ui/prefs_win.glade:17 src/tau/src/ui/tau.glade:139
 msgid "Preferences"
 msgstr "Instellingen"
 
-#: src/gxi/src/ui/prefs_win.glade:42 src/gxi/src/main_win.rs:439
+#: src/tau/src/ui/prefs_win.glade:42 src/tau/src/main_win.rs:431
 msgid "Theme"
 msgstr "Thema"
 
-#: src/gxi/src/ui/prefs_win.glade:64
+#: src/tau/src/ui/prefs_win.glade:64
 msgid "Font"
 msgstr "Lettertype"
 
-#: src/gxi/src/ui/prefs_win.glade:112
+#: src/tau/src/ui/prefs_win.glade:112
 msgid "Appearance"
 msgstr "Uiterlijk"
 
-#: src/gxi/src/ui/prefs_win.glade:133
-msgid "0"
-msgstr "0"
+#: src/tau/src/ui/prefs_win.glade:169
+msgid "Delete spaces up to the previous tab stop"
+msgstr ""
 
-#: src/gxi/src/ui/prefs_win.glade:149
-msgid "Tab size"
-msgstr "Tab grootte"
-
-#: src/gxi/src/ui/prefs_win.glade:168
-msgid "Treat spaces like tabs"
-msgstr "Behandel spaties net als tabs"
-
-#: src/gxi/src/ui/prefs_win.glade:183
-msgid "Scroll past the end of documents"
-msgstr "Voorbij einde van document kunnen scrollen"
-
-#: src/gxi/src/ui/prefs_win.glade:198
-msgid "Wrap lines at the end of the view instead of offering scrolling"
-msgstr "Regels afbreken in plaats van een horizontale schuifbalk"
-
-#: src/gxi/src/ui/prefs_win.glade:231
+#: src/tau/src/ui/prefs_win.glade:203
 msgid "Display right margin at the column:"
 msgstr "Teken rechter margelijn  bij kolom:"
 
-#: src/gxi/src/ui/prefs_win.glade:269
+#: src/tau/src/ui/prefs_win.glade:242
 msgid "Highlight the current line"
 msgstr "Huidige regel uitlichten"
 
-#: src/gxi/src/ui/prefs_win.glade:291
+#: src/tau/src/ui/prefs_win.glade:267
+msgid "Tabs"
+msgstr ""
+
+#: src/tau/src/ui/prefs_win.glade:276 src/tau/src/ui/prefs_win.glade:320
+#, fuzzy
+msgid "Trailing"
+msgstr "Behandeling"
+
+#: src/tau/src/ui/prefs_win.glade:291 src/tau/src/ui/prefs_win.glade:335
+msgid "All"
+msgstr ""
+
+#: src/tau/src/ui/prefs_win.glade:306 src/tau/src/ui/prefs_win.glade:361
+msgid "Leading"
+msgstr ""
+
+#: src/tau/src/ui/prefs_win.glade:352
+#, fuzzy
+msgid "Spaces"
+msgstr "Spaties Invoegen"
+
+#: src/tau/src/ui/prefs_win.glade:390
 msgid "Editing"
 msgstr "Bewerken"
 
-#: src/gxi/src/ui/gxi.glade:22
+#: src/tau/src/ui/tau.glade:22
 msgid "Save As…"
 msgstr "Opslaan Als…"
 
-#: src/gxi/src/ui/gxi.glade:36
+#: src/tau/src/ui/tau.glade:36
 msgid "Save All"
 msgstr "Alles Opslaan"
 
-#: src/gxi/src/ui/gxi.glade:61
+#: src/tau/src/ui/tau.glade:61
 msgid "Find…"
 msgstr "Zoeken…"
 
-#: src/gxi/src/ui/gxi.glade:75
+#: src/tau/src/ui/tau.glade:75
 msgid "Replace…"
 msgstr "Vervangen…"
 
-#: src/gxi/src/ui/gxi.glade:100
+#: src/tau/src/ui/tau.glade:100
 msgid "Auto Indent"
 msgstr "Automatisch inspringen"
 
-#: src/gxi/src/ui/gxi.glade:114
+#: src/tau/src/ui/tau.glade:114
 msgid "Insert Spaces"
 msgstr "Spaties Invoegen"
 
-#: src/gxi/src/ui/gxi.glade:164
+#: src/tau/src/ui/tau.glade:164
 msgid "Help"
 msgstr "Hulp"
 
-#: src/gxi/src/ui/gxi.glade:178
+#: src/tau/src/ui/tau.glade:178
 msgid "About"
 msgstr "Over"
 
-#: src/gxi/src/ui/gxi.glade:203
+#: src/tau/src/ui/tau.glade:203
 msgid "Close All"
 msgstr "Alles Sluiten"
 
-#: src/gxi/src/ui/gxi.glade:217
+#: src/tau/src/ui/tau.glade:217
 msgid "Close"
 msgstr "Sluiten"
 
-#: src/gxi/src/ui/gxi.glade:231
+#: src/tau/src/ui/tau.glade:231
 msgid "Quit"
 msgstr "Afsluiten"
 
-#: src/gxi/src/ui/gxi.glade:265 src/gxi/src/main_win.rs:650
+#: src/tau/src/ui/tau.glade:265 src/tau/src/main_win.rs:607
 msgid "Open"
 msgstr "Openen"
 
-#: src/gxi/src/ui/gxi.glade:306 src/gxi/src/main_win.rs:708
-#: src/gxi/src/main_win.rs:970
+#: src/tau/src/ui/tau.glade:306 src/tau/src/main_win.rs:664
+#: src/tau/src/main_win.rs:890
 msgid "Save"
 msgstr "Opslaan"
 
-#: src/gxi/src/ui/gxi.glade:321
-msgid "Syntax Selection"
-msgstr "Syntaxkeuze"
-
-#: src/editview/src/edit_view.rs:42
-msgid "Failed to load Pango font set"
-msgstr "Laden Pango lettertypezetter mislukt"
-
-#: src/editview/src/edit_view.rs:45
-msgid "Failed to load Pango font metrics"
-msgstr "Laden Pango lettertypematen mislukt"
-
-#: src/editview/src/edit_view.rs:50
-msgid "Pango font size"
-msgstr "Pango lettertype grootte"
-
-#: src/editview/src/edit_view.rs:59
-msgid "Font metrics"
-msgstr "Lettertype maten"
-
-#: src/editview/src/edit_view.rs:121
-msgid "Connecting events of EditView"
-msgstr "'Events' van 'EditView' verbinden"
-
-#: src/editview/src/edit_view.rs:161
-msgid "Size changed to"
-msgstr "Grootte veranderd in"
-
-#: src/editview/src/edit_view.rs:161
-msgid "width"
-msgstr "breedte"
-
-#: src/editview/src/edit_view.rs:161
-msgid "height"
-msgstr "hoogte"
-
-#: src/editview/src/edit_view.rs:182
-msgid "Failed to get Pango context"
-msgstr "Kon Pango context niet verkrijgen"
-
-#: src/editview/src/edit_view.rs:247
-msgid "Unknown key change event"
-msgstr "Onbekend toetsmutatie 'event'"
-
-#: src/editview/src/edit_view.rs:284 src/gxi/src/main_win.rs:811
+#: src/editview/src/edit_view.rs:67 src/tau/src/main_win.rs:747
 msgid "Creating new EditView"
 msgstr "Creëer nieuwe 'EditView'"
 
-#: src/editview/src/edit_view.rs:457
-msgid "Connecting FindReplace events for EditView"
-msgstr "Zoek/Vervang opdrachten verbinden met 'EditView'"
+#: src/editview/src/edit_view.rs:106
+msgid "Xi-Update sender disconnected"
+msgstr ""
 
-#: src/editview/src/edit_view.rs:574
+#: src/editview/src/edit_view.rs:136
 msgid "Connecting"
 msgstr "Verbinden"
 
-#: src/editview/src/edit_view.rs:575
+#: src/editview/src/edit_view.rs:137
 msgid "events for EditView"
 msgstr "'events' voor 'EditView'"
 
-#: src/editview/src/edit_view.rs:588 src/editview/src/edit_view.rs:590
+#: src/editview/src/edit_view.rs:150 src/editview/src/edit_view.rs:152
 msgid "Untitled"
 msgstr "Naamloos"
 
-#: src/editview/src/edit_view.rs:601
+#: src/editview/src/edit_view.rs:163
 msgid "Setting title for EditView"
 msgstr "'EditView' titel kiezen"
 
-#: src/editview/src/edit_view.rs:614 src/editview/src/edit_view.rs:686
-#: src/editview/src/edit_view.rs:736 src/editview/src/edit_view.rs:780
-#: src/editview/src/edit_view.rs:803 src/editview/src/edit_view.rs:994
-#: src/editview/src/edit_view.rs:1213 src/editview/src/edit_view.rs:1313
-#: src/editview/src/edit_view.rs:1360 src/editview/src/edit_view.rs:1403
-#: src/gxi/src/main_win.rs:208 src/gxi/src/main_win.rs:216
-#: src/gxi/src/main_win.rs:224 src/gxi/src/main_win.rs:232
-#: src/gxi/src/main_win.rs:240 src/gxi/src/main_win.rs:248
-#: src/gxi/src/main_win.rs:256 src/gxi/src/main_win.rs:264
-#: src/gxi/src/main_win.rs:272 src/gxi/src/main_win.rs:280
-#: src/gxi/src/main_win.rs:289 src/gxi/src/main_win.rs:528
-#: src/gxi/src/main_win.rs:536 src/gxi/src/main_win.rs:591
-#: src/gxi/src/main_win.rs:615 src/gxi/src/main_win.rs:628
+#: src/editview/src/edit_view.rs:176 src/editview/src/edit_view.rs:213
+#: src/editview/src/edit_view.rs:247 src/editview/src/edit_view.rs:293
+#: src/editview/src/edit_view.rs:320 src/editview/src/edit_view.rs:600
+#: src/editview/src/edit_view.rs:792 src/editview/src/edit_view.rs:901
+#: src/editview/src/edit_view.rs:951 src/tau/src/main_win.rs:214
+#: src/tau/src/main_win.rs:222 src/tau/src/main_win.rs:230
+#: src/tau/src/main_win.rs:238 src/tau/src/main_win.rs:246
+#: src/tau/src/main_win.rs:254 src/tau/src/main_win.rs:262
+#: src/tau/src/main_win.rs:270 src/tau/src/main_win.rs:278
+#: src/tau/src/main_win.rs:286 src/tau/src/main_win.rs:295
+#: src/tau/src/main_win.rs:509 src/tau/src/main_win.rs:517
+#: src/tau/src/main_win.rs:543 src/tau/src/main_win.rs:560
+#: src/tau/src/main_win.rs:591
 msgid "Handling"
 msgstr "Behandeling"
 
-#: src/editview/src/edit_view.rs:615 src/editview/src/edit_view.rs:687
-#: src/editview/src/edit_view.rs:737 src/editview/src/edit_view.rs:781
-#: src/editview/src/edit_view.rs:804 src/editview/src/edit_view.rs:995
-#: src/editview/src/edit_view.rs:1214 src/editview/src/edit_view.rs:1314
-#: src/editview/src/edit_view.rs:1361 src/editview/src/edit_view.rs:1404
+#: src/editview/src/edit_view.rs:177 src/editview/src/edit_view.rs:214
+#: src/editview/src/edit_view.rs:248 src/editview/src/edit_view.rs:294
+#: src/editview/src/edit_view.rs:321 src/editview/src/edit_view.rs:601
+#: src/editview/src/edit_view.rs:793 src/editview/src/edit_view.rs:902
+#: src/editview/src/edit_view.rs:952
 msgid "for EditView"
 msgstr "voor 'EditView'"
 
-#: src/editview/src/edit_view.rs:636
+#: src/editview/src/edit_view.rs:193
 msgid "Setting edit font to"
 msgstr "Lettertype instellen als"
 
-#: src/editview/src/edit_view.rs:651
-msgid "Setting tab size to"
-msgstr "Tabgrootte instellen als"
-
-#: src/editview/src/edit_view.rs:671
-msgid "Unhandled config option, open a bug report!"
-msgstr "Niet afgehandeld configuratie-item. Maak er een bugmelding van!"
-
-#: src/editview/src/edit_view.rs:765
+#: src/editview/src/edit_view.rs:277
 msgid "Allocating DrawingArea size"
 msgstr "Geheugen ter grootte van 'DrawingArea' toewijzen"
 
-#: src/editview/src/edit_view.rs:791
+#: src/editview/src/edit_view.rs:278
+#, fuzzy
+msgid "Width"
+msgstr "breedte"
+
+#: src/editview/src/edit_view.rs:280
+#, fuzzy
+msgid "Height"
+msgstr "hoogte"
+
+#: src/editview/src/edit_view.rs:308
 msgid "Updating visible scroll region"
 msgstr "Zichtbare tekstdeel hertekenen"
 
-#: src/editview/src/edit_view.rs:884
+#: src/editview/src/edit_view.rs:395
 msgid "Drawing EditView"
 msgstr "'EditView' aan het tekenen"
 
-#: src/editview/src/edit_view.rs:885
+#: src/editview/src/edit_view.rs:396
 msgid "vertical adjustment"
 msgstr "verticale afstelling"
 
-#: src/editview/src/edit_view.rs:888
+#: src/editview/src/edit_view.rs:399
 msgid "horizontal adjustment"
 msgstr "horizontale afstelling"
 
-#: src/editview/src/edit_view.rs:1303
+#: src/editview/src/edit_view.rs:802
+msgid "Line"
+msgstr ""
+
+#: src/editview/src/edit_view.rs:806
+msgid "Column"
+msgstr ""
+
+#: src/editview/src/edit_view.rs:891
 msgid ""
 "Couldn't update hscrollbar value because I couldn't get the line to scroll "
 "to!"
@@ -370,171 +457,172 @@ msgstr ""
 "Kon horizontale schuifbalkwaarde niet bijwerken.  Kon de regel waar naartoe "
 "niet verkrijgen!"
 
-#: src/editview/src/edit_view.rs:1377
-msgid "Smooth scrolling failed"
-msgstr "Soepel scrollen mislukt"
-
-#: src/editview/src/edit_view.rs:1410
+#: src/editview/src/edit_view.rs:958
 msgid "Processing key press"
 msgstr "Verwerking toetsaanslag"
 
-#: src/editview/src/edit_view.rs:1411
+#: src/editview/src/edit_view.rs:959
 msgid "value"
 msgstr "waarde"
 
-#: src/editview/src/edit_view.rs:1413
+#: src/editview/src/edit_view.rs:961
 msgid "state"
 msgstr "toestand"
 
-#: src/editview/src/edit_view.rs:1415
+#: src/editview/src/edit_view.rs:963
 msgid "length"
 msgstr "lengte"
 
-#: src/editview/src/edit_view.rs:1417
+#: src/editview/src/edit_view.rs:965
 msgid "group"
 msgstr "groep"
 
-#: src/editview/src/edit_view.rs:1419
+#: src/editview/src/edit_view.rs:967
 msgid "unicode"
 msgstr "unicode"
 
-#: src/editview/src/edit_view.rs:1554
-msgid "Cutting text"
-msgstr "Tekst knippen"
+#: src/editview/src/edit_view.rs:1112
+msgid "Adding cutting text op to idle queue"
+msgstr ""
 
-#: src/editview/src/edit_view.rs:1572
-msgid "Copying text"
-msgstr "Tekst kopiëren"
+#: src/editview/src/edit_view.rs:1137
+msgid "Adding copying text op to idle queue"
+msgstr ""
 
 #. if let Some(text) = Clipboard::get(&SELECTION_CLIPBOARD).wait_for_text() {
 #. self.core.insert(view_id, &text);
 #. }
-#: src/editview/src/edit_view.rs:1592
+#: src/editview/src/edit_view.rs:1165
 msgid "Pasting text"
 msgstr "Tekst invoegen"
 
-#. if let Some(text) = Clipboard::get(&SELECTION_PRIMARY).wait_for_text() {
-#. self.core.insert(view_id, &text);
-#. }
-#: src/editview/src/edit_view.rs:1606
+#: src/editview/src/edit_view.rs:1175
 msgid "Pasting primary text"
 msgstr "Tekst invoegen (primaire buffer)"
 
-#: src/editview/src/edit_view.rs:1619
+#: src/editview/src/edit_view.rs:1187
 msgid "Resizing EditView"
 msgstr "'EditView' verschalen"
 
-#: src/gxi/src/about_win.rs:17
-msgid "GTK frontend for the xi text editor, written in Rust"
-msgstr "GTK grafische schil voor de xi tekst editor, geschreven in Rust"
+#: src/editview/src/edit_view.rs:1345
+msgid "Changing language to"
+msgstr "Verander taal in"
 
-#: src/gxi/src/about_win.rs:25
-msgid "translator-credits"
-msgstr "Luuk van der Duim"
+#: src/editview/src/edit_view.rs:1350
+#, fuzzy
+msgid "Language has been changed to"
+msgstr "Thema omgezet naar"
 
-#: src/gxi/src/about_win.rs:31
-msgid "Showing about window"
-msgstr "Toon 'over'-venster"
-
-#: src/gxi/src/errors.rs:19
-msgid "No default application"
-msgstr "Geen standaard programma"
-
-#: src/gxi/src/errors.rs:21
-msgid "Default application has wrong type"
-msgstr "Standaard programma heeft verkeerde type"
-
-#: src/gxi/src/main.rs:130
-msgid "Starting gxi"
-msgstr "Opstarten gxi"
-
-#: src/gxi/src/main.rs:162
-msgid "Activating new view"
-msgstr "Activatie leeg blad"
-
-#: src/gxi/src/main.rs:179
-msgid "Opening new file"
-msgstr "Nieuw bestand aan het openen"
-
-#: src/gxi/src/main.rs:202
-msgid "Shutting down…"
-msgstr "Afsluiten…"
-
-#: src/gxi/src/main_win.rs:113
-msgid "Theme name"
-msgstr "Themanaam"
-
-#: src/gxi/src/main_win.rs:140
-msgid "Found message in queue"
-msgstr "Vond een bericht in de rij"
-
-#: src/gxi/src/main_win.rs:148
-msgid "Found a message from xi"
-msgstr "Vond een bericht van xi"
-
-#: src/gxi/src/main_win.rs:160
-msgid "User chose to cancel exiting"
-msgstr "Gebruiker koos ervoor  het afsluiten af te breken"
-
-#: src/gxi/src/main_win.rs:163
-msgid "User chose to close the application"
-msgstr "Gebruiker koos ervoor om het programma af te sluiten"
-
-#. xi-editor doesn't know about the translations
-#: src/gxi/src/main_win.rs:185 src/gxi/src/main_win.rs:192
+#: src/editview/src/edit_view.rs:1353
 msgid "Plain Text"
 msgstr "Platte Tekst"
 
-#: src/gxi/src/main_win.rs:199
-msgid "Setting language to"
-msgstr "Taal instellen op"
+#: src/editview/src/edit_view.rs:1371
+msgid "Couldn't determine what position the following language is in"
+msgstr ""
 
-#: src/gxi/src/main_win.rs:208 src/gxi/src/main_win.rs:216
-#: src/gxi/src/main_win.rs:224 src/gxi/src/main_win.rs:232
-#: src/gxi/src/main_win.rs:240 src/gxi/src/main_win.rs:248
-#: src/gxi/src/main_win.rs:256 src/gxi/src/main_win.rs:264
-#: src/gxi/src/main_win.rs:272 src/gxi/src/main_win.rs:280
-#: src/gxi/src/main_win.rs:289
+#: src/tau/src/about_win.rs:16
+msgid "GTK frontend for the xi text editor, written in Rust"
+msgstr "GTK grafische schil voor de xi tekst editor, geschreven in Rust"
+
+#: src/tau/src/about_win.rs:24
+msgid "translator-credits"
+msgstr "Luuk van der Duim"
+
+#: src/tau/src/about_win.rs:30
+msgid "Showing about window"
+msgstr "Toon 'over'-venster"
+
+#: src/tau/src/errors.rs:30
+msgid "No default application"
+msgstr "Geen standaard programma"
+
+#: src/tau/src/errors.rs:32
+msgid "Default application has wrong type"
+msgstr "Standaard programma heeft verkeerde type"
+
+#: src/tau/src/main.rs:115
+#, fuzzy
+msgid "Start a new instance of the application"
+msgstr "Gebruiker koos ervoor om het programma af te sluiten"
+
+#: src/tau/src/main.rs:135
+#, fuzzy
+msgid "Starting Tau"
+msgstr "Opstarten Tau"
+
+#: src/tau/src/main.rs:239
+msgid "Activating new view"
+msgstr "Activatie leeg blad"
+
+#: src/tau/src/main.rs:246
+msgid "Failed to open new, empty view due to error"
+msgstr ""
+
+#: src/tau/src/main.rs:251
+msgid "Opening new file"
+msgstr "Nieuw bestand aan het openen"
+
+#: src/tau/src/main.rs:261
+#, fuzzy
+msgid "Failed to open new due to error"
+msgstr "Kon XI geen bericht sturen"
+
+#: src/tau/src/main.rs:261
+msgid "Path"
+msgstr ""
+
+#: src/tau/src/main.rs:268
+msgid "Shutting down…"
+msgstr "Afsluiten…"
+
+#: src/tau/src/main_win.rs:127
+msgid "Failed to get default CssProvider!"
+msgstr ""
+
+#: src/tau/src/main_win.rs:149
+msgid "Theme name"
+msgstr "Themanaam"
+
+#: src/tau/src/main_win.rs:186
+msgid "User chose to cancel exiting"
+msgstr "Gebruiker koos ervoor  het afsluiten af te breken"
+
+#: src/tau/src/main_win.rs:189
+msgid "User chose to close the application"
+msgstr "Gebruiker koos ervoor om het programma af te sluiten"
+
+#: src/tau/src/main_win.rs:214 src/tau/src/main_win.rs:222
+#: src/tau/src/main_win.rs:230 src/tau/src/main_win.rs:238
+#: src/tau/src/main_win.rs:246 src/tau/src/main_win.rs:254
+#: src/tau/src/main_win.rs:262 src/tau/src/main_win.rs:270
+#: src/tau/src/main_win.rs:278 src/tau/src/main_win.rs:286
+#: src/tau/src/main_win.rs:295
 msgid "action"
 msgstr "actie"
 
-#: src/gxi/src/main_win.rs:292
+#: src/tau/src/main_win.rs:298
 msgid "User chose to not quit application"
 msgstr "Gebruiker koos ervoor het programma niet af te sluiten"
 
-#: src/gxi/src/main_win.rs:294
+#: src/tau/src/main_win.rs:300
 msgid "User chose to quit application"
 msgstr "Gebruiker koos ervoor het proramma af te sluiten"
 
-#: src/gxi/src/main_win.rs:311
-msgid "Auto indent"
-msgstr "Automatisch inspringen"
-
-#: src/gxi/src/main_win.rs:335
-msgid "Space indent"
-msgstr "Met spatie inspringen"
-
-#: src/gxi/src/main_win.rs:363
+#: src/tau/src/main_win.rs:372
 msgid "Showing main window"
 msgstr "Tonen van het centrale venster"
 
-#: src/gxi/src/main_win.rs:382
-msgid "Handling CoreMsg"
-msgstr "Afhandelen 'CoreMsg'"
+#: src/tau/src/main_win.rs:391
+#, fuzzy
+msgid "Handling XiEvent"
+msgstr "Behandeling"
 
-#: src/gxi/src/main_win.rs:407
-msgid "!!! UNHANDLED NOTIFICATION, PLEASE OPEN A BUGREPORT!"
-msgstr "!!! NIET AFGEHANDELD BERICHT, MAAK HIER AUB EEN BUGMELDING VAN!"
-
-#: src/gxi/src/main_win.rs:441
+#: src/tau/src/main_win.rs:433
 msgid "isn't available, setting to default"
 msgstr "Is niet beschikbaar, val terug op standaardvariant"
 
-#: src/gxi/src/main_win.rs:459
-msgid "Failed to convert theme settings"
-msgstr "Kan thema instellingen niet omzetten"
-
-#: src/gxi/src/main_win.rs:494
+#: src/tau/src/main_win.rs:476
 msgid ""
 "Couldn't find syntect plugin, functionality will be limited! Only found the "
 "following plugins"
@@ -542,64 +630,52 @@ msgstr ""
 "Kon 'syntect'-plugin niet vinden. Hierdoor zijn sommige functies niet "
 "beschikbaar"
 
-#: src/gxi/src/main_win.rs:566
-msgid "has stopped due to an user-initiated exit"
-msgstr "Gestopt omdat de gebruiker voor afsluiten koos"
-
-#: src/gxi/src/main_win.rs:569
-msgid "has crashed with error code"
-msgstr "is gecrasht met foutcode"
-
-#: src/gxi/src/main_win.rs:572
-msgid "has crashed"
-msgstr "is gecrasht"
-
-#: src/gxi/src/main_win.rs:578
+#: src/tau/src/main_win.rs:533
 msgid "Plugin"
 msgstr "Plugin"
 
-#: src/gxi/src/main_win.rs:581
+#: src/tau/src/main_win.rs:535
+msgid "has crashed"
+msgstr "is gecrasht"
+
+#: src/tau/src/main_win.rs:536
 msgid "functionality will be limited"
 msgstr "Sommige functies zullen niet beschikbaar zijn"
 
-#: src/gxi/src/main_win.rs:637
-msgid "Changing language to"
-msgstr "Verander taal in"
-
-#: src/gxi/src/main_win.rs:647
+#: src/tau/src/main_win.rs:604
 msgid "Open a file to edit"
 msgstr "Open bestand om te bewerken"
 
-#: src/gxi/src/main_win.rs:651 src/gxi/src/main_win.rs:709
-#: src/gxi/src/main_win.rs:966
+#: src/tau/src/main_win.rs:608 src/tau/src/main_win.rs:665
+#: src/tau/src/main_win.rs:886
 msgid "Cancel"
 msgstr "Stoppen"
 
-#: src/gxi/src/main_win.rs:659
+#: src/tau/src/main_win.rs:616
 msgid "FileChooserNative open response"
 msgstr "'FileChooserNative' openingsreactie"
 
-#: src/gxi/src/main_win.rs:670
+#: src/tau/src/main_win.rs:626
 msgid "Couldn't open file"
 msgstr "Kon bestand niet openen"
 
-#: src/gxi/src/main_win.rs:705
+#: src/tau/src/main_win.rs:661
 msgid "Save file"
 msgstr "Bestand opslaan"
 
-#: src/gxi/src/main_win.rs:717
+#: src/tau/src/main_win.rs:673
 msgid "FileChooserNative save response"
 msgstr "'FileChooserNative' reactie bij opslaan"
 
-#: src/gxi/src/main_win.rs:728
+#: src/tau/src/main_win.rs:683
 msgid "Saving file"
 msgstr "Bestand aan het opslaan"
 
-#: src/gxi/src/main_win.rs:735
+#: src/tau/src/main_win.rs:690
 msgid "Couldn't save file"
 msgstr "Kon bestand niet opslaan"
 
-#: src/gxi/src/main_win.rs:788
+#: src/tau/src/main_win.rs:731
 msgid ""
 "Couldn't get current EditView. This may only mean that you don't have an "
 "editing tab open right now."
@@ -607,45 +683,49 @@ msgstr ""
 "Kon huidige 'EditView' niet verkrijgen. Het zou kunnen dat u enkel geen "
 "tabblad open hebt."
 
-#: src/gxi/src/main_win.rs:793
+#: src/tau/src/main_win.rs:736
 msgid "Requesting new view"
 msgstr "Opvragen schoon blad"
 
-#: src/gxi/src/main_win.rs:881
+#: src/tau/src/main_win.rs:807
 msgid "Closing all EditViews"
 msgstr "Alle 'EditView's aan het sluiten"
 
-#: src/gxi/src/main_win.rs:918
+#: src/tau/src/main_win.rs:841
 msgid "Closing current Editview"
 msgstr "Huidige 'EditView' aan het sluiten"
 
-#: src/gxi/src/main_win.rs:929
+#: src/tau/src/main_win.rs:852
 msgid "Closing Editview"
 msgstr "'EditView' aan het sluiten"
 
-#: src/gxi/src/main_win.rs:959
+#: src/tau/src/main_win.rs:879
 msgid "Save unsaved changes"
 msgstr "Opslaan van onopgeslagen bewerkingen"
 
-#: src/gxi/src/main_win.rs:962
+#: src/tau/src/main_win.rs:882
 msgid "Close Without Saving"
 msgstr "Sluiten zonder opslaan"
 
-#: src/gxi/src/main_win.rs:985
+#: src/tau/src/main_win.rs:905
 msgid "Save dialog has been destroyed before the user clicked a button"
 msgstr ""
 "Het 'opslaan'-dialoogvenster is verdwenen nog voordat de gebruiker op een "
 "knop klikte"
 
-#: src/gxi/src/panic_handler.rs:39
+#: src/tau/src/main_win.rs:1097
+msgid "Unknown key change event"
+msgstr "Onbekend toetsmutatie 'event'"
+
+#: src/tau/src/panic_handler.rs:39
 msgid "gxi crash reporter"
 msgstr "gxi crash rapport"
 
-#: src/gxi/src/panic_handler.rs:49
+#: src/tau/src/panic_handler.rs:49
 msgid "It seems like gxi has crashed, sorry!"
 msgstr "Het ziet ernaar uit dat gxi is gecrasht, sorry!"
 
-#: src/gxi/src/panic_handler.rs:50
+#: src/tau/src/panic_handler.rs:50
 msgid ""
 "Please send the contents of the file below to our GitHub issue tracker so we "
 "can fix it! Thank you =)"
@@ -653,152 +733,199 @@ msgstr ""
 "Stuur alstublieft de inhoud van het onderstaande bestand naar onze GitHub "
 "'issue tracker' zodat we ermee aan de slag kunnen. Alvast bedankt!  =)"
 
-#: src/gxi/src/panic_handler.rs:53
+#: src/tau/src/panic_handler.rs:53
 msgid "File"
 msgstr "Bestand"
 
-#: src/gxi/src/panic_handler.rs:53
+#: src/tau/src/panic_handler.rs:53
 msgid "URL"
 msgstr "URL"
 
-#: src/gxi/src/prefs_win.rs:55
-msgid "Setting font description"
-msgstr "Instellen lettertypebeschrijving"
-
-#: src/gxi/src/prefs_win.rs:68
-msgid "Setting font to"
-msgstr "Lettertype instellen op"
-
-#: src/gxi/src/prefs_win.rs:69
-msgid "Setting font size to"
-msgstr "Lettertype grootte instellen op"
-
-#: src/gxi/src/prefs_win.rs:87
+#: src/tau/src/prefs_win.rs:61
 msgid "Setting active theme"
 msgstr "Instellen huidige thema"
 
-#: src/gxi/src/prefs_win.rs:96
+#: src/tau/src/prefs_win.rs:70
 msgid "Theme changed to"
 msgstr "Thema omgezet naar"
 
-#: src/gxi/src/prefs_win.rs:114
-msgid "Scrolling past end"
-msgstr "Voorbij einde schuiven"
+#~ msgid "gxi"
+#~ msgstr "gxi"
 
-#: src/gxi/src/prefs_win.rs:129
-msgid "Word wrapping"
-msgstr "Woordafbreking"
+#~ msgid "com.github.Cogitri.gxi"
+#~ msgstr "com.github.Cogitri.gxi"
 
-#: src/gxi/src/prefs_win.rs:144
-msgid "Tab stops"
-msgstr "Tabulator stops"
+#~ msgid "Wrap lines at the end of the view instead of offering scrolling"
+#~ msgstr "Regels afbreken in plaats van een horizontale schuifbalk"
 
-#: src/gxi/src/prefs_win.rs:169
-msgid "Right hand margin"
-msgstr "Rechtszijdige margerand"
+#~ msgid "Syntax Selection"
+#~ msgstr "Syntaxkeuze"
 
-#: src/gxi/src/prefs_win.rs:187
-msgid "Right hand margin width"
-msgstr "Breedte rechtszijdige margerand"
+#~ msgid "Failed to load Pango font set"
+#~ msgstr "Laden Pango lettertypezetter mislukt"
 
-#: src/gxi/src/prefs_win.rs:202
-msgid "Setting tab size"
-msgstr "Instellen tab grootte"
+#~ msgid "Failed to load Pango font metrics"
+#~ msgstr "Laden Pango lettertypematen mislukt"
 
-#: src/gxi-config-storage/src/pref_storage.rs:83
-msgid "Failed to create the config dir"
-msgstr "Kon de configuratiemap niet aanmaken"
+#~ msgid "Pango font size"
+#~ msgstr "Pango lettertype grootte"
 
-#: src/gxi-config-storage/src/pref_storage.rs:130
-msgid "Couldn't read config, falling back to the default XI-Editor config"
-msgstr ""
-"Kon de configuratie niet lezen, val terug op standaardvariant van XI-Editor"
+#~ msgid "Font metrics"
+#~ msgstr "Lettertype maten"
 
-#: src/gxi-config-storage/src/pref_storage.rs:141
-msgid "Discovered config dir in home dir"
-msgstr "Configuratiemap gevonden in 'home'- map"
+#~ msgid "Connecting events of EditView"
+#~ msgstr "'Events' van 'EditView' verbinden"
 
-#: src/gxi-config-storage/src/pref_storage.rs:149
-msgid "Couldn't determine home dir! Settings will be temporary"
-msgstr ""
-"'Home'-map niet vast te stellen! Instellingen zijn hierdoor slechts tijdelijk"
+#~ msgid "Size changed to"
+#~ msgstr "Grootte veranderd in"
 
-#: src/gxi-config-storage/src/pref_storage.rs:158
-msgid "Failed to create temporary config dir"
-msgstr "Aanmaken tijdelijke instellingenmap niet gelukt"
+#~ msgid "Failed to get Pango context"
+#~ msgstr "Kon Pango context niet verkrijgen"
 
-#: src/gxi-config-storage/src/pref_storage.rs:181
-msgid "Discovered config dir in temporary dir"
-msgstr "Instellingenmap gevonden in tijdelijke map"
+#~ msgid "Connecting FindReplace events for EditView"
+#~ msgstr "Zoek/Vervang opdrachten verbinden met 'EditView'"
 
-#: src/gxi-config-storage/src/pref_storage.rs:190
-msgid "Opening config file"
-msgstr "Instellingenbestand aan het openen"
+#~ msgid "Setting tab size to"
+#~ msgstr "Tabgrootte instellen als"
 
-#: src/gxi-config-storage/src/pref_storage.rs:194
-msgid "Reading config file"
-msgstr "Instellingen bestand  wordt gelezen"
+#~ msgid "Unhandled config option, open a bug report!"
+#~ msgstr "Niet afgehandeld configuratie-item. Maak er een bugmelding van!"
 
-#: src/gxi-config-storage/src/pref_storage.rs:198
-msgid "Xi-Config"
-msgstr "Xi-Configuratie"
+#~ msgid "Smooth scrolling failed"
+#~ msgstr "Soepel scrollen mislukt"
 
-#: src/gxi-config-storage/src/pref_storage.rs:208
-msgid "Saving config to"
-msgstr "Instelling opslaan naar"
+#~ msgid "Cutting text"
+#~ msgstr "Tekst knippen"
 
-#: src/gxi-peer/src/rpc.rs:70 src/gxi-peer/src/rpc.rs:72
-msgid "Error code"
-msgstr "Foutcode"
+#~ msgid "Copying text"
+#~ msgstr "Tekst kopiëren"
 
-#: src/gxi-peer/src/rpc.rs:91
-msgid "Calling callback"
-msgstr "'callback' aanroepen"
+#~ msgid "Found message in queue"
+#~ msgstr "Vond een bericht in de rij"
 
-#: src/gxi-peer/src/rpc.rs:94
-msgid "unexpected result"
-msgstr "onverwacht resultaat"
+#~ msgid "Found a message from xi"
+#~ msgstr "Vond een bericht van xi"
 
-#: src/gxi-peer/src/rpc.rs:97
-msgid "Got"
-msgstr "Heb"
+#~ msgid "Setting language to"
+#~ msgstr "Taal instellen op"
 
-#: src/gxi-peer/src/rpc.rs:97
-msgid "at RPC level"
-msgstr "op RPC niveau"
+#~ msgid "Auto indent"
+#~ msgstr "Automatisch inspringen"
 
-#: src/gxi-peer/src/shared_queue.rs:37
-msgid "Pushing message to rx queue"
-msgstr "Plaats bericht op rx-wachtrij"
+#~ msgid "Space indent"
+#~ msgstr "Met spatie inspringen"
 
-#: src/gxi-peer/src/shared_queue.rs:42
-msgid "Pushing message to tx queue"
-msgstr "Plaats bericht op tx-wachtrij"
+#~ msgid "Handling CoreMsg"
+#~ msgstr "Afhandelen 'CoreMsg'"
 
-#: src/gxi-peer/src/xi_thread.rs:18
-msgid "Failed to send msg to Xi"
-msgstr "Kon XI geen bericht sturen"
+#~ msgid "!!! UNHANDLED NOTIFICATION, PLEASE OPEN A BUGREPORT!"
+#~ msgstr "!!! NIET AFGEHANDELD BERICHT, MAAK HIER AUB EEN BUGMELDING VAN!"
 
-#: src/gxi-peer/src/xi_thread.rs:45
-msgid "Didn't expect xi-rpc to call read()"
-msgstr "Onverachte 'read()' van 'xi-rpc'"
+#~ msgid "Failed to convert theme settings"
+#~ msgstr "Kan thema instellingen niet omzetten"
 
-#: src/gxi-peer/src/xi_thread.rs:53
-msgid "Didn't expect xi-rpc to call fill_buf()"
-msgstr "Oververwachte 'fill-buf()' door 'xi-rpc'"
+#~ msgid "has stopped due to an user-initiated exit"
+#~ msgstr "Gestopt omdat de gebruiker voor afsluiten koos"
 
-#: src/gxi-peer/src/xi_thread.rs:57
-msgid "Didn't expect xi-rpc to call consume()"
-msgstr "Overwachte 'consume()' door 'xi-rpc'"
+#~ msgid "has crashed with error code"
+#~ msgstr "is gecrasht met foutcode"
 
-#: src/gxi-peer/src/xi_thread.rs:77
-msgid "Didn't expect xi-rpc to call write()"
-msgstr "Overwachte 'write()' door 'xi-rpc'"
+#~ msgid "Setting font description"
+#~ msgstr "Instellen lettertypebeschrijving"
 
-#: src/gxi-peer/src/xi_thread.rs:81
-msgid "Didn't expect xi-rpc to call flush()"
-msgstr "Onverwachte 'flush()' door 'xi-rpc'"
+#~ msgid "Setting font to"
+#~ msgstr "Lettertype instellen op"
 
-#: src/gxi-peer/src/xi_thread.rs:88
-msgid "RPC rx thread lost"
-msgstr "RPC ontvangstthread verdwenen"
+#~ msgid "Setting font size to"
+#~ msgstr "Lettertype grootte instellen op"
+
+#~ msgid "Scrolling past end"
+#~ msgstr "Voorbij einde schuiven"
+
+#~ msgid "Word wrapping"
+#~ msgstr "Woordafbreking"
+
+#~ msgid "Tab stops"
+#~ msgstr "Tabulator stops"
+
+#~ msgid "Right hand margin"
+#~ msgstr "Rechtszijdige margerand"
+
+#~ msgid "Right hand margin width"
+#~ msgstr "Breedte rechtszijdige margerand"
+
+#~ msgid "Setting tab size"
+#~ msgstr "Instellen tab grootte"
+
+#~ msgid "Failed to create the config dir"
+#~ msgstr "Kon de configuratiemap niet aanmaken"
+
+#~ msgid "Couldn't read config, falling back to the default XI-Editor config"
+#~ msgstr ""
+#~ "Kon de configuratie niet lezen, val terug op standaardvariant van XI-"
+#~ "Editor"
+
+#~ msgid "Discovered config dir in home dir"
+#~ msgstr "Configuratiemap gevonden in 'home'- map"
+
+#~ msgid "Couldn't determine home dir! Settings will be temporary"
+#~ msgstr ""
+#~ "'Home'-map niet vast te stellen! Instellingen zijn hierdoor slechts "
+#~ "tijdelijk"
+
+#~ msgid "Failed to create temporary config dir"
+#~ msgstr "Aanmaken tijdelijke instellingenmap niet gelukt"
+
+#~ msgid "Discovered config dir in temporary dir"
+#~ msgstr "Instellingenmap gevonden in tijdelijke map"
+
+#~ msgid "Opening config file"
+#~ msgstr "Instellingenbestand aan het openen"
+
+#~ msgid "Reading config file"
+#~ msgstr "Instellingen bestand  wordt gelezen"
+
+#~ msgid "Xi-Config"
+#~ msgstr "Xi-Configuratie"
+
+#~ msgid "Saving config to"
+#~ msgstr "Instelling opslaan naar"
+
+#~ msgid "Error code"
+#~ msgstr "Foutcode"
+
+#~ msgid "Calling callback"
+#~ msgstr "'callback' aanroepen"
+
+#~ msgid "unexpected result"
+#~ msgstr "onverwacht resultaat"
+
+#~ msgid "Got"
+#~ msgstr "Heb"
+
+#~ msgid "at RPC level"
+#~ msgstr "op RPC niveau"
+
+#~ msgid "Pushing message to rx queue"
+#~ msgstr "Plaats bericht op rx-wachtrij"
+
+#~ msgid "Pushing message to tx queue"
+#~ msgstr "Plaats bericht op tx-wachtrij"
+
+#~ msgid "Didn't expect xi-rpc to call read()"
+#~ msgstr "Onverachte 'read()' van 'xi-rpc'"
+
+#~ msgid "Didn't expect xi-rpc to call fill_buf()"
+#~ msgstr "Oververwachte 'fill-buf()' door 'xi-rpc'"
+
+#~ msgid "Didn't expect xi-rpc to call consume()"
+#~ msgstr "Overwachte 'consume()' door 'xi-rpc'"
+
+#~ msgid "Didn't expect xi-rpc to call write()"
+#~ msgstr "Overwachte 'write()' door 'xi-rpc'"
+
+#~ msgid "Didn't expect xi-rpc to call flush()"
+#~ msgstr "Onverwachte 'flush()' door 'xi-rpc'"
+
+#~ msgid "RPC rx thread lost"
+#~ msgstr "RPC ontvangstthread verdwenen"
