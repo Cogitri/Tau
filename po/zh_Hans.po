@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Tau\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-06-17 00:36+0200\n"
-"PO-Revision-Date: 2019-04-13 01:04+0000\n"
+"PO-Revision-Date: 2019-06-17 09:41+0000\n"
 "Last-Translator: Chojan Shang <PsiACE@outlook.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/gxi/"
 "translation/zh_Hans/>\n"
@@ -41,7 +41,7 @@ msgstr "Rasmus \"Cogitri\" Thomsen"
 
 #: data/org.gnome.Tau.desktop.in:5
 msgid "The Tau text editor"
-msgstr ""
+msgstr "Tau 文本编辑器"
 
 #: data/org.gnome.Tau.desktop.in:8
 msgid "org.gnome.Tau"
@@ -57,19 +57,19 @@ msgstr ""
 
 #: data/org.gnome.Tau.gschema.xml:9
 msgid "Xi-Editor's theme"
-msgstr ""
+msgstr "Xi 编辑器主题"
 
 #: data/org.gnome.Tau.gschema.xml:10
 msgid "Sets the theme used for the editing area"
-msgstr ""
+msgstr "设定用于编辑区域的主题"
 
 #: data/org.gnome.Tau.gschema.xml:17
 msgid "Draw trailing spaces"
-msgstr ""
+msgstr "绘制尾随空格"
 
 #: data/org.gnome.Tau.gschema.xml:18
 msgid "Draw spaces which are at the end of a line"
-msgstr ""
+msgstr "绘制位于行尾的空格"
 
 #: data/org.gnome.Tau.gschema.xml:25
 msgid "Draw leading spaces"
@@ -89,41 +89,41 @@ msgstr ""
 
 #: data/org.gnome.Tau.gschema.xml:41
 msgid "Draw a right hand margin"
-msgstr ""
+msgstr "绘制右边距"
 
 #: data/org.gnome.Tau.gschema.xml:42
 msgid "Draw a right hand margin to limit the text width"
-msgstr ""
+msgstr "绘制右边距以限制文本宽度"
 
 #: data/org.gnome.Tau.gschema.xml:49
 msgid "At what column to display the margin"
-msgstr ""
+msgstr "在哪一列显示边距"
 
 #: data/org.gnome.Tau.gschema.xml:50
 msgid "Sets the column at which the margin should be drawn"
-msgstr ""
+msgstr "设定应绘制边距的列"
 
 #: data/org.gnome.Tau.gschema.xml:57
 msgid "Whether the current line should be highlighted"
-msgstr ""
+msgstr "是否应突出显示当前行"
 
 #: data/org.gnome.Tau.gschema.xml:58
 msgid ""
 "Sets if the current line should be highlighted, which eases navigation "
 "through the document"
-msgstr ""
+msgstr "设定是否应突出显示当前行，从而简化文档导航"
 
 #: data/org.gnome.Tau.gschema.xml:65
 msgid "Sets the height of the window in the next startup"
-msgstr ""
+msgstr "设定下次启动时窗口的高度"
 
 #: data/org.gnome.Tau.gschema.xml:70
 msgid "Sets the width of the window in the next startup"
-msgstr ""
+msgstr "设定下次启动时窗口的宽度"
 
 #: data/org.gnome.Tau.gschema.xml:75
 msgid "Sets if the window should be maximized during the next startup"
-msgstr ""
+msgstr "设定下一次启动时窗口是否应最大化"
 
 #: data/org.gnome.Tau.gschema.xml:80 src/tau/src/ui/prefs_win.glade:149
 msgid "Tab size"
@@ -161,7 +161,7 @@ msgstr ""
 
 #: data/org.gnome.Tau.gschema.xml:109 src/tau/src/ui/prefs_win.glade:184
 msgid "Wrap lines at the end of the document"
-msgstr ""
+msgstr "在视图的末尾换行, 而不是提供滚动"
 
 #: data/org.gnome.Tau.gschema.xml:114
 msgid "Draw trailing tabs"
@@ -198,60 +198,60 @@ msgstr ""
 #: src/editview/src/ui/ev.glade:180 src/editview/src/ui/ev.glade:192
 #: src/tau/src/ui/prefs_win.glade:133
 msgid "0"
-msgstr ""
+msgstr "0"
 
 #: src/editview/src/ui/find_replace.glade:32
 msgid "Find"
-msgstr ""
+msgstr "查找"
 
 #: src/editview/src/ui/find_replace.glade:82
 msgid "Switch between Search and Search-and-Replace"
-msgstr ""
+msgstr "在“查找”和“查找与替换”之间切换"
 
 #: src/editview/src/ui/find_replace.glade:103
 msgid "Show or hide search options such as case sensitivity"
-msgstr ""
+msgstr "显示或隐藏搜索选项，如区分大小写"
 
 #: src/editview/src/ui/find_replace.glade:140
 #: src/editview/src/ui/find_replace.glade:150
 msgid "Replace"
-msgstr ""
+msgstr "替换"
 
 #: src/editview/src/ui/find_replace.glade:162
 msgid "Replace All"
-msgstr ""
+msgstr "全部替换"
 
 #: src/editview/src/ui/find_replace.glade:191
 msgid "Regular expressions"
-msgstr ""
+msgstr "正则表达式"
 
 #: src/editview/src/ui/find_replace.glade:206
 msgid "Case sensitive"
-msgstr ""
+msgstr "区分大小写"
 
 #: src/editview/src/ui/find_replace.glade:220
 msgid "Match whole word only"
-msgstr ""
+msgstr "全字匹配"
 
 #: src/editview/src/ui/find_replace.glade:245
 msgid "No Results"
-msgstr ""
+msgstr "无结果"
 
 #: src/tau/src/ui/prefs_win.glade:17 src/tau/src/ui/tau.glade:139
 msgid "Preferences"
-msgstr ""
+msgstr "偏好设置"
 
 #: src/tau/src/ui/prefs_win.glade:42 src/tau/src/main_win.rs:431
 msgid "Theme"
-msgstr ""
+msgstr "主题"
 
 #: src/tau/src/ui/prefs_win.glade:64
 msgid "Font"
-msgstr ""
+msgstr "字体"
 
 #: src/tau/src/ui/prefs_win.glade:112
 msgid "Appearance"
-msgstr ""
+msgstr "外观"
 
 #: src/tau/src/ui/prefs_win.glade:169
 msgid "Delete spaces up to the previous tab stop"
@@ -259,11 +259,11 @@ msgstr ""
 
 #: src/tau/src/ui/prefs_win.glade:203
 msgid "Display right margin at the column:"
-msgstr ""
+msgstr "在列中显示右边距："
 
 #: src/tau/src/ui/prefs_win.glade:242
 msgid "Highlight the current line"
-msgstr ""
+msgstr "突出显示当前行"
 
 #: src/tau/src/ui/prefs_win.glade:267
 msgid "Tabs"
@@ -287,64 +287,64 @@ msgstr ""
 
 #: src/tau/src/ui/prefs_win.glade:390
 msgid "Editing"
-msgstr ""
+msgstr "编辑"
 
 #: src/tau/src/ui/tau.glade:22
 msgid "Save As…"
-msgstr ""
+msgstr "另存为…"
 
 #: src/tau/src/ui/tau.glade:36
 msgid "Save All"
-msgstr ""
+msgstr "全部保存"
 
 #: src/tau/src/ui/tau.glade:61
 msgid "Find…"
-msgstr ""
+msgstr "查找…"
 
 #: src/tau/src/ui/tau.glade:75
 msgid "Replace…"
-msgstr ""
+msgstr "替换…"
 
 #: src/tau/src/ui/tau.glade:100
 msgid "Auto Indent"
-msgstr ""
+msgstr "自动缩进"
 
 #: src/tau/src/ui/tau.glade:114
 msgid "Insert Spaces"
-msgstr ""
+msgstr "插入空格"
 
 #: src/tau/src/ui/tau.glade:164
 msgid "Help"
-msgstr ""
+msgstr "帮助"
 
 #: src/tau/src/ui/tau.glade:178
 msgid "About"
-msgstr ""
+msgstr "关于"
 
 #: src/tau/src/ui/tau.glade:203
 msgid "Close All"
-msgstr ""
+msgstr "全部关闭"
 
 #: src/tau/src/ui/tau.glade:217
 msgid "Close"
-msgstr ""
+msgstr "关闭"
 
 #: src/tau/src/ui/tau.glade:231
 msgid "Quit"
-msgstr ""
+msgstr "退出"
 
 #: src/tau/src/ui/tau.glade:265 src/tau/src/main_win.rs:607
 msgid "Open"
-msgstr ""
+msgstr "打开"
 
 #: src/tau/src/ui/tau.glade:306 src/tau/src/main_win.rs:664
 #: src/tau/src/main_win.rs:890
 msgid "Save"
-msgstr ""
+msgstr "保存"
 
 #: src/editview/src/edit_view.rs:67 src/tau/src/main_win.rs:747
 msgid "Creating new EditView"
-msgstr ""
+msgstr "创建新的编辑视图"
 
 #: src/editview/src/edit_view.rs:106
 msgid "Xi-Update sender disconnected"
@@ -400,27 +400,27 @@ msgstr ""
 
 #: src/editview/src/edit_view.rs:278
 msgid "Width"
-msgstr ""
+msgstr "宽度"
 
 #: src/editview/src/edit_view.rs:280
 msgid "Height"
-msgstr ""
+msgstr "高度"
 
 #: src/editview/src/edit_view.rs:308
 msgid "Updating visible scroll region"
-msgstr ""
+msgstr "更新可见滚动区域"
 
 #: src/editview/src/edit_view.rs:395
 msgid "Drawing EditView"
-msgstr ""
+msgstr "绘制编辑视图"
 
 #: src/editview/src/edit_view.rs:396
 msgid "vertical adjustment"
-msgstr ""
+msgstr "垂直调整"
 
 #: src/editview/src/edit_view.rs:399
 msgid "horizontal adjustment"
-msgstr ""
+msgstr "水平调整"
 
 #: src/editview/src/edit_view.rs:802
 msgid "Line"
@@ -442,46 +442,46 @@ msgstr ""
 
 #: src/editview/src/edit_view.rs:959
 msgid "value"
-msgstr ""
+msgstr "值"
 
 #: src/editview/src/edit_view.rs:961
 msgid "state"
-msgstr ""
+msgstr "状态"
 
 #: src/editview/src/edit_view.rs:963
 msgid "length"
-msgstr ""
+msgstr "长度"
 
 #: src/editview/src/edit_view.rs:965
 msgid "group"
-msgstr ""
+msgstr "组"
 
 #: src/editview/src/edit_view.rs:967
 msgid "unicode"
-msgstr ""
+msgstr "Unicode"
 
 #: src/editview/src/edit_view.rs:1112
 msgid "Adding cutting text op to idle queue"
-msgstr ""
+msgstr "剪切文本"
 
 #: src/editview/src/edit_view.rs:1137
 msgid "Adding copying text op to idle queue"
-msgstr ""
+msgstr "复制文本"
 
 #. if let Some(text) = Clipboard::get(&SELECTION_CLIPBOARD).wait_for_text() {
 #. self.core.insert(view_id, &text);
 #. }
 #: src/editview/src/edit_view.rs:1165
 msgid "Pasting text"
-msgstr ""
+msgstr "粘贴文本"
 
 #: src/editview/src/edit_view.rs:1175
 msgid "Pasting primary text"
-msgstr ""
+msgstr "粘贴主文本"
 
 #: src/editview/src/edit_view.rs:1187
 msgid "Resizing EditView"
-msgstr ""
+msgstr "调整编辑视图的大小"
 
 #: src/editview/src/edit_view.rs:1345
 msgid "Changing language to"
@@ -493,7 +493,7 @@ msgstr ""
 
 #: src/editview/src/edit_view.rs:1353
 msgid "Plain Text"
-msgstr ""
+msgstr "纯文本"
 
 #: src/editview/src/edit_view.rs:1371
 msgid "Couldn't determine what position the following language is in"
@@ -501,23 +501,23 @@ msgstr ""
 
 #: src/tau/src/about_win.rs:16
 msgid "GTK frontend for the xi text editor, written in Rust"
-msgstr ""
+msgstr "文本编辑器 xi 的 GTK 前端，用 Rust 编写"
 
 #: src/tau/src/about_win.rs:24
 msgid "translator-credits"
-msgstr ""
+msgstr "Chojan Shang"
 
 #: src/tau/src/about_win.rs:30
 msgid "Showing about window"
-msgstr ""
+msgstr "显示关于窗口"
 
 #: src/tau/src/errors.rs:30
 msgid "No default application"
-msgstr ""
+msgstr "没有默认应用程序"
 
 #: src/tau/src/errors.rs:32
 msgid "Default application has wrong type"
-msgstr ""
+msgstr "没有默认应用程序"
 
 #: src/tau/src/main.rs:115
 msgid "Start a new instance of the application"
@@ -525,11 +525,11 @@ msgstr ""
 
 #: src/tau/src/main.rs:135
 msgid "Starting Tau"
-msgstr ""
+msgstr "启动 Tau"
 
 #: src/tau/src/main.rs:239
 msgid "Activating new view"
-msgstr ""
+msgstr "激活新视图"
 
 #: src/tau/src/main.rs:246
 msgid "Failed to open new, empty view due to error"
@@ -537,7 +537,7 @@ msgstr ""
 
 #: src/tau/src/main.rs:251
 msgid "Opening new file"
-msgstr ""
+msgstr "打开新文件"
 
 #: src/tau/src/main.rs:261
 msgid "Failed to open new due to error"
@@ -549,7 +549,7 @@ msgstr ""
 
 #: src/tau/src/main.rs:268
 msgid "Shutting down…"
-msgstr ""
+msgstr "关闭…"
 
 #: src/tau/src/main_win.rs:127
 msgid "Failed to get default CssProvider!"
@@ -557,15 +557,15 @@ msgstr ""
 
 #: src/tau/src/main_win.rs:149
 msgid "Theme name"
-msgstr ""
+msgstr "主题名称"
 
 #: src/tau/src/main_win.rs:186
 msgid "User chose to cancel exiting"
-msgstr ""
+msgstr "用户选择取消退出"
 
 #: src/tau/src/main_win.rs:189
 msgid "User chose to close the application"
-msgstr ""
+msgstr "用户选择关闭应用程序"
 
 #: src/tau/src/main_win.rs:214 src/tau/src/main_win.rs:222
 #: src/tau/src/main_win.rs:230 src/tau/src/main_win.rs:238
@@ -578,11 +578,11 @@ msgstr ""
 
 #: src/tau/src/main_win.rs:298
 msgid "User chose to not quit application"
-msgstr ""
+msgstr "用户选择不退出应用程序"
 
 #: src/tau/src/main_win.rs:300
 msgid "User chose to quit application"
-msgstr ""
+msgstr "用户选择退出应用程序"
 
 #: src/tau/src/main_win.rs:372
 msgid "Showing main window"
@@ -594,17 +594,17 @@ msgstr ""
 
 #: src/tau/src/main_win.rs:433
 msgid "isn't available, setting to default"
-msgstr ""
+msgstr "不可用，设置为默认值"
 
 #: src/tau/src/main_win.rs:476
 msgid ""
 "Couldn't find syntect plugin, functionality will be limited! Only found the "
 "following plugins"
-msgstr ""
+msgstr "找不到语法插件，功能将受到限制！只找到以下插件"
 
 #: src/tau/src/main_win.rs:533
 msgid "Plugin"
-msgstr ""
+msgstr "插件"
 
 #: src/tau/src/main_win.rs:535
 msgid "has crashed"
@@ -612,7 +612,7 @@ msgstr ""
 
 #: src/tau/src/main_win.rs:536
 msgid "functionality will be limited"
-msgstr ""
+msgstr "功能将受到限制"
 
 #: src/tau/src/main_win.rs:604
 msgid "Open a file to edit"
@@ -621,65 +621,65 @@ msgstr ""
 #: src/tau/src/main_win.rs:608 src/tau/src/main_win.rs:665
 #: src/tau/src/main_win.rs:886
 msgid "Cancel"
-msgstr ""
+msgstr "取消"
 
 #: src/tau/src/main_win.rs:616
 msgid "FileChooserNative open response"
-msgstr ""
+msgstr "FileChooserNative 打开响应"
 
 #: src/tau/src/main_win.rs:626
 msgid "Couldn't open file"
-msgstr ""
+msgstr "无法打开文件"
 
 #: src/tau/src/main_win.rs:661
 msgid "Save file"
-msgstr ""
+msgstr "保存文件"
 
 #: src/tau/src/main_win.rs:673
 msgid "FileChooserNative save response"
-msgstr ""
+msgstr "FileChooserNative 保存响应"
 
 #: src/tau/src/main_win.rs:683
 msgid "Saving file"
-msgstr ""
+msgstr "正在保存文件"
 
 #: src/tau/src/main_win.rs:690
 msgid "Couldn't save file"
-msgstr ""
+msgstr "无法保存文件"
 
 #: src/tau/src/main_win.rs:731
 msgid ""
 "Couldn't get current EditView. This may only mean that you don't have an "
 "editing tab open right now."
-msgstr ""
+msgstr "无法获取当前的编辑视图。这可能只是意味着您现在没有打开编辑选项卡。"
 
 #: src/tau/src/main_win.rs:736
 msgid "Requesting new view"
-msgstr ""
+msgstr "请求新视图"
 
 #: src/tau/src/main_win.rs:807
 msgid "Closing all EditViews"
-msgstr ""
+msgstr "关闭所有编辑视图"
 
 #: src/tau/src/main_win.rs:841
 msgid "Closing current Editview"
-msgstr ""
+msgstr "关闭当前编辑视图"
 
 #: src/tau/src/main_win.rs:852
 msgid "Closing Editview"
-msgstr ""
+msgstr "关闭编辑视图"
 
 #: src/tau/src/main_win.rs:879
 msgid "Save unsaved changes"
-msgstr ""
+msgstr "保存未保存的更改"
 
 #: src/tau/src/main_win.rs:882
 msgid "Close Without Saving"
-msgstr ""
+msgstr "不保存关闭"
 
 #: src/tau/src/main_win.rs:905
 msgid "Save dialog has been destroyed before the user clicked a button"
-msgstr ""
+msgstr "在用户单击按钮之前，保存对话框已被销毁"
 
 #: src/tau/src/main_win.rs:1097
 msgid "Unknown key change event"
@@ -687,33 +687,33 @@ msgstr ""
 
 #: src/tau/src/panic_handler.rs:39
 msgid "gxi crash reporter"
-msgstr ""
+msgstr "gxi 崩溃记录器"
 
 #: src/tau/src/panic_handler.rs:49
 msgid "It seems like gxi has crashed, sorry!"
-msgstr ""
+msgstr "看来 gxi 已经崩溃了，抱歉！"
 
 #: src/tau/src/panic_handler.rs:50
 msgid ""
 "Please send the contents of the file below to our GitHub issue tracker so we "
 "can fix it! Thank you =)"
-msgstr ""
+msgstr "请将以下文件的内容发送到我们的 GitHub 问题跟踪器，以便我们可以修复它！谢谢 =)"
 
 #: src/tau/src/panic_handler.rs:53
 msgid "File"
-msgstr ""
+msgstr "文件"
 
 #: src/tau/src/panic_handler.rs:53
 msgid "URL"
-msgstr ""
+msgstr "网址"
 
 #: src/tau/src/prefs_win.rs:61
 msgid "Setting active theme"
-msgstr ""
+msgstr "设置活动主题"
 
 #: src/tau/src/prefs_win.rs:70
 msgid "Theme changed to"
-msgstr ""
+msgstr "主题更改为"
 
 #~ msgid "gxi"
 #~ msgstr "gxi"
