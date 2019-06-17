@@ -467,7 +467,7 @@ dependencies = [
 [[package]]
 name = "glib"
 version = "0.7.0"
-source = "git+https://github.com/gtk-rs/glib#34b8df425a04f633c299f627b793b2a8cb35de69"
+source = "git+https://github.com/gtk-rs/glib#c5e26321a1277c4fa4955389708b1ca190b888de"
 dependencies = [
  "bitflags 1.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "glib-sys 0.8.0 (git+https://github.com/gtk-rs/sys)",
@@ -479,7 +479,7 @@ dependencies = [
 [[package]]
 name = "glib-sys"
 version = "0.8.0"
-source = "git+https://github.com/gtk-rs/sys#c45adc74dd9432b22825fa8318a4028590eb9ec2"
+source = "git+https://github.com/gtk-rs/sys#20f28b5f159256fdf2c4c2642d448684f9230a54"
 dependencies = [
  "libc 0.2.58 (registry+https://github.com/rust-lang/crates.io-index)",
  "pkg-config 0.3.14 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -488,7 +488,7 @@ dependencies = [
 [[package]]
 name = "gobject-sys"
 version = "0.8.0"
-source = "git+https://github.com/gtk-rs/sys#c45adc74dd9432b22825fa8318a4028590eb9ec2"
+source = "git+https://github.com/gtk-rs/sys#20f28b5f159256fdf2c4c2642d448684f9230a54"
 dependencies = [
  "glib-sys 0.8.0 (git+https://github.com/gtk-rs/sys)",
  "libc 0.2.58 (registry+https://github.com/rust-lang/crates.io-index)",
