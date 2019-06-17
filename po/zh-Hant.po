@@ -1,14 +1,14 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the gxi package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Chojan Shang <PsiACE@outlook.com>, 2019.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Tau\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-06-17 00:36+0200\n"
-"PO-Revision-Date: 2019-04-13 01:04+0000\n"
+"PO-Revision-Date: 2019-06-17 09:41+0000\n"
 "Last-Translator: Chojan Shang <PsiACE@outlook.com>\n"
 "Language-Team: Chinese (Traditional) <https://hosted.weblate.org/projects/"
 "gxi/translation/zh_Hant/>\n"
@@ -21,7 +21,7 @@ msgstr ""
 
 #: data/org.gnome.Tau.appdata.xml.in:7 data/org.gnome.Tau.desktop.in:3
 msgid "Tau"
-msgstr ""
+msgstr "Tau"
 
 #: data/org.gnome.Tau.appdata.xml.in:8
 msgid "GTK frontend for the xi text editor"
@@ -42,7 +42,7 @@ msgstr "Rasmus \"Cogitri\" Thomsen"
 #: data/org.gnome.Tau.desktop.in:5
 #, fuzzy
 msgid "The Tau text editor"
-msgstr "Tau 文本编辑器"
+msgstr "Tau 文本編輯器"
 
 #: data/org.gnome.Tau.desktop.in:8
 msgid "org.gnome.Tau"
@@ -119,15 +119,15 @@ msgstr "設定是否應突出顯示當前行，從而簡化檔案導航"
 
 #: data/org.gnome.Tau.gschema.xml:65
 msgid "Sets the height of the window in the next startup"
-msgstr ""
+msgstr "設定下次啟動時視窗的高度"
 
 #: data/org.gnome.Tau.gschema.xml:70
 msgid "Sets the width of the window in the next startup"
-msgstr ""
+msgstr "設定下次啟動時視窗的寬度"
 
 #: data/org.gnome.Tau.gschema.xml:75
 msgid "Sets if the window should be maximized during the next startup"
-msgstr ""
+msgstr "設定下一次啟動時視窗是否應最大化"
 
 #: data/org.gnome.Tau.gschema.xml:80 src/tau/src/ui/prefs_win.glade:149
 msgid "Tab size"
@@ -519,11 +519,11 @@ msgstr ""
 
 #: src/tau/src/about_win.rs:16
 msgid "GTK frontend for the xi text editor, written in Rust"
-msgstr "文本编辑器 xi 的 GTK 前端，用 Rust 编写"
+msgstr "文本編輯器 xi 的 GTK 前端，用 Rust 編寫"
 
 #: src/tau/src/about_win.rs:24
 msgid "translator-credits"
-msgstr "翻译人员 - 致谢"
+msgstr "Chojan Shang"
 
 #: src/tau/src/about_win.rs:30
 msgid "Showing about window"
@@ -705,29 +705,29 @@ msgstr "在用戶按下按鈕前，儲存對話框已被銷毀"
 
 #: src/tau/src/main_win.rs:1097
 msgid "Unknown key change event"
-msgstr ""
+msgstr "未知的密鑰更改事件"
 
 #: src/tau/src/panic_handler.rs:39
 msgid "gxi crash reporter"
-msgstr ""
+msgstr "gxi 崩潰記錄器"
 
 #: src/tau/src/panic_handler.rs:49
 msgid "It seems like gxi has crashed, sorry!"
-msgstr ""
+msgstr "看起來 gxi 已經崩潰了，抱歉"
 
 #: src/tau/src/panic_handler.rs:50
 msgid ""
 "Please send the contents of the file below to our GitHub issue tracker so we "
 "can fix it! Thank you =)"
-msgstr ""
+msgstr "請將以下檔案的內容發送到我們的 Github 問題跟踪器，以便我們修復它！謝謝 =)"
 
 #: src/tau/src/panic_handler.rs:53
 msgid "File"
-msgstr ""
+msgstr "檔案"
 
 #: src/tau/src/panic_handler.rs:53
 msgid "URL"
-msgstr ""
+msgstr "網址"
 
 #: src/tau/src/prefs_win.rs:61
 msgid "Setting active theme"
