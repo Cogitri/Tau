@@ -1,61 +1,58 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the gxi package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# ssantos <ssantos@web.de>, 2019.
 msgid ""
 msgstr ""
 "Project-Id-Version: Tau\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-06-17 00:36+0200\n"
-"PO-Revision-Date: 2019-06-17 09:41+0000\n"
+"PO-Revision-Date: 2019-06-18 21:01+0000\n"
 "Last-Translator: ssantos <ssantos@web.de>\n"
-"Language-Team: German <https://hosted.weblate.org/projects/gxi/translation/"
+"Language-Team: German <https://hosted.weblate.org/projects/Tau/translation/"
 "de/>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 3.7-dev\n"
+"X-Generator: Weblate 3.7\n"
 
 #: data/org.gnome.Tau.appdata.xml.in:7 data/org.gnome.Tau.desktop.in:3
 msgid "Tau"
-msgstr ""
+msgstr "Tau"
 
 #: data/org.gnome.Tau.appdata.xml.in:8
 msgid "GTK frontend for the xi text editor"
 msgstr "Ein GTK Frontend für den xi Texteditor"
 
 #: data/org.gnome.Tau.appdata.xml.in:12
-#, fuzzy
 msgid ""
 "Tau is a GTK frontend for the xi text editor written in Rust. It's a very "
 "fast plain text editor."
 msgstr ""
-"Tau ist ein in Rust und GTK geschriebenes Frontend für den xi Texteditor. Es "
-"ist ein sehr schneller Klartext-Editor."
+"Tau ist ein GTK-Frontend für den in Rust geschriebenen xi-Texteditor. Es ist "
+"ein sehr schneller Klartext-Editor."
 
 #: data/org.gnome.Tau.appdata.xml.in:27
 msgid "Rasmus \"Cogitri\" Thomsen"
 msgstr "Rasmus \"Cogitri\" Thomsen"
 
 #: data/org.gnome.Tau.desktop.in:5
-#, fuzzy
 msgid "The Tau text editor"
-msgstr "Der Tau Texteditor"
+msgstr "Der Tau-Texteditor"
 
 #: data/org.gnome.Tau.desktop.in:8
 msgid "org.gnome.Tau"
-msgstr ""
+msgstr "org.gnome.Tau"
 
 #: data/org.gnome.Tau.desktop.in:13
 msgid "Text;Editor;Plaintext;Write;gxi;"
-msgstr ""
+msgstr "Text;Editor;Klartext;Schreiben;gxi;"
 
 #: data/org.gnome.Tau.desktop.in:16
 msgid "Launch a new Tau instance"
-msgstr ""
+msgstr "Eine neue Tau-Instanz starten"
 
 #: data/org.gnome.Tau.gschema.xml:9
 msgid "Xi-Editor's theme"
@@ -74,23 +71,20 @@ msgid "Draw spaces which are at the end of a line"
 msgstr "Zeige Leerzeichen an, die am Ende einer Linie sind"
 
 #: data/org.gnome.Tau.gschema.xml:25
-#, fuzzy
 msgid "Draw leading spaces"
-msgstr "Zeige nachhängende Leerzeichen an"
+msgstr "Führende Leerzeichen anzeigen"
 
 #: data/org.gnome.Tau.gschema.xml:26
-#, fuzzy
 msgid "Draw spaces which are at the beginning of a line"
-msgstr "Zeige Leerzeichen an, die am Ende einer Linie sind"
+msgstr "Zeige Leerzeichen an, die sich am Ende einer Zeile befinden"
 
 #: data/org.gnome.Tau.gschema.xml:33
-#, fuzzy
 msgid "Draw all spaces"
-msgstr "Zeige nachhängende Leerzeichen an"
+msgstr "Alle Leerzeichen anzeigen"
 
 #: data/org.gnome.Tau.gschema.xml:34
 msgid "Draw spaces, no matter the position"
-msgstr ""
+msgstr "Leerzeichen unabhängig von der Position anzeigen"
 
 #: data/org.gnome.Tau.gschema.xml:41
 msgid "Draw a right hand margin"
@@ -135,74 +129,68 @@ msgstr "Stellt ein, ob das Fenster beim nächsten Start maximiert werden soll"
 
 #: data/org.gnome.Tau.gschema.xml:80 src/tau/src/ui/prefs_win.glade:149
 msgid "Tab size"
-msgstr ""
+msgstr "Tab-Größe"
 
 #: data/org.gnome.Tau.gschema.xml:81
 msgid "Amount of spaces that a tab is wide"
-msgstr ""
+msgstr "Anzahl der Leerzeichen, die eine Tab breit ist"
 
 #: data/org.gnome.Tau.gschema.xml:87
-#, fuzzy
 msgid "Insert spaces instead of tabs"
-msgstr "Behandle Leerzeichen wie Tabs"
+msgstr "Leerzeichen anstelle von Tabs einfügen"
 
 #: data/org.gnome.Tau.gschema.xml:88
 msgid "Whether spaces should be inserted instead of tabs"
-msgstr ""
+msgstr "Ob Leerzeichen anstelle von Tabs eingefügt werden sollen"
 
 #: data/org.gnome.Tau.gschema.xml:93
-#, fuzzy
 msgid "Treat indention with spaces like tabs"
-msgstr "Behandle Leerzeichen wie Tabs"
+msgstr "Einrückungen mit Leerzeichen wie Tabs behandeln"
 
 #: data/org.gnome.Tau.gschema.xml:94
 msgid ""
 "If translate-tabs-to-spaces is true, backspaces will delete multiple spaces, "
 "up to the previous tab stop"
 msgstr ""
+"Wenn translate-tabs-to-spaces wahr ist, wird Entfernen mehrere Leerzeichen "
+"bis zum vorherigen Tab löschen"
 
 #: data/org.gnome.Tau.gschema.xml:99
 msgid "Automatically match document's indention on newlines"
 msgstr ""
+"Automatische Übereinstimmung der Einrückung des Dokuments bei neuen Zeilen"
 
 #: data/org.gnome.Tau.gschema.xml:104
-#, fuzzy
 msgid "The font used for editing"
-msgstr "Setzt das Thema für den Editor-Bereich"
+msgstr "Schriftart für die Bearbeitung"
 
 #: data/org.gnome.Tau.gschema.xml:109 src/tau/src/ui/prefs_win.glade:184
-#, fuzzy
 msgid "Wrap lines at the end of the document"
-msgstr "Scrolle über das Ende des Dokuments hinaus"
+msgstr "Zeilen am Ende des Dokuments umbrechen"
 
 #: data/org.gnome.Tau.gschema.xml:114
-#, fuzzy
 msgid "Draw trailing tabs"
-msgstr "Zeige nachhängende Leerzeichen an"
+msgstr "Nachlaufende Registerkarten anzeigen"
 
 #: data/org.gnome.Tau.gschema.xml:115
-#, fuzzy
 msgid "Draw tabs which are at the end of a line"
-msgstr "Zeige Leerzeichen an, die am Ende einer Linie sind"
+msgstr "Leerzeichen anzeigen, die am Ende einer Linie sind"
 
 #: data/org.gnome.Tau.gschema.xml:122
-#, fuzzy
 msgid "Draw leading tabs"
-msgstr "Zeige Tabs an"
+msgstr "Führende Registerkarten anzeigen"
 
 #: data/org.gnome.Tau.gschema.xml:123
-#, fuzzy
 msgid "Draw tabs which are at the beginning of a line"
-msgstr "Zeige Leerzeichen an, die am Ende einer Linie sind"
+msgstr "Tabs anzeigen, die sich am Anfang einer Zeile befinden"
 
 #: data/org.gnome.Tau.gschema.xml:130
-#, fuzzy
 msgid "Draw all tabs"
-msgstr "Zeige Tabs an"
+msgstr "Alle Tabs anzeigen"
 
 #: data/org.gnome.Tau.gschema.xml:131
 msgid "Draw all tabs, no matter the position"
-msgstr ""
+msgstr "Alle Tabs anzeigen, unabhängig von der Position"
 
 #: src/editview/src/ui/ev.glade:97
 msgid "document-text"
@@ -272,7 +260,7 @@ msgstr "Aussehen"
 
 #: src/tau/src/ui/prefs_win.glade:169
 msgid "Delete spaces up to the previous tab stop"
-msgstr ""
+msgstr "Leerzeichen bis zum vorherigen Tabulator löschen"
 
 #: src/tau/src/ui/prefs_win.glade:203
 msgid "Display right margin at the column:"
@@ -284,25 +272,23 @@ msgstr "Hebe die momentane Linie hervor"
 
 #: src/tau/src/ui/prefs_win.glade:267
 msgid "Tabs"
-msgstr ""
+msgstr "Tabs"
 
 #: src/tau/src/ui/prefs_win.glade:276 src/tau/src/ui/prefs_win.glade:320
-#, fuzzy
 msgid "Trailing"
-msgstr "Behandle"
+msgstr "Nachfolgend"
 
 #: src/tau/src/ui/prefs_win.glade:291 src/tau/src/ui/prefs_win.glade:335
 msgid "All"
-msgstr ""
+msgstr "Alle"
 
 #: src/tau/src/ui/prefs_win.glade:306 src/tau/src/ui/prefs_win.glade:361
 msgid "Leading"
-msgstr ""
+msgstr "Führend"
 
 #: src/tau/src/ui/prefs_win.glade:352
-#, fuzzy
 msgid "Spaces"
-msgstr "Einrücken mit Leerzeichen"
+msgstr "Leerzeichen"
 
 #: src/tau/src/ui/prefs_win.glade:390
 msgid "Editing"
@@ -367,7 +353,7 @@ msgstr "Erstelle neue EditView"
 
 #: src/editview/src/edit_view.rs:106
 msgid "Xi-Update sender disconnected"
-msgstr ""
+msgstr "Xi-Aktualisierung Absender getrennt"
 
 #: src/editview/src/edit_view.rs:136
 msgid "Connecting"
@@ -418,12 +404,10 @@ msgid "Allocating DrawingArea size"
 msgstr "Belege DrawingArea Größe"
 
 #: src/editview/src/edit_view.rs:278
-#, fuzzy
 msgid "Width"
 msgstr "Breite"
 
 #: src/editview/src/edit_view.rs:280
-#, fuzzy
 msgid "Height"
 msgstr "Höhe"
 
@@ -445,11 +429,11 @@ msgstr "horizontale Einstellung"
 
 #: src/editview/src/edit_view.rs:802
 msgid "Line"
-msgstr ""
+msgstr "Zeile"
 
 #: src/editview/src/edit_view.rs:806
 msgid "Column"
-msgstr ""
+msgstr "Spalte"
 
 #: src/editview/src/edit_view.rs:891
 msgid ""
@@ -511,9 +495,8 @@ msgid "Changing language to"
 msgstr "Wechsle die Sprache zu"
 
 #: src/editview/src/edit_view.rs:1350
-#, fuzzy
 msgid "Language has been changed to"
-msgstr "Thema gewechselt zu"
+msgstr "Sprache wurde geändert auf"
 
 #: src/editview/src/edit_view.rs:1353
 msgid "Plain Text"
@@ -522,6 +505,8 @@ msgstr "Klartext"
 #: src/editview/src/edit_view.rs:1371
 msgid "Couldn't determine what position the following language is in"
 msgstr ""
+"Konnte nicht feststellen, in welcher Position sich die folgende Sprache "
+"befindet"
 
 #: src/tau/src/about_win.rs:16
 msgid "GTK frontend for the xi text editor, written in Rust"
@@ -544,12 +529,10 @@ msgid "Default application has wrong type"
 msgstr "Standardapplikation hat den falschen typ"
 
 #: src/tau/src/main.rs:115
-#, fuzzy
 msgid "Start a new instance of the application"
-msgstr "Der Benutzer hat sich entscheiden, die Anwendung zu verlassen"
+msgstr "Eine neue Instanz der Anwendung starten"
 
 #: src/tau/src/main.rs:135
-#, fuzzy
 msgid "Starting Tau"
 msgstr "Starte Tau"
 
@@ -559,20 +542,19 @@ msgstr "Aktiviere eine neue EditView"
 
 #: src/tau/src/main.rs:246
 msgid "Failed to open new, empty view due to error"
-msgstr ""
+msgstr "Neue, leere Ansicht konnte aufgrund eines Fehlers nicht geöffnet werden"
 
 #: src/tau/src/main.rs:251
 msgid "Opening new file"
 msgstr "Öffne eine neue Datei"
 
 #: src/tau/src/main.rs:261
-#, fuzzy
 msgid "Failed to open new due to error"
-msgstr "Konnte Xi keine Nachricht zuschicken"
+msgstr "Fehler beim Öffnen eines neuen"
 
 #: src/tau/src/main.rs:261
 msgid "Path"
-msgstr ""
+msgstr "Pfad"
 
 #: src/tau/src/main.rs:268
 msgid "Shutting down…"
@@ -580,7 +562,7 @@ msgstr "Schließe die Applikation…"
 
 #: src/tau/src/main_win.rs:127
 msgid "Failed to get default CssProvider!"
-msgstr ""
+msgstr "Fehler beim Abrufen von Standard-CssProvider!"
 
 #: src/tau/src/main_win.rs:149
 msgid "Theme name"
@@ -616,9 +598,8 @@ msgid "Showing main window"
 msgstr "Zeige das Hauptfenster"
 
 #: src/tau/src/main_win.rs:391
-#, fuzzy
 msgid "Handling XiEvent"
-msgstr "Behandle"
+msgstr "Umgang mit XiEvent"
 
 #: src/tau/src/main_win.rs:433
 msgid "isn't available, setting to default"
