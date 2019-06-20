@@ -35,3 +35,6 @@ tau-linecache = { path="../tau-linecache" }
 tokio = "0.1"
 unicode-segmentation = "1"
 xrl = "0.0.7"
+
+[dev-dependencies]
+servo-fontconfig = "0.4"
