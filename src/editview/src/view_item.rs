@@ -41,7 +41,7 @@ impl ViewItem {
         let resource = Resource::new_from_data(&gbytes).unwrap();
         gio::resources_register(&resource);
 
-        let builder = Builder::new_from_resource("/com/github/Cogitri/editview/ev.glade");
+        let builder = Builder::new_from_resource("/org/gnome/Tau/editview/ev.glade");
 
         let hadj = builder.get_object("hadj").unwrap();
         let vadj = builder.get_object("vadj").unwrap();
@@ -210,7 +210,7 @@ pub struct TopBar {
 impl TopBar {
     /// Make the widgets for the tab
     pub fn new() -> Self {
-        let builder = Builder::new_from_resource("/com/github/Cogitri/editview/close_tab.glade");
+        let builder = Builder::new_from_resource("/org/gnome/Tau/editview/close_tab.glade");
         let tab_widget: Box = builder.get_object("tab_widget").unwrap();
         let label = builder.get_object("tab_label").unwrap();
         let close_button = builder.get_object("close_button").unwrap();
@@ -256,7 +256,7 @@ pub struct FindReplace {
 impl FindReplace {
     /// Loads the glade description of the window, and builds gtk-rs objects.
     pub fn new(btn: &MenuButton) -> Self {
-        let builder = Builder::new_from_resource("/com/github/Cogitri/editview/find_replace.glade");
+        let builder = Builder::new_from_resource("/org/gnome/Tau/editview/find_replace.glade");
         let search_bar = builder.get_object("search_bar").unwrap();
         let popover: Popover = builder.get_object("search_popover").unwrap();
         let replace_revealer: Revealer = builder.get_object("replace_revealer").unwrap();
