@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
-  <gresource prefix="/com/github/Cogitri/editview/">
+  <gresource prefix="/org/gnome/Tau/editview/">
       <file preprocess="xml-stripblanks">close_tab.glade</file>
       <file preprocess="xml-stripblanks">ev.glade</file>
       <file preprocess="xml-stripblanks">find_replace.glade</file>
