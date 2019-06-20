@@ -132,6 +132,14 @@
                 Draw all tabs, no matter the position
             </description>
         </key>
+
+        <key name="draw-cursor" type="b">
+            <default>true</default>
+            <summary>Draw the cursor</summary>
+            <description>
+                Whether to draw the cursor
+            </description>
+        </key>
     </schema>
 
 </schemalist>
