@@ -570,16 +570,18 @@ impl EditView {
                     }
                 }
 
-                for c in &line.cursor {
-                    let (strong_cursor, _) = layout.get_cursor_pos(*c as i32);
-                    // Draw the cursor
-                    cr.rectangle(
-                        (strong_cursor.x / pango::SCALE).into(),
-                        self.edit_font.font_height * i as f64 - vadj.get_value(),
-                        CURSOR_WIDTH,
-                        (strong_cursor.height / pango::SCALE).into(),
-                    );
-                    cr.fill();
+                if self.main_state.borrow().settings.draw_cursor {
+                    for c in &line.cursor {
+                        let (strong_cursor, _) = layout.get_cursor_pos(*c as i32);
+                        // Draw the cursor
+                        cr.rectangle(
+                            (strong_cursor.x / pango::SCALE).into(),
+                            self.edit_font.font_height * i as f64 - vadj.get_value(),
+                            CURSOR_WIDTH,
+                            (strong_cursor.height / pango::SCALE).into(),
+                        );
+                        cr.fill();
+                    }
                 }
             }
         }
@@ -1075,6 +1077,11 @@ impl EditView {
             }
             key::Escape => {
                 self.stop_search();
+            }
+            key::F7 => {
+                let mut main_state = self.main_state.borrow_mut();
+                let draw_cursor = main_state.settings.draw_cursor;
+                main_state.settings.draw_cursor = !draw_cursor;
             }
             key::a | key::backslash | key::slash if ctrl => {
                 self.core.select_all(view_id);

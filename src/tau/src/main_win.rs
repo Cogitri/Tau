@@ -966,6 +966,7 @@ pub fn new_settings() -> Settings {
         trailing_tabs: gschema.get_key("draw-trailing-tabs"),
         all_tabs: gschema.get_key("draw-all-tabs"),
         leading_tabs: gschema.get_key("draw-leading-tabs"),
+        draw_cursor: gschema.get_key("draw-cursor"),
         interface_font,
         gschema,
     }
@@ -1037,6 +1038,13 @@ pub fn connect_settings_change(main_win: &Rc<MainWin>, core: &Client) {
                 "column-right-margin" => {
                     let val = gschema.get_key("column-right-margin");
                     main_win.state.borrow_mut().settings.column_right_margin = val;
+                    if let Some(ev) = main_win.get_current_edit_view() {
+                        ev.borrow().view_item.edit_area.queue_draw();
+                    }
+                }
+                "draw-cursor" => {
+                    let val = gschema.get_key("draw-cursor");
+                    main_win.state.borrow_mut().settings.draw_cursor = val;
                     if let Some(ev) = main_win.get_current_edit_view() {
                         ev.borrow().view_item.edit_area.queue_draw();
                     }
