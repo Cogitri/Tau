@@ -1,6 +1,6 @@
 use crate::draw_invisible;
 use crate::fonts::Font;
-use crate::main_state::{MainState, Settings};
+use crate::main_state::MainState;
 use crate::theme::{color_from_u32, set_margin_source_color, set_source_color, PangoColor};
 use crate::view_item::*;
 use cairo::Context;
@@ -69,7 +69,10 @@ impl EditView {
         let find_replace = FindReplace::new(&hamburger_button);
         let pango_ctx = view_item.get_pango_ctx();
         let im_context = IMContextSimple::new();
-        let interface_font = Self::get_interface_font(&main_state.borrow().settings, &pango_ctx);
+        let interface_font = Font::new(
+            &pango_ctx,
+            FontDescription::from_string(&main_state.borrow().settings.interface_font),
+        );
 
         let (update_sender, update_recv) = unbounded();
 
@@ -83,7 +86,10 @@ impl EditView {
             top_bar: TopBar::new(),
             view_item: view_item.clone(),
             line_cache: Arc::new(Mutex::new(LineCache::new())),
-            edit_font: Self::get_edit_font(&pango_ctx, &main_state.borrow().settings.edit_font),
+            edit_font: Font::new(
+                &pango_ctx,
+                FontDescription::from_string(&main_state.borrow().settings.edit_font),
+            ),
             interface_font,
             find_replace: find_replace.clone(),
             im_context: im_context.clone(),
@@ -114,17 +120,6 @@ impl EditView {
             let ev = edit_view.borrow();
             ev.core.insert(ev.view_id, text);
         }));
-    }
-
-    fn get_interface_font(settings: &Settings, pango_ctx: &pango::Context) -> Font {
-        Font::new(
-            &pango_ctx,
-            FontDescription::from_string(&settings.interface_font),
-        )
-    }
-
-    fn get_edit_font(pango_ctx: &pango::Context, font: &str) -> Font {
-        Font::new(pango_ctx, FontDescription::from_string(&font))
     }
 }
 
