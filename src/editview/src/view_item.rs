@@ -204,6 +204,7 @@ pub struct TopBar {
     pub tab_widget: gtk::Box,
     pub label: Label,
     pub close_button: Button,
+    pub event_box: EventBox,
 }
 
 impl TopBar {
@@ -213,12 +214,14 @@ impl TopBar {
         let tab_widget: Box = builder.get_object("tab_widget").unwrap();
         let label = builder.get_object("tab_label").unwrap();
         let close_button = builder.get_object("close_button").unwrap();
+        let event_box = builder.get_object("tab_event_box").unwrap();
         tab_widget.show_all();
 
         Self {
             tab_widget,
             label,
             close_button,
+            event_box,
         }
     }
 }
