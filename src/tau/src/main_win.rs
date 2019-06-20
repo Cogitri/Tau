@@ -779,7 +779,7 @@ impl MainWin {
             let ev = edit_view.borrow();
             let page_num = main_win.notebook.insert_page(
                 &ev.root_widget,
-                Some(&ev.top_bar.tab_widget),
+                Some(&ev.top_bar.event_box),
                 position,
             );
             if let Some(w) = main_win.notebook.get_nth_page(Some(page_num)) {
@@ -795,6 +795,16 @@ impl MainWin {
                 .connect_clicked(enclose!((main_win, edit_view) move |_| {
                     Self::close_view(&main_win, &edit_view);
                 }));
+
+            ev.top_bar.event_box.connect_button_press_event(
+                enclose!((main_win, edit_view) move |_, eb| {
+                    // 2 == middle click
+                    if eb.get_button() == 2 {
+                        Self::close_view(&main_win, &edit_view);
+                    }
+                    Inhibit(false)
+                }),
+            );
         }
 
         main_win.views.borrow_mut().insert(view_id, edit_view);
