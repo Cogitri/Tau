@@ -26,6 +26,7 @@ qa:
 test-native:
   stage: test
   script:
+    - apt-get install -y cmake libfreetype6-dev libfontconfig1-dev # required for tests
     - meson _build
     - ninja -C _build test
 
