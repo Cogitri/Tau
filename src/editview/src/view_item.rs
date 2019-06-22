@@ -146,9 +146,10 @@ impl ViewItem {
             }));
 
         self.ev_scrolled_window
-            .connect_scroll_event(enclose!((edit_view) move |_,_| {
+            .get_vadjustment()
+            .unwrap()
+            .connect_value_changed(enclose!((edit_view) move |_| {
                 edit_view.borrow().update_visible_scroll_region();
-                Inhibit(false)
             }));
 
         // Make scrolling possible even when scrolling on the linecount

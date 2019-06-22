@@ -405,21 +405,6 @@ impl EditView {
         let last_line =
             ((vadj.get_value() + f64::from(da_height)) / self.edit_font.font_height) as u64 + 1;
         let last_line = min(last_line, num_lines as u64);
-        let view_lines = f64::from(da_height) / self.edit_font.font_height;
-
-        // Prefetch a few lines in front of our view for (somewhat) seamless scrolling
-        self.core.request_lines(
-            self.view_id,
-            first_line.saturating_sub((view_lines / 0.15) as u64),
-            first_line,
-        );
-
-        // Same as above, but for lines behind our view
-        self.core.request_lines(
-            self.view_id,
-            last_line,
-            last_line.saturating_add((view_lines / 0.15) as u64),
-        );
 
         let pango_ctx = self.view_item.get_pango_ctx();
         pango_ctx.set_font_description(&self.edit_font.font_desc);
