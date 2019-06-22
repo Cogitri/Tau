@@ -3,9 +3,9 @@
 </a>
 
 # Tau
-[![Drone CI Build Status](https://drone.exqa.de/api/badges/Cogitri/gxi/status.svg)](https://drone.exqa.de/Cogitri/gxi)
-[![Travis CI Build Status](https://travis-ci.com/Cogitri/gxi.svg?branch=master)](https://travis-ci.com/Cogitri/gxi)
-[![Translation Progress](https://hosted.weblate.org/widgets/gxi/-/translation/svg-badge.svg)](https://hosted.weblate.org/engage/gxi/?utm_source=widget)
+[![Drone CI Build Status](https://drone.exqa.de/api/badges/Cogitri/Tau/status.svg)](https://drone.exqa.de/Cogitri/Tau)
+[![Travis CI Build Status](https://travis-ci.com/Cogitri/Tau.svg?branch=master)](https://travis-ci.com/Cogitri/Tau)
+[![Translation Progress](https://hosted.weblate.org/widgets/Tau/-/translation/svg-badge.svg)](https://hosted.weblate.org/engage/Tau/?utm_source=widget)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/2711/badge)](https://bestpractices.coreinfrastructure.org/projects/2711)
 
 GTK frontend, written in Rust, for the [xi editor](https://github.com/google/xi-editor).
