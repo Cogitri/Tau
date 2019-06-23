@@ -456,7 +456,7 @@ impl EditView {
                 );
 
                 let pango_ctx = self.view_item.get_pango_ctx();
-                let layout = self.create_layout_for_line(&pango_ctx, line, &tabs);
+                let layout = self.create_layout_for_line(&pango_ctx, &line, &tabs);
                 // debug!("width={}", layout.get_extents().1.width);
                 update_layout(cr, &layout);
                 show_layout(cr, &layout);
@@ -470,7 +470,7 @@ impl EditView {
                     || self.main_state.borrow().settings.all_tabs
                     || self.main_state.borrow().settings.leading_tabs
                 {
-                    let line_text = layout.get_text().unwrap();
+                    let line_text = &line.text;
                     let mut tab_indexes = Vec::new();
 
                     if self.main_state.borrow().settings.all_tabs {
@@ -481,20 +481,18 @@ impl EditView {
                             }
                         }
                     } else if self.main_state.borrow().settings.trailing_tabs
-                        && line_text.as_str().ends_with('\t')
+                        && (line_text.ends_with('\t') || line_text.ends_with("\t\n"))
                     {
-                        let text = layout.get_text().unwrap().to_string();
-                        let last_char = text.replace(" ", "a").trim_end().len();
-                        let (text_without_tabs, tabs) = text.split_at(last_char);
+                        let last_char = line_text.replace(" ", "a").trim_end().len();
+                        let (text_without_tabs, tabs) = line_text.split_at(last_char);
                         let char_count =
                             UnicodeSegmentation::graphemes(text_without_tabs, true).count();
                         for (i, _) in tabs.chars().enumerate() {
                             tab_indexes.push((i + char_count) as i32)
                         }
                     } else if self.main_state.borrow().settings.leading_tabs {
-                        let text = layout.get_text().unwrap().to_string();
-                        let last_char = text.replace(" ", "a").trim_start().len();
-                        let (_, tabs) = text.split_at(last_char);
+                        let last_char = line_text.replace(" ", "a").trim_start().len();
+                        let (_, tabs) = line_text.split_at(last_char);
                         for (i, _) in tabs.chars().enumerate() {
                             tab_indexes.push((i) as i32)
                         }
@@ -508,7 +506,9 @@ impl EditView {
                             width: (pos.width / pango::SCALE).into(),
                             height: (pos.height / pango::SCALE).into(),
                         };
-                        rect.draw_tab(cr)
+                        if !(rect.width == 0.0) {
+                            rect.draw_tab(cr)
+                        }
                     }
                 }
 
@@ -516,7 +516,7 @@ impl EditView {
                     || self.main_state.borrow().settings.all_spaces
                     || self.main_state.borrow().settings.leading_spaces
                 {
-                    let line_text = layout.get_text().unwrap();
+                    let line_text = &line.text;
                     let mut space_indexes = Vec::new();
 
                     if self.main_state.borrow().settings.all_spaces {
@@ -527,20 +527,18 @@ impl EditView {
                             }
                         }
                     } else if self.main_state.borrow().settings.trailing_spaces
-                        && line_text.ends_with(' ')
+                        && (line_text.ends_with(' ') || line_text.ends_with(" \n"))
                     {
-                        let text = layout.get_text().unwrap().to_string();
-                        let last_char = text.replace("\t", "a").trim_end().len();
-                        let (text_without_spaces, spaces) = text.split_at(last_char);
+                        let last_char = line_text.replace("\t", "a").trim_end().len();
+                        let (text_without_spaces, spaces) = line_text.split_at(last_char);
                         let char_count =
                             UnicodeSegmentation::graphemes(text_without_spaces, true).count();
                         for (i, _) in spaces.chars().enumerate() {
                             space_indexes.push((i + char_count) as i32)
                         }
                     } else if self.main_state.borrow().settings.leading_spaces {
-                        let text = layout.get_text().unwrap().to_string();
-                        let last_char = text.replace("\t", "a").trim_start().len();
-                        let (_, spaces) = text.split_at(last_char);
+                        let last_char = line_text.replace("\t", "a").trim_start().len();
+                        let (_, spaces) = line_text.split_at(last_char);
                         for (i, _) in spaces.chars().enumerate() {
                             space_indexes.push(i as i32)
                         }
