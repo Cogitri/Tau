@@ -1,6 +1,7 @@
 use cairo::Context;
 use log::trace;
 use std::f64::consts::PI;
+use unicode_segmentation::UnicodeSegmentation;
 
 #[derive(Debug)]
 pub struct Rectangle {
@@ -43,5 +44,106 @@ impl Rectangle {
         cr.rel_line_to(-height * 1.0 / 4.0, height * 1.0 / 4.0);
         cr.stroke();
         cr.restore();
+    }
+
+    pub fn from_layout_index(index: Vec<i32>, layout: &pango::Layout) -> Vec<Self> {
+        let mut vec = Vec::new();
+
+        for index in index.iter() {
+            let pos = layout.index_to_pos(*index);
+            let rect = Self {
+                x: (pos.x / pango::SCALE).into(),
+                y: (pos.y / pango::SCALE).into(),
+                width: (pos.width / pango::SCALE).into(),
+                height: (pos.height / pango::SCALE).into(),
+            };
+            vec.push(rect);
+        }
+
+        vec
+    }
+}
+
+pub struct Spaces {
+    pub index: Vec<i32>,
+}
+
+impl Spaces {
+    pub fn all(text: &str) -> Self {
+        let mut space_index = Vec::new();
+        let char_it = UnicodeSegmentation::graphemes(text, true);
+        for (i, char) in char_it.enumerate() {
+            if char == " " {
+                space_index.push(i as i32)
+            }
+        }
+
+        Self { index: space_index }
+    }
+
+    pub fn leading(text: &str) -> Self {
+        let mut space_index = Vec::new();
+        let last_char = text.replace("\t", "a").trim_start().len();
+        let (_, spaces) = text.split_at(last_char);
+        for (i, _) in spaces.chars().enumerate() {
+            space_index.push(i as i32)
+        }
+
+        Self { index: space_index }
+    }
+
+    pub fn trailing(text: &str) -> Self {
+        let mut space_index = Vec::new();
+        let last_char = text.replace("\t", "a").trim_end().len();
+        let (text_without_spaces, spaces) = text.split_at(last_char);
+        let char_count = UnicodeSegmentation::graphemes(text_without_spaces, true).count();
+        for (i, _) in spaces.chars().enumerate() {
+            space_index.push((i + char_count) as i32)
+        }
+
+        Self { index: space_index }
+    }
+}
+
+pub struct Tabs {
+    pub index: Vec<i32>,
+}
+
+impl Tabs {
+    pub fn all(text: &str) -> Self {
+        let mut tab_index = Vec::new();
+        let char_it = UnicodeSegmentation::graphemes(text, true);
+        for (i, char) in char_it.enumerate() {
+            if char == "\t" {
+                tab_index.push(i as i32)
+            }
+        }
+
+        Self { index: tab_index }
+    }
+
+    pub fn leading(text: &str) -> Self {
+        let mut tab_index = Vec::new();
+
+        let last_char = text.replace(" ", "a").trim_start().len();
+        let (_, tabs) = text.split_at(last_char);
+        for (i, _) in tabs.chars().enumerate() {
+            tab_index.push((i) as i32)
+        }
+
+        Self { index: tab_index }
+    }
+
+    pub fn trailing(text: &str) -> Self {
+        let mut tab_index = Vec::new();
+
+        let last_char = text.replace(" ", "a").trim_end().len();
+        let (text_without_tabs, tabs) = text.split_at(last_char);
+        let char_count = UnicodeSegmentation::graphemes(text_without_tabs, true).count();
+        for (i, _) in tabs.chars().enumerate() {
+            tab_index.push((i + char_count) as i32)
+        }
+
+        Self { index: tab_index }
     }
 }

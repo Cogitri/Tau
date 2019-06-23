@@ -20,7 +20,6 @@ use std::rc::Rc;
 use std::sync::Arc;
 use std::u32;
 use tau_linecache::*;
-use unicode_segmentation::UnicodeSegmentation;
 use xrl::{Client, ConfigChanges, Query, Status, Update, ViewId};
 
 /// Returned by `EditView::get_text_size()` and used to adjust the scrollbars.
@@ -466,94 +465,62 @@ impl EditView {
                 // a thing in xi's themes.
                 set_source_color(cr, theme.caret);
 
-                if self.main_state.borrow().settings.trailing_tabs
-                    || self.main_state.borrow().settings.all_tabs
-                    || self.main_state.borrow().settings.leading_tabs
-                {
-                    let line_text = &line.text;
-                    let mut tab_indexes = Vec::new();
-
-                    if self.main_state.borrow().settings.all_tabs {
-                        let char_it = UnicodeSegmentation::graphemes(line_text.as_str(), true);
-                        for (i, char) in char_it.enumerate() {
-                            if char == "\t" {
-                                tab_indexes.push(i as i32)
-                            }
-                        }
-                    } else if self.main_state.borrow().settings.trailing_tabs
-                        && (line_text.ends_with('\t') || line_text.ends_with("\t\n"))
-                    {
-                        let last_char = line_text.replace(" ", "a").trim_end().len();
-                        let (text_without_tabs, tabs) = line_text.split_at(last_char);
-                        let char_count =
-                            UnicodeSegmentation::graphemes(text_without_tabs, true).count();
-                        for (i, _) in tabs.chars().enumerate() {
-                            tab_indexes.push((i + char_count) as i32)
-                        }
-                    } else if self.main_state.borrow().settings.leading_tabs {
-                        let last_char = line_text.replace(" ", "a").trim_start().len();
-                        let (_, tabs) = line_text.split_at(last_char);
-                        for (i, _) in tabs.chars().enumerate() {
-                            tab_indexes.push((i) as i32)
-                        }
-                    }
-
-                    for index in tab_indexes.iter() {
-                        let pos = layout.index_to_pos(*index);
-                        let rect = draw_invisible::Rectangle {
-                            x: (pos.x / pango::SCALE).into(),
-                            y: (self.edit_font.font_height * i as f64 - vadj.get_value()),
-                            width: (pos.width / pango::SCALE).into(),
-                            height: (pos.height / pango::SCALE).into(),
-                        };
-                        if !(rect.width == 0.0) {
-                            rect.draw_tab(cr)
-                        }
-                    }
+                if self.main_state.borrow().settings.trailing_tabs {
+                    let mut pos = draw_invisible::Rectangle::from_layout_index(
+                        draw_invisible::Tabs::trailing(&line.text.as_str()).index,
+                        &layout,
+                    );
+                    pos.drain(..).filter(|r| r.width != 0.0).for_each(|mut r| {
+                        r.y = self.edit_font.font_height * i as f64 - vadj.get_value();
+                        r.draw_tab(cr);
+                    });
+                } else if self.main_state.borrow().settings.leading_tabs {
+                    let mut pos = draw_invisible::Rectangle::from_layout_index(
+                        draw_invisible::Tabs::leading(&line.text.as_str()).index,
+                        &layout,
+                    );
+                    pos.drain(..).filter(|r| r.width != 0.0).for_each(|mut r| {
+                        r.y = self.edit_font.font_height * i as f64 - vadj.get_value();
+                        r.draw_tab(cr);
+                    });
+                } else if self.main_state.borrow().settings.all_tabs {
+                    let mut pos = draw_invisible::Rectangle::from_layout_index(
+                        draw_invisible::Tabs::all(&line.text.as_str()).index,
+                        &layout,
+                    );
+                    pos.drain(..).filter(|r| r.width != 0.0).for_each(|mut r| {
+                        r.y = self.edit_font.font_height * i as f64 - vadj.get_value();
+                        r.draw_tab(cr);
+                    });
                 }
 
-                if self.main_state.borrow().settings.trailing_spaces
-                    || self.main_state.borrow().settings.all_spaces
-                    || self.main_state.borrow().settings.leading_spaces
-                {
-                    let line_text = &line.text;
-                    let mut space_indexes = Vec::new();
-
-                    if self.main_state.borrow().settings.all_spaces {
-                        let char_it = UnicodeSegmentation::graphemes(line_text.as_str(), true);
-                        for (i, char) in char_it.enumerate() {
-                            if char == " " {
-                                space_indexes.push(i as i32)
-                            }
-                        }
-                    } else if self.main_state.borrow().settings.trailing_spaces
-                        && (line_text.ends_with(' ') || line_text.ends_with(" \n"))
-                    {
-                        let last_char = line_text.replace("\t", "a").trim_end().len();
-                        let (text_without_spaces, spaces) = line_text.split_at(last_char);
-                        let char_count =
-                            UnicodeSegmentation::graphemes(text_without_spaces, true).count();
-                        for (i, _) in spaces.chars().enumerate() {
-                            space_indexes.push((i + char_count) as i32)
-                        }
-                    } else if self.main_state.borrow().settings.leading_spaces {
-                        let last_char = line_text.replace("\t", "a").trim_start().len();
-                        let (_, spaces) = line_text.split_at(last_char);
-                        for (i, _) in spaces.chars().enumerate() {
-                            space_indexes.push(i as i32)
-                        }
-                    }
-
-                    for index in space_indexes.iter() {
-                        let pos = layout.index_to_pos(*index);
-                        let rect = draw_invisible::Rectangle {
-                            x: (pos.x / pango::SCALE).into(),
-                            y: (self.edit_font.font_height * i as f64 - vadj.get_value()),
-                            width: (pos.width / pango::SCALE).into(),
-                            height: (pos.height / pango::SCALE).into(),
-                        };
-                        rect.draw_space(cr);
-                    }
+                if self.main_state.borrow().settings.trailing_spaces {
+                    let mut pos = draw_invisible::Rectangle::from_layout_index(
+                        draw_invisible::Spaces::trailing(&line.text.as_str()).index,
+                        &layout,
+                    );
+                    pos.drain(..).filter(|r| r.width != 0.0).for_each(|mut r| {
+                        r.y = self.edit_font.font_height * i as f64 - vadj.get_value();
+                        r.draw_space(cr);
+                    });
+                } else if self.main_state.borrow().settings.leading_spaces {
+                    let mut pos = draw_invisible::Rectangle::from_layout_index(
+                        draw_invisible::Spaces::leading(&line.text.as_str()).index,
+                        &layout,
+                    );
+                    pos.drain(..).filter(|r| r.width != 0.0).for_each(|mut r| {
+                        r.y = self.edit_font.font_height * i as f64 - vadj.get_value();
+                        r.draw_space(cr);
+                    });
+                } else if self.main_state.borrow().settings.all_spaces {
+                    let mut pos = draw_invisible::Rectangle::from_layout_index(
+                        draw_invisible::Spaces::all(&line.text.as_str()).index,
+                        &layout,
+                    );
+                    pos.drain(..).filter(|r| r.width != 0.0).for_each(|mut r| {
+                        r.y = self.edit_font.font_height * i as f64 - vadj.get_value();
+                        r.draw_space(cr);
+                    });
                 }
 
                 for c in &line.cursor {
