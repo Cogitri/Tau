@@ -13,7 +13,5 @@ description = "Comfortability functions for GSettings"
 
 [dependencies]
 failure = "0.1"
-gio = { git="https://github.com/gtk-rs/gio", features = ["v2_50"]  }
-gio-sys = { git="https://github.com/gtk-rs/sys", features = ["v2_50"] }
-glib = { git="https://github.com/gtk-rs/glib", features = ["v2_44"] }
-glib-sys = { git="https://github.com/gtk-rs/sys", features = ["v2_44"] }
+gio = { version="0.7", features = ["v2_50"]  }
+glib = { version="0.8", features = ["v2_44"] }
