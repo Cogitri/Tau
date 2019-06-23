@@ -13,10 +13,11 @@ use gtk::{self, *};
 use log::{debug, error, trace, warn};
 use pango::{self, *};
 use pangocairo::functions::*;
+use parking_lot::Mutex;
 use std::cell::RefCell;
 use std::cmp::{max, min};
 use std::rc::Rc;
-use std::sync::{Arc, Mutex};
+use std::sync::Arc;
 use std::u32;
 use tau_linecache::*;
 use unicode_segmentation::UnicodeSegmentation;
@@ -101,7 +102,7 @@ impl EditView {
         let linecache = edit_view.borrow().line_cache.clone();
         std::thread::spawn(move || loop {
             while let Ok(update) = update_recv.recv() {
-                linecache.lock().unwrap().update(update);
+                linecache.lock().update(update);
             }
             error!("{}", gettext("Xi-Update sender disconnected"));
         });
@@ -258,7 +259,7 @@ impl EditView {
             y = 0.0;
         }
         let line_num = (y / self.edit_font.font_height) as u64;
-        let index = if let Some(line) = self.line_cache.lock().unwrap().get_line(line_num) {
+        let index = if let Some(line) = self.line_cache.lock().get_line(line_num) {
             let pango_ctx = self.view_item.get_pango_ctx();
 
             let layout = self.create_layout_for_line(&pango_ctx, line, &self.get_tabs());
@@ -324,7 +325,7 @@ impl EditView {
 
         let da_width = f64::from(self.view_item.edit_area.get_allocated_width());
         let da_height = f64::from(self.view_item.edit_area.get_allocated_height());
-        let num_lines = self.line_cache.lock().unwrap().height();
+        let num_lines = self.line_cache.lock().height();
 
         let all_text_height =
             num_lines as f64 * self.edit_font.font_height + self.edit_font.font_descent;
@@ -348,7 +349,7 @@ impl EditView {
         // Determine the longest line as per Pango. Creating layouts with Pango here is kind of expensive
         // here, but it's hard determining an accurate width otherwise.
         for i in first_line..last_line {
-            if let Some(line) = self.line_cache.lock().unwrap().get_line(i) {
+            if let Some(line) = self.line_cache.lock().get_line(i) {
                 let layout = self.create_layout_for_line(&pango_ctx, line, &tabs);
                 max_width = max(max_width, layout.get_extents().1.width);
             }
@@ -383,7 +384,7 @@ impl EditView {
         let da_width = self.view_item.edit_area.get_allocated_width();
         let da_height = self.view_item.edit_area.get_allocated_height();
 
-        let num_lines = self.line_cache.lock().unwrap().height();
+        let num_lines = self.line_cache.lock().height();
 
         let vadj = &self.view_item.vadj;
         let hadj = &self.view_item.hadj;
@@ -436,7 +437,7 @@ impl EditView {
 
         for i in first_line..last_line {
             // Keep track of the starting x position
-            if let Some(line) = self.line_cache.lock().unwrap().get_line(i) {
+            if let Some(line) = self.line_cache.lock().get_line(i) {
                 if self.main_state.borrow().settings.highlight_line && !line.cursor.is_empty() {
                     set_source_color(cr, theme.line_highlight);
                     cr.rectangle(
@@ -586,7 +587,7 @@ impl EditView {
         let theme = &self.main_state.borrow().theme;
         let linecount_height = self.view_item.linecount.get_allocated_height();
 
-        let num_lines = self.line_cache.lock().unwrap().height();
+        let num_lines = self.line_cache.lock().height();
 
         let vadj = &self.view_item.vadj;
 
@@ -623,7 +624,7 @@ impl EditView {
         set_source_color(cr, theme.foreground);
         for i in first_line..last_line {
             // Keep track of the starting x position
-            if let Some(line) = self.line_cache.lock().unwrap().get_line(i) {
+            if let Some(line) = self.line_cache.lock().get_line(i) {
                 if line.line_num.is_some() {
                     current_line += 1;
                     cr.move_to(
@@ -816,7 +817,7 @@ impl EditView {
 
         {
             // Collect all styles with id 0/1 (selections/find results) to make sure they're in the frame
-            if let Some(line) = self.line_cache.lock().unwrap().get_line(line) {
+            if let Some(line) = self.line_cache.lock().get_line(line) {
                 let line_selections: Vec<_> = line
                     .styles
                     .iter()
@@ -1320,7 +1321,7 @@ impl EditView {
 
     /// Returns true if this EditView is empty (contains no text)
     pub fn is_empty(&self) -> bool {
-        self.line_cache.lock().unwrap().is_empty()
+        self.line_cache.lock().is_empty()
     }
 
     pub fn set_language(&self, lang: &str) {
