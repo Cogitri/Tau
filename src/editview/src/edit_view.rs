@@ -295,13 +295,10 @@ impl EditView {
             self.view_id
         );
         let da_height = self.view_item.edit_area.get_allocated_height();
-        let num_lines = self.line_cache.lock().unwrap().height();
         let vadj = &self.view_item.vadj;
         let first_line = (vadj.get_value() / self.edit_font.font_height) as u64;
-        let last_line = min(
-            ((vadj.get_value() + f64::from(da_height)) / self.edit_font.font_height) as u64 + 1,
-            num_lines as u64,
-        );
+        let last_line =
+            ((vadj.get_value() + f64::from(da_height)) / self.edit_font.font_height) as u64 + 1;
 
         debug!(
             "{} {} {}",
