@@ -369,7 +369,7 @@ impl EditView {
     /// Handles the drawing of the EditView. This is called when we get a update from xi-editor or if
     /// gtk requests us to draw the EditView. This draws the background, all lines and the cursor.
     #[allow(clippy::cognitive_complexity)]
-    pub fn handle_da_draw(&mut self, cr: &Context) -> Inhibit {
+    pub fn handle_da_draw(&self, cr: &Context) -> Inhibit {
         const CURSOR_WIDTH: f64 = 2.0;
 
         // let foreground = self.main_state.borrow().theme.foreground;

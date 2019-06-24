@@ -88,7 +88,7 @@ impl ViewItem {
 
         self.edit_area
             .connect_draw(enclose!((edit_view) move |_,ctx| {
-                edit_view.borrow_mut().handle_da_draw(&ctx)
+                edit_view.borrow().handle_da_draw(&ctx)
             }));
 
         self.ev_scrolled_window
