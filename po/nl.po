@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Tau\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-06-17 00:36+0200\n"
-"PO-Revision-Date: 2019-06-18 21:01+0000\n"
+"PO-Revision-Date: 2019-06-24 20:02+0000\n"
 "Last-Translator: Luuk van der Duim <luukvanderduim@gmail.com>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/Tau/translation/nl/"
 ">\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 3.7\n"
+"X-Generator: Weblate 3.7.1-dev\n"
 
 #: data/org.gnome.Tau.appdata.xml.in:7 data/org.gnome.Tau.desktop.in:3
 msgid "Tau"
@@ -27,12 +27,11 @@ msgid "GTK frontend for the xi text editor"
 msgstr "GTK grafische schil voor de xi tekst bewerker"
 
 #: data/org.gnome.Tau.appdata.xml.in:12
-#, fuzzy
 msgid ""
 "Tau is a GTK frontend for the xi text editor written in Rust. It's a very "
 "fast plain text editor."
 msgstr ""
-"Tau is de GTK grafische schil voor de  xi tekst editor, geschreven in Rust, "
+"Tau is de GTK grafische schil voor de in Rust geschreven Xi tekst editor, "
 "een heel snelle platte tekst editor."
 
 #: data/org.gnome.Tau.appdata.xml.in:27
@@ -50,7 +49,7 @@ msgstr "org.gnome.Tau"
 
 #: data/org.gnome.Tau.desktop.in:13
 msgid "Text;Editor;Plaintext;Write;gxi;"
-msgstr ""
+msgstr "Tekst;Editor;Platte tekst;Schrijven;gxi;"
 
 #: data/org.gnome.Tau.desktop.in:16
 msgid "Launch a new Tau instance"
