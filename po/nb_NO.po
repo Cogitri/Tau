@@ -1,27 +1,26 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the gxi package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# Allan Nordhøy <epost@anotheragency.no>, 2019.
 msgid ""
 msgstr ""
 "Project-Id-Version: Tau\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-06-17 00:36+0200\n"
-"PO-Revision-Date: 2019-05-23 15:07+0000\n"
+"PO-Revision-Date: 2019-06-27 05:02+0000\n"
 "Last-Translator: Allan Nordhøy <epost@anotheragency.no>\n"
-"Language-Team: Norwegian Bokmål <https://hosted.weblate.org/projects/gxi/"
+"Language-Team: Norwegian Bokmål <https://hosted.weblate.org/projects/Tau/"
 "translation/nb_NO/>\n"
 "Language: nb_NO\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 3.7-dev\n"
+"X-Generator: Weblate 3.7.1-dev\n"
 
 #: data/org.gnome.Tau.appdata.xml.in:7 data/org.gnome.Tau.desktop.in:3
 msgid "Tau"
-msgstr ""
+msgstr "Tau"
 
 #: data/org.gnome.Tau.appdata.xml.in:8
 msgid "GTK frontend for the xi text editor"
@@ -46,16 +45,17 @@ msgid "The Tau text editor"
 msgstr "Tekstbehandleren Tau"
 
 #: data/org.gnome.Tau.desktop.in:8
+#, fuzzy
 msgid "org.gnome.Tau"
-msgstr ""
+msgstr "org.gnome.Tau"
 
 #: data/org.gnome.Tau.desktop.in:13
 msgid "Text;Editor;Plaintext;Write;gxi;"
-msgstr ""
+msgstr "Tekst;tekstbehandker;klartekst;skriv;gxi;"
 
 #: data/org.gnome.Tau.desktop.in:16
 msgid "Launch a new Tau instance"
-msgstr ""
+msgstr "Åpne nytt Tau-program"
 
 #: data/org.gnome.Tau.gschema.xml:9
 #, fuzzy
@@ -91,7 +91,7 @@ msgstr "Tegn etterfølgende blanktegn"
 
 #: data/org.gnome.Tau.gschema.xml:34
 msgid "Draw spaces, no matter the position"
-msgstr ""
+msgstr "Tegn blanktegn, uansett posisjon"
 
 #: data/org.gnome.Tau.gschema.xml:41
 msgid "Draw a right hand margin"
@@ -139,7 +139,7 @@ msgstr "Fanestørrelse"
 
 #: data/org.gnome.Tau.gschema.xml:81
 msgid "Amount of spaces that a tab is wide"
-msgstr ""
+msgstr "Antall mellomrom for tabulator"
 
 #: data/org.gnome.Tau.gschema.xml:87
 #, fuzzy
@@ -148,7 +148,7 @@ msgstr "Håndter blanktegn som tabulator"
 
 #: data/org.gnome.Tau.gschema.xml:88
 msgid "Whether spaces should be inserted instead of tabs"
-msgstr ""
+msgstr "Hvorvidt blanktegn skal settes inn istedenfor tabulator"
 
 #: data/org.gnome.Tau.gschema.xml:93
 #, fuzzy
@@ -160,10 +160,12 @@ msgid ""
 "If translate-tabs-to-spaces is true, backspaces will delete multiple spaces, "
 "up to the previous tab stop"
 msgstr ""
+"Hvis omgjør-faner-til-blanktegn er sant, vil rettetasten slette flere "
+"blanktegn, inntil forrige tabulator"
 
 #: data/org.gnome.Tau.gschema.xml:99
 msgid "Automatically match document's indention on newlines"
-msgstr ""
+msgstr "Automatisk samsvar dokumentets innrykk ved nye linjer"
 
 #: data/org.gnome.Tau.gschema.xml:104
 #, fuzzy
@@ -202,15 +204,15 @@ msgstr "Tegn etterfølgende blanktegn"
 
 #: data/org.gnome.Tau.gschema.xml:131
 msgid "Draw all tabs, no matter the position"
-msgstr ""
+msgstr "Tegn alle faner, uansett posisjon"
 
 #: src/editview/src/ui/ev.glade:97
 msgid "document-text"
-msgstr ""
+msgstr "dokument-tekst"
 
 #: src/editview/src/ui/ev.glade:104 src/editview/src/ui/ev.glade:219
 msgid "text"
-msgstr ""
+msgstr "tekst"
 
 #: src/editview/src/ui/ev.glade:180 src/editview/src/ui/ev.glade:192
 #: src/tau/src/ui/prefs_win.glade:133
@@ -272,7 +274,7 @@ msgstr "Utseende"
 
 #: src/tau/src/ui/prefs_win.glade:169
 msgid "Delete spaces up to the previous tab stop"
-msgstr ""
+msgstr "Slett blanktegn inntil forrige tabulator"
 
 #: src/tau/src/ui/prefs_win.glade:203
 msgid "Display right margin at the column:"
@@ -285,7 +287,7 @@ msgstr "Klarte ikke å hente nåværende EditView"
 
 #: src/tau/src/ui/prefs_win.glade:267
 msgid "Tabs"
-msgstr ""
+msgstr "Faner"
 
 #: src/tau/src/ui/prefs_win.glade:276 src/tau/src/ui/prefs_win.glade:320
 #, fuzzy
@@ -294,11 +296,12 @@ msgstr "Håndtering"
 
 #: src/tau/src/ui/prefs_win.glade:291 src/tau/src/ui/prefs_win.glade:335
 msgid "All"
-msgstr ""
+msgstr "Alle"
 
 #: src/tau/src/ui/prefs_win.glade:306 src/tau/src/ui/prefs_win.glade:361
+#, fuzzy
 msgid "Leading"
-msgstr ""
+msgstr "Ledende"
 
 #: src/tau/src/ui/prefs_win.glade:352
 #, fuzzy
@@ -373,8 +376,9 @@ msgid "Creating new EditView"
 msgstr "Tegner EditView"
 
 #: src/editview/src/edit_view.rs:106
+#, fuzzy
 msgid "Xi-Update sender disconnected"
-msgstr ""
+msgstr "Xi-oppdateringsforsender koblet fra"
 
 #: src/editview/src/edit_view.rs:136
 msgid "Connecting"
@@ -454,11 +458,11 @@ msgstr "vannrett justering"
 
 #: src/editview/src/edit_view.rs:802
 msgid "Line"
-msgstr ""
+msgstr "Linje"
 
 #: src/editview/src/edit_view.rs:806
 msgid "Column"
-msgstr ""
+msgstr "Kolonne"
 
 #: src/editview/src/edit_view.rs:891
 #, fuzzy
@@ -495,12 +499,14 @@ msgid "unicode"
 msgstr "Unicode"
 
 #: src/editview/src/edit_view.rs:1112
+#, fuzzy
 msgid "Adding cutting text op to idle queue"
-msgstr ""
+msgstr "Legger til kuttingstekst-op i ledigangskø"
 
 #: src/editview/src/edit_view.rs:1137
+#, fuzzy
 msgid "Adding copying text op to idle queue"
-msgstr ""
+msgstr "Legger til kuttingstekst-op i ledigangskø"
 
 #. if let Some(text) = Clipboard::get(&SELECTION_CLIPBOARD).wait_for_text() {
 #. self.core.insert(view_id, &text);
@@ -532,8 +538,9 @@ msgid "Plain Text"
 msgstr "Klartekst"
 
 #: src/editview/src/edit_view.rs:1371
+#, fuzzy
 msgid "Couldn't determine what position the following language is in"
-msgstr ""
+msgstr "Kunne ikke bestemme hvilken posisjon følgende språk befinner seg i"
 
 #: src/tau/src/about_win.rs:16
 msgid "GTK frontend for the xi text editor, written in Rust"
@@ -573,7 +580,7 @@ msgstr "Aktiverer ny visning"
 
 #: src/tau/src/main.rs:246
 msgid "Failed to open new, empty view due to error"
-msgstr ""
+msgstr "Klarte ikke å åpne ny, tom visning som følge av feil"
 
 #: src/tau/src/main.rs:251
 msgid "Opening new file"
@@ -586,7 +593,7 @@ msgstr "Klarte ikke å sette oppsettsmappe."
 
 #: src/tau/src/main.rs:261
 msgid "Path"
-msgstr ""
+msgstr "Sti"
 
 #: src/tau/src/main.rs:268
 #, fuzzy
@@ -594,8 +601,9 @@ msgid "Shutting down…"
 msgstr "Lukker programmet…"
 
 #: src/tau/src/main_win.rs:127
+#, fuzzy
 msgid "Failed to get default CssProvider!"
-msgstr ""
+msgstr "Klarte ikke å hente forvalgt CssProvider."
 
 #: src/tau/src/main_win.rs:149
 msgid "Theme name"
