@@ -2,7 +2,7 @@ use cairo::Context;
 use log::trace;
 use std::f64::consts::PI;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialOrd, PartialEq)]
 pub struct Rectangle {
     pub width: f64,
     pub height: f64,
@@ -142,5 +142,45 @@ impl Tabs {
         }
 
         Self { index: tab_index }
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    use ::fontconfig::fontconfig;
+    use pango::{FontDescription, FontMapExt};
+    use std::ffi::CString;
+
+    // Misc strings to test. Try to use special chars here
+    const EXM1: &str = "Traga tinta em trinta taças";
+    const EXM2: &str = "Völlig übertrieben";
+    const EXM3: &str = "\t\tÜberall ganz\tviele Tabs!\t\t";
+    const EXM4: &str = "  Überall\tganz    \tviele Spaces und\tTabs!";
+
+    #[test]
+    fn spaces_special_char() {
+        assert_eq!(Spaces::trailing(EXM1).index.len(), 0);
+        assert_eq!(Spaces::all(EXM1).index.len(), 4);
+        assert_eq!(Spaces::leading(EXM4).index.len(), 2);
+    }
+
+    #[test]
+    fn tabs_special_char() {
+        assert_eq!(Tabs::trailing(EXM1).index.len(), 0);
+        assert_eq!(Tabs::all(EXM3).index.len(), 5);
+        assert_eq!(Tabs::leading(EXM3).index.len(), 2);
+    }
+
+    #[test]
+    fn mixed_tabs_spaces() {
+        assert_eq!(
+            (Tabs::all(EXM4).index.len(), Spaces::all(EXM4).index.len()),
+            (3, 8),
+        );
+        assert_eq!(
+            (Tabs::all(EXM3).index.len(), Spaces::all(EXM3).index.len()),
+            (5, 2),
+        );
     }
 }
