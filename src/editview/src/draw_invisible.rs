@@ -1,7 +1,6 @@
 use cairo::Context;
 use log::trace;
 use std::f64::consts::PI;
-use unicode_segmentation::UnicodeSegmentation;
 
 #[derive(Debug)]
 pub struct Rectangle {
@@ -71,9 +70,8 @@ pub struct Spaces {
 impl Spaces {
     pub fn all(text: &str) -> Self {
         let mut space_index = Vec::new();
-        let char_it = UnicodeSegmentation::graphemes(text, true);
-        for (i, char) in char_it.enumerate() {
-            if char == " " {
+        for (i, char) in text.bytes().enumerate() {
+            if char == b" "[0] {
                 space_index.push(i as i32)
             }
         }
@@ -96,7 +94,7 @@ impl Spaces {
         let mut space_index = Vec::new();
         let last_char = text.replace("\t", "a").trim_end().len();
         let (text_without_spaces, spaces) = text.split_at(last_char);
-        let char_count = UnicodeSegmentation::graphemes(text_without_spaces, true).count();
+        let char_count = text_without_spaces.bytes().count();
         for (i, _) in spaces.chars().enumerate() {
             space_index.push((i + char_count) as i32)
         }
@@ -112,9 +110,8 @@ pub struct Tabs {
 impl Tabs {
     pub fn all(text: &str) -> Self {
         let mut tab_index = Vec::new();
-        let char_it = UnicodeSegmentation::graphemes(text, true);
-        for (i, char) in char_it.enumerate() {
-            if char == "\t" {
+        for (i, char) in text.bytes().enumerate() {
+            if char == b"\t"[0] {
                 tab_index.push(i as i32)
             }
         }
@@ -127,7 +124,7 @@ impl Tabs {
 
         let last_char = text.replace(" ", "a").trim_start().len();
         let (_, tabs) = text.split_at(last_char);
-        for (i, _) in tabs.chars().enumerate() {
+        for (i, _) in tabs.bytes().enumerate() {
             tab_index.push((i) as i32)
         }
 
@@ -139,8 +136,8 @@ impl Tabs {
 
         let last_char = text.replace(" ", "a").trim_end().len();
         let (text_without_tabs, tabs) = text.split_at(last_char);
-        let char_count = UnicodeSegmentation::graphemes(text_without_tabs, true).count();
-        for (i, _) in tabs.chars().enumerate() {
+        let char_count = text_without_tabs.bytes().count();
+        for (i, _) in tabs.bytes().enumerate() {
             tab_index.push((i + char_count) as i32)
         }
 
