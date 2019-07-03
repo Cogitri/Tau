@@ -1,27 +1,27 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the gxi package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# Elizabeth Sherrock <lizzyd710@gmail.com>, 2019.
 msgid ""
 msgstr ""
 "Project-Id-Version: Tau\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-06-17 00:36+0200\n"
-"PO-Revision-Date: 2019-06-17 09:41+0000\n"
-"Last-Translator: Chojan Shang <PsiACE@outlook.com>\n"
-"Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/gxi/"
+"PO-Revision-Date: 2019-07-03 10:02+0000\n"
+"Last-Translator: Elizabeth Sherrock <lizzyd710@gmail.com>\n"
+"Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/Tau/"
 "translation/zh_Hans/>\n"
 "Language: zh_Hans\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 3.6-dev\n"
+"X-Generator: Weblate 3.8-dev\n"
 
 #: data/org.gnome.Tau.appdata.xml.in:7 data/org.gnome.Tau.desktop.in:3
+#, fuzzy
 msgid "Tau"
-msgstr ""
+msgstr "Tau"
 
 #: data/org.gnome.Tau.appdata.xml.in:8
 msgid "GTK frontend for the xi text editor"
