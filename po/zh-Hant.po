@@ -2,22 +2,21 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the gxi package.
 # Chojan Shang <PsiACE@outlook.com>, 2019.
-#
 msgid ""
 msgstr ""
 "Project-Id-Version: Tau\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-06-17 00:36+0200\n"
-"PO-Revision-Date: 2019-06-17 09:41+0000\n"
+"PO-Revision-Date: 2019-07-03 10:02+0000\n"
 "Last-Translator: Chojan Shang <PsiACE@outlook.com>\n"
 "Language-Team: Chinese (Traditional) <https://hosted.weblate.org/projects/"
-"gxi/translation/zh_Hant/>\n"
+"Tau/translation/zh_Hant/>\n"
 "Language: zh-Hant\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 3.6-dev\n"
+"X-Generator: Weblate 3.8-dev\n"
 
 #: data/org.gnome.Tau.appdata.xml.in:7 data/org.gnome.Tau.desktop.in:3
 msgid "Tau"
@@ -28,25 +27,22 @@ msgid "GTK frontend for the xi text editor"
 msgstr "文本編輯器 xi 的 GTK 前端"
 
 #: data/org.gnome.Tau.appdata.xml.in:12
-#, fuzzy
 msgid ""
 "Tau is a GTK frontend for the xi text editor written in Rust. It's a very "
 "fast plain text editor."
-msgstr ""
-"Tau，文本編輯器 xi 的 GTK 前端，用 Rust 編寫。一款非常快速的純文本編輯器。"
+msgstr "Tau，文本編輯器 xi 的 GTK 前端，用 Rust 編寫。一款非常快速的純文本編輯器。"
 
 #: data/org.gnome.Tau.appdata.xml.in:27
 msgid "Rasmus \"Cogitri\" Thomsen"
 msgstr "Rasmus \"Cogitri\" Thomsen"
 
 #: data/org.gnome.Tau.desktop.in:5
-#, fuzzy
 msgid "The Tau text editor"
 msgstr "Tau 文本編輯器"
 
 #: data/org.gnome.Tau.desktop.in:8
 msgid "org.gnome.Tau"
-msgstr ""
+msgstr "org.gnome.Tau"
 
 #: data/org.gnome.Tau.desktop.in:13
 msgid "Text;Editor;Plaintext;Write;gxi;"
