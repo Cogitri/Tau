@@ -91,9 +91,9 @@ pub struct MainWin {
     /// The `Builder` from which we build the GTK Widgets.
     builder: Builder,
     /// A Map mapping `ViewId`s to `EditView`s.
-    views: RefCell<BTreeMap<ViewId, Rc<RefCell<EditView>>>>,
+    views: RefCell<BTreeMap<ViewId, Rc<EditView>>>,
     /// A Map mapping GTK `Widget`s to `EditView`s.
-    w_to_ev: RefCell<HashMap<Widget, Rc<RefCell<EditView>>>>,
+    w_to_ev: RefCell<HashMap<Widget, Rc<EditView>>>,
     /// A map mapping `ViewId`s to GTK `Widget`s.
     view_id_to_w: RefCell<HashMap<ViewId, Widget>>,
     /// The `MainState`, which are common settings among all `EditView`s.
@@ -482,21 +482,21 @@ impl MainWin {
     pub fn config_changed(&self, params: xrl::ConfigChanged) {
         let views = self.views.borrow();
         if let Some(ev) = views.get(&params.view_id) {
-            ev.borrow_mut().config_changed(&params.changes)
+            ev.config_changed(&params.changes)
         }
     }
 
     pub fn find_status(&self, params: xrl::FindStatus) {
         let views = self.views.borrow();
         if let Some(ev) = views.get(&params.view_id) {
-            ev.borrow().find_status(&params.queries)
+            ev.find_status(&params.queries)
         }
     }
 
     pub fn replace_status(&self, params: xrl::ReplaceStatus) {
         let views = self.views.borrow();
         if let Some(ev) = views.get(&params.view_id) {
-            ev.borrow().replace_status(&params.status)
+            ev.replace_status(&params.status)
         }
     }
 
@@ -509,7 +509,7 @@ impl MainWin {
         trace!("{} 'update': {:?}", gettext("Handling"), params);
         let views = self.views.borrow();
         if let Some(ev) = views.get(&params.view_id) {
-            ev.borrow_mut().update(params)
+            ev.update(params)
         }
     }
 
@@ -518,9 +518,9 @@ impl MainWin {
 
         let views = self.views.borrow();
         if let Some(ev) = views.get(&params.view_id) {
-            let idx = self.notebook.page_num(&ev.borrow().root_widget);
+            let idx = self.notebook.page_num(&ev.root_widget);
             self.notebook.set_current_page(idx);
-            ev.borrow().scroll_to(params.line, params.column);
+            ev.scroll_to(params.line, params.column);
         }
     }
 
@@ -546,7 +546,7 @@ impl MainWin {
 
             for mes_width in params.0 {
                 for string in &mes_width.strings {
-                    widths.push(ev.borrow().line_width(string) as f32)
+                    widths.push(ev.line_width(string) as f32)
                 }
             }
 
@@ -564,11 +564,11 @@ impl MainWin {
         // If there are no syntaxes to choose from, disable the selection
         if params.languages.is_empty() {
             for (_, ev) in self.views.borrow().iter() {
-                ev.borrow().set_syntax_selection_sensitivity(false);
+                ev.set_syntax_selection_sensitivity(false);
             }
         } else {
             for (_, ev) in self.views.borrow().iter() {
-                ev.borrow().set_syntax_selection_sensitivity(true);
+                ev.set_syntax_selection_sensitivity(true);
             }
         }
 
@@ -583,7 +583,7 @@ impl MainWin {
             .collect::<Vec<&str>>();
 
         for (_, ev) in self.views.borrow().iter() {
-            ev.borrow().view_item.set_avail_langs(&langs);
+            ev.view_item.set_avail_langs(&langs);
         }
     }
 
@@ -591,7 +591,7 @@ impl MainWin {
         debug!("{} 'language_changed' {:?}", gettext("Handling"), params);
         let views = self.views.borrow();
         if let Some(ev) = views.get(&params.view_id) {
-            ev.borrow().language_changed(&params.language_id)
+            ev.language_changed(&params.language_id)
         }
     }
 
@@ -636,10 +636,8 @@ impl MainWin {
 
     pub fn handle_save_button(main_win: &Rc<Self>) {
         if let Some(edit_view) = main_win.get_current_edit_view() {
-            if edit_view.borrow().file_name.is_some() {
-                let ev = edit_view.borrow();
-                let core = main_win.core.clone();
-                core.save(ev.view_id, ev.file_name.as_ref().unwrap());
+            if let Some(ref file_name) = *edit_view.file_name.borrow() {
+                main_win.core.save(edit_view.view_id, file_name);
             } else {
                 Self::save_as(main_win, &edit_view);
             }
@@ -656,7 +654,7 @@ impl MainWin {
     /// Don't use FileChooserDialog here, it doesn't work for Flatpaks.
     /// This may call the GTK main loop.  There must not be any RefCell borrows out while this
     /// function runs.
-    fn save_as(main_win: &Rc<Self>, edit_view: &Rc<RefCell<EditView>>) {
+    fn save_as(main_win: &Rc<Self>, edit_view: &Rc<EditView>) {
         let fcn = FileChooserNative::new(
             Some(gettext("Save file").as_str()),
             Some(&main_win.window),
@@ -681,10 +679,9 @@ impl MainWin {
                         match &std::fs::OpenOptions::new().write(true).create(true).open(&file) {
                             Ok(_) => {
                                 debug!("{} {:?}", gettext("Saving file"), &file);
-                                let view_id = edit_view.borrow().view_id;
                                 let file = file.to_string_lossy();
-                                main_win.core.save(view_id, &file);
-                                edit_view.borrow_mut().set_file(&file);
+                                main_win.core.save(edit_view.view_id, &file);
+                                edit_view.set_file(&file);
                             }
                         Err(e) => {
                             let err_msg = format!("{} '{}': {}", &gettext("Couldn't save file"), &file_str, &e.to_string());
@@ -710,17 +707,17 @@ impl MainWin {
 
     fn find(main_win: &Rc<Self>) {
         if let Some(edit_view) = main_win.get_current_edit_view() {
-            edit_view.borrow().start_search();
+            edit_view.start_search();
         }
     }
 
     fn replace(main_win: &Rc<Self>) {
         if let Some(edit_view) = main_win.get_current_edit_view() {
-            edit_view.borrow().start_replace();
+            edit_view.start_replace();
         }
     }
 
-    fn get_current_edit_view(&self) -> Option<Rc<RefCell<EditView>>> {
+    fn get_current_edit_view(&self) -> Option<Rc<EditView>> {
         if let Some(idx) = self.notebook.get_current_page() {
             if let Some(w) = self.notebook.get_nth_page(Some(idx)) {
                 if let Some(edit_view) = self.w_to_ev.borrow().get(&w) {
@@ -748,13 +745,9 @@ impl MainWin {
         let mut old_ev = None;
 
         let position = if let Some(curr_ev) = main_win.get_current_edit_view() {
-            if curr_ev.borrow().is_empty() {
+            if curr_ev.is_empty() {
                 old_ev = Some(curr_ev.clone());
-                if let Some(w) = main_win
-                    .view_id_to_w
-                    .borrow()
-                    .get(&curr_ev.borrow().view_id)
-                {
+                if let Some(w) = main_win.view_id_to_w.borrow().get(&curr_ev.view_id) {
                     main_win.notebook.page_num(w)
                 } else {
                     None
@@ -776,10 +769,9 @@ impl MainWin {
             &main_win.window,
         );
         {
-            let ev = edit_view.borrow();
             let page_num = main_win.notebook.insert_page(
-                &ev.root_widget,
-                Some(&ev.top_bar.event_box),
+                &edit_view.root_widget,
+                Some(&edit_view.top_bar.event_box),
                 position,
             );
             if let Some(w) = main_win.notebook.get_nth_page(Some(page_num)) {
@@ -790,13 +782,13 @@ impl MainWin {
                 main_win.view_id_to_w.borrow_mut().insert(view_id, w);
             }
 
-            ev.top_bar
-                .close_button
-                .connect_clicked(enclose!((main_win, edit_view) move |_| {
+            edit_view.top_bar.close_button.connect_clicked(
+                enclose!((main_win, edit_view) move |_| {
                     Self::close_view(&main_win, &edit_view);
-                }));
+                }),
+            );
 
-            ev.top_bar.event_box.connect_button_press_event(
+            edit_view.top_bar.event_box.connect_button_press_event(
                 enclose!((main_win, edit_view) move |_, eb| {
                     // 2 == middle click
                     if eb.get_button() == 2 {
@@ -823,7 +815,7 @@ impl MainWin {
             .map(|(_, ev)| {
                 let save_action = Self::close_view(&main_win.clone(), &ev);
                 if save_action != SaveAction::Cancel {
-                    main_win.views.borrow_mut().remove(&ev.borrow().view_id);
+                    main_win.views.borrow_mut().remove(&ev.view_id);
                 }
                 save_action
             })
@@ -856,14 +848,9 @@ impl MainWin {
         }
     }
 
-    fn close_view(main_win: &Rc<Self>, edit_view: &Rc<RefCell<EditView>>) -> SaveAction {
-        trace!(
-            "{} {}",
-            gettext("Closing Editview"),
-            edit_view.borrow().view_id
-        );
-        let pristine = edit_view.borrow().pristine;
-        let save_action = if pristine {
+    fn close_view(main_win: &Rc<Self>, edit_view: &Rc<EditView>) -> SaveAction {
+        trace!("{} {}", gettext("Closing Editview"), edit_view.view_id);
+        let save_action = if *edit_view.pristine.borrow() {
             // If it's pristine we don't ask the user if he really wants to quit because everything
             // is saved already and as such always close without saving
             SaveAction::CloseWithoutSave
@@ -873,7 +860,7 @@ impl MainWin {
             if let Some(w) = main_win
                 .view_id_to_w
                 .borrow()
-                .get(&edit_view.borrow().view_id)
+                .get(&edit_view.view_id)
                 .map(Clone::clone)
             {
                 if let Some(page_num) = main_win.notebook.page_num(&w) {
@@ -921,13 +908,11 @@ impl MainWin {
         };
         debug!("SaveAction: {:?}", save_action);
 
-        let view_id = edit_view.borrow().view_id;
-
         if save_action != SaveAction::Cancel {
             if let Some(w) = main_win
                 .view_id_to_w
                 .borrow()
-                .get(&view_id)
+                .get(&edit_view.view_id)
                 .map(Clone::clone)
             {
                 if let Some(page_num) = main_win.notebook.page_num(&w) {
@@ -935,9 +920,12 @@ impl MainWin {
                 }
                 main_win.w_to_ev.borrow_mut().remove(&w.clone());
             }
-            main_win.view_id_to_w.borrow_mut().remove(&view_id);
-            main_win.views.borrow_mut().remove(&view_id);
-            main_win.core.close_view(view_id);
+            main_win
+                .view_id_to_w
+                .borrow_mut()
+                .remove(&edit_view.view_id);
+            main_win.views.borrow_mut().remove(&edit_view.view_id);
+            main_win.core.close_view(edit_view.view_id);
         }
         save_action
     }
@@ -983,70 +971,70 @@ pub fn connect_settings_change(main_win: &Rc<MainWin>, core: &Client) {
                     let val = gschema.get_key("draw-trailing-spaces");
                     main_win.state.borrow_mut().settings.trailing_spaces = val;
                     if let Some(ev) = main_win.get_current_edit_view() {
-                        ev.borrow().view_item.edit_area.queue_draw();
+                        ev.view_item.edit_area.queue_draw();
                     }
                 }
                 "draw-leading-spaces" => {
                     let val = gschema.get_key("draw-leading-spaces");
                     main_win.state.borrow_mut().settings.leading_spaces = val;
                     if let Some(ev) = main_win.get_current_edit_view() {
-                        ev.borrow().view_item.edit_area.queue_draw();
+                        ev.view_item.edit_area.queue_draw();
                     }
                 }
                 "draw-all-spaces" => {
                     let val = gschema.get_key("draw-all-spaces");
                     main_win.state.borrow_mut().settings.all_spaces = val;
                     if let Some(ev) = main_win.get_current_edit_view() {
-                        ev.borrow().view_item.edit_area.queue_draw();
+                        ev.view_item.edit_area.queue_draw();
                     }
                 }
                 "draw-trailing-tabs" => {
                     let val = gschema.get_key("draw-trailing-tabs");
                     main_win.state.borrow_mut().settings.trailing_tabs = val;
                     if let Some(ev) = main_win.get_current_edit_view() {
-                        ev.borrow().view_item.edit_area.queue_draw();
+                        ev.view_item.edit_area.queue_draw();
                     }
                 }
                 "draw-leading-tabs" => {
                     let val = gschema.get_key("draw-leading-tabs");
                     main_win.state.borrow_mut().settings.leading_tabs = val;
                     if let Some(ev) = main_win.get_current_edit_view() {
-                        ev.borrow().view_item.edit_area.queue_draw();
+                        ev.view_item.edit_area.queue_draw();
                     }
                 }
                 "draw-all-tabs" => {
                     let val = gschema.get_key("draw-all-tabs");
                     main_win.state.borrow_mut().settings.all_tabs = val;
                     if let Some(ev) = main_win.get_current_edit_view() {
-                        ev.borrow().view_item.edit_area.queue_draw();
+                        ev.view_item.edit_area.queue_draw();
                     }
                 }
                 "highlight-line" => {
                     let val = gschema.get_key("highlight-line");
                     main_win.state.borrow_mut().settings.highlight_line = val;
                     if let Some(ev) = main_win.get_current_edit_view() {
-                        ev.borrow().view_item.edit_area.queue_draw();
+                        ev.view_item.edit_area.queue_draw();
                     }
                 }
                 "draw-right-margin" => {
                     let val = gschema.get_key("draw-right-margin");
                     main_win.state.borrow_mut().settings.right_margin = val;
                     if let Some(ev) = main_win.get_current_edit_view() {
-                        ev.borrow().view_item.edit_area.queue_draw();
+                        ev.view_item.edit_area.queue_draw();
                     }
                 }
                 "column-right-margin" => {
                     let val = gschema.get_key("column-right-margin");
                     main_win.state.borrow_mut().settings.column_right_margin = val;
                     if let Some(ev) = main_win.get_current_edit_view() {
-                        ev.borrow().view_item.edit_area.queue_draw();
+                        ev.view_item.edit_area.queue_draw();
                     }
                 }
                 "draw-cursor" => {
                     let val = gschema.get_key("draw-cursor");
                     main_win.state.borrow_mut().settings.draw_cursor = val;
                     if let Some(ev) = main_win.get_current_edit_view() {
-                        ev.borrow().view_item.edit_area.queue_draw();
+                        ev.view_item.edit_area.queue_draw();
                     }
                 }
                 "translate-tabs-to-spaces" => {
@@ -1071,7 +1059,7 @@ pub fn connect_settings_change(main_win: &Rc<MainWin>, core: &Client) {
                     );
                     main_win.state.borrow_mut().settings.tab_size = val;
                     if let Some(ev) = main_win.get_current_edit_view() {
-                        ev.borrow().view_item.edit_area.queue_draw();
+                        ev.view_item.edit_area.queue_draw();
                     }
                 }
                 "font" => {
@@ -1086,7 +1074,7 @@ pub fn connect_settings_change(main_win: &Rc<MainWin>, core: &Client) {
                         );
                         main_win.state.borrow_mut().settings.edit_font = val;
                         if let Some(ev) = main_win.get_current_edit_view() {
-                            ev.borrow().view_item.edit_area.queue_draw();
+                            ev.view_item.edit_area.queue_draw();
                         }
                     }
                 }
@@ -1106,7 +1094,7 @@ pub fn connect_settings_change(main_win: &Rc<MainWin>, core: &Client) {
                 }
                 "theme-name" => {
                     if let Some(ev) = main_win.get_current_edit_view() {
-                        ev.borrow().view_item.edit_area.queue_draw();
+                        ev.view_item.edit_area.queue_draw();
                     }
                 },
                 // We load these during startup

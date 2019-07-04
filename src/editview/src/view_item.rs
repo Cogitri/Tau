@@ -5,7 +5,6 @@ use gio::Resource;
 use glib::Bytes;
 use gtk::*;
 use log::{debug, trace};
-use std::cell::RefCell;
 use std::rc::Rc;
 
 const RESOURCE: &[u8] = include_bytes!("ui/resources.gresource");
@@ -74,31 +73,31 @@ impl ViewItem {
     }
 
     /// Sets up event listeners for the ViewItem
-    pub fn connect_events(&self, edit_view: &Rc<RefCell<EditView>>) {
+    pub fn connect_events(&self, edit_view: &Rc<EditView>) {
         trace!(
             "{} '{}'",
-            edit_view.borrow().view_id,
+            edit_view.view_id,
             gettext("Connecting events of EditView")
         );
 
         self.ev_scrolled_window
             .connect_button_press_event(enclose!((edit_view) move |_,eb| {
-                edit_view.borrow().handle_button_press(eb)
+                edit_view.handle_button_press(eb)
             }));
 
         self.edit_area
             .connect_draw(enclose!((edit_view) move |_,ctx| {
-                edit_view.borrow().handle_da_draw(&ctx)
+                edit_view.handle_da_draw(&ctx)
             }));
 
         self.ev_scrolled_window
             .connect_key_press_event(enclose!((edit_view) move |_, ek| {
-                edit_view.borrow().handle_key_press_event(ek)
+                edit_view.handle_key_press_event(ek)
             }));
 
         self.ev_scrolled_window
             .connect_motion_notify_event(enclose!((edit_view) move |_,em| {
-               edit_view.borrow().handle_drag(em)
+               edit_view.handle_drag(em)
             }));
 
         self.ev_scrolled_window.connect_realize(|w| {
@@ -114,13 +113,13 @@ impl ViewItem {
 
         self.edit_area.connect_size_allocate(enclose!((edit_view) move |_,alloc| {
             debug!("{}: {}={} {}={}", gettext("Size changed to"), gettext("width"), alloc.width, gettext("height"), alloc.height);
-            edit_view.borrow().da_size_allocate(alloc.width, alloc.height);
-            edit_view.borrow().do_resize(edit_view.borrow().view_id,alloc.width, alloc.height);
+            edit_view.da_size_allocate(alloc.width, alloc.height);
+            edit_view.do_resize(edit_view.view_id,alloc.width, alloc.height);
         }));
 
         self.linecount
             .connect_draw(enclose!((edit_view) move |_,ctx| {
-                edit_view.borrow().handle_linecount_draw(&ctx)
+                edit_view.handle_linecount_draw(&ctx)
             }));
 
         self.statusbar
@@ -131,15 +130,15 @@ impl ViewItem {
                     let selected_syntax =  syntax_tup.0.get_value(&syntax_tup.1, 0);
                     if let Some(lang) = selected_syntax.get::<&str>() {
                         // DONT set the lang if we already selected it, otherwise we way loop here!
-                        if lang == edit_view.borrow().view_item.statusbar.syntax_label.get_text().unwrap().as_str() {
+                        if lang == edit_view.view_item.statusbar.syntax_label.get_text().unwrap().as_str() {
                             return;
                         }
-                        edit_view.borrow().view_item.statusbar.syntax_label.set_text(lang);
+                        edit_view.view_item.statusbar.syntax_label.set_text(lang);
                         // We localized it ourselves, so we have to turn it into English again when sending it to Xi
                         if lang == gettext("Plain Text") {
-                             edit_view.borrow().set_language("Plain Text");
+                             edit_view.set_language("Plain Text");
                         } else {
-                             edit_view.borrow().set_language(&lang);
+                             edit_view.set_language(&lang);
                         }
                     }
                 }
@@ -149,13 +148,13 @@ impl ViewItem {
             .get_vadjustment()
             .unwrap()
             .connect_value_changed(enclose!((edit_view) move |_| {
-                edit_view.borrow().update_visible_scroll_region();
+                edit_view.update_visible_scroll_region();
             }));
 
         // Make scrolling possible even when scrolling on the linecount
         self.linecount
             .connect_scroll_event(enclose!((edit_view) move |_,es| {
-                    edit_view.borrow().view_item.ev_scrolled_window.emit("scroll-event", &[&es.to_value()]).unwrap();
+                    edit_view.view_item.ev_scrolled_window.emit("scroll-event", &[&es.to_value()]).unwrap();
                     Inhibit(false)
             }));
     }
@@ -300,39 +299,39 @@ impl FindReplace {
     }
 
     /// Sets up event listeners
-    pub fn connect_events(&self, ev: &Rc<RefCell<EditView>>) {
+    pub fn connect_events(&self, ev: &Rc<EditView>) {
         trace!(
             "{} '{}'",
             gettext("Connecting FindReplace events for EditView"),
-            ev.borrow().view_id
+            ev.view_id
         );
 
         self.popover.connect_event(enclose!((ev) move |_, event| {
-            ev.borrow().find_replace.search_bar.handle_event(event);
+            ev.find_replace.search_bar.handle_event(event);
 
             Inhibit(false)
         }));
 
         self.popover.connect_closed(enclose!((ev) move |_| {
-            ev.borrow().stop_search();
-            ev.borrow().stop_replace();
+            ev.stop_search();
+            ev.stop_replace();
         }));
 
         self.show_replace_button
             .connect_toggled(enclose!((ev) move |toggle_btn| {
                 if toggle_btn.get_active() {
-                    ev.borrow().show_replace();
+                    ev.show_replace();
                 } else {
-                    ev.borrow().hide_replace();
+                    ev.hide_replace();
                 }
             }));
 
         self.show_options_button
             .connect_toggled(enclose!((ev) move |toggle_btn| {
                 if toggle_btn.get_active() {
-                    ev.borrow().show_findreplace_opts();
+                    ev.show_findreplace_opts();
                 } else {
-                    ev.borrow().hide_findreplace_opts();
+                    ev.hide_findreplace_opts();
                 }
             }));
 
@@ -341,40 +340,40 @@ impl FindReplace {
         self.search_bar
             .connect_property_search_mode_enabled_notify(enclose!((ev) move |sb| {
                 if ! sb.get_search_mode() {
-                    ev.borrow().stop_search();
+                    ev.stop_search();
                 }
             }));
 
         self.search_entry
             .connect_search_changed(enclose!((ev) move |w| {
                 if let Some(text) = w.get_text() {
-                    ev.borrow().search_changed(Some(text.to_string()));
+                    ev.search_changed(Some(text.to_string()));
                 } else {
-                    ev.borrow().search_changed(None);
+                    ev.search_changed(None);
                 }
             }));
 
         self.replace_entry
             .connect_next_match(enclose!((ev) move |_| {
-                ev.borrow().find_next();
+                ev.find_next();
             }));
 
         self.replace_entry
             .connect_previous_match(enclose!((ev) move |_| {
-                ev.borrow().find_prev();
+                ev.find_prev();
             }));
 
         self.replace_entry
             .connect_stop_search(enclose!((ev) move |_| {
-                ev.borrow().stop_replace();
+                ev.stop_replace();
             }));
 
-        let restart_search = move |edit_view: Rc<RefCell<EditView>>| {
-            let text_opt = { edit_view.borrow().find_replace.search_entry.get_text() };
+        let restart_search = move |edit_view: Rc<EditView>| {
+            let text_opt = { edit_view.find_replace.search_entry.get_text() };
             if let Some(text) = text_opt {
-                edit_view.borrow().search_changed(Some(text.to_string()));
+                edit_view.search_changed(Some(text.to_string()));
             } else {
-                edit_view.borrow().search_changed(None);
+                edit_view.search_changed(None);
             }
         };
 
@@ -388,29 +387,29 @@ impl FindReplace {
             .connect_toggled(enclose!((ev) move |_| restart_search(ev.clone())));
 
         self.search_entry.connect_activate(enclose!((ev) move |_| {
-            ev.borrow().find_next();
+            ev.find_next();
         }));
 
         self.search_entry
             .connect_stop_search(enclose!((ev) move |_| {
-                ev.borrow().stop_search();
+                ev.stop_search();
             }));
 
         self.replace_button.connect_clicked(enclose!((ev) move |_| {
-            ev.borrow().replace();
+            ev.replace();
         }));
 
         self.replace_all_button
             .connect_clicked(enclose!((ev) move |_| {
-                ev.borrow().replace_all();
+                ev.replace_all();
             }));
 
         self.go_down_button.connect_clicked(enclose!((ev) move |_| {
-            ev.borrow().find_next();
+            ev.find_next();
         }));
 
         self.go_up_button.connect_clicked(enclose!((ev) move |_| {
-            ev.borrow().find_prev();
+            ev.find_prev();
         }));
     }
 }

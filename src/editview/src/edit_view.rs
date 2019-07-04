@@ -39,14 +39,14 @@ pub struct EditView {
     core: Client,
     main_state: Rc<RefCell<MainState>>,
     pub view_id: ViewId,
-    pub file_name: Option<String>,
-    pub pristine: bool,
+    pub file_name: RefCell<Option<String>>,
+    pub pristine: RefCell<bool>,
     pub root_widget: Grid,
     pub top_bar: TopBar,
     pub view_item: ViewItem,
     line_cache: Arc<Mutex<LineCache>>,
     pub(crate) find_replace: FindReplace,
-    edit_font: Font,
+    edit_font: RefCell<Font>,
     interface_font: Font,
     im_context: IMContextSimple,
     update_sender: Sender<Update>,
@@ -63,7 +63,7 @@ impl EditView {
         file_name: Option<String>,
         view_id: ViewId,
         parent: &ApplicationWindow,
-    ) -> Rc<RefCell<Self>> {
+    ) -> Rc<Self> {
         trace!("{}, '{}'", gettext("Creating new EditView"), view_id);
         let view_item = ViewItem::new();
         let find_replace = FindReplace::new(&hamburger_button);
@@ -76,27 +76,27 @@ impl EditView {
 
         let (update_sender, update_recv) = unbounded();
 
-        let edit_view = Rc::new(RefCell::new(Self {
+        let edit_view = Rc::new(Self {
             core: core.clone(),
             main_state: main_state.clone(),
-            file_name,
-            pristine: true,
+            file_name: RefCell::new(file_name),
+            pristine: RefCell::new(true),
             view_id,
             root_widget: view_item.root_box.clone(),
             top_bar: TopBar::new(),
             view_item: view_item.clone(),
             line_cache: Arc::new(Mutex::new(LineCache::new())),
-            edit_font: Font::new(
+            edit_font: RefCell::new(Font::new(
                 &pango_ctx,
                 FontDescription::from_string(&main_state.borrow().settings.edit_font),
-            ),
+            )),
             interface_font,
             find_replace: find_replace.clone(),
             im_context: im_context.clone(),
             update_sender,
-        }));
+        });
 
-        edit_view.borrow_mut().update_title();
+        edit_view.update_title();
 
         view_item.connect_events(&edit_view);
         find_replace.connect_events(&edit_view);
@@ -104,7 +104,7 @@ impl EditView {
 
         im_context.set_client_window(parent.get_window().as_ref());
 
-        let linecache = edit_view.borrow().line_cache.clone();
+        let linecache = edit_view.line_cache.clone();
         std::thread::spawn(move || loop {
             while let Ok(update) = update_recv.recv() {
                 linecache.lock().update(update);
@@ -115,30 +115,29 @@ impl EditView {
         edit_view
     }
 
-    fn connect_im_events(edit_view: &Rc<RefCell<EditView>>, im_context: &IMContextSimple) {
+    fn connect_im_events(edit_view: &Rc<EditView>, im_context: &IMContextSimple) {
         im_context.connect_commit(enclose!((edit_view) move |_, text| {
-            let ev = edit_view.borrow();
-            ev.core.insert(ev.view_id, text);
+            edit_view.core.insert(edit_view.view_id, text);
         }));
     }
 }
 
 impl EditView {
     /// Set the name of the file the EditView is currently editing and calls [update_title](struct.EditView.html#method.update_title)
-    pub fn set_file(&mut self, file_name: &str) {
+    pub fn set_file(&self, file_name: &str) {
         trace!(
             "{} 'FindReplace' {} '{}'",
             gettext("Connecting"),
             gettext("events for EditView"),
             self.view_id
         );
-        self.file_name = Some(file_name.to_string());
+        self.file_name.replace(Some(file_name.to_string()));
         self.update_title();
     }
 
     /// Update the title of the EditView to the currently set file_name
     fn update_title(&self) {
-        let title = match self.file_name {
+        let title = match *self.file_name.borrow() {
             Some(ref f) => f
                 .split(::std::path::MAIN_SEPARATOR)
                 .last()
@@ -148,7 +147,7 @@ impl EditView {
         };
 
         let mut full_title = String::new();
-        if !self.pristine {
+        if !*self.pristine.borrow() {
             full_title.push('*');
         }
         full_title.push_str(&title);
@@ -165,7 +164,7 @@ impl EditView {
     /// If xi-editor sends us a [config_changed](https://xi-editor.io/docs/frontend-protocol.html#config_changed)
     /// msg we process it here, e.g. setting the font face/size xi-editor tells us. Most configs don't
     /// need special handling by us though.
-    pub fn config_changed(&mut self, changes: &ConfigChanges) {
+    pub fn config_changed(&self, changes: &ConfigChanges) {
         trace!(
             "{} 'config_changed' {} '{}': {:?}",
             gettext("Handling"),
@@ -176,25 +175,25 @@ impl EditView {
 
         if let Some(font_size) = changes.font_size {
             let pango_ctx = self.view_item.get_pango_ctx();
-            self.edit_font
-                .font_desc
-                .set_size(font_size as i32 * pango::SCALE);
+            let mut font_desc = self.edit_font.borrow().font_desc.clone();
+            font_desc.set_size(font_size as i32 * pango::SCALE);
             // We've set the new fontsize previously, now we have to regenerate the font height/width etc.
-            self.edit_font = Font::new(&pango_ctx, self.edit_font.font_desc.clone());
+            self.edit_font.replace(Font::new(&pango_ctx, font_desc));
             self.view_item.edit_area.queue_draw();
         }
 
         if let Some(font_face) = &changes.font_face {
             debug!("{}: {}", gettext("Setting edit font to"), font_face);
             let pango_ctx = self.view_item.get_pango_ctx();
-            self.edit_font = Font::new(
+            let font_size = self.edit_font.borrow().font_desc.get_size();
+            self.edit_font.replace(Font::new(
                 &pango_ctx,
                 FontDescription::from_string(&format!(
                     "{} {}",
                     font_face,
-                    self.edit_font.font_desc.get_size() / pango::SCALE
+                    font_size / pango::SCALE
                 )),
-            );
+            ));
             self.view_item.edit_area.queue_draw();
         }
     }
@@ -202,7 +201,7 @@ impl EditView {
     /// If xi-editor sends us a [update](https://xi-editor.io/docs/frontend-protocol.html#config_changed)
     /// msg we process it here, setting the scrollbars upper limit accordingly, checking if the EditView
     /// is pristine (_does not_ has unsaved changes) and queue a new draw of the EditView.
-    pub fn update(&mut self, params: Update) {
+    pub fn update(&self, params: Update) {
         trace!(
             "{} 'update' {} '{}': {:?}",
             gettext("Handling"),
@@ -211,7 +210,7 @@ impl EditView {
             params
         );
 
-        self.pristine = params.pristine;
+        self.pristine.replace(params.pristine);
         self.update_title();
 
         self.update_sender.send(params).unwrap();
@@ -222,7 +221,7 @@ impl EditView {
         let text_width = if text_size.contained_width {
             text_size.width
         } else {
-            text_size.width + self.edit_font.font_width * 4.0
+            text_size.width + self.edit_font.borrow().font_width * 4.0
         };
 
         self.view_item
@@ -248,11 +247,11 @@ impl EditView {
         let x = x + self.view_item.hadj.get_value();
         let y = y + self.view_item.vadj.get_value();
 
-        let mut y = y - self.edit_font.font_descent;
+        let mut y = y - self.edit_font.borrow().font_descent;
         if y < 0.0 {
             y = 0.0;
         }
-        let line_num = (y / self.edit_font.font_height) as u64;
+        let line_num = (y / self.edit_font.borrow().font_height) as u64;
         let index = if let Some(line) = self.line_cache.lock().get_line(line_num) {
             let pango_ctx = self.view_item.get_pango_ctx();
 
@@ -262,7 +261,10 @@ impl EditView {
         } else {
             0
         };
-        (index as u64, (y / self.edit_font.font_height) as u64)
+        (
+            index as u64,
+            (y / self.edit_font.borrow().font_height) as u64,
+        )
     }
 
     /// Allocate the space our DrawingArea needs.
@@ -291,9 +293,10 @@ impl EditView {
         );
         let da_height = self.view_item.edit_area.get_allocated_height();
         let vadj = &self.view_item.vadj;
-        let first_line = (vadj.get_value() / self.edit_font.font_height) as u64;
-        let last_line =
-            ((vadj.get_value() + f64::from(da_height)) / self.edit_font.font_height) as u64 + 1;
+        let first_line = (vadj.get_value() / self.edit_font.borrow().font_height) as u64;
+        let last_line = ((vadj.get_value() + f64::from(da_height))
+            / self.edit_font.borrow().font_height) as u64
+            + 1;
 
         debug!(
             "{} {} {}",
@@ -321,8 +324,8 @@ impl EditView {
         let da_height = f64::from(self.view_item.edit_area.get_allocated_height());
         let num_lines = self.line_cache.lock().height();
 
-        let all_text_height =
-            num_lines as f64 * self.edit_font.font_height + self.edit_font.font_descent;
+        let all_text_height = num_lines as f64 * self.edit_font.borrow().font_height
+            + self.edit_font.borrow().font_descent;
         let height = if da_height > all_text_height {
             contained_height = true;
             da_height
@@ -331,8 +334,9 @@ impl EditView {
         };
 
         let vadj = &self.view_item.vadj;
-        let first_line = (vadj.get_value() / self.edit_font.font_height) as u64;
-        let last_line = (vadj.get_value() + da_height / self.edit_font.font_height) as u64 + 1;
+        let first_line = (vadj.get_value() / self.edit_font.borrow().font_height) as u64;
+        let last_line =
+            (vadj.get_value() + da_height / self.edit_font.borrow().font_height) as u64 + 1;
         let last_line = min(last_line, num_lines as u64);
         // Set this to pango::SCALE, we divide by that later on.
         let mut max_width = pango::SCALE;
@@ -393,17 +397,18 @@ impl EditView {
             hadj.get_upper()
         );
 
-        let first_line = (vadj.get_value() / self.edit_font.font_height) as u64;
-        let last_line =
-            ((vadj.get_value() + f64::from(da_height)) / self.edit_font.font_height) as u64 + 1;
+        let first_line = (vadj.get_value() / self.edit_font.borrow().font_height) as u64;
+        let last_line = ((vadj.get_value() + f64::from(da_height))
+            / self.edit_font.borrow().font_height) as u64
+            + 1;
         let last_line = min(last_line, num_lines as u64);
 
         let pango_ctx = self.view_item.get_pango_ctx();
-        pango_ctx.set_font_description(&self.edit_font.font_desc);
+        pango_ctx.set_font_description(&self.edit_font.borrow().font_desc);
 
         // Draw a line at x chars
         if self.main_state.borrow().settings.right_margin {
-            let until_margin_width = self.edit_font.font_width
+            let until_margin_width = self.edit_font.borrow().font_width
                 * f64::from(self.main_state.borrow().settings.column_right_margin);
             // Draw editing background
             set_source_color(cr, theme.background);
@@ -436,9 +441,9 @@ impl EditView {
                     set_source_color(cr, theme.line_highlight);
                     cr.rectangle(
                         0.0,
-                        self.edit_font.font_height * i as f64 - vadj.get_value(),
+                        self.edit_font.borrow().font_height * i as f64 - vadj.get_value(),
                         f64::from(da_width),
-                        self.edit_font.font_height,
+                        self.edit_font.borrow().font_height,
                     );
                     cr.fill();
                     set_source_color(cr, theme.foreground);
@@ -446,7 +451,7 @@ impl EditView {
 
                 cr.move_to(
                     -hadj.get_value(),
-                    self.edit_font.font_height * (i as f64) - vadj.get_value(),
+                    self.edit_font.borrow().font_height * (i as f64) - vadj.get_value(),
                 );
 
                 let pango_ctx = self.view_item.get_pango_ctx();
@@ -466,7 +471,7 @@ impl EditView {
                         &layout,
                     );
                     pos.drain(..).filter(|r| r.width != 0.0).for_each(|mut r| {
-                        r.y = self.edit_font.font_height * i as f64 - vadj.get_value();
+                        r.y = self.edit_font.borrow().font_height * i as f64 - vadj.get_value();
                         r.draw_tab(cr);
                     });
                 } else if self.main_state.borrow().settings.leading_tabs {
@@ -475,7 +480,7 @@ impl EditView {
                         &layout,
                     );
                     pos.drain(..).filter(|r| r.width != 0.0).for_each(|mut r| {
-                        r.y = self.edit_font.font_height * i as f64 - vadj.get_value();
+                        r.y = self.edit_font.borrow().font_height * i as f64 - vadj.get_value();
                         r.draw_tab(cr);
                     });
                 } else if self.main_state.borrow().settings.all_tabs {
@@ -484,7 +489,7 @@ impl EditView {
                         &layout,
                     );
                     pos.drain(..).filter(|r| r.width != 0.0).for_each(|mut r| {
-                        r.y = self.edit_font.font_height * i as f64 - vadj.get_value();
+                        r.y = self.edit_font.borrow().font_height * i as f64 - vadj.get_value();
                         r.draw_tab(cr);
                     });
                 }
@@ -495,7 +500,7 @@ impl EditView {
                         &layout,
                     );
                     pos.drain(..).filter(|r| r.width != 0.0).for_each(|mut r| {
-                        r.y = self.edit_font.font_height * i as f64 - vadj.get_value();
+                        r.y = self.edit_font.borrow().font_height * i as f64 - vadj.get_value();
                         r.draw_space(cr);
                     });
                 } else if self.main_state.borrow().settings.leading_spaces {
@@ -504,7 +509,7 @@ impl EditView {
                         &layout,
                     );
                     pos.drain(..).filter(|r| r.width != 0.0).for_each(|mut r| {
-                        r.y = self.edit_font.font_height * i as f64 - vadj.get_value();
+                        r.y = self.edit_font.borrow().font_height * i as f64 - vadj.get_value();
                         r.draw_space(cr);
                     });
                 } else if self.main_state.borrow().settings.all_spaces {
@@ -513,7 +518,7 @@ impl EditView {
                         &layout,
                     );
                     pos.drain(..).filter(|r| r.width != 0.0).for_each(|mut r| {
-                        r.y = self.edit_font.font_height * i as f64 - vadj.get_value();
+                        r.y = self.edit_font.borrow().font_height * i as f64 - vadj.get_value();
                         r.draw_space(cr);
                     });
                 }
@@ -524,7 +529,7 @@ impl EditView {
                         // Draw the cursor
                         cr.rectangle(
                             (strong_cursor.x / pango::SCALE).into(),
-                            self.edit_font.font_height * i as f64 - vadj.get_value(),
+                            self.edit_font.borrow().font_height * i as f64 - vadj.get_value(),
                             CURSOR_WIDTH,
                             (strong_cursor.height / pango::SCALE).into(),
                         );
@@ -553,9 +558,9 @@ impl EditView {
 
         let vadj = &self.view_item.vadj;
 
-        let first_line = (vadj.get_value() / self.edit_font.font_height) as u64;
+        let first_line = (vadj.get_value() / self.edit_font.borrow().font_height) as u64;
         let last_line = ((vadj.get_value() + f64::from(linecount_height))
-            / self.edit_font.font_height) as u64
+            / self.edit_font.borrow().font_height) as u64
             + 1;
         let last_line = min(last_line, num_lines as u64);
 
@@ -581,7 +586,8 @@ impl EditView {
 
         //FIXME: Xi sends us the 'ln' (logical linenumber) param for this, but that isn't updated on every draw!
         let mut current_line = first_line;
-        let center_diff = (self.edit_font.font_height - self.interface_font.font_height) / 2.0;
+        let center_diff =
+            (self.edit_font.borrow().font_height - self.interface_font.font_height) / 2.0;
 
         set_source_color(cr, theme.foreground);
         for i in first_line..last_line {
@@ -591,7 +597,8 @@ impl EditView {
                     current_line += 1;
                     cr.move_to(
                         0.0,
-                        self.edit_font.font_height * (i as f64) - vadj.get_value() + center_diff,
+                        self.edit_font.borrow().font_height * (i as f64) - vadj.get_value()
+                            + center_diff,
                     );
 
                     let linecount_layout = self.create_layout_for_linecount(
@@ -636,7 +643,7 @@ impl EditView {
         tabs.set_tab(
             0,
             TabAlign::Left,
-            self.edit_font.font_width as i32
+            self.edit_font.borrow().font_width as i32
                 * self.main_state.borrow().settings.tab_size as i32
                 * pango::SCALE,
         );
@@ -649,7 +656,7 @@ impl EditView {
         let pango_ctx = self.view_item.get_pango_ctx();
         let layout = pango::Layout::new(&pango_ctx);
         layout.set_tabs(Some(&self.get_tabs()));
-        layout.set_font_description(Some(&self.edit_font.font_desc));
+        layout.set_font_description(Some(&self.edit_font.borrow().font_desc));
         layout.set_text(&line_string);
 
         f64::from(layout.get_extents().1.width / pango::SCALE)
@@ -664,7 +671,7 @@ impl EditView {
     ) -> pango::Layout {
         let layout = pango::Layout::new(pango_ctx);
         layout.set_tabs(Some(tabs));
-        layout.set_font_description(Some(&self.edit_font.font_desc));
+        layout.set_font_description(Some(&self.edit_font.borrow().font_desc));
         layout.set_text(&line.text);
 
         let mut ix = 0;
@@ -752,8 +759,8 @@ impl EditView {
 
         {
             // The new height is the current last line + 1
-            let new_height = self.edit_font.font_height * line as f64;
-            let padding = self.edit_font.font_height * 4.0;
+            let new_height = self.edit_font.borrow().font_height * line as f64;
+            let padding = self.edit_font.borrow().font_height * 4.0;
             // The font height doesn't include these, so we have to add them for the last line
             let vadj = &self.view_item.vadj;
             // If the cursor above our current view, this is true. Scroll a bit higher than necessary
@@ -767,11 +774,11 @@ impl EditView {
             {
                 vadj.set_value(
                     new_height
-                        + self.edit_font.font_height
+                        + self.edit_font.borrow().font_height
                         + padding
                         // These two aren't included in the font height and we need them to line up with the line
-                        + self.edit_font.font_ascent
-                        + self.edit_font.font_descent
+                        + self.edit_font.borrow().font_ascent
+                        + self.edit_font.borrow().font_descent
                         - vadj.get_page_size(),
                 );
             }
@@ -820,7 +827,7 @@ impl EditView {
 
                 trace!("Horizontal scrolling to min: {}; max: {}", min, max);
 
-                let padding = self.edit_font.font_width * 4.0;
+                let padding = self.edit_font.borrow().font_width * 4.0;
                 let hadj = &self.view_item.hadj;
 
                 // If the cursor/selection is to the left of our current view, this is true
