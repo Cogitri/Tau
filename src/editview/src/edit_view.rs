@@ -881,6 +881,12 @@ impl EditView {
             2 => {
                 self.do_paste_primary(self.view_id, line, col);
             }
+            3 => {
+                #[cfg(feature = "gtk_v3_22")]
+                self.view_item.context_menu.popup_at_pointer(Some(&eb));
+                #[cfg(not(feature = "gtk_v3_22"))]
+                self.view_item.context_menu.popup_easy(3, eb.get_time());
+            }
             _ => {}
         }
         Inhibit(false)
@@ -1069,7 +1075,7 @@ impl EditView {
     }
 
     /// Copies text to the clipboard
-    fn do_cut(&self, view_id: ViewId) {
+    pub fn do_cut(&self, view_id: ViewId) {
         debug!("{}", gettext("Adding cutting text op to idle queue"));
 
         let (clipboard_tx, clipboard_rx) =
@@ -1094,7 +1100,7 @@ impl EditView {
     }
 
     /// Copies text to the clipboard
-    fn do_copy(&self, view_id: ViewId) {
+    pub fn do_copy(&self, view_id: ViewId) {
         debug!("{}", gettext("Adding copying text op to idle queue"));
 
         let (clipboard_tx, clipboard_rx) =
@@ -1119,7 +1125,7 @@ impl EditView {
     }
 
     /// Pastes text from the clipboard into the EditView
-    fn do_paste(&self, view_id: ViewId) {
+    pub fn do_paste(&self, view_id: ViewId) {
         // if let Some(text) = Clipboard::get(&SELECTION_CLIPBOARD).wait_for_text() {
         //     self.core.insert(view_id, &text);
         // }
@@ -1132,7 +1138,7 @@ impl EditView {
         }));
     }
 
-    fn do_paste_primary(&self, view_id: ViewId, line: u64, col: u64) {
+    pub fn do_paste_primary(&self, view_id: ViewId, line: u64, col: u64) {
         debug!("{}", gettext("Pasting primary text"));
         let core = self.core.clone();
         Clipboard::get(&SELECTION_PRIMARY).request_text(enclose!((view_id) move |_, text| {

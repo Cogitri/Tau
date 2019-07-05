@@ -257,6 +257,66 @@ impl MainWin {
             application.add_action(&replace_action);
         }
         {
+            let copy_action = SimpleAction::new("copy", None);
+            copy_action.connect_activate(enclose!((main_win) move |_,_| {
+                trace!("{} 'copy' {}", gettext("Handling"), gettext("action"));
+                if let Some(ev) = main_win.get_current_edit_view() {
+                    ev.do_copy(ev.view_id)
+                }
+            }));
+            application.add_action(&copy_action);
+        }
+        {
+            let cut_action = SimpleAction::new("cut", None);
+            cut_action.connect_activate(enclose!((main_win) move |_,_| {
+                trace!("{} 'cut' {}", gettext("Handling"), gettext("action"));
+                if let Some(ev) = main_win.get_current_edit_view() {
+                    ev.do_cut(ev.view_id)
+                }
+            }));
+            application.add_action(&cut_action);
+        }
+        {
+            let paste_action = SimpleAction::new("paste", None);
+            paste_action.connect_activate(enclose!((main_win) move |_,_| {
+                trace!("{} 'paste' {}", gettext("Handling"), gettext("action"));
+                if let Some(ev) = main_win.get_current_edit_view() {
+                    ev.do_paste(ev.view_id)
+                }
+            }));
+            application.add_action(&paste_action);
+        }
+        {
+            let undo_action = SimpleAction::new("undo", None);
+            undo_action.connect_activate(enclose!((main_win) move |_,_| {
+                trace!("{} 'undo' {}", gettext("Handling"), gettext("action"));
+                if let Some(ev) = main_win.get_current_edit_view() {
+                    main_win.core.undo(ev.view_id);
+                }
+            }));
+            application.add_action(&undo_action);
+        }
+        {
+            let redo_action = SimpleAction::new("redo", None);
+            redo_action.connect_activate(enclose!((main_win) move |_,_| {
+                trace!("{} 'redo' {}", gettext("Handling"), gettext("action"));
+                if let Some(ev) = main_win.get_current_edit_view() {
+                    main_win.core.redo(ev.view_id);
+                }
+            }));
+            application.add_action(&redo_action);
+        }
+        {
+            let select_all_action = SimpleAction::new("select_all", None);
+            select_all_action.connect_activate(enclose!((main_win) move |_,_| {
+                trace!("{} 'select_all' {}", gettext("Handling"), gettext("action"));
+                if let Some(ev) = main_win.get_current_edit_view() {
+                    main_win.core.select_all(ev.view_id);
+                }
+            }));
+            application.add_action(&select_all_action);
+        }
+        {
             let save_action = SimpleAction::new("save", None);
             save_action.connect_activate(enclose!((main_win) move |_,_| {
                 trace!("{} 'save' {}", gettext("Handling"), gettext("action"));

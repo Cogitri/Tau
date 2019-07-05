@@ -220,4 +220,36 @@
       </object>
     </child>
   </object>
+  <menu id="context_menu">
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">Cut</attribute>
+        <attribute name="action">app.cut</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">Copy</attribute>
+        <attribute name="action">app.copy</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">Paste</attribute>
+        <attribute name="action">app.paste</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">Undo</attribute>
+        <attribute name="action">app.undo</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">Redo</attribute>
+        <attribute name="action">app.redo</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">Select All</attribute>
+        <attribute name="action">app.select_all</attribute>
+      </item>
+    </section>
+  </menu>
 </interface>

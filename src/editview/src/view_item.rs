@@ -31,6 +31,7 @@ pub struct ViewItem {
     pub hadj: Adjustment,
     pub vadj: Adjustment,
     pub statusbar: EvBar,
+    pub context_menu: Menu,
 }
 
 impl ViewItem {
@@ -56,6 +57,10 @@ impl ViewItem {
             column_label: builder.get_object("column_label").unwrap(),
             list_model: builder.get_object("syntax_liststore").unwrap(),
         };
+        let gmenu: gio::Menu = builder.get_object("context_menu").unwrap();
+        let context_menu = gtk::Menu::new_from_model(&gmenu);
+        //FIXME: This should take IsA<Widget> so we don't have to upcast to a widget
+        context_menu.set_property_attach_widget(Some(&edit_area.clone().upcast::<Widget>()));
 
         let ev_scrolled_window = builder.get_object("ev_scrolled_window").unwrap();
         let hbox: Grid = builder.get_object("ev_root_widget").unwrap();
@@ -68,6 +73,7 @@ impl ViewItem {
             vadj,
             statusbar,
             ev_scrolled_window,
+            context_menu,
             root_box: hbox,
         }
     }
