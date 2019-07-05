@@ -166,7 +166,10 @@ impl ViewItem {
             .unwrap_or_else(|| panic!("{}", &gettext("Failed to get Pango context")))
     }
 
-    pub fn set_avail_langs(&self, langs: &[&str]) {
+    pub fn set_avail_langs<T>(&self, langs: &[T])
+    where
+        T: AsRef<str> + PartialEq<&'static str> + glib::value::SetValue,
+    {
         for lang in langs {
             // Localize 'Plain Text'
             if lang == &"Plain Text" {

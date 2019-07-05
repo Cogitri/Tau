@@ -113,6 +113,10 @@ impl EditView {
         });
 
         edit_view
+            .view_item
+            .set_avail_langs(&main_state.borrow().avail_languages);
+
+        edit_view
     }
 
     fn connect_im_events(edit_view: &Rc<EditView>, im_context: &IMContextSimple) {
