@@ -69,12 +69,12 @@ argument you pass to meson. Do note that `sudo -E` isn't strictly necessary, but
 
 ### Docs
 
-Please see the docs on https://gxi.cogitri.dev/docs to learn more about Tau's inner workings. 
+Please see the docs on https://gxi.cogitri.dev/docs to learn more about Tau's inner workings.
 [gtk-rs' site](https://gtk-rs.org/) offers documentation and examples about how gtk-rs works.
 
 ### Translating
 
-Visit [Weblate](https://hosted.weblate.org/engage/gxi/) to translate Tau.
+Visit [Weblate](https://hosted.weblate.org/engage/Tau/) to translate Tau.
 
 ## Install on different platforms
 
