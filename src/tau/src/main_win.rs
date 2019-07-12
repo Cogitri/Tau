@@ -27,8 +27,11 @@ pub const RESOURCE: &[u8] = include_bytes!("ui/resources.gresource");
 /// - `Cancel` (cancel the action and return to editing)
 #[derive(Debug, PartialEq)]
 enum SaveAction {
+    /// Symbols that we should save&close
     Save = 100,
+    //// Symbols that we should close w/o save
     CloseWithoutSave = 101,
+    /// Symbols to close without saving
     Cancel = 102,
 }
 
@@ -52,13 +55,22 @@ impl TryFrom<i32> for SaveAction {
 /// The `WinProp` struct, which holds some information about the current state of the Window. It's
 /// saved to GSettings during shutdown to restore the window state when it's started again.
 struct WinProp {
+    /// Height of the MainWin
     height: i32,
+    /// Width of the MainWin
     width: i32,
+    /// Whether or not the MainWin is maximized
     is_maximized: bool,
+    /// The GSchema we save the fields of the WinProp to
     gschema: GSchema,
 }
 
 impl WinProp {
+    /// Create a new WinProp. Gets the GSchema of the name of the `Application`'s id
+    ///
+    /// # Panics
+    ///
+    /// This will panic if there's no GSchema of the name of the `Application`s id.
     pub fn new(application: &Application) -> Self {
         let gschema = GSchema::new(application.get_application_id().unwrap().as_str());
         Self {
@@ -69,6 +81,7 @@ impl WinProp {
         }
     }
 
+    /// Save the WinProp to the `WinProp.gschema`
     pub fn save(&self) {
         self.gschema.set_key("window-height", self.height).unwrap();
         self.gschema.set_key("window-width", self.width).unwrap();
@@ -107,19 +120,29 @@ pub struct MainWin {
 }
 
 impl MainWin {
+    /// Create a new `MainWin` instance, which facilitates Tau's buttons (like save/open) and
+    /// bootstrap Tau
     pub fn new(
+        // The `gio::Application` which this `MainWin` belongs to
         application: Application,
+        // The `xi-core` we can send commands to
         core: Client,
+        // The `Receiver` we get requests to open new views from
         new_view_rx: Receiver<(ViewId, Option<String>)>,
+        // The `Sender` to open new views
         new_view_tx: Sender<(ViewId, Option<String>)>,
+        // The `Receiver` on which we receive messages from `xi-core`
         event_rx: Receiver<XiEvent>,
+        // The `Receiver` on which we receive requests from `xi-core`
         request_tx: crossbeam_channel::Sender<XiRequest>,
+        // The tokio runtime, we only use this to shut it down with Tau
         tokio_runtime: Rc<RefCell<Option<Runtime>>>,
     ) -> Rc<Self> {
         let gbytes = Bytes::from_static(RESOURCE);
         let resource = Resource::new_from_data(&gbytes).unwrap();
         gio::resources_register(&resource);
 
+        // Add custom CSS, mainly to make the statusbar smaller
         let provider = gtk::CssProvider::new();
         provider.load_from_resource("/org/gnome/Tau/app.css");
         gtk::StyleContext::add_provider_for_screen(
@@ -179,7 +202,7 @@ impl MainWin {
 
         window.set_application(Some(&application));
 
-        //This is called when the window is closed with the 'X' or via the application menu, etc.
+        // This is called when the window is closed with the 'X' or via the application menu, etc.
         window.connect_delete_event(enclose!((main_win, window, tokio_runtime) move |_, _| {
             // Only destroy the window when the user has saved the changes or closes without saving
             if Self::close_all(main_win.clone()) == SaveAction::Cancel {
@@ -196,6 +219,7 @@ impl MainWin {
             }
         }));
 
+        // Save to `WinProp` when the size of the window is changed
         window.connect_size_allocate(enclose!((main_win, window) move |_, _| {
             let win_size = window.get_size();
             let maximized = window.is_maximized();
@@ -208,6 +232,8 @@ impl MainWin {
             }
         }));
 
+        // Below here we connect all actions, meaning that these closures will be run when the respective
+        // action is triggered (e.g. by a button press)
         {
             let open_action = SimpleAction::new("open", None);
             open_action.connect_activate(enclose!((main_win) move |_,_| {
@@ -400,7 +426,7 @@ impl MainWin {
             application.add_action(&space_indent_action);
         }
 
-        /* Put keyboard shortcuts here*/
+        // Put keyboard shortcuts here
         if let Some(app) = window.get_application() {
             app.set_accels_for_action("app.find", &["<Primary>f"]);
             app.set_accels_for_action("app.save", &["<Primary>s"]);
@@ -413,6 +439,8 @@ impl MainWin {
 
         let main_context = MainContext::default();
 
+        // Open new `EditView`s when we receives something here. This is a channel because we can
+        // also receive this from `connect_open`/`connect_activate` in main.rs
         new_view_rx.attach(
             Some(&main_context),
             enclose!((main_win) move |(view_id, path)| {
@@ -434,16 +462,6 @@ impl MainWin {
 
         main_win
     }
-    /*
-    pub fn activate(_application: &Application, _shared_queue: Arc<Mutex<SharedQueue>>) {
-        // TODO
-        unimplemented!();
-    }
-    pub fn open(_application: &Application, _shared_queue: Arc<Mutex<SharedQueue>>) {
-        // TODO
-        unimplemented!();
-    }
-    */
 }
 
 impl MainWin {
@@ -471,6 +489,7 @@ impl MainWin {
         }
     }
 
+    /// Open an `ErrorDialog` when with the `Alert`'s msg
     pub fn alert(&self, params: xrl::Alert) {
         ErrorDialog::new(ErrorMsg {
             msg: params.msg,
@@ -478,6 +497,7 @@ impl MainWin {
         });
     }
 
+    /// Register the `AvailableThemes` with our `MainState`
     pub fn available_themes(&self, params: xrl::AvailableThemes) {
         let mut state = self.state.borrow_mut();
         state.themes.clear();
@@ -503,6 +523,7 @@ impl MainWin {
         self.core.set_theme(&state.theme_name);
     }
 
+    /// Change the theme in our `MainState`
     pub fn theme_changed(&self, params: xrl::ThemeChanged) {
         // FIXME: Use annotations instead of constructing the selection style here
         let selection_style = Style {
@@ -522,6 +543,8 @@ impl MainWin {
         state.styles.insert(0, selection_style);
     }
 
+    /// Get the available plugins and throw and error msg if we're missing syntect, which
+    /// we need for a lot of stuff
     pub fn available_plugins(&self, params: xrl::AvailablePlugins) {
         let mut has_syntect = false;
 
@@ -531,6 +554,7 @@ impl MainWin {
             }
         }
 
+        // FIXME: add a "don't show this again"!
         if !has_syntect {
             ErrorDialog::new(ErrorMsg {
                 msg: format!("{}: {:?}", gettext("Couldn't find syntect plugin, functionality will be limited! Only found the following plugins"), params.plugins),
@@ -539,6 +563,7 @@ impl MainWin {
         }
     }
 
+    /// Forward `ConfigChanged` to the respective `EditView`
     pub fn config_changed(&self, params: xrl::ConfigChanged) {
         let views = self.views.borrow();
         if let Some(ev) = views.get(&params.view_id) {
@@ -546,6 +571,7 @@ impl MainWin {
         }
     }
 
+    /// Forward `FindStatus` to the respective `EditView`
     pub fn find_status(&self, params: xrl::FindStatus) {
         let views = self.views.borrow();
         if let Some(ev) = views.get(&params.view_id) {
@@ -553,6 +579,7 @@ impl MainWin {
         }
     }
 
+    /// Forward `ReplaceStatus` to the respective `EditView`
     pub fn replace_status(&self, params: xrl::ReplaceStatus) {
         let views = self.views.borrow();
         if let Some(ev) = views.get(&params.view_id) {
@@ -560,11 +587,13 @@ impl MainWin {
         }
     }
 
+    /// Insert a style into our `MainState`
     pub fn def_style(&self, params: xrl::Style) {
         let mut state = self.state.borrow_mut();
         state.styles.insert(params.id as usize, params);
     }
 
+    /// Forward `Update` to the respective `EditView`
     pub fn update(&self, params: xrl::Update) {
         trace!("{} 'update': {:?}", gettext("Handling"), params);
         let views = self.views.borrow();
@@ -573,6 +602,8 @@ impl MainWin {
         }
     }
 
+    /// Forward `ScrollTo` to the respective `EditView`. Also set our `GtkNotebook`'s
+    /// current page to that `EditView`
     pub fn scroll_to(&self, params: xrl::ScrollTo) {
         trace!("{} 'scroll_to' {:?}", gettext("Handling"), params);
 
@@ -586,6 +617,7 @@ impl MainWin {
 
     fn plugin_started(&self, _params: xrl::PluginStarted) {}
 
+    /// Open an error dialog if a plugin has crashed
     fn plugin_stopped(&self, params: xrl::PluginStoped) {
         ErrorDialog::new(ErrorMsg {
             msg: format!(
@@ -599,6 +631,7 @@ impl MainWin {
         });
     }
 
+    /// Measure the width of a string for Xi and send it the result. Used for line wrapping.
     pub fn measure_width(&self, params: xrl::MeasureWidth) {
         trace!("{} 'measure_width' {:?}", gettext("Handling"), params);
         if let Some(ev) = self.get_current_edit_view() {
@@ -616,6 +649,8 @@ impl MainWin {
         }
     }
 
+    /// Set available syntaxes in our `MainState` and set the syntax_seletion_sensitivity
+    /// of all `EditView`s, so it's unsensitive when we don't have any syntaxes to choose from.
     pub fn available_languages(&self, params: xrl::AvailableLanguages) {
         debug!("{} 'available_languages' {:?}", gettext("Handling"), params);
         let mut main_state = self.state.borrow_mut();
@@ -647,6 +682,7 @@ impl MainWin {
         }
     }
 
+    /// Forward `LanguageChanged` to the respective `EditView`
     pub fn language_changed(&self, params: xrl::LanguageChanged) {
         debug!("{} 'language_changed' {:?}", gettext("Handling"), params);
         let views = self.views.borrow();
@@ -694,6 +730,8 @@ impl MainWin {
         fcn.run();
     }
 
+    /// Save the `EditView`'s document if a filename is set, or open a filesaver
+    /// dialog for the user to choose a name
     pub fn handle_save_button(main_win: &Rc<Self>) {
         if let Some(edit_view) = main_win.get_current_edit_view() {
             if let Some(ref file_name) = *edit_view.file_name.borrow() {
@@ -704,6 +742,8 @@ impl MainWin {
         }
     }
 
+    /// Open a filesaver dialog for the user to choose a name where to save the
+    /// file and save to it.
     fn current_save_as(main_win: &Rc<Self>) {
         if let Some(edit_view) = main_win.get_current_edit_view() {
             Self::save_as(main_win, &edit_view);
@@ -756,27 +796,32 @@ impl MainWin {
         fcn.run();
     }
 
+    /// Open a `PrefsWin` for the user to configure things like the theme
     fn prefs(main_win: Rc<Self>) {
         let gschema = { &main_win.properties.borrow().gschema };
         PrefsWin::new(&main_win.window, &main_win.state, &main_win.core, &gschema);
     }
 
+    /// Open the `AboutWin`, which contains some info about Tau
     fn about(main_win: Rc<Self>) {
         AboutWin::new(&main_win.window);
     }
 
+    /// Open the find dialog of the current `EditView`
     fn find(main_win: &Rc<Self>) {
         if let Some(edit_view) = main_win.get_current_edit_view() {
             edit_view.start_search();
         }
     }
 
+    /// Open the replace dialog of the current `EditView
     fn replace(main_win: &Rc<Self>) {
         if let Some(edit_view) = main_win.get_current_edit_view() {
             edit_view.start_replace();
         }
     }
 
+    /// Get the currently opened `EditView` in our `GtkNotebook`
     fn get_current_edit_view(&self) -> Option<Rc<EditView>> {
         if let Some(idx) = self.notebook.get_current_page() {
             if let Some(w) = self.notebook.get_nth_page(Some(idx)) {
@@ -789,6 +834,7 @@ impl MainWin {
         None
     }
 
+    /// Request a new view from `xi-core` and send
     fn req_new_view(&self, file_name: Option<String>) {
         trace!("{}", gettext("Requesting new view"));
 
@@ -800,6 +846,11 @@ impl MainWin {
         self.new_view_tx.send((view_id, file_name)).unwrap();
     }
 
+    /// When `xi-core` tells us to create a new view, we have to do multiple things:
+    ///
+    /// 1) Check if the current `EditView` is empty (doesn't contain ANY text). If so, replace that `EditView`
+    ///    with the new `EditView`. That way we don't stack empty, useless views.
+    /// 2) Connect the ways to close the `EditView`, either via a middle click or by clicking the X of the tab
     fn new_view_response(main_win: &Rc<Self>, file_name: Option<String>, view_id: ViewId) {
         trace!("{}", gettext("Creating new EditView"));
         let mut old_ev = None;
@@ -865,6 +916,11 @@ impl MainWin {
         }
     }
 
+    /// Close all `EditView`s, checking if the user wants to close them if there are unsaved changes
+    ///
+    /// # Returns
+    ///
+    /// - `SaveAction` determining if all `EditView`s have been closed.
     fn close_all(main_win: Rc<Self>) -> SaveAction {
         trace!("{}", gettext("Closing all EditViews"));
         // Get all views that we currently have opened
@@ -899,6 +955,11 @@ impl MainWin {
         }
     }
 
+    /// Close the current `EditView`
+    ///
+    /// # Returns
+    ///
+    /// - `SaveAction` determining if the `EdtiView` has been closed.
     fn close(main_win: &Rc<Self>) -> SaveAction {
         trace!("{}", gettext("Closing current Editview"));
         if let Some(edit_view) = main_win.get_current_edit_view() {
@@ -908,6 +969,13 @@ impl MainWin {
         }
     }
 
+    /// Close a specific `EditView`. Changes the `GtkNotebook` to the supplied `EditView`, so that the
+    /// user can see which one is being closed. Presents the user a close dialog giving him the choice
+    /// of either saving, aborting or closing without saving, if the `EditView` has unsaved changes.
+    ///
+    /// # Returns
+    ///
+    /// `SaveAction` determining which choice the user has made in the save dialog
     fn close_view(main_win: &Rc<Self>, edit_view: &Rc<EditView>) -> SaveAction {
         trace!("{} {}", gettext("Closing Editview"), edit_view.view_id);
         let save_action = if *edit_view.pristine.borrow() {
@@ -991,6 +1059,7 @@ impl MainWin {
     }
 }
 
+/// Generate a new `Settings` object, which we pass to the `EditView` to set its behaviour.
 pub fn new_settings() -> Settings {
     let gschema = GSchema::new("org.gnome.Tau");
     let interface_font = {
@@ -1020,6 +1089,9 @@ pub fn new_settings() -> Settings {
     }
 }
 
+/// Connect changes in our GSchema to actions in Tau. E.g. when the `draw-trailing-spaces` key has
+/// been modified we make sure to set this in the `MainState` (so that the `EditView`s actually notice
+/// the change) and redraw the current one so that the user sees what has changed.
 pub fn connect_settings_change(main_win: &Rc<MainWin>, core: &Client) {
     let gschema = main_win.state.borrow().settings.gschema.clone();
     gschema
