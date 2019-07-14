@@ -50,20 +50,16 @@ impl Rectangle {
 
     /// Locate the positions of spaces/tabs in form of a `Vec<Rectangle>` in a `pango::Layout`.
     pub fn from_layout_index(index: Vec<i32>, layout: &pango::Layout) -> Vec<Self> {
-        let mut vec = Vec::new();
-
-        for index in index.iter() {
-            let pos = layout.index_to_pos(*index);
-            let rect = Self {
+        index
+            .iter()
+            .map(|index| layout.index_to_pos(*index))
+            .map(|pos| Self {
                 x: (pos.x / pango::SCALE).into(),
                 y: (pos.y / pango::SCALE).into(),
                 width: (pos.width / pango::SCALE).into(),
                 height: (pos.height / pango::SCALE).into(),
-            };
-            vec.push(rect);
-        }
-
-        vec
+            })
+            .collect()
     }
 }
 
