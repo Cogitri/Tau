@@ -3,6 +3,7 @@ use log::trace;
 use std::f64::consts::PI;
 
 #[derive(Debug, Clone, PartialOrd, PartialEq)]
+/// A Rectangle representing a tab's/space's position on the screen
 pub struct Rectangle {
     pub width: f64,
     pub height: f64,
@@ -11,6 +12,7 @@ pub struct Rectangle {
 }
 
 impl Rectangle {
+    /// Draw a circle representing a space at the position of the `Rectangle`
     pub fn draw_space(&self, cr: &Context) {
         trace!("Drawing space at: {:?}", self);
 
@@ -26,6 +28,7 @@ impl Rectangle {
         cr.restore();
     }
 
+    /// Draw an arrow representing a tab at the position of the `Rectangle`
     pub fn draw_tab(&self, cr: &Context) {
         trace!("Drawing tab at: {:?}", self);
 
@@ -45,6 +48,7 @@ impl Rectangle {
         cr.restore();
     }
 
+    /// Locate the positions of spaces/tabs in form of a `Vec<Rectangle>` in a `pango::Layout`.
     pub fn from_layout_index(index: Vec<i32>, layout: &pango::Layout) -> Vec<Self> {
         let mut vec = Vec::new();
 
@@ -63,11 +67,13 @@ impl Rectangle {
     }
 }
 
+#[derive(Debug, Clone, PartialOrd, PartialEq)]
 pub struct Spaces {
     pub index: Vec<i32>,
 }
 
 impl Spaces {
+    /// Get all spaces in a string
     pub fn all(text: &str) -> Self {
         let mut space_index = Vec::new();
         for (i, char) in text.bytes().enumerate() {
@@ -79,6 +85,15 @@ impl Spaces {
         Self { index: space_index }
     }
 
+    /// Get leading spaces in a string
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use editview::draw_invisible::Spaces;
+    ///
+    /// assert_eq!(Spaces::leading("  example"), Spaces { index: vec![0,1] })
+    /// ```
     pub fn leading(text: &str) -> Self {
         let mut space_index = Vec::new();
         let last_char = text.replace("\t", "a").trim_start().len();
@@ -90,6 +105,15 @@ impl Spaces {
         Self { index: space_index }
     }
 
+    /// Get trailing spaces in a string
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use editview::draw_invisible::Spaces;
+    ///
+    /// assert_eq!(Spaces::trailing("example  "), Spaces { index: vec![7,8] })
+    /// ```
     pub fn trailing(text: &str) -> Self {
         let mut space_index = Vec::new();
         let last_char = text.replace("\t", "a").trim_end().len();
@@ -103,11 +127,13 @@ impl Spaces {
     }
 }
 
+#[derive(Debug, Clone, PartialOrd, PartialEq)]
 pub struct Tabs {
     pub index: Vec<i32>,
 }
 
 impl Tabs {
+    /// Get all tabs in your string
     pub fn all(text: &str) -> Self {
         let mut tab_index = Vec::new();
         for (i, char) in text.bytes().enumerate() {
@@ -119,6 +145,15 @@ impl Tabs {
         Self { index: tab_index }
     }
 
+    /// Get leading tabs in a string
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use editview::draw_invisible::Tabs;
+    ///
+    /// assert_eq!(Tabs::leading("\t\texample"), Tabs { index: vec![0,1] })
+    /// ```
     pub fn leading(text: &str) -> Self {
         let mut tab_index = Vec::new();
 
@@ -131,6 +166,15 @@ impl Tabs {
         Self { index: tab_index }
     }
 
+    /// Get leading tabs in a string
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use editview::draw_invisible::Tabs;
+    ///
+    /// assert_eq!(Tabs::trailing("example\t\t"), Tabs { index: vec![7,8] })
+    /// ```
     pub fn trailing(text: &str) -> Self {
         let mut tab_index = Vec::new();
 
