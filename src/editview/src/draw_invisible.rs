@@ -192,13 +192,9 @@ impl Tabs {
 #[cfg(test)]
 mod test {
     use super::*;
-    use ::fontconfig::fontconfig;
-    use pango::{FontDescription, FontMapExt};
-    use std::ffi::CString;
 
     // Misc strings to test. Try to use special chars here
     const EXM1: &str = "Traga tinta em trinta taças";
-    const EXM2: &str = "Völlig übertrieben";
     const EXM3: &str = "\t\tÜberall ganz\tviele Tabs!\t\t";
     const EXM4: &str = "  Überall\tganz    \tviele Spaces und\tTabs!";
 
