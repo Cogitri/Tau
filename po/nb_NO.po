@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Tau\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-06-17 00:36+0200\n"
-"PO-Revision-Date: 2019-06-27 05:02+0000\n"
+"PO-Revision-Date: 2019-07-15 12:46+0000\n"
 "Last-Translator: Allan Nordhøy <epost@anotheragency.no>\n"
 "Language-Team: Norwegian Bokmål <https://hosted.weblate.org/projects/Tau/"
 "translation/nb_NO/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 3.7.1-dev\n"
+"X-Generator: Weblate 3.8-dev\n"
 
 #: data/org.gnome.Tau.appdata.xml.in:7 data/org.gnome.Tau.desktop.in:3
 msgid "Tau"
@@ -27,13 +27,12 @@ msgid "GTK frontend for the xi text editor"
 msgstr "GTK-grenseflate for xi-tekstbehandleren"
 
 #: data/org.gnome.Tau.appdata.xml.in:12
-#, fuzzy
 msgid ""
 "Tau is a GTK frontend for the xi text editor written in Rust. It's a very "
 "fast plain text editor."
 msgstr ""
-"GTK-grenseflate for xi-tekstbehandleren skrevet i Rust. Det er en veldig "
-"rask klartekstbehandler."
+"Tau er en GTK-grenseflate for xi-tekstbehandleren skrevet i Rust. Det er en "
+"veldig rask klartekstbehandler."
 
 #: data/org.gnome.Tau.appdata.xml.in:27
 msgid "Rasmus \"Cogitri\" Thomsen"
@@ -75,19 +74,16 @@ msgid "Draw spaces which are at the end of a line"
 msgstr "Tegn blanktegn som er på slutten av en linje"
 
 #: data/org.gnome.Tau.gschema.xml:25
-#, fuzzy
 msgid "Draw leading spaces"
-msgstr "Tegn etterfølgende blanktegn"
+msgstr "Tegn innledende blanktegn"
 
 #: data/org.gnome.Tau.gschema.xml:26
-#, fuzzy
 msgid "Draw spaces which are at the beginning of a line"
-msgstr "Tegn blanktegn som er på slutten av en linje"
+msgstr "Tegn blanktegn som er på begynnelsen av en linje"
 
 #: data/org.gnome.Tau.gschema.xml:33
-#, fuzzy
 msgid "Draw all spaces"
-msgstr "Tegn etterfølgende blanktegn"
+msgstr "Tegn alle blanktegn"
 
 #: data/org.gnome.Tau.gschema.xml:34
 msgid "Draw spaces, no matter the position"
@@ -142,18 +138,16 @@ msgid "Amount of spaces that a tab is wide"
 msgstr "Antall mellomrom for tabulator"
 
 #: data/org.gnome.Tau.gschema.xml:87
-#, fuzzy
 msgid "Insert spaces instead of tabs"
-msgstr "Håndter blanktegn som tabulator"
+msgstr "Sett inn mellomrom istedenfor tabulatortegn"
 
 #: data/org.gnome.Tau.gschema.xml:88
 msgid "Whether spaces should be inserted instead of tabs"
 msgstr "Hvorvidt blanktegn skal settes inn istedenfor tabulator"
 
 #: data/org.gnome.Tau.gschema.xml:93
-#, fuzzy
 msgid "Treat indention with spaces like tabs"
-msgstr "Håndter blanktegn som tabulator"
+msgstr "Håndter innrykk med blanktegn som tabulator"
 
 #: data/org.gnome.Tau.gschema.xml:94
 msgid ""
@@ -168,39 +162,33 @@ msgid "Automatically match document's indention on newlines"
 msgstr "Automatisk samsvar dokumentets innrykk ved nye linjer"
 
 #: data/org.gnome.Tau.gschema.xml:104
-#, fuzzy
 msgid "The font used for editing"
-msgstr "Velger drakt for redigeringsområdet"
+msgstr "Skrift brukt for redigeringsområde"
 
 #: data/org.gnome.Tau.gschema.xml:109 src/tau/src/ui/prefs_win.glade:184
 #, fuzzy
 msgid "Wrap lines at the end of the document"
-msgstr "Rull forbi slutten på dokumenter"
+msgstr "Linjebrytning på slutten av dokumentet"
 
 #: data/org.gnome.Tau.gschema.xml:114
-#, fuzzy
 msgid "Draw trailing tabs"
-msgstr "Tegn etterfølgende blanktegn"
+msgstr "Tegn etterfølgende tabulatortegn"
 
 #: data/org.gnome.Tau.gschema.xml:115
-#, fuzzy
 msgid "Draw tabs which are at the end of a line"
-msgstr "Tegn blanktegn som er på slutten av en linje"
+msgstr "Tegn tabulatortegn som er på slutten av en linje"
 
 #: data/org.gnome.Tau.gschema.xml:122
-#, fuzzy
 msgid "Draw leading tabs"
-msgstr "Tegn etterfølgende blanktegn"
+msgstr "Tegn innledende tabulatortegn"
 
 #: data/org.gnome.Tau.gschema.xml:123
-#, fuzzy
 msgid "Draw tabs which are at the beginning of a line"
-msgstr "Tegn blanktegn som er på slutten av en linje"
+msgstr "Tegn tabulatortegn som er på begynnelsen av en linje"
 
 #: data/org.gnome.Tau.gschema.xml:130
-#, fuzzy
 msgid "Draw all tabs"
-msgstr "Tegn etterfølgende blanktegn"
+msgstr "Tegn alle tabulatortegn"
 
 #: data/org.gnome.Tau.gschema.xml:131
 msgid "Draw all tabs, no matter the position"
@@ -281,32 +269,28 @@ msgid "Display right margin at the column:"
 msgstr "Tegn en sidemarg på høyresiden i kolonnen:"
 
 #: src/tau/src/ui/prefs_win.glade:242
-#, fuzzy
 msgid "Highlight the current line"
-msgstr "Klarte ikke å hente nåværende EditView"
+msgstr "Framhev nåværende linje"
 
 #: src/tau/src/ui/prefs_win.glade:267
 msgid "Tabs"
 msgstr "Faner"
 
 #: src/tau/src/ui/prefs_win.glade:276 src/tau/src/ui/prefs_win.glade:320
-#, fuzzy
 msgid "Trailing"
-msgstr "Håndtering"
+msgstr "Etterfølgende"
 
 #: src/tau/src/ui/prefs_win.glade:291 src/tau/src/ui/prefs_win.glade:335
 msgid "All"
 msgstr "Alle"
 
 #: src/tau/src/ui/prefs_win.glade:306 src/tau/src/ui/prefs_win.glade:361
-#, fuzzy
 msgid "Leading"
-msgstr "Ledende"
+msgstr "Innledende"
 
 #: src/tau/src/ui/prefs_win.glade:352
-#, fuzzy
 msgid "Spaces"
-msgstr "Sett inn mellomrom"
+msgstr "Mellomrom"
 
 #: src/tau/src/ui/prefs_win.glade:390
 msgid "Editing"
@@ -322,14 +306,12 @@ msgid "Save All"
 msgstr "Lagre alle"
 
 #: src/tau/src/ui/tau.glade:61
-#, fuzzy
 msgid "Find…"
-msgstr "Finn"
+msgstr "Finn…"
 
 #: src/tau/src/ui/tau.glade:75
-#, fuzzy
 msgid "Replace…"
-msgstr "Erstatt"
+msgstr "Erstatt…"
 
 #: src/tau/src/ui/tau.glade:100
 #, fuzzy
@@ -337,9 +319,8 @@ msgid "Auto Indent"
 msgstr "Automatisk innrykk"
 
 #: src/tau/src/ui/tau.glade:114
-#, fuzzy
 msgid "Insert Spaces"
-msgstr "Sett inn mellomrom"
+msgstr "Sett inn blanktegn"
 
 #: src/tau/src/ui/tau.glade:164
 msgid "Help"
@@ -371,9 +352,8 @@ msgid "Save"
 msgstr "Lagre"
 
 #: src/editview/src/edit_view.rs:67 src/tau/src/main_win.rs:747
-#, fuzzy
 msgid "Creating new EditView"
-msgstr "Tegner EditView"
+msgstr "Oppretter ny EditView"
 
 #: src/editview/src/edit_view.rs:106
 #, fuzzy
@@ -393,9 +373,8 @@ msgid "Untitled"
 msgstr "Uten tittel"
 
 #: src/editview/src/edit_view.rs:163
-#, fuzzy
 msgid "Setting title for EditView"
-msgstr "Setter tittel til"
+msgstr "Setter tittel for EditView"
 
 #: src/editview/src/edit_view.rs:176 src/editview/src/edit_view.rs:213
 #: src/editview/src/edit_view.rs:247 src/editview/src/edit_view.rs:293
@@ -418,9 +397,8 @@ msgstr "Håndtering"
 #: src/editview/src/edit_view.rs:321 src/editview/src/edit_view.rs:601
 #: src/editview/src/edit_view.rs:793 src/editview/src/edit_view.rs:902
 #: src/editview/src/edit_view.rs:952
-#, fuzzy
 msgid "for EditView"
-msgstr "Tegner EditView"
+msgstr "for EditView"
 
 #: src/editview/src/edit_view.rs:193
 msgid "Setting edit font to"
@@ -431,14 +409,12 @@ msgid "Allocating DrawingArea size"
 msgstr "Tildeler DrawingArea-størrelse"
 
 #: src/editview/src/edit_view.rs:278
-#, fuzzy
 msgid "Width"
-msgstr "bredde"
+msgstr "Bredde"
 
 #: src/editview/src/edit_view.rs:280
-#, fuzzy
 msgid "Height"
-msgstr "høyde"
+msgstr "Høyde"
 
 #: src/editview/src/edit_view.rs:308
 msgid "Updating visible scroll region"
@@ -506,7 +482,7 @@ msgstr "Legger til kuttingstekst-op i ledigangskø"
 #: src/editview/src/edit_view.rs:1137
 #, fuzzy
 msgid "Adding copying text op to idle queue"
-msgstr "Legger til kuttingstekst-op i ledigangskø"
+msgstr "Legger til kopieringstekst-op i ledigangskø"
 
 #. if let Some(text) = Clipboard::get(&SELECTION_CLIPBOARD).wait_for_text() {
 #. self.core.insert(view_id, &text);
@@ -520,18 +496,16 @@ msgid "Pasting primary text"
 msgstr "Limer inn hovedtekst"
 
 #: src/editview/src/edit_view.rs:1187
-#, fuzzy
 msgid "Resizing EditView"
-msgstr "Tegner EditView"
+msgstr "Endrer størrelse på EditView"
 
 #: src/editview/src/edit_view.rs:1345
 msgid "Changing language to"
 msgstr "Endrer språk til"
 
 #: src/editview/src/edit_view.rs:1350
-#, fuzzy
 msgid "Language has been changed to"
-msgstr "Drakt endret til"
+msgstr "Språk endret til"
 
 #: src/editview/src/edit_view.rs:1353
 msgid "Plain Text"
@@ -565,9 +539,8 @@ msgid "Default application has wrong type"
 msgstr "Forvalgt program har feil type"
 
 #: src/tau/src/main.rs:115
-#, fuzzy
 msgid "Start a new instance of the application"
-msgstr "Brukeren velger å lukke programmet"
+msgstr "Åpne enda en utgave av programmet"
 
 #: src/tau/src/main.rs:135
 #, fuzzy
@@ -589,7 +562,7 @@ msgstr "Åpner ny fil"
 #: src/tau/src/main.rs:261
 #, fuzzy
 msgid "Failed to open new due to error"
-msgstr "Klarte ikke å sette oppsettsmappe."
+msgstr "Klarte ikke å åpne som følge av feil."
 
 #: src/tau/src/main.rs:261
 msgid "Path"
@@ -631,14 +604,12 @@ msgid "User chose to not quit application"
 msgstr "Bruker velger å ikke lukke programmet"
 
 #: src/tau/src/main_win.rs:300
-#, fuzzy
 msgid "User chose to quit application"
-msgstr "Inget forvalgt program"
+msgstr "Bruker valgte å avslutte programmet"
 
 #: src/tau/src/main_win.rs:372
-#, fuzzy
 msgid "Showing main window"
-msgstr "Viser \\\"Om\\\"-vindu"
+msgstr "Viser hovedvindu"
 
 #: src/tau/src/main_win.rs:391
 #, fuzzy
@@ -712,24 +683,20 @@ msgstr ""
 "en redigeringsfane åpen akkurat nå."
 
 #: src/tau/src/main_win.rs:736
-#, fuzzy
 msgid "Requesting new view"
-msgstr "Aktiverer ny visning"
+msgstr "Forespør ny visning"
 
 #: src/tau/src/main_win.rs:807
-#, fuzzy
 msgid "Closing all EditViews"
-msgstr "Tegner EditView"
+msgstr "Lukker alle EditViews"
 
 #: src/tau/src/main_win.rs:841
-#, fuzzy
 msgid "Closing current Editview"
-msgstr "Tegner EditView"
+msgstr "Lukker nåværende EditView"
 
 #: src/tau/src/main_win.rs:852
-#, fuzzy
 msgid "Closing Editview"
-msgstr "Tegner EditView"
+msgstr "Lukker EditView"
 
 #: src/tau/src/main_win.rs:879
 msgid "Save unsaved changes"
