@@ -49,36 +49,29 @@ impl Rectangle {
     }
 
     /// Locate the positions of spaces/tabs in form of a `Vec<Rectangle>` in a `pango::Layout`.
-    pub fn from_layout_index(index: Vec<i32>, layout: &pango::Layout) -> Vec<Self> {
+    pub fn from_layout_index<'a>(
+        index: impl Iterator<Item = i32> + 'a,
+        layout: &'a pango::Layout,
+    ) -> impl Iterator<Item = Self> + 'a {
         index
-            .iter()
-            .map(|index| layout.index_to_pos(*index))
+            .map(move |index| layout.index_to_pos(index))
             .map(|pos| Self {
                 x: (pos.x / pango::SCALE).into(),
                 y: (pos.y / pango::SCALE).into(),
                 width: (pos.width / pango::SCALE).into(),
                 height: (pos.height / pango::SCALE).into(),
             })
-            .collect()
     }
 }
 
-#[derive(Debug, Clone, PartialOrd, PartialEq)]
-pub struct Spaces {
-    pub index: Vec<i32>,
-}
+pub mod spaces {
+    use std::ops::Range;
 
-impl Spaces {
     /// Get all spaces in a string
-    pub fn all(text: &str) -> Self {
-        let mut space_index = Vec::new();
-        for (i, char) in text.bytes().enumerate() {
-            if char == b" "[0] {
-                space_index.push(i as i32)
-            }
-        }
-
-        Self { index: space_index }
+    pub fn all(text: &str) -> impl Iterator<Item = i32> + '_ {
+        text.bytes()
+            .zip(0..)
+            .flat_map(|(ch, i)| if ch == b' ' { Some(i) } else { None })
     }
 
     /// Get leading spaces in a string
@@ -86,59 +79,47 @@ impl Spaces {
     /// # Example
     ///
     /// ```
-    /// use editview::draw_invisible::Spaces;
+    /// use editview::draw_invisible::spaces;
     ///
-    /// assert_eq!(Spaces::leading("  example"), Spaces { index: vec![0,1] })
+    /// assert_eq!(spaces::leading("  example"), 0..2)
     /// ```
-    pub fn leading(text: &str) -> Self {
-        let mut space_index = Vec::new();
-        let last_char = text.replace("\t", "a").trim_start().len();
-        let (_, spaces) = text.split_at(last_char);
-        for (i, _) in spaces.chars().enumerate() {
-            space_index.push(i as i32)
-        }
-
-        Self { index: space_index }
+    pub fn leading(text: &str) -> Range<i32> {
+        let last_space = text
+            .bytes()
+            .position(|ch| ch != b' ')
+            .unwrap_or_else(|| text.len());
+        0..last_space as i32
     }
 
-    /// Get trailing spaces in a string
+    /// Get trailing spaces in a string. Be mindful that this _does not_ remove newline chars ('\n').
     ///
     /// # Example
     ///
     /// ```
-    /// use editview::draw_invisible::Spaces;
+    /// use editview::draw_invisible::spaces;
     ///
-    /// assert_eq!(Spaces::trailing("example  "), Spaces { index: vec![7,8] })
+    /// assert_eq!(spaces::trailing("example  "), 7..9)
     /// ```
-    pub fn trailing(text: &str) -> Self {
-        let mut space_index = Vec::new();
-        let last_char = text.replace("\t", "a").trim_end().len();
-        let (text_without_spaces, spaces) = text.split_at(last_char);
-        let char_count = text_without_spaces.bytes().count();
-        for (i, _) in spaces.chars().enumerate() {
-            space_index.push((i + char_count) as i32)
-        }
-
-        Self { index: space_index }
+    ///
+    /// ```
+    /// use editview::draw_invisible::spaces;
+    ///
+    /// assert_eq!(spaces::trailing("example  \n"), 10..10)
+    /// ```
+    pub fn trailing(text: &str) -> Range<i32> {
+        let first_space = text.bytes().rposition(|ch| ch != b' ').map_or(0, |x| x + 1);
+        first_space as _..text.len() as _
     }
 }
 
-#[derive(Debug, Clone, PartialOrd, PartialEq)]
-pub struct Tabs {
-    pub index: Vec<i32>,
-}
+pub mod tabs {
+    use std::ops::Range;
 
-impl Tabs {
-    /// Get all tabs in your string
-    pub fn all(text: &str) -> Self {
-        let mut tab_index = Vec::new();
-        for (i, char) in text.bytes().enumerate() {
-            if char == b"\t"[0] {
-                tab_index.push(i as i32)
-            }
-        }
-
-        Self { index: tab_index }
+    /// Get all tabs in a string
+    pub fn all(text: &str) -> impl Iterator<Item = i32> + '_ {
+        text.bytes()
+            .zip(0..)
+            .flat_map(|(ch, i)| if ch == b'\t' { Some(i) } else { None })
     }
 
     /// Get leading tabs in a string
@@ -146,42 +127,39 @@ impl Tabs {
     /// # Example
     ///
     /// ```
-    /// use editview::draw_invisible::Tabs;
+    /// use editview::draw_invisible::tabs;
     ///
-    /// assert_eq!(Tabs::leading("\t\texample"), Tabs { index: vec![0,1] })
+    /// assert_eq!(tabs::leading("\t\texample"), 0..2)
     /// ```
-    pub fn leading(text: &str) -> Self {
-        let mut tab_index = Vec::new();
-
-        let last_char = text.replace(" ", "a").trim_start().len();
-        let (_, tabs) = text.split_at(last_char);
-        for (i, _) in tabs.bytes().enumerate() {
-            tab_index.push((i) as i32)
-        }
-
-        Self { index: tab_index }
+    pub fn leading(text: &str) -> Range<i32> {
+        let last_tab = text
+            .bytes()
+            .position(|ch| ch != b'\t')
+            .unwrap_or_else(|| text.len());
+        0..last_tab as i32
     }
 
-    /// Get leading tabs in a string
+    /// Get trailing tabs in a string. Be mindful that this _does not_ remove newline chars ('\n').
     ///
     /// # Example
     ///
     /// ```
-    /// use editview::draw_invisible::Tabs;
+    /// use editview::draw_invisible::tabs;
     ///
-    /// assert_eq!(Tabs::trailing("example\t\t"), Tabs { index: vec![7,8] })
+    /// assert_eq!(tabs::trailing("example\t\t"), 7..9)
     /// ```
-    pub fn trailing(text: &str) -> Self {
-        let mut tab_index = Vec::new();
-
-        let last_char = text.replace(" ", "a").trim_end().len();
-        let (text_without_tabs, tabs) = text.split_at(last_char);
-        let char_count = text_without_tabs.bytes().count();
-        for (i, _) in tabs.bytes().enumerate() {
-            tab_index.push((i + char_count) as i32)
-        }
-
-        Self { index: tab_index }
+    ///
+    ///```
+    /// use editview::draw_invisible::tabs;
+    ///
+    /// assert_eq!(tabs::trailing("example\t\t\n"), 10..10)
+    ///```
+    pub fn trailing(text: &str) -> Range<i32> {
+        let first_tab = text
+            .bytes()
+            .rposition(|ch| ch != b'\t')
+            .map_or(0, |x| x + 1);
+        first_tab as _..text.len() as _
     }
 }
 
@@ -196,27 +174,26 @@ mod test {
 
     #[test]
     fn spaces_special_char() {
-        assert_eq!(Spaces::trailing(EXM1).index.len(), 0);
-        assert_eq!(Spaces::all(EXM1).index.len(), 4);
-        assert_eq!(Spaces::leading(EXM4).index.len(), 2);
+        assert_eq!(spaces::trailing(EXM1).count(), 0);
+        assert_eq!(spaces::all(EXM1).count(), 4);
+        assert_eq!(spaces::leading(EXM4).count(), 2);
     }
 
     #[test]
     fn tabs_special_char() {
-        assert_eq!(Tabs::trailing(EXM1).index.len(), 0);
-        assert_eq!(Tabs::all(EXM3).index.len(), 5);
-        assert_eq!(Tabs::leading(EXM3).index.len(), 2);
+        assert_eq!(tabs::trailing(EXM1).count(), 0);
+        assert_eq!(tabs::all(EXM3).count(), 5);
+        assert_eq!(tabs::leading(EXM3).count(), 2);
     }
 
     #[test]
     fn mixed_tabs_spaces() {
-        assert_eq!(
-            (Tabs::all(EXM4).index.len(), Spaces::all(EXM4).index.len()),
-            (3, 8),
-        );
-        assert_eq!(
-            (Tabs::all(EXM3).index.len(), Spaces::all(EXM3).index.len()),
-            (5, 2),
-        );
+        assert_eq!((tabs::all(EXM4).count(), spaces::all(EXM4).count()), (3, 8),);
+        assert_eq!((tabs::all(EXM3).count(), spaces::all(EXM3).count()), (5, 2),);
+    }
+
+    #[test]
+    fn trailing_tabs() {
+        assert_eq!(tabs::trailing(EXM3).count(), 2);
     }
 }

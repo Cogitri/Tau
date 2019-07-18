@@ -470,58 +470,62 @@ impl EditView {
                 set_source_color(cr, theme.caret);
 
                 if self.main_state.borrow().settings.trailing_tabs {
-                    let mut pos = draw_invisible::Rectangle::from_layout_index(
-                        draw_invisible::Tabs::trailing(&line.text.as_str()).index,
+                    let pos = draw_invisible::Rectangle::from_layout_index(
+                        draw_invisible::tabs::trailing(
+                            &line.text.replace("\n", "").replace("\r\n", "").as_str(),
+                        ),
                         &layout,
                     );
-                    pos.drain(..).filter(|r| r.width != 0.0).for_each(|mut r| {
+                    pos.filter(|r| r.width != 0.0).for_each(|mut r| {
                         r.y = self.edit_font.borrow().font_height * i as f64 - vadj.get_value();
                         r.draw_tab(cr);
                     });
                 } else if self.main_state.borrow().settings.leading_tabs {
-                    let mut pos = draw_invisible::Rectangle::from_layout_index(
-                        draw_invisible::Tabs::leading(&line.text.as_str()).index,
+                    let pos = draw_invisible::Rectangle::from_layout_index(
+                        draw_invisible::tabs::leading(&line.text.as_str()),
                         &layout,
                     );
-                    pos.drain(..).filter(|r| r.width != 0.0).for_each(|mut r| {
+                    pos.filter(|r| r.width != 0.0).for_each(|mut r| {
                         r.y = self.edit_font.borrow().font_height * i as f64 - vadj.get_value();
                         r.draw_tab(cr);
                     });
                 } else if self.main_state.borrow().settings.all_tabs {
-                    let mut pos = draw_invisible::Rectangle::from_layout_index(
-                        draw_invisible::Tabs::all(&line.text.as_str()).index,
+                    let pos = draw_invisible::Rectangle::from_layout_index(
+                        draw_invisible::tabs::all(&line.text.as_str()),
                         &layout,
                     );
-                    pos.drain(..).filter(|r| r.width != 0.0).for_each(|mut r| {
+                    pos.filter(|r| r.width != 0.0).for_each(|mut r| {
                         r.y = self.edit_font.borrow().font_height * i as f64 - vadj.get_value();
                         r.draw_tab(cr);
                     });
                 }
 
                 if self.main_state.borrow().settings.trailing_spaces {
-                    let mut pos = draw_invisible::Rectangle::from_layout_index(
-                        draw_invisible::Spaces::trailing(&line.text.as_str()).index,
+                    let pos = draw_invisible::Rectangle::from_layout_index(
+                        draw_invisible::spaces::trailing(
+                            &line.text.replace("\n", "").replace("\r\n", "").as_str(),
+                        ),
                         &layout,
                     );
-                    pos.drain(..).filter(|r| r.width != 0.0).for_each(|mut r| {
+                    pos.filter(|r| r.width != 0.0).for_each(|mut r| {
                         r.y = self.edit_font.borrow().font_height * i as f64 - vadj.get_value();
                         r.draw_space(cr);
                     });
                 } else if self.main_state.borrow().settings.leading_spaces {
-                    let mut pos = draw_invisible::Rectangle::from_layout_index(
-                        draw_invisible::Spaces::leading(&line.text.as_str()).index,
+                    let pos = draw_invisible::Rectangle::from_layout_index(
+                        draw_invisible::spaces::leading(&line.text.as_str()),
                         &layout,
                     );
-                    pos.drain(..).filter(|r| r.width != 0.0).for_each(|mut r| {
+                    pos.filter(|r| r.width != 0.0).for_each(|mut r| {
                         r.y = self.edit_font.borrow().font_height * i as f64 - vadj.get_value();
                         r.draw_space(cr);
                     });
                 } else if self.main_state.borrow().settings.all_spaces {
-                    let mut pos = draw_invisible::Rectangle::from_layout_index(
-                        draw_invisible::Spaces::all(&line.text.as_str()).index,
+                    let pos = draw_invisible::Rectangle::from_layout_index(
+                        draw_invisible::spaces::all(&line.text.as_str()),
                         &layout,
                     );
-                    pos.drain(..).filter(|r| r.width != 0.0).for_each(|mut r| {
+                    pos.filter(|r| r.width != 0.0).for_each(|mut r| {
                         r.y = self.edit_font.borrow().font_height * i as f64 - vadj.get_value();
                         r.draw_space(cr);
                     });
