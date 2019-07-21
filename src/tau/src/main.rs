@@ -89,7 +89,7 @@ use glib::{Char, MainContext};
 use gschema_config_storage::{GSchema, GSchemaExt};
 use gtk::Application;
 use log::{debug, error, info, max_level as log_level, warn, LevelFilter};
-use parking_lot::{Condvar, Mutex};
+use parking_lot::Mutex;
 use serde_json::json;
 use std::cell::RefCell;
 use std::env::args;
@@ -127,8 +127,6 @@ fn main() {
     // it's only called once, so it's fine to move new_view_rx and event_rx into connect_startup
     let new_view_rx_opt = Rc::new(RefCell::new(Some(new_view_rx)));
 
-    let core_ready = Arc::new((Mutex::new(false), Condvar::new()));
-
     application.connect_startup(
         enclose!((core_opt, application, new_view_rx_opt, new_view_tx) move |_| {
                 debug!("{}", gettext("Starting Tau"));
@@ -143,8 +141,9 @@ fn main() {
             let xi_config_dir = std::env::var("XI_CONFIG_DIR").ok();
 
             let mut runtime = Runtime::new().unwrap();
-            runtime.spawn(future::lazy(enclose!((request_tx, core_opt, core_ready) move || {
-                let (client, core_stderr) = spawn_xi(
+
+            let core_res = runtime.block_on(future::lazy(enclose!((request_tx, core_opt) move || {
+                let res = spawn_xi(
                     crate::globals::XI_PATH.unwrap_or("xi-core"),
                     TauFrontendBuilder {
                         request_rx,
@@ -153,18 +152,26 @@ fn main() {
                     },
                 );
 
-                client.client_started(
-                    xi_config_dir.as_ref().map(String::as_str),
-                    crate::globals::PLUGIN_DIR,
-                );
+                if let Ok((client, core_stderr)) = res {
+                    client.client_started(
+                        xi_config_dir.as_ref().map(String::as_str),
+                        crate::globals::PLUGIN_DIR,
+                    );
 
-                core_opt.lock().replace(Some(client.clone()));
+                    core_opt.lock().replace(Some(client.clone()));
 
-                let &(ref lock, ref cvar) = &*core_ready;
-                let mut started = lock.lock();
-                * started = true;
-                cvar.notify_one();
+                    Ok((client,core_stderr))
+                } else {
+                    Err(res.err().unwrap())
+                }
+            })));
 
+            let (core, core_stderr) = core_res.unwrap_or_else(|e| {
+                error!("{}", e);
+                panic!();
+            });
+
+            runtime.spawn(future::lazy(move || {
                 tokio::spawn(
                     core_stderr
                         .for_each(|msg| {
@@ -189,7 +196,7 @@ fn main() {
                 );
 
                 future::ok(())
-            })));
+            }));
 
             glib::set_application_name("Tau");
 
@@ -207,18 +214,6 @@ fn main() {
                 }
                 Err(TextDomainError::InvalidLocale(locale)) => warn!("Invalid locale {}", locale),
             }
-
-            // Make sure we wait for the tokio thread to set the core
-            // wait for the thread to start up
-            let &(ref lock, ref cvar) = &*core_ready;
-            let mut started = lock.lock();
-            while !*started {
-                cvar.wait(&mut started);
-            }
-
-            // It's fine to unwrap here - we already made sure that the core has been set to Some
-            // above.
-            let core = core_opt.lock().as_ref().unwrap().as_ref().unwrap().clone();
 
             setup_config(&core);
 

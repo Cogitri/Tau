@@ -274,7 +274,7 @@ dependencies = [
  "syntect 3.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "tau-linecache 0.2.0",
  "tokio 0.1.21 (registry+https://github.com/rust-lang/crates.io-index)",
- "xrl 0.0.7 (registry+https://github.com/rust-lang/crates.io-index)",
+ "xrl 0.0.8 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -1369,7 +1369,7 @@ dependencies = [
  "serde_json 1.0.39 (registry+https://github.com/rust-lang/crates.io-index)",
  "syntect 3.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "tokio 0.1.21 (registry+https://github.com/rust-lang/crates.io-index)",
- "xrl 0.0.7 (registry+https://github.com/rust-lang/crates.io-index)",
+ "xrl 0.0.8 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -1377,7 +1377,7 @@ name = "tau-linecache"
 version = "0.2.0"
 dependencies = [
  "log 0.4.6 (registry+https://github.com/rust-lang/crates.io-index)",
- "xrl 0.0.7 (registry+https://github.com/rust-lang/crates.io-index)",
+ "xrl 0.0.8 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -1748,7 +1748,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "xrl"
-version = "0.0.7"
+version = "0.0.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "bytes 0.4.12 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -1953,5 +1953,5 @@ dependencies = [
 "checksum wincolor 1.0.1 (registry+https://github.com/rust-lang/crates.io-index)" = "561ed901ae465d6185fa7864d63fbd5720d0ef718366c9a4dc83cf6170d7e9ba"
 "checksum ws2_32-sys 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)" = "d59cefebd0c892fa2dd6de581e937301d8552cb44489cdff035c6187cb63fa5e"
 "checksum xml-rs 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)" = "541b12c998c5b56aa2b4e6f18f03664eef9a4fd0a246a55594efae6cc2d964b5"
-"checksum xrl 0.0.7 (registry+https://github.com/rust-lang/crates.io-index)" = "742f0321a57a06e1200a6f8686020f6f14353dc9ebc7499ecf906c4b64f9573a"
+"checksum xrl 0.0.8 (registry+https://github.com/rust-lang/crates.io-index)" = "92cbe4c2a4df52b07f17ae37e64936772a696ca78bb6489e2ba72a70ccbf81d0"
 "checksum yaml-rust 0.4.3 (registry+https://github.com/rust-lang/crates.io-index)" = "65923dd1784f44da1d2c3dbbc5e822045628c590ba72123e1c73d3c230c4434d"
