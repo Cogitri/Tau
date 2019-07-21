@@ -30,7 +30,7 @@ You need the following dependencies installed:
 	* GLib-2.0 >= 2.36
 	* GTK+3>= 3.20
 	* Pango >= 1.38
-	* Rust >= 1.31
+	* Rust >= 1.35 # required for one of our deps
 
 You have two ways of installing Tau:
 
