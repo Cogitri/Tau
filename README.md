@@ -47,6 +47,8 @@ make -C vendor/xi-editor/rust/syntect-plugin install
 
 # Set accordingly if you want to use a custom xi-core binary. This will use
 # whatever xi-core is in PATH and is the default if you don't set this env var.
+# Please make sure that you have xi-core installed, e.g. with `cargo install --path vendor/xi-editor/rust xi-core`.
+# Meson will do this for you.
 export TAU_XI_BINARY_PATH="xi-core"
 
 glib-compile-schemas data
