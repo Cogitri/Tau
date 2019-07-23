@@ -1269,14 +1269,18 @@ impl EditView {
 
     /// Go to the next match in the find/replace dialog
     pub fn find_next(&self) {
-        self.core
-            .find_next(self.view_id, true, true, xrl::ModifySelection::Set);
+        if self.find_replace.search_bar.get_search_mode() {
+            self.core
+                .find_next(self.view_id, true, true, xrl::ModifySelection::Set);
+        }
     }
 
     /// Go the to previous match in the find/replace dialog
     pub fn find_prev(&self) {
-        self.core
-            .find_prev(self.view_id, true, true, xrl::ModifySelection::Set);
+        if self.find_replace.search_bar.get_search_mode() {
+            self.core
+                .find_prev(self.view_id, true, true, xrl::ModifySelection::Set);
+        }
     }
 
     /// Tells xi-editor that we're searching for a different string (or none) now
