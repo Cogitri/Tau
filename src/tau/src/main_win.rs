@@ -377,11 +377,27 @@ impl MainWin {
         }
         {
             let shortcuts_action = SimpleAction::new("shortcuts", None);
-            shortcuts_action.connect_activate(enclose!((main_win)move |_, _| {
+            shortcuts_action.connect_activate(enclose!((main_win) move |_, _| {
                 trace!("{} 'shortcuts' {}", gettext("Handling"), gettext("action"));
                 main_win.shortcuts();
             }));
             application.add_action(&shortcuts_action);
+        }
+        {
+            let find_prev_action = SimpleAction::new("find_prev", None);
+            find_prev_action.connect_activate(enclose!((main_win) move |_,_| {
+                trace!("{} 'find_prev' {}", gettext("Handling"), gettext("action"));
+                main_win.find_prev();
+            }));
+            application.add_action(&find_prev_action);
+        }
+        {
+            let find_next_action = SimpleAction::new("find_next", None);
+            find_next_action.connect_activate(enclose!((main_win) move |_,_| {
+                trace!("{} 'find_next' {}", gettext("Handling"), gettext("action"));
+                main_win.find_next();
+            }));
+            application.add_action(&find_next_action);
         }
         {
             // This is called when we run app.quit, e.g. via Ctrl+Q
@@ -444,6 +460,8 @@ impl MainWin {
             app.set_accels_for_action("app.quit", &["<Primary>q"]);
             app.set_accels_for_action("app.replace", &["<Primary>r"]);
             app.set_accels_for_action("app.close", &["<Primary>w"]);
+            app.set_accels_for_action("app.find_next", &["<Primary>g"]);
+            app.set_accels_for_action("app.find_prev", &["<Primary><Shift>g"]);
         }
 
         let main_context = MainContext::default();
@@ -825,6 +843,18 @@ impl MainWin {
     fn find(main_win: &Rc<Self>) {
         if let Some(edit_view) = main_win.get_current_edit_view() {
             edit_view.start_search();
+        }
+    }
+
+    fn find_prev(&self) {
+        if let Some(edit_view) = self.get_current_edit_view() {
+            edit_view.find_prev();
+        }
+    }
+
+    fn find_next(&self) {
+        if let Some(edit_view) = self.get_current_edit_view() {
+            edit_view.find_next();
         }
     }
 
