@@ -29,4 +29,10 @@ fn main() {
         );
         panic!("Can't continue build without GResources!");
     }
+
+    println!("cargo:rerun-if-changed=src/ui/close_tab.glade");
+    println!("cargo:rerun-if-changed=src/ui/ev.glade");
+    println!("cargo:rerun-if-changed=src/ui/find_replace.glade");
+    println!("cargo:rerun-if-changed=src/ui/resources.gresource");
+    println!("cargo:rerun-if-changed=src/ui/resources.xml");
 }
