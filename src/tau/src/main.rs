@@ -76,6 +76,7 @@ mod globals;
 mod main_win;
 //mod panic_handler;
 mod prefs_win;
+mod shortcuts_win;
 
 use crate::frontend::*;
 use crate::main_win::MainWin;

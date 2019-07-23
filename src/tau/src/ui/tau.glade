@@ -174,8 +174,8 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
-            <property name="action_name">app.about</property>
-            <property name="text" translatable="yes">About</property>
+            <property name="action_name">app.shortcuts</property>
+            <property name="text" translatable="yes">Shortcuts</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -184,9 +184,12 @@
           </packing>
         </child>
         <child>
-          <object class="GtkSeparator">
+          <object class="GtkModelButton">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="action_name">app.about</property>
+            <property name="text" translatable="yes">About</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -195,12 +198,9 @@
           </packing>
         </child>
         <child>
-          <object class="GtkModelButton">
+          <object class="GtkSeparator">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="action_name">app.close_all</property>
-            <property name="text" translatable="yes">Close All</property>
+            <property name="can_focus">False</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -227,13 +227,27 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
+            <property name="action_name">app.close_all</property>
+            <property name="text" translatable="yes">Close All</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">16</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkModelButton">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
             <property name="action_name">app.quit</property>
             <property name="text" translatable="yes">Quit</property>
           </object>
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">16</property>
+            <property name="position">17</property>
           </packing>
         </child>
       </object>

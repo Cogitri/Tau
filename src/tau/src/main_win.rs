@@ -2,6 +2,7 @@ use crate::about_win::AboutWin;
 use crate::errors::{ErrorDialog, ErrorMsg};
 use crate::frontend::{XiEvent, XiRequest};
 use crate::prefs_win::PrefsWin;
+use crate::shortcuts_win::ShortcutsWin;
 use editview::{theme::u32_from_color, EditView, MainState, Settings};
 use futures::future::Future;
 use gdk_pixbuf::Pixbuf;
@@ -373,6 +374,14 @@ impl MainWin {
                 Self::close_all(main_win.clone());
             }));
             application.add_action(&close_all_action);
+        }
+        {
+            let shortcuts_action = SimpleAction::new("shortcuts", None);
+            shortcuts_action.connect_activate(enclose!((main_win)move |_, _| {
+                trace!("{} 'shortcuts' {}", gettext("Handling"), gettext("action"));
+                main_win.shortcuts();
+            }));
+            application.add_action(&shortcuts_action);
         }
         {
             // This is called when we run app.quit, e.g. via Ctrl+Q
@@ -805,6 +814,11 @@ impl MainWin {
     /// Open the `AboutWin`, which contains some info about Tau
     fn about(main_win: Rc<Self>) {
         AboutWin::new(&main_win.window);
+    }
+
+    /// Open the `ShortcutsWin`, which contains info about shortcuts
+    fn shortcuts(&self) {
+        ShortcutsWin::new(&self.window);
     }
 
     /// Open the find dialog of the current `EditView`
