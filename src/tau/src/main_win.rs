@@ -255,7 +255,7 @@ impl MainWin {
             let prefs_action = SimpleAction::new("prefs", None);
             prefs_action.connect_activate(enclose!((main_win) move |_,_| {
                 trace!("{} 'prefs' {}", gettext("Handling"), gettext("action"));
-                Self::prefs(main_win.clone())
+                Self::prefs(&main_win)
             }));
             application.add_action(&prefs_action);
         }
@@ -263,7 +263,7 @@ impl MainWin {
             let about_action = SimpleAction::new("about", None);
             about_action.connect_activate(enclose!((main_win) move |_,_| {
                 trace!("{} 'about' {}", gettext("Handling"), gettext("action"));
-                Self::about(main_win.clone())
+                Self::about(&main_win)
             }));
             application.add_action(&about_action);
         }
@@ -492,27 +492,27 @@ impl MainWin {
 }
 
 impl MainWin {
-    fn handle_event(main_win: &Rc<Self>, ev: XiEvent) {
+    fn handle_event(&self, ev: XiEvent) {
         trace!("{}: {:?}", gettext("Handling XiEvent"), ev);
         match ev {
             XiEvent::Notification(notification) => match notification {
-                Alert(alert) => main_win.alert(alert),
-                AvailableThemes(themes) => main_win.available_themes(themes),
-                AvailablePlugins(plugins) => main_win.available_plugins(plugins),
-                ConfigChanged(config) => main_win.config_changed(config),
-                DefStyle(style) => main_win.def_style(style),
-                FindStatus(status) => main_win.find_status(status),
-                ReplaceStatus(status) => main_win.replace_status(status),
-                Update(update) => main_win.update(update),
-                ScrollTo(scroll) => main_win.scroll_to(scroll),
-                ThemeChanged(theme) => main_win.theme_changed(theme),
-                AvailableLanguages(langs) => main_win.available_languages(langs),
-                LanguageChanged(lang) => main_win.language_changed(lang),
-                PluginStarted(plugin) => main_win.plugin_started(plugin),
-                PluginStoped(plugin) => main_win.plugin_stopped(plugin),
+                Alert(alert) => self.alert(alert),
+                AvailableThemes(themes) => self.available_themes(themes),
+                AvailablePlugins(plugins) => self.available_plugins(plugins),
+                ConfigChanged(config) => self.config_changed(config),
+                DefStyle(style) => self.def_style(style),
+                FindStatus(status) => self.find_status(status),
+                ReplaceStatus(status) => self.replace_status(status),
+                Update(update) => self.update(update),
+                ScrollTo(scroll) => self.scroll_to(scroll),
+                ThemeChanged(theme) => self.theme_changed(theme),
+                AvailableLanguages(langs) => self.available_languages(langs),
+                LanguageChanged(lang) => self.language_changed(lang),
+                PluginStarted(plugin) => self.plugin_started(plugin),
+                PluginStoped(plugin) => self.plugin_stopped(plugin),
                 _ => {}
             },
-            XiEvent::MeasureWidth(measure_width) => main_win.measure_width(measure_width),
+            XiEvent::MeasureWidth(measure_width) => self.measure_width(measure_width),
         }
     }
 
@@ -824,14 +824,14 @@ impl MainWin {
     }
 
     /// Open a `PrefsWin` for the user to configure things like the theme
-    fn prefs(main_win: Rc<Self>) {
-        let gschema = { &main_win.properties.borrow().gschema };
-        PrefsWin::new(&main_win.window, &main_win.state, &main_win.core, &gschema);
+    fn prefs(&self) {
+        let gschema = { &self.properties.borrow().gschema };
+        PrefsWin::new(&self.window, &self.state, &self.core, &gschema);
     }
 
     /// Open the `AboutWin`, which contains some info about Tau
-    fn about(main_win: Rc<Self>) {
-        AboutWin::new(&main_win.window);
+    fn about(&self) {
+        AboutWin::new(&self.window);
     }
 
     /// Open the `ShortcutsWin`, which contains info about shortcuts
@@ -840,8 +840,8 @@ impl MainWin {
     }
 
     /// Open the find dialog of the current `EditView`
-    fn find(main_win: &Rc<Self>) {
-        if let Some(edit_view) = main_win.get_current_edit_view() {
+    fn find(&self) {
+        if let Some(edit_view) = self.get_current_edit_view() {
             edit_view.start_search();
         }
     }
@@ -859,8 +859,8 @@ impl MainWin {
     }
 
     /// Open the replace dialog of the current `EditView
-    fn replace(main_win: &Rc<Self>) {
-        if let Some(edit_view) = main_win.get_current_edit_view() {
+    fn replace(&self) {
+        if let Some(edit_view) = self.get_current_edit_view() {
             edit_view.start_replace();
         }
     }
