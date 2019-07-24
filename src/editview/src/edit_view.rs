@@ -378,8 +378,6 @@ impl EditView {
     /// gtk requests us to draw the EditView. This draws the background, all lines and the cursor.
     #[allow(clippy::cognitive_complexity)]
     pub fn handle_da_draw(&self, cr: &Context) -> Inhibit {
-        const CURSOR_WIDTH: f64 = 2.0;
-
         // let foreground = self.main_state.borrow().theme.foreground;
         let theme = &self.main_state.borrow().theme;
 
@@ -533,15 +531,15 @@ impl EditView {
 
                 if self.main_state.borrow().settings.draw_cursor {
                     for c in &line.cursor {
-                        let (strong_cursor, _) = layout.get_cursor_pos(*c as i32);
-                        // Draw the cursor
-                        cr.rectangle(
-                            (strong_cursor.x / pango::SCALE).into(),
+                        gtk::render_insertion_cursor(
+                            &self.view_item.edit_area.get_style_context(),
+                            &cr,
+                            1.0,
                             self.edit_font.borrow().font_height * i as f64 - vadj.get_value(),
-                            CURSOR_WIDTH,
-                            (strong_cursor.height / pango::SCALE).into(),
-                        );
-                        cr.fill();
+                            &layout,
+                            *c as i32,
+                            Direction::Neutral,
+                        )
                     }
                 }
             }
