@@ -540,7 +540,18 @@ impl MainWin {
                 gettext("isn't available, setting to default"),
             );
 
-            if let Some(theme_name) = state.themes.first().map(Clone::clone) {
+            if let Some(theme_name) = state.themes.first() {
+                state
+                    .settings
+                    .gschema
+                    .set_key("theme-name", theme_name.clone())
+                    .unwrap_or_else(|e| {
+                        error!(
+                            "{}: {}",
+                            gettext("Failed to set theme name in GSettings due to error"),
+                            e
+                        )
+                    });
                 state.theme_name = theme_name.clone();
             } else {
                 return;
