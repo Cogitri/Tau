@@ -46,6 +46,7 @@
 
         <key name="column-right-margin" type="u">
             <default>80</default>
+            <range min="1" max="1000"/>
             <summary>At what column to display the margin</summary>
             <description>
                 Sets the column at which the margin should be drawn
@@ -62,11 +63,13 @@
 
         <key name="window-height" type="i">
             <default>900</default>
+            <range min="150"/>
             <summary>Sets the height of the window in the next startup</summary>
         </key>
 
         <key name="window-width" type="i">
             <default>700</default>
+            <range min="150"/>
             <summary>Sets the width of the window in the next startup</summary>
         </key>
 
@@ -76,6 +79,7 @@
         </key>
 
         <key name="tab-size" type="u">
+            <range min="1" max="100"/>
             <default>4</default>
             <summary>Tab size</summary>
             <description>Amount of spaces that a tab is wide</description>
