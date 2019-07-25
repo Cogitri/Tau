@@ -17,7 +17,7 @@ tau_bindir = join_paths(tau_prefix, get_option('bindir'))
 tau_datadir = get_option('datadir')
 tau_localedir = join_paths(tau_prefix, get_option('localedir'))
 tau_libexecdir = join_paths(tau_prefix, get_option('libexecdir'), 'tau')
-tau_plugin_dir = join_paths(tau_libexecdir, 'tau', 'plugins')
+tau_plugin_dir = join_paths(tau_libexecdir, 'plugins')
 tau_podir = join_paths(meson.current_source_dir(), 'po')
 
 i18n = import('i18n')
