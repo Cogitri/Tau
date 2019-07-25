@@ -1278,6 +1278,9 @@ pub fn connect_settings_change(main_win: &Rc<MainWin>, core: &Client) {
                         if let Some(ev) = main_win.get_current_edit_view() {
                             ev.view_item.edit_area.queue_draw();
                         }
+                    } else {
+                        error!("{}. {}", gettext("Failed to get font configuration"), gettext("Resetting."));
+                        gschema.settings.reset("font");
                     }
                 }
                 "use-tab-stops" => {
@@ -1298,10 +1301,15 @@ pub fn connect_settings_change(main_win: &Rc<MainWin>, core: &Client) {
                     let val = gschema.settings.get_strv("syntax-config");
 
                     for x in val {
-                        core.notify(
-                            "modify_user_config",
-                            serde_json::from_str(x.as_str()).unwrap(),
-                        );
+                        if let Ok(val) = serde_json::from_str(x.as_str()) {
+                            core.notify(
+                                "modify_user_config",
+                                val
+                            );
+                        } else {
+                            error!("{}. {}", gettext("Failed to deserialize syntax config"), gettext("Resetting."));
+                            gschema.settings.reset("syntax-config");
+                        }
                     }
                 }
                 "theme-name" => {

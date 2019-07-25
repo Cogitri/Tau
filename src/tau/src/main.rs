@@ -81,7 +81,6 @@ mod syntax_config;
 
 use crate::frontend::*;
 use crate::main_win::MainWin;
-use crate::syntax_config::SyntaxParams;
 //use crate::panic_handler::PanicHandler;
 use crossbeam_channel::unbounded;
 use futures::stream::Stream;
@@ -295,9 +294,15 @@ fn setup_config(core: &Client) {
     let font: String = gschema.get_key("font");
     let font_vec = font.split_whitespace().collect::<Vec<_>>();
     let (font_size, font_name) = if let Some((size, splitted_name)) = font_vec.split_last() {
-        (size.parse::<f32>().ok(), Some(splitted_name.join(" ")))
+        (size.parse::<f32>().unwrap_or(14.0), splitted_name.join(" "))
     } else {
-        (None, None)
+        error!(
+            "{}. {}",
+            gettext("Failed to get font configuration"),
+            gettext("Resetting.")
+        );
+        gschema.settings.reset("font");
+        (14.0, "Monospace".to_string())
     };
 
     #[cfg(windows)]
@@ -320,26 +325,19 @@ fn setup_config(core: &Client) {
     ))
     .unwrap();
 
-    let val: Vec<SyntaxParams> = gschema
-        .settings
-        .get_strv("syntax-config")
-        .iter()
-        .map(|s| s.as_str())
-        .map(|s| {
-            serde_json::from_str(s)
-                .map_err(|e| error!("{} {}", gettext("Failed to deserialize syntax config"), e))
-                .unwrap()
-        })
-        .collect();
+    let val = gschema.settings.get_strv("syntax-config");
 
     for x in val {
-        tokio::executor::current_thread::block_on_all(core.notify(
-            "modify_user_config",
-            json!({
-                "domain": x.domain,
-                "changes": x.changes,
-            }),
-        ))
-        .unwrap();
+        if let Ok(val) = serde_json::from_str(x.as_str()) {
+            tokio::executor::current_thread::block_on_all(core.notify("modify_user_config", val))
+                .unwrap();
+        } else {
+            error!(
+                "{}. {}",
+                gettext("Failed to deserialize syntax config"),
+                gettext("Resetting.")
+            );
+            gschema.settings.reset("syntax-config");
+        }
     }
 }
