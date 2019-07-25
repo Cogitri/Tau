@@ -837,7 +837,22 @@ impl MainWin {
     /// Open a `PrefsWin` for the user to configure things like the theme
     fn prefs(&self) {
         let gschema = { &self.properties.borrow().gschema };
-        PrefsWin::new(&self.window, &self.state, &self.core, &gschema);
+        let lang = if let Some(ev) = self.get_current_edit_view() {
+            ev.view_item
+                .statusbar
+                .syntax_label
+                .get_text()
+                .map(|s| s.to_string())
+        } else {
+            None
+        };
+        PrefsWin::new(
+            &self.window,
+            &self.state,
+            &self.core,
+            &gschema,
+            lang.as_ref().map(String::as_str),
+        );
     }
 
     /// Open the `AboutWin`, which contains some info about Tau
@@ -1278,6 +1293,16 @@ pub fn connect_settings_change(main_win: &Rc<MainWin>, core: &Client) {
                         "general",
                         json!({ "word_wrap": val })
                     );
+                }
+                "syntax-config" => {
+                    let val = gschema.settings.get_strv("syntax-config");
+
+                    for x in val {
+                        core.notify(
+                            "modify_user_config",
+                            serde_json::from_str(x.as_str()).unwrap(),
+                        );
+                    }
                 }
                 "theme-name" => {
                     if let Some(ev) = main_win.get_current_edit_view() {

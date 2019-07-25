@@ -77,15 +77,17 @@ mod main_win;
 //mod panic_handler;
 mod prefs_win;
 mod shortcuts_win;
+mod syntax_config;
 
 use crate::frontend::*;
 use crate::main_win::MainWin;
+use crate::syntax_config::SyntaxParams;
 //use crate::panic_handler::PanicHandler;
 use crossbeam_channel::unbounded;
 use futures::stream::Stream;
 use futures::{future, future::Future};
 use gettextrs::{gettext, TextDomain, TextDomainError};
-use gio::{ApplicationExt, ApplicationExtManual, ApplicationFlags, FileExt};
+use gio::{ApplicationExt, ApplicationExtManual, ApplicationFlags, FileExt, SettingsExt};
 use glib::{Char, MainContext};
 use gschema_config_storage::{GSchema, GSchemaExt};
 use gtk::Application;
@@ -317,4 +319,27 @@ fn setup_config(core: &Client) {
         }),
     ))
     .unwrap();
+
+    let val: Vec<SyntaxParams> = gschema
+        .settings
+        .get_strv("syntax-config")
+        .iter()
+        .map(|s| s.as_str())
+        .map(|s| {
+            serde_json::from_str(s)
+                .map_err(|e| error!("{} {}", gettext("Failed to deserialize syntax config"), e))
+                .unwrap()
+        })
+        .collect();
+
+    for x in val {
+        tokio::executor::current_thread::block_on_all(core.notify(
+            "modify_user_config",
+            json!({
+                "domain": x.domain,
+                "changes": x.changes,
+            }),
+        ))
+        .unwrap();
+    }
 }

@@ -140,6 +140,14 @@
                 Whether to draw the cursor
             </description>
         </key>
+
+        <key name="syntax-config" type="as">
+            <default>['{"domain": { "syntax": "Makefile" }, "changes": { "translate_tabs_to_spaces": false} }', '{ "domain": { "syntax": "YAML" }, "changes": { "translate_tabs_to_spaces": true, "tab_size": 2} }']</default>
+            <summary>Syntax specific settings</summary>
+            <description>
+                A JSON string containing syntax specific settings (e.g. tab-width of 2 for YML)
+            </description>
+        </key>
     </schema>
 
 </schemalist>
