@@ -772,7 +772,8 @@ impl MainWin {
     /// dialog for the user to choose a name
     pub fn handle_save_button(main_win: &Rc<Self>) {
         if let Some(edit_view) = main_win.get_current_edit_view() {
-            if let Some(ref file_name) = *edit_view.file_name.borrow() {
+            let name = { edit_view.file_name.borrow().clone() };
+            if let Some(ref file_name) = name {
                 main_win.core.save(edit_view.view_id, file_name);
             } else {
                 Self::save_as(main_win, &edit_view);
