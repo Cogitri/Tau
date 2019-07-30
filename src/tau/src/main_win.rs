@@ -414,42 +414,6 @@ impl MainWin {
             }));
             application.add_action(&quit_action);
         }
-        {
-            let auto_indent_action = SimpleAction::new_stateful(
-                "auto_indent",
-                None,
-                &main_state.borrow().settings.gschema.get_key("auto-indent"),
-            );
-
-            auto_indent_action.connect_change_state(enclose!((main_state) move |action, value| {
-                if let Some(value) = value.as_ref() {
-                    action.set_state(value);
-                    main_state.borrow().settings.gschema.set_key("auto-indent", value.get::<bool>().unwrap()).unwrap();
-                }
-            }));
-
-            application.add_action(&auto_indent_action);
-        }
-        {
-            let space_indent_action = SimpleAction::new_stateful(
-                "insert_spaces",
-                None,
-                &main_state
-                    .borrow()
-                    .settings
-                    .gschema
-                    .get_key("translate-tabs-to-spaces"),
-            );
-
-            space_indent_action.connect_change_state(enclose!((main_state) move |action, value| {
-                if let Some(value) = value.as_ref() {
-                    action.set_state(value);
-                    main_state.borrow().settings.gschema.set_key("translate-tabs-to-spaces", value.get::<bool>().unwrap()).unwrap();
-                }
-            }));
-
-            application.add_action(&space_indent_action);
-        }
 
         // Put keyboard shortcuts here
         if let Some(app) = window.get_application() {
@@ -1150,7 +1114,6 @@ pub fn new_settings() -> Settings {
         right_margin: gschema.get_key("draw-right-margin"),
         column_right_margin: gschema.get_key("column-right-margin"),
         edit_font: gschema.get_key("font"),
-        tab_size: gschema.get_key("tab-size"),
         trailing_tabs: gschema.get_key("draw-trailing-tabs"),
         all_tabs: gschema.get_key("draw-all-tabs"),
         leading_tabs: gschema.get_key("draw-leading-tabs"),
@@ -1260,10 +1223,6 @@ pub fn connect_settings_change(main_win: &Rc<MainWin>, core: &Client) {
                         "general",
                         json!({ "tab_size": val })
                     );
-                    main_win.state.borrow_mut().settings.tab_size = val;
-                    if let Some(ev) = main_win.get_current_edit_view() {
-                        ev.view_item.edit_area.queue_draw();
-                    }
                 }
                 "font" => {
                     let val: String = gschema.get_key("font");

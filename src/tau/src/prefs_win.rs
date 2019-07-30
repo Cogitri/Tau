@@ -39,6 +39,10 @@ impl PrefsWin {
         let highlight_line_checkbutton: ToggleButton =
             builder.get_object("highlight_line_checkbutton").unwrap();
         let tab_size_spinbutton: SpinButton = builder.get_object("tab_size_spinbutton").unwrap();
+        let auto_indention_checkbutton: ToggleButton =
+            builder.get_object("auto_indention_checkbutton").unwrap();
+        let insert_spaces_checkbutton: ToggleButton =
+            builder.get_object("insert_spaces_checkbutton").unwrap();
 
         let draw_trailing_tabs_radio: RadioButton =
             builder.get_object("tabs_trailing_radio_button").unwrap();
@@ -207,6 +211,20 @@ impl PrefsWin {
         gschema.settings.bind(
             "draw-all-tabs",
             &draw_all_tabs_radio,
+            "active",
+            SettingsBindFlags::DEFAULT,
+        );
+
+        gschema.settings.bind(
+            "auto-indent",
+            &auto_indention_checkbutton,
+            "active",
+            SettingsBindFlags::DEFAULT,
+        );
+
+        gschema.settings.bind(
+            "translate-tabs-to-spaces",
+            &insert_spaces_checkbutton,
             "active",
             SettingsBindFlags::DEFAULT,
         );

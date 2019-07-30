@@ -4,5 +4,6 @@
       <file preprocess="xml-stripblanks">close_tab.glade</file>
       <file preprocess="xml-stripblanks">ev.glade</file>
       <file preprocess="xml-stripblanks">find_replace.glade</file>
+      <file preprocess="xml-stripblanks">context_menu.glade</file>
   </gresource>
 </gresources>

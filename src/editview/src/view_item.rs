@@ -5,6 +5,7 @@ use gio::Resource;
 use glib::Bytes;
 use gtk::*;
 use log::{debug, trace};
+use serde_json::json;
 use std::rc::Rc;
 
 const RESOURCE: &[u8] = include_bytes!("ui/resources.gresource");
@@ -19,6 +20,11 @@ pub struct EvBar {
     pub line_label: Label,
     pub column_label: Label,
     list_model: ListStore,
+    edit_settings_popover: Popover,
+    pub auto_indention_button: ToggleButton,
+    pub insert_spaces_button: ToggleButton,
+    pub tab_size_button: SpinButton,
+    pub tab_width_label: Label,
 }
 
 /// The ViewItem contains the various GTK parts related to the edit_area of the EditView
@@ -36,7 +42,7 @@ pub struct ViewItem {
 
 impl ViewItem {
     /// Sets up the drawing areas and scrollbars.
-    pub fn new() -> Self {
+    pub fn new(tab_size: u32) -> Self {
         let gbytes = Bytes::from_static(RESOURCE);
         let resource = Resource::new_from_data(&gbytes).unwrap();
         gio::resources_register(&resource);
@@ -56,8 +62,26 @@ impl ViewItem {
             line_label: builder.get_object("line_label").unwrap(),
             column_label: builder.get_object("column_label").unwrap(),
             list_model: builder.get_object("syntax_liststore").unwrap(),
+            edit_settings_popover: builder.get_object("edit_settings_popover").unwrap(),
+            auto_indention_button: builder
+                .get_object("edit_settings_automatic_indention_checkbutton")
+                .unwrap(),
+            insert_spaces_button: builder
+                .get_object("edit_settings_insert_spaces_checkbutton")
+                .unwrap(),
+            tab_size_button: builder
+                .get_object("edit_settings_tab_size_spinbutton")
+                .unwrap(),
+            tab_width_label: builder.get_object("tab_width_label").unwrap(),
         };
-        let gmenu: gio::Menu = builder.get_object("context_menu").unwrap();
+        statusbar
+            .tab_width_label
+            .set_text(&format!("{}: {}", gettext("Tab Size"), tab_size));
+        statusbar.tab_size_button.set_value(f64::from(tab_size));
+
+        let context_menu_builder =
+            Builder::new_from_resource("/org/gnome/Tau/editview/context_menu.glade");
+        let gmenu: gio::Menu = context_menu_builder.get_object("context_menu").unwrap();
         let context_menu = gtk::Menu::new_from_model(&gmenu);
         //FIXME: This should take IsA<Widget> so we don't have to upcast to a widget
         context_menu.set_property_attach_widget(Some(&edit_area.clone().upcast::<Widget>()));
@@ -150,6 +174,62 @@ impl ViewItem {
                 }
             }));
 
+        self.statusbar
+            .tab_size_button
+            .connect_value_changed(enclose!((edit_view) move |sb| {
+                // We only allow vals that fit in a u32 via es_tab_size_spinbutton_adj
+                let val = sb.get_value() as u32;
+                edit_view.view_item.statusbar.tab_width_label.set_text(
+                    &format!("{}: {}",
+                    gettext("Tab Size"),
+                    &val,
+                ));
+
+                if *edit_view.default_tab_size.borrow() == val {
+                    edit_view.tab_size.replace(None);
+                } else {
+                    edit_view.tab_size.replace(Some(val));
+                }
+
+                edit_view.core.notify(
+                    "modify_user_config",
+                    json!({
+                        "domain": { "user_override": edit_view.view_id },
+                        "changes": { "tab_size": val },
+                    }),
+                );
+            }));
+
+        self.statusbar
+            .insert_spaces_button
+            .connect_toggled(enclose!(
+                (edit_view) move | tb | {
+                    let val = tb.get_active();
+                    edit_view.core.notify(
+                        "modify_user_config",
+                        json!({
+                            "domain": { "user_override": edit_view.view_id },
+                            "changes": { "translate_tabs_to_spaces": val },
+                        }),
+                    );
+                }
+            ));
+
+        self.statusbar
+            .auto_indention_button
+            .connect_toggled(enclose!(
+                (edit_view) move | tb | {
+                    let val = tb.get_active();
+                    edit_view.core.notify(
+                        "modify_user_config",
+                        json!({
+                            "domain": { "user_override": edit_view.view_id },
+                            "changes": { "autodetect_whitespace": val },
+                        }),
+                    );
+                }
+            ));
+
         self.ev_scrolled_window
             .get_vadjustment()
             .unwrap()
@@ -198,12 +278,6 @@ impl ViewItem {
                     .insert_with_values(None, &[0], &[lang]);
             }
         }
-    }
-}
-
-impl Default for ViewItem {
-    fn default() -> Self {
-        Self::new()
     }
 }
 

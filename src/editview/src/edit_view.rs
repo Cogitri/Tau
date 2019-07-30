@@ -8,7 +8,9 @@ use crossbeam_channel::{unbounded, Sender};
 use gdk::enums::key;
 use gdk::*;
 use gettextrs::gettext;
+use gio::SettingsExt;
 use glib::{source::Continue, MainContext, PRIORITY_HIGH};
+use gschema_config_storage::GSchemaExt;
 use gtk::{self, *};
 use log::{debug, error, trace, warn};
 use pango::{self, *};
@@ -36,7 +38,7 @@ pub struct TextSize {
 
 /// The EditView is the part of Tau that does the actual editing. This is where you edit documents.
 pub struct EditView {
-    core: Client,
+    pub(crate) core: Client,
     main_state: Rc<RefCell<MainState>>,
     pub view_id: ViewId,
     pub file_name: RefCell<Option<String>>,
@@ -50,6 +52,8 @@ pub struct EditView {
     interface_font: Font,
     im_context: IMContextSimple,
     update_sender: Sender<Update>,
+    pub default_tab_size: RefCell<u32>,
+    pub tab_size: RefCell<Option<u32>>,
 }
 
 impl EditView {
@@ -65,7 +69,9 @@ impl EditView {
         parent: &ApplicationWindow,
     ) -> Rc<Self> {
         trace!("{}, '{}'", gettext("Creating new EditView"), view_id);
-        let view_item = ViewItem::new();
+        let gschema = main_state.borrow().settings.gschema.clone();
+        let default_tab_size: u32 = gschema.get_key("tab-size");
+        let view_item = ViewItem::new(default_tab_size);
         let find_replace = FindReplace::new(&hamburger_button);
         let pango_ctx = view_item.get_pango_ctx();
         let im_context = IMContextSimple::new();
@@ -94,6 +100,8 @@ impl EditView {
             find_replace: find_replace.clone(),
             im_context: im_context.clone(),
             update_sender,
+            default_tab_size: RefCell::new(default_tab_size),
+            tab_size: RefCell::new(None),
         });
 
         edit_view.update_title();
@@ -111,6 +119,18 @@ impl EditView {
             }
             error!("{}", gettext("Xi-Update sender disconnected"));
         });
+
+        gschema
+            .settings
+            .connect_changed(enclose!((gschema, edit_view) move |_, key| {
+            trace!("Key '{}' has changed!", key);
+            if key == "tab-size" {
+                    let val = gschema.get_key("tab-size");
+                    edit_view.default_tab_size.replace(val);
+                    edit_view.view_item.statusbar.tab_size_button.set_value(f64::from(val));
+                    edit_view.view_item.edit_area.queue_draw();
+                }
+            }));
 
         edit_view
             .view_item
@@ -646,12 +666,15 @@ impl EditView {
 
     fn get_tabs(&self) -> TabArray {
         let mut tabs = TabArray::new(1, false);
+        let tab_size = if let Some(size) = *self.tab_size.borrow() {
+            size
+        } else {
+            *self.default_tab_size.borrow()
+        };
         tabs.set_tab(
             0,
             TabAlign::Left,
-            self.edit_font.borrow().font_width as i32
-                * self.main_state.borrow().settings.tab_size as i32
-                * pango::SCALE,
+            self.edit_font.borrow().font_width as i32 * tab_size as i32 * pango::SCALE,
         );
 
         tabs

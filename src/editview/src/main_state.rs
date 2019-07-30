@@ -16,7 +16,6 @@ pub struct Settings {
     pub column_right_margin: u32,
     pub interface_font: String,
     pub edit_font: String,
-    pub tab_size: u32,
     pub draw_cursor: bool,
 }
 
