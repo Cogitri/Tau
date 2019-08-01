@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Tau\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-06-17 00:36+0200\n"
-"PO-Revision-Date: 2019-07-03 10:02+0000\n"
+"PO-Revision-Date: 2019-08-01 02:46+0000\n"
 "Last-Translator: Chojan Shang <PsiACE@outlook.com>\n"
 "Language-Team: Chinese (Traditional) <https://hosted.weblate.org/projects/"
 "Tau/translation/zh_Hant/>\n"
@@ -46,11 +46,11 @@ msgstr "org.gnome.Tau"
 
 #: data/org.gnome.Tau.desktop.in:13
 msgid "Text;Editor;Plaintext;Write;gxi;"
-msgstr ""
+msgstr "Text;Editor;Plaintext;Write;gxi;"
 
 #: data/org.gnome.Tau.desktop.in:16
 msgid "Launch a new Tau instance"
-msgstr ""
+msgstr "啟動一個新的 Tau 實例"
 
 #: data/org.gnome.Tau.gschema.xml:9
 msgid "Xi-Editor's theme"
@@ -69,23 +69,20 @@ msgid "Draw spaces which are at the end of a line"
 msgstr "繪製位於行尾的空格"
 
 #: data/org.gnome.Tau.gschema.xml:25
-#, fuzzy
 msgid "Draw leading spaces"
-msgstr "繪製尾隨空格"
+msgstr "繪製前導空格"
 
 #: data/org.gnome.Tau.gschema.xml:26
-#, fuzzy
 msgid "Draw spaces which are at the beginning of a line"
-msgstr "繪製位於行尾的空格"
+msgstr "繪製位於行首的空格"
 
 #: data/org.gnome.Tau.gschema.xml:33
-#, fuzzy
 msgid "Draw all spaces"
-msgstr "繪製尾隨空格"
+msgstr "繪製所有空格"
 
 #: data/org.gnome.Tau.gschema.xml:34
 msgid "Draw spaces, no matter the position"
-msgstr ""
+msgstr "繪製在任意位置的空格"
 
 #: data/org.gnome.Tau.gschema.xml:41
 msgid "Draw a right hand margin"
