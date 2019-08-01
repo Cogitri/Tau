@@ -3,13 +3,14 @@
 # This file is distributed under the same license as the gxi package.
 # Elizabeth Sherrock <lizzyd710@gmail.com>, 2019.
 # Yulin Shen <sylxjtu@outlook.com>, 2019.
+# Chojan Shang <PsiACE@outlook.com>, 2019.
 msgid ""
 msgstr ""
 "Project-Id-Version: Tau\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-06-17 00:36+0200\n"
 "PO-Revision-Date: 2019-08-01 02:46+0000\n"
-"Last-Translator: Yulin Shen <sylxjtu@outlook.com>\n"
+"Last-Translator: Chojan Shang <PsiACE@outlook.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/Tau/"
 "translation/zh_Hans/>\n"
 "Language: zh_Hans\n"
@@ -86,7 +87,7 @@ msgstr "绘制所有空格"
 
 #: data/org.gnome.Tau.gschema.xml:34
 msgid "Draw spaces, no matter the position"
-msgstr "绘制在所有位置的空格"
+msgstr "绘制在任意位置的空格"
 
 #: data/org.gnome.Tau.gschema.xml:41
 msgid "Draw a right hand margin"
