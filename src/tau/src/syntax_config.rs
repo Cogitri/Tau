@@ -13,12 +13,6 @@ pub struct Domain {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Changes {
-    #[serde(default)]
-    pub translate_tabs_to_spaces: bool,
-    #[serde(default = "default_tab_size")]
-    pub tab_size: u32,
-}
-
-fn default_tab_size() -> u32 {
-    4
+    pub translate_tabs_to_spaces: Option<bool>,
+    pub tab_size: Option<u32>,
 }

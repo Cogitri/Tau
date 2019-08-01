@@ -62,6 +62,11 @@ impl PrefsWin {
         let syntax_config_insert_spaces_checkbutton: CheckButton = builder
             .get_object("syntax_config_insert_spaces_checkbutton")
             .unwrap();
+        let syntax_config_insert_spaces_switch: Switch = builder
+            .get_object("syntax_config_insert_spaces_switch")
+            .unwrap();
+        let syntax_config_tab_size_switch: Switch =
+            builder.get_object("syntax_config_tab_size_switch").unwrap();
         let syntax_config_tab_size_spinbutton: SpinButton = builder
             .get_object("syntax_config_tab_size_spinbutton")
             .unwrap();
@@ -87,6 +92,8 @@ impl PrefsWin {
             if main_state.avail_languages.is_empty() {
                 syntax_config_tab_size_spinbutton.set_sensitive(false);
                 syntax_config_insert_spaces_checkbutton.set_sensitive(false);
+                syntax_config_insert_spaces_switch.set_sensitive(false);
+                syntax_config_tab_size_switch.set_sensitive(false);
                 syntax_config_apply_button.set_sensitive(false);
                 syntax_config_tab_size_label.set_sensitive(false);
             } else {
@@ -245,39 +252,89 @@ impl PrefsWin {
         syntax_config_combo_box.connect_changed(enclose!((syntax_config_insert_spaces_checkbutton, syntax_config_tab_size_spinbutton, syntax_config) move |cb| {
             if let Some(lang) = cb.get_active_text() {
                 if let Some(config) = syntax_config.borrow().get(lang.as_str()) {
-                    syntax_config_insert_spaces_checkbutton.set_active(config.changes.translate_tabs_to_spaces);
-                    syntax_config_tab_size_spinbutton.set_value(config.changes.tab_size.into());
+                    // This is an Option, so set a default here
+                    let insert_spaces = if let Some(setting) = config.changes.translate_tabs_to_spaces {
+                        setting
+                    } else {
+                        false
+                    };
+                    syntax_config_insert_spaces_checkbutton.set_active(insert_spaces);
+
+                    let tab_size = if let Some(setting) = config.changes.tab_size {
+                        f64::from(setting)
+                    } else {
+                        4.0
+                    };
+                    syntax_config_tab_size_spinbutton.set_value(tab_size);
                 }
             }
         }));
 
         syntax_config_apply_button.connect_clicked(
-            enclose!((syntax_config_combo_box, syntax_config_insert_spaces_checkbutton, syntax_config_tab_size_spinbutton, syntax_config, gschema) move |_| {
-                if let Some(lang) = syntax_config_combo_box.get_active_text() {
-                    let tab_size = syntax_config_tab_size_spinbutton.get_value_as_int() as u32;
-                    let insert_spaces = syntax_config_insert_spaces_checkbutton.get_active();
-                    let mut syntax_config = syntax_config.borrow_mut();
-                    if let Some(config) = syntax_config.get_mut(lang.as_str()) {
-                        config.changes.translate_tabs_to_spaces = insert_spaces;
-                        config.changes.tab_size = tab_size;
-                    } else {
-                        let params = SyntaxParams {
-                            domain: Domain {
-                                syntax: lang.to_string(),
-                            },
-                            changes: Changes {
-                                tab_size,
-                                translate_tabs_to_spaces: insert_spaces
-                            },
+            enclose!((
+                syntax_config_combo_box,
+                syntax_config_insert_spaces_checkbutton,
+                syntax_config_insert_spaces_switch,
+                syntax_config_tab_size_switch,
+                syntax_config_tab_size_spinbutton,
+                syntax_config,
+                gschema,
+                ) move |_| {
+                    if let Some(lang) = syntax_config_combo_box.get_active_text() {
+                        let tab_size = if syntax_config_tab_size_switch.get_active() {
+                            Some(syntax_config_tab_size_spinbutton.get_value_as_int() as u32)
+                        } else {
+                            None
                         };
-                        syntax_config.insert(lang.to_string(), params);
-                    }
+                        let insert_spaces = if syntax_config_insert_spaces_switch.get_active() {
+                            Some(syntax_config_insert_spaces_checkbutton.get_active())
+                        } else {
+                            None
+                        };
 
-                    let json_setting: Vec<String> = syntax_config.iter().map(|(_, sc)| serde_json::to_string(sc).unwrap()).collect();
-                    let json_setting: Vec<_> = json_setting.iter().map(AsRef::as_ref).collect();
-                    gschema.settings.set_strv("syntax-config", &json_setting);
+                        let mut syntax_config = syntax_config.borrow_mut();
+                        if tab_size.is_none() && insert_spaces.is_none() {
+                            syntax_config.remove(lang.as_str());
+                        } else if let Some(config) = syntax_config.get_mut(lang.as_str()) {
+                            config.changes.translate_tabs_to_spaces = insert_spaces;
+                            config.changes.tab_size = tab_size;
+                        } else {
+                            let params = SyntaxParams {
+                                domain: Domain {
+                                    syntax: lang.to_string(),
+                                },
+                                changes: Changes {
+                                    tab_size,
+                                    translate_tabs_to_spaces: insert_spaces
+                                },
+                            };
+                            syntax_config.insert(lang.to_string(), params);
+                        }
+
+                        let json_setting: Vec<String> = syntax_config.iter().map(|(_, sc)| serde_json::to_string(sc).unwrap()).collect();
+                        let json_setting: Vec<_> = json_setting.iter().map(AsRef::as_ref).collect();
+                        gschema.settings.set_strv("syntax-config", &json_setting);
+                    }
                 }
-        }));
+            )
+        );
+
+        syntax_config_insert_spaces_switch.connect_property_active_notify(enclose!(
+            (syntax_config_insert_spaces_checkbutton) move | sw | {
+                syntax_config_insert_spaces_checkbutton.set_sensitive(sw.get_active());
+            }
+        ));
+
+        syntax_config_tab_size_switch.connect_property_active_notify(enclose!(
+            (
+                syntax_config_tab_size_label,
+                syntax_config_tab_size_spinbutton
+            ) move | sw | {
+                    let active = sw.get_active();
+                    syntax_config_tab_size_label.set_sensitive(active);
+                    syntax_config_tab_size_spinbutton.set_sensitive(active);
+                }
+        ));
 
         let prefs_win = Self {
             core: core.clone(),

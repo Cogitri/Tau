@@ -712,7 +712,16 @@ impl MainWin {
         if let Some(ev) = views.get(&params.view_id) {
             // Set the default_tab_size so the EditView
             if let Some(sc) = self.syntax_config.borrow().get(&params.language_id) {
-                ev.set_default_tab_size(sc.changes.tab_size);
+                if let Some(tab_size) = sc.changes.tab_size {
+                    debug!(
+                        "{}: '{}'",
+                        gettext("Setting the following to the syntax attached tab size"),
+                        tab_size
+                    );
+                    ev.set_default_tab_size(tab_size);
+                } else {
+                    debug!("{}", gettext("No tab size attached to the syntax"));
+                }
             }
             ev.language_changed(&params.language_id);
         }
