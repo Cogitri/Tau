@@ -3,6 +3,7 @@ use crate::errors::{ErrorDialog, ErrorMsg};
 use crate::frontend::{XiEvent, XiRequest};
 use crate::prefs_win::PrefsWin;
 use crate::shortcuts_win::ShortcutsWin;
+use crate::syntax_config::SyntaxParams;
 use editview::{theme::u32_from_color, EditView, MainState, Settings};
 use futures::future::Future;
 use gdk_pixbuf::Pixbuf;
@@ -118,6 +119,8 @@ pub struct MainWin {
     new_view_tx: Sender<(ViewId, Option<String>)>,
     /// A crossbeam_channel `Sender` from whom we receive something when Xi requests something.
     request_tx: crossbeam_channel::Sender<XiRequest>,
+    /// A `HashMap` containing the different configs for each syntax
+    syntax_config: RefCell<HashMap<String, SyntaxParams>>,
 }
 
 impl MainWin {
@@ -185,6 +188,23 @@ impl MainWin {
             selected_language: Default::default(),
         }));
 
+        let syntax_changes = main_state
+            .borrow()
+            .settings
+            .gschema
+            .settings
+            .get_strv("syntax-config");
+        let syntax_config: HashMap<String, SyntaxParams> = syntax_changes
+            .iter()
+            .map(|s| s.as_str())
+            .map(|s| {
+                serde_json::from_str(s)
+                    .map_err(|e| error!("{} {}", gettext("Failed to deserialize syntax config"), e))
+                    .unwrap()
+            })
+            .map(|sc: SyntaxParams| (sc.domain.syntax.clone(), sc))
+            .collect();
+
         let main_win = Rc::new(Self {
             core: core.clone(),
             window: window.clone(),
@@ -197,6 +217,7 @@ impl MainWin {
             new_view_tx,
             properties,
             request_tx,
+            syntax_config: RefCell::new(syntax_config),
         });
 
         connect_settings_change(&main_win, &core);
@@ -689,7 +710,10 @@ impl MainWin {
         debug!("{} 'language_changed' {:?}", gettext("Handling"), params);
         let views = self.views.borrow();
         if let Some(ev) = views.get(&params.view_id) {
-            ev.language_changed(&params.language_id)
+            if let Some(sc) = self.syntax_config.borrow().get(&params.language_id) {
+                ev.default_tab_size.replace(sc.changes.tab_size);
+            }
+            ev.language_changed(&params.language_id);
         }
     }
 
@@ -1260,17 +1284,30 @@ pub fn connect_settings_change(main_win: &Rc<MainWin>, core: &Client) {
                 "syntax-config" => {
                     let val = gschema.settings.get_strv("syntax-config");
 
-                    for x in val {
+                    for x in &val {
                         if let Ok(val) = serde_json::from_str(x.as_str()) {
                             core.notify(
                                 "modify_user_config",
-                                val
+                                val,
                             );
                         } else {
                             error!("{}. {}", gettext("Failed to deserialize syntax config"), gettext("Resetting."));
                             gschema.settings.reset("syntax-config");
                         }
                     }
+
+                    let syntax_config: HashMap<String, SyntaxParams> = val
+                        .iter()
+                        .map(|s| s.as_str())
+                        .map(|s| {
+                            serde_json::from_str(s)
+                                .map_err(|e| error!("{} {}", gettext("Failed to deserialize syntax config"), e))
+                                .unwrap()
+                        })
+                        .map(|sc: SyntaxParams| (sc.domain.syntax.clone(), sc))
+                        .collect();
+
+                    main_win.syntax_config.replace(syntax_config);
                 }
                 "theme-name" => {
                     if let Some(ev) = main_win.get_current_edit_view() {
