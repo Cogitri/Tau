@@ -225,7 +225,7 @@ impl MainWin {
         window.set_application(Some(&application));
 
         // This is called when the window is closed with the 'X' or via the application menu, etc.
-        window.connect_delete_event(enclose!((main_win, window, tokio_runtime) move |_, _| {
+        window.connect_delete_event(enclose!((main_win, tokio_runtime) move |window, _| {
             // Only destroy the window when the user has saved the changes or closes without saving
             if Self::close_all(main_win.clone()) == SaveAction::Cancel {
                 debug!("{}", gettext("User chose to cancel exiting"));
@@ -242,7 +242,7 @@ impl MainWin {
         }));
 
         // Save to `WinProp` when the size of the window is changed
-        window.connect_size_allocate(enclose!((main_win, window) move |_, _| {
+        window.connect_size_allocate(enclose!((main_win) move |window, _| {
             let win_size = window.get_size();
             let maximized = window.is_maximized();
 
