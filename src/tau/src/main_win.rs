@@ -430,7 +430,7 @@ impl MainWin {
                     debug!("{}", gettext("User chose to not quit application"));
                 } else {
                     debug!("{}", gettext("User chose to quit application"));
-                    main_win.window.destroy();
+                    main_win.window.close();
                 }
             }));
             application.add_action(&quit_action);
