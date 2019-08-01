@@ -52,8 +52,8 @@ pub struct EditView {
     interface_font: Font,
     im_context: IMContextSimple,
     update_sender: Sender<Update>,
-    pub default_tab_size: RefCell<u32>,
-    pub tab_size: RefCell<Option<u32>>,
+    pub(crate) default_tab_size: RefCell<u32>,
+    pub(crate) tab_size: RefCell<Option<u32>>,
 }
 
 impl EditView {
@@ -126,9 +126,7 @@ impl EditView {
             trace!("Key '{}' has changed!", key);
             if key == "tab-size" {
                     let val = gschema.get_key("tab-size");
-                    edit_view.default_tab_size.replace(val);
-                    edit_view.view_item.statusbar.tab_size_button.set_value(f64::from(val));
-                    edit_view.view_item.edit_area.queue_draw();
+                    edit_view.set_default_tab_size(val);
                 }
             }));
 
@@ -1375,5 +1373,17 @@ impl EditView {
             .statusbar
             .syntax_menu_button
             .set_sensitive(state);
+    }
+
+    pub fn set_default_tab_size(&self, size: u32) {
+        self.default_tab_size.replace(size);
+        self.view_item
+            .statusbar
+            .tab_size_button
+            .set_value(f64::from(size));
+        // We only need to redraw if the `default_tab_size` is actually in use right now.
+        if self.tab_size.borrow().is_none() {
+            self.view_item.edit_area.queue_draw();
+        }
     }
 }
