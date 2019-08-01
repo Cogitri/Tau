@@ -2,13 +2,14 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the gxi package.
 # Elizabeth Sherrock <lizzyd710@gmail.com>, 2019.
+# Yulin Shen <sylxjtu@outlook.com>, 2019.
 msgid ""
 msgstr ""
 "Project-Id-Version: Tau\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-06-17 00:36+0200\n"
-"PO-Revision-Date: 2019-07-03 10:02+0000\n"
-"Last-Translator: Elizabeth Sherrock <lizzyd710@gmail.com>\n"
+"PO-Revision-Date: 2019-08-01 02:46+0000\n"
+"Last-Translator: Yulin Shen <sylxjtu@outlook.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/Tau/"
 "translation/zh_Hans/>\n"
 "Language: zh_Hans\n"
@@ -53,7 +54,7 @@ msgstr ""
 
 #: data/org.gnome.Tau.desktop.in:16
 msgid "Launch a new Tau instance"
-msgstr ""
+msgstr "启动一个新的 Tau 实例"
 
 #: data/org.gnome.Tau.gschema.xml:9
 msgid "Xi-Editor's theme"
@@ -73,19 +74,19 @@ msgstr "绘制位于行尾的空格"
 
 #: data/org.gnome.Tau.gschema.xml:25
 msgid "Draw leading spaces"
-msgstr ""
+msgstr "绘制前导空格"
 
 #: data/org.gnome.Tau.gschema.xml:26
 msgid "Draw spaces which are at the beginning of a line"
-msgstr ""
+msgstr "绘制位于行首的空格"
 
 #: data/org.gnome.Tau.gschema.xml:33
 msgid "Draw all spaces"
-msgstr ""
+msgstr "绘制所有空格"
 
 #: data/org.gnome.Tau.gschema.xml:34
 msgid "Draw spaces, no matter the position"
-msgstr ""
+msgstr "绘制在所有位置的空格"
 
 #: data/org.gnome.Tau.gschema.xml:41
 msgid "Draw a right hand margin"
