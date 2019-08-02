@@ -30,8 +30,6 @@ impl AboutWin {
         trace!("{}", gettext("Showing about window"));
         about_dialog.show_all();
 
-        Self {
-            about_dialog: about_dialog.clone(),
-        }
+        Self { about_dialog }
     }
 }

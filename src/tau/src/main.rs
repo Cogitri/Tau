@@ -220,13 +220,13 @@ fn main() {
             setup_config(&core);
 
             MainWin::new(
-                application.clone(),
+                &application,
                 core,
                 new_view_rx_opt.borrow_mut().take().unwrap(),
                 new_view_tx.clone(),
                 event_rx,
-                request_tx.clone(),
-                Rc::new(RefCell::new(Some(runtime))),
+                request_tx,
+                &Rc::new(RefCell::new(Some(runtime))),
             );
         }),
     );
@@ -251,7 +251,7 @@ fn main() {
 
         for file in files {
             if let Some(path) = file.get_path() {
-                let file =  path.to_str().map(|s| s.to_string());
+                let file =  path.to_str().map(ToString::to_string);
                 match tokio::executor::current_thread::block_on_all(core_locked.new_view(file.clone())) {
                     Ok(view_id) => new_view_tx.send((view_id, file)).unwrap(),
                     Err(e) => error!("{}: '{}'; {}: {:#?}", gettext("Failed to open new due to error"), e, gettext("Path"), file),
@@ -283,6 +283,11 @@ fn main() {
 
 /// Send the current config to xi-editor during startup
 fn setup_config(core: &Client) {
+    #[cfg(windows)]
+    const LINE_ENDING: &str = "\r\n";
+    #[cfg(not(windows))]
+    const LINE_ENDING: &str = "\n";
+
     let gschema = GSchema::new("org.gnome.Tau");
 
     let tab_size: u32 = gschema.get_key("tab-size");
@@ -304,11 +309,6 @@ fn setup_config(core: &Client) {
         gschema.settings.reset("font");
         (14.0, "Monospace".to_string())
     };
-
-    #[cfg(windows)]
-    const LINE_ENDING: &str = "\r\n";
-    #[cfg(not(windows))]
-    const LINE_ENDING: &str = "\n";
 
     tokio::executor::current_thread::block_on_all(core.modify_user_config(
         "general",

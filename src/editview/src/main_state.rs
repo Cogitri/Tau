@@ -2,7 +2,7 @@ use gschema_config_storage::GSchema;
 use std::collections::HashMap;
 use syntect::highlighting::ThemeSettings;
 
-/// A Struct containing setting switches for the EditView
+/// A Struct containing setting switches for the `EditView`
 pub struct Settings {
     pub gschema: GSchema,
     pub trailing_spaces: bool,

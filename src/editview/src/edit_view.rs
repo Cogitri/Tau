@@ -37,7 +37,7 @@ pub struct TextSize {
     contained_width: bool,
 }
 
-/// The EditView is the part of Tau that does the actual editing. This is where you edit documents.
+/// The `EditView` is the part of Tau that does the actual editing. This is where you edit documents.
 pub struct EditView {
     pub(crate) core: Client,
     main_state: Rc<RefCell<MainState>>,
@@ -476,7 +476,7 @@ impl EditView {
                 );
 
                 let pango_ctx = self.view_item.get_pango_ctx();
-                let layout = self.create_layout_for_line(&pango_ctx, &line, &tabs);
+                let layout = self.create_layout_for_line(&pango_ctx, line, &tabs);
                 // debug!("width={}", layout.get_extents().1.width);
                 update_layout(cr, &layout);
                 show_layout(cr, &layout);
@@ -489,7 +489,7 @@ impl EditView {
                 if self.main_state.borrow().settings.trailing_tabs {
                     let pos = draw_invisible::Rectangle::from_layout_index(
                         draw_invisible::tabs::trailing(
-                            &line.text.replace("\n", "").replace("\r\n", "").as_str(),
+                            line.text.replace("\n", "").replace("\r\n", "").as_str(),
                         ),
                         &layout,
                     );
@@ -499,7 +499,7 @@ impl EditView {
                     });
                 } else if self.main_state.borrow().settings.leading_tabs {
                     let pos = draw_invisible::Rectangle::from_layout_index(
-                        draw_invisible::tabs::leading(&line.text.as_str()),
+                        draw_invisible::tabs::leading(line.text.as_str()),
                         &layout,
                     );
                     pos.filter(|r| r.width != 0.0).for_each(|mut r| {
@@ -508,7 +508,7 @@ impl EditView {
                     });
                 } else if self.main_state.borrow().settings.all_tabs {
                     let pos = draw_invisible::Rectangle::from_layout_index(
-                        draw_invisible::tabs::all(&line.text.as_str()),
+                        draw_invisible::tabs::all(line.text.as_str()),
                         &layout,
                     );
                     pos.filter(|r| r.width != 0.0).for_each(|mut r| {
@@ -520,7 +520,7 @@ impl EditView {
                 if self.main_state.borrow().settings.trailing_spaces {
                     let pos = draw_invisible::Rectangle::from_layout_index(
                         draw_invisible::spaces::trailing(
-                            &line.text.replace("\n", "").replace("\r\n", "").as_str(),
+                            line.text.replace("\n", "").replace("\r\n", "").as_str(),
                         ),
                         &layout,
                     );
@@ -530,7 +530,7 @@ impl EditView {
                     });
                 } else if self.main_state.borrow().settings.leading_spaces {
                     let pos = draw_invisible::Rectangle::from_layout_index(
-                        draw_invisible::spaces::leading(&line.text.as_str()),
+                        draw_invisible::spaces::leading(line.text.as_str()),
                         &layout,
                     );
                     pos.filter(|r| r.width != 0.0).for_each(|mut r| {
@@ -539,7 +539,7 @@ impl EditView {
                     });
                 } else if self.main_state.borrow().settings.all_spaces {
                     let pos = draw_invisible::Rectangle::from_layout_index(
-                        draw_invisible::spaces::all(&line.text.as_str()),
+                        draw_invisible::spaces::all(line.text.as_str()),
                         &layout,
                     );
                     pos.filter(|r| r.width != 0.0).for_each(|mut r| {
@@ -552,7 +552,7 @@ impl EditView {
                     for c in &line.cursor {
                         gtk::render_insertion_cursor(
                             &self.view_item.edit_area.get_style_context(),
-                            &cr,
+                            cr,
                             1.0,
                             self.edit_font.borrow().font_height * i as f64 - vadj.get_value(),
                             &layout,
@@ -1131,8 +1131,8 @@ impl EditView {
             MainContext::sync_channel::<serde_json::value::Value>(PRIORITY_HIGH, 1);
 
         clipboard_rx.attach(None, move |val| {
-            if let Some(ref text) = val.as_str() {
-                Clipboard::get(&SELECTION_CLIPBOARD).set_text(&text);
+            if let Some(text) = val.as_str() {
+                Clipboard::get(&SELECTION_CLIPBOARD).set_text(text);
             }
 
             Continue(false)
@@ -1150,14 +1150,11 @@ impl EditView {
 
     /// Pastes text from the clipboard into the EditView
     pub fn do_paste(&self, view_id: ViewId) {
-        // if let Some(text) = Clipboard::get(&SELECTION_CLIPBOARD).wait_for_text() {
-        //     self.core.insert(view_id, &text);
-        // }
         debug!("{}", gettext("Pasting text"));
         let core = self.core.clone();
         Clipboard::get(&SELECTION_CLIPBOARD).request_text(enclose!((view_id) move |_, text| {
             if let Some(clip_content) = text {
-                core.insert(view_id, &clip_content);
+                core.insert(view_id, clip_content);
             }
         }));
     }
@@ -1168,7 +1165,7 @@ impl EditView {
         Clipboard::get(&SELECTION_PRIMARY).request_text(enclose!((view_id) move |_, text| {
             core.click_point_select(view_id, line, col);
             if let Some(clip_content) = text {
-                core.insert(view_id, &clip_content);
+                core.insert(view_id, clip_content);
             }
         }));
     }
@@ -1338,7 +1335,7 @@ impl EditView {
 
     pub fn set_language(&self, lang: &str) {
         debug!("{} '{:?}'", gettext("Changing language to"), lang);
-        self.core.set_language(self.view_id, &lang);
+        self.core.set_language(self.view_id, lang);
     }
 
     pub fn language_changed(&self, syntax: &str) {

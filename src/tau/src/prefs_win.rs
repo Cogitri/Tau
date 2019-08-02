@@ -3,6 +3,7 @@ use crate::syntax_config::*;
 use editview::MainState;
 use gettextrs::gettext;
 use gio::{SettingsBindFlags, SettingsExt};
+use glib::GString;
 use gschema_config_storage::{GSchema, GSchemaExt};
 use gtk::*;
 use log::{debug, error, trace};
@@ -90,7 +91,7 @@ impl PrefsWin {
         let syntax_changes = gschema.settings.get_strv("syntax-config");
         let syntax_config: HashMap<String, SyntaxParams> = syntax_changes
             .iter()
-            .map(|s| s.as_str())
+            .map(GString::as_str)
             .map(|s| {
                 serde_json::from_str(s)
                     .map_err(|e| error!("{} {}", gettext("Failed to deserialize syntax config"), e))

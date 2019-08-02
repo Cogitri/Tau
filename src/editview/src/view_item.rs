@@ -27,7 +27,7 @@ pub struct EvBar {
     pub tab_width_label: Label,
 }
 
-/// The ViewItem contains the various GTK parts related to the edit_area of the EditView
+/// The `ViewItem` contains the various GTK parts related to the `edit_area` of the `EditView`
 #[derive(Clone)]
 pub struct ViewItem {
     pub root_box: Grid,
@@ -117,7 +117,7 @@ impl ViewItem {
 
         self.edit_area
             .connect_draw(enclose!((edit_view) move |_,ctx| {
-                edit_view.handle_da_draw(&ctx)
+                edit_view.handle_da_draw(ctx)
             }));
 
         self.ev_scrolled_window
@@ -149,7 +149,7 @@ impl ViewItem {
 
         self.linecount
             .connect_draw(enclose!((edit_view) move |_,ctx| {
-                edit_view.handle_linecount_draw(&ctx)
+                edit_view.handle_linecount_draw(ctx)
             }));
 
         self.statusbar
@@ -168,7 +168,7 @@ impl ViewItem {
                         if lang == gettext("Plain Text") {
                              edit_view.set_language("Plain Text");
                         } else {
-                             edit_view.set_language(&lang);
+                             edit_view.set_language(lang);
                         }
                     }
                 }
@@ -281,7 +281,7 @@ impl ViewItem {
     }
 }
 
-/// Contains the top part of the EditView, tab widget and top bar.
+/// Contains the top part of the `EditView`, tab widget and top bar.
 pub struct TopBar {
     pub tab_widget: gtk::Box,
     pub label: Label,

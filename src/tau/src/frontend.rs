@@ -1,14 +1,14 @@
 use glib::SyncSender;
 use xrl::{Client, Frontend, FrontendBuilder, MeasureWidth, XiNotification};
 
-/// Wrapper enum to use one rx/tx pair for all XiNotifications and requests
+/// Wrapper enum to use one rx/tx pair for all `XiNotifications` and requests
 #[derive(Debug)]
 pub enum XiEvent {
     Notification(XiNotification),
     MeasureWidth(MeasureWidth),
 }
 
-/// Wrapper enum to use one rx/tx pair for all XiRequest results we send back to Xi.
+/// Wrapper enum to use one rx/tx pair for all `XiRequest` results we send back to Xi.
 #[derive(Debug)]
 pub enum XiRequest {
     MeasureWidth(Vec<Vec<f32>>),
@@ -36,7 +36,7 @@ impl Frontend for TauFrontend {
 
     /// Send `XiNotification`s to the thread GTK is running on
     fn handle_notification(&mut self, ev: XiNotification) -> Self::NotificationResult {
-        // Send all XiNotifications to the MainWin
+        // Send all `XiNotifications` to the MainWin
         self.event_tx.send(XiEvent::Notification(ev)).unwrap();
 
         Ok(())

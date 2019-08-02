@@ -19,7 +19,7 @@ impl From<Color> for PangoColor {
     }
 }
 
-/// Helper function for cairo::Context::set_source_rgba which sets a sane default if the Color is None
+/// Helper function for `cairo::Context::set_source_rgba` which sets a sane default if the Color is None
 pub fn set_source_color(cr: &cairo::Context, color: Option<Color>) {
     if let Some(c) = color {
         cr.set_source_rgba(
@@ -64,7 +64,7 @@ pub fn set_margin_source_color(cr: &cairo::Context, color: Option<Color>) {
 }
 
 /// Explode an u32 into its individual RGBA values
-pub fn color_from_u32(c: u32) -> Color {
+pub const fn color_from_u32(c: u32) -> Color {
     Color {
         r: (c >> 16) as u8,
         g: (c >> 8) as u8,

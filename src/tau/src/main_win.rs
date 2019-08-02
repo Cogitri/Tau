@@ -9,7 +9,7 @@ use futures::future::Future;
 use gdk_pixbuf::Pixbuf;
 use gettextrs::gettext;
 use gio::{ActionMapExt, ApplicationExt, Resource, SettingsExt, SimpleAction};
-use glib::{Bytes, MainContext, Receiver, Sender};
+use glib::{Bytes, GString, MainContext, Receiver, Sender};
 use gschema_config_storage::{GSchema, GSchemaExt};
 use gtk::*;
 use log::{debug, error, info, trace, warn};
@@ -19,7 +19,7 @@ use std::collections::{BTreeMap, HashMap};
 use std::convert::TryFrom;
 use std::rc::Rc;
 use tokio::runtime::Runtime;
-use xrl::{Client, Style, ViewId, XiNotification::*};
+use xrl::{Client, Style, ViewId, XiNotification};
 
 pub const RESOURCE: &[u8] = include_bytes!("ui/resources.gresource");
 
@@ -55,7 +55,7 @@ impl TryFrom<i32> for SaveAction {
 }
 
 /// The `WinProp` struct, which holds some information about the current state of the Window. It's
-/// saved to GSettings during shutdown to restore the window state when it's started again.
+/// saved to `GSettings` during shutdown to restore the window state when it's started again.
 struct WinProp {
     /// Height of the MainWin
     height: i32,
@@ -137,7 +137,7 @@ impl MainWin {
     /// bootstrap Tau
     pub fn new(
         // The `gio::Application` which this `MainWin` belongs to
-        application: Application,
+        application: &Application,
         // The `xi-core` we can send commands to
         core: Client,
         // The `Receiver` we get requests to open new views from
@@ -149,7 +149,7 @@ impl MainWin {
         // The `Receiver` on which we receive requests from `xi-core`
         request_tx: crossbeam_channel::Sender<XiRequest>,
         // The tokio runtime, we only use this to shut it down with Tau
-        tokio_runtime: Rc<RefCell<Option<Runtime>>>,
+        tokio_runtime: &Rc<RefCell<Option<Runtime>>>,
     ) -> Rc<Self> {
         let gbytes = Bytes::from_static(RESOURCE);
         let resource = Resource::new_from_data(&gbytes).unwrap();
@@ -205,7 +205,7 @@ impl MainWin {
             .get_strv("syntax-config");
         let syntax_config: HashMap<String, SyntaxParams> = syntax_changes
             .iter()
-            .map(|s| s.as_str())
+            .map(GString::as_str)
             .map(|s| {
                 serde_json::from_str(s)
                     .map_err(|e| error!("{} {}", gettext("Failed to deserialize syntax config"), e))
@@ -215,54 +215,58 @@ impl MainWin {
             .collect();
 
         let main_win = Rc::new(Self {
-            core: core.clone(),
-            window: window.clone(),
-            notebook: notebook.clone(),
-            builder: builder.clone(),
-            views: Default::default(),
-            w_to_ev: Default::default(),
-            view_id_to_w: Default::default(),
-            state: main_state.clone(),
+            core,
+            window,
+            notebook,
+            builder,
             new_view_tx,
             properties,
             request_tx,
+            views: Default::default(),
+            w_to_ev: Default::default(),
+            view_id_to_w: Default::default(),
+            state: main_state,
             syntax_config: RefCell::new(syntax_config),
             started_plugins: RefCell::new(Default::default()),
         });
 
-        connect_settings_change(&main_win, &core);
+        connect_settings_change(&main_win, &main_win.core);
 
-        window.set_application(Some(&application));
+        main_win.window.set_application(Some(&application.clone()));
 
         // This is called when the window is closed with the 'X' or via the application menu, etc.
-        window.connect_delete_event(enclose!((main_win, tokio_runtime) move |window, _| {
-            // Only destroy the window when the user has saved the changes or closes without saving
-            if Self::close_all(main_win.clone()) == SaveAction::Cancel {
-                debug!("{}", gettext("User chose to cancel exiting"));
-                Inhibit(true)
-            } else {
-                debug!("{}", gettext("User chose to close the application"));
-                main_win.properties.borrow().save();
-                if let Some(runtime) = tokio_runtime.borrow_mut().take() {
-                    runtime.shutdown_now().wait().unwrap();
+        main_win
+            .window
+            .connect_delete_event(enclose!((main_win, tokio_runtime) move |window, _| {
+                // Only destroy the window when the user has saved the changes or closes without saving
+                if Self::close_all(&main_win) == SaveAction::Cancel {
+                    debug!("{}", gettext("User chose to cancel exiting"));
+                    Inhibit(true)
+                } else {
+                    debug!("{}", gettext("User chose to close the application"));
+                    main_win.properties.borrow().save();
+                    if let Some(runtime) = tokio_runtime.borrow_mut().take() {
+                        runtime.shutdown_now().wait().unwrap();
+                    }
+                    window.destroy();
+                    Inhibit(false)
                 }
-                window.destroy();
-                Inhibit(false)
-            }
-        }));
+            }));
 
         // Save to `WinProp` when the size of the window is changed
-        window.connect_size_allocate(enclose!((main_win) move |window, _| {
-            let win_size = window.get_size();
-            let maximized = window.is_maximized();
+        main_win
+            .window
+            .connect_size_allocate(enclose!((main_win) move |window, _| {
+                let win_size = window.get_size();
+                let maximized = window.is_maximized();
 
-            let mut properties = main_win.properties.borrow_mut();
-            properties.is_maximized = maximized;
-            if ! maximized {
-                properties.width = win_size.0;
-                properties.height = win_size.1;
-            }
-        }));
+                let mut properties = main_win.properties.borrow_mut();
+                properties.is_maximized = maximized;
+                if ! maximized {
+                    properties.width = win_size.0;
+                    properties.height = win_size.1;
+                }
+            }));
 
         // Below here we connect all actions, meaning that these closures will be run when the respective
         // action is triggered (e.g. by a button press)
@@ -402,7 +406,7 @@ impl MainWin {
             let close_all_action = SimpleAction::new("close_all", None);
             close_all_action.connect_activate(enclose!((main_win) move |_,_| {
                 trace!("{} 'close_all' {}", gettext("Handling"), gettext("action"));
-                Self::close_all(main_win.clone());
+                Self::close_all(&main_win);
             }));
             application.add_action(&close_all_action);
         }
@@ -436,7 +440,7 @@ impl MainWin {
             quit_action.connect_activate(enclose!((main_win) move |_,_| {
                 trace!("{} 'quit' {}", gettext("Handling"), gettext("action"));
                 // Same as in connect_destroy, only quit if the user saves or wants to close without saving
-                if Self::close_all(main_win.clone()) == SaveAction::Cancel {
+                if Self::close_all(&main_win) == SaveAction::Cancel {
                     debug!("{}", gettext("User chose to not quit application"));
                 } else {
                     debug!("{}", gettext("User chose to quit application"));
@@ -447,17 +451,15 @@ impl MainWin {
         }
 
         // Put keyboard shortcuts here
-        if let Some(app) = window.get_application() {
-            app.set_accels_for_action("app.find", &["<Primary>f"]);
-            app.set_accels_for_action("app.save", &["<Primary>s"]);
-            app.set_accels_for_action("app.new", &["<Primary>n"]);
-            app.set_accels_for_action("app.open", &["<Primary>o"]);
-            app.set_accels_for_action("app.quit", &["<Primary>q"]);
-            app.set_accels_for_action("app.replace", &["<Primary>r"]);
-            app.set_accels_for_action("app.close", &["<Primary>w"]);
-            app.set_accels_for_action("app.find_next", &["<Primary>g"]);
-            app.set_accels_for_action("app.find_prev", &["<Primary><Shift>g"]);
-        }
+        application.set_accels_for_action("app.find", &["<Primary>f"]);
+        application.set_accels_for_action("app.save", &["<Primary>s"]);
+        application.set_accels_for_action("app.new", &["<Primary>n"]);
+        application.set_accels_for_action("app.open", &["<Primary>o"]);
+        application.set_accels_for_action("app.quit", &["<Primary>q"]);
+        application.set_accels_for_action("app.replace", &["<Primary>r"]);
+        application.set_accels_for_action("app.close", &["<Primary>w"]);
+        application.set_accels_for_action("app.find_next", &["<Primary>g"]);
+        application.set_accels_for_action("app.find_prev", &["<Primary><Shift>g"]);
 
         let main_context = MainContext::default();
 
@@ -466,7 +468,7 @@ impl MainWin {
         new_view_rx.attach(
             Some(&main_context),
             enclose!((main_win) move |(view_id, path)| {
-                MainWin::new_view_response(&main_win, path, view_id);
+                Self::new_view_response(&main_win, path, view_id);
                 Continue(true)
             }),
         );
@@ -474,13 +476,13 @@ impl MainWin {
         event_rx.attach(
             Some(&main_context),
             enclose!((main_win) move |ev| {
-                    MainWin::handle_event(&main_win, ev);
+                    Self::handle_event(&main_win, ev);
                     Continue(true)
             }),
         );
 
         debug!("{}", gettext("Showing main window"));
-        window.show_all();
+        main_win.window.show_all();
 
         main_win
     }
@@ -491,19 +493,19 @@ impl MainWin {
         trace!("{}: {:?}", gettext("Handling XiEvent"), ev);
         match ev {
             XiEvent::Notification(notification) => match notification {
-                Alert(alert) => self.alert(alert),
-                AvailableThemes(themes) => self.available_themes(themes),
-                ConfigChanged(config) => self.config_changed(config),
-                DefStyle(style) => self.def_style(style),
-                FindStatus(status) => self.find_status(status),
-                ReplaceStatus(status) => self.replace_status(status),
-                Update(update) => self.update(update),
-                ScrollTo(scroll) => self.scroll_to(scroll),
-                ThemeChanged(theme) => self.theme_changed(theme),
-                AvailableLanguages(langs) => self.available_languages(langs),
-                LanguageChanged(lang) => self.language_changed(lang),
-                PluginStarted(plugin) => self.plugin_started(plugin),
-                PluginStoped(plugin) => self.plugin_stopped(plugin),
+                XiNotification::Alert(alert) => self.alert(alert),
+                XiNotification::AvailableThemes(themes) => self.available_themes(themes),
+                XiNotification::ConfigChanged(config) => self.config_changed(&config),
+                XiNotification::DefStyle(style) => self.def_style(style),
+                XiNotification::FindStatus(status) => self.find_status(&status),
+                XiNotification::ReplaceStatus(status) => self.replace_status(&status),
+                XiNotification::Update(update) => self.update(update),
+                XiNotification::ScrollTo(scroll) => self.scroll_to(&scroll),
+                XiNotification::ThemeChanged(theme) => self.theme_changed(theme),
+                XiNotification::AvailableLanguages(langs) => self.available_languages(langs),
+                XiNotification::LanguageChanged(lang) => self.language_changed(&lang),
+                XiNotification::PluginStarted(plugin) => self.plugin_started(&plugin),
+                XiNotification::PluginStoped(plugin) => self.plugin_stopped(&plugin),
                 _ => {}
             },
             XiEvent::MeasureWidth(measure_width) => self.measure_width(measure_width),
@@ -571,12 +573,12 @@ impl MainWin {
         };
 
         let mut state = self.state.borrow_mut();
-        state.theme = params.theme.clone();
+        state.theme = params.theme;
         state.styles.insert(0, selection_style);
     }
 
     /// Forward `ConfigChanged` to the respective `EditView`
-    pub fn config_changed(&self, params: xrl::ConfigChanged) {
+    pub fn config_changed(&self, params: &xrl::ConfigChanged) {
         let views = self.views.borrow();
         if let Some(ev) = views.get(&params.view_id) {
             ev.config_changed(&params.changes)
@@ -584,7 +586,7 @@ impl MainWin {
     }
 
     /// Forward `FindStatus` to the respective `EditView`
-    pub fn find_status(&self, params: xrl::FindStatus) {
+    pub fn find_status(&self, params: &xrl::FindStatus) {
         let views = self.views.borrow();
         if let Some(ev) = views.get(&params.view_id) {
             ev.find_status(&params.queries)
@@ -592,7 +594,7 @@ impl MainWin {
     }
 
     /// Forward `ReplaceStatus` to the respective `EditView`
-    pub fn replace_status(&self, params: xrl::ReplaceStatus) {
+    pub fn replace_status(&self, params: &xrl::ReplaceStatus) {
         let views = self.views.borrow();
         if let Some(ev) = views.get(&params.view_id) {
             ev.replace_status(&params.status)
@@ -616,7 +618,7 @@ impl MainWin {
 
     /// Forward `ScrollTo` to the respective `EditView`. Also set our `GtkNotebook`'s
     /// current page to that `EditView`
-    pub fn scroll_to(&self, params: xrl::ScrollTo) {
+    pub fn scroll_to(&self, params: &xrl::ScrollTo) {
         trace!("{} 'scroll_to' {:?}", gettext("Handling"), params);
 
         let views = self.views.borrow();
@@ -627,7 +629,7 @@ impl MainWin {
         }
     }
 
-    fn plugin_started(&self, params: xrl::PluginStarted) {
+    fn plugin_started(&self, params: &xrl::PluginStarted) {
         if params.plugin == "xi-syntect-plugin" {
             self.started_plugins.borrow_mut().syntect = true;
             if let Some(ev) = self.views.borrow().get(&params.view_id) {
@@ -644,7 +646,7 @@ impl MainWin {
     }
 
     /// Open an error dialog if a plugin has crashed
-    fn plugin_stopped(&self, params: xrl::PluginStoped) {
+    fn plugin_stopped(&self, params: &xrl::PluginStoped) {
         if params.plugin == "xi-syntect-plugin" {
             self.started_plugins.borrow_mut().syntect = false;
             if let Some(ev) = self.views.borrow().get(&params.view_id) {
@@ -712,7 +714,7 @@ impl MainWin {
     }
 
     /// Forward `LanguageChanged` to the respective `EditView`
-    pub fn language_changed(&self, params: xrl::LanguageChanged) {
+    pub fn language_changed(&self, params: &xrl::LanguageChanged) {
         debug!("{} 'language_changed' {:?}", gettext("Handling"), params);
         let views = self.views.borrow();
         if let Some(ev) = views.get(&params.view_id) {
@@ -855,7 +857,7 @@ impl MainWin {
             &self.window,
             &self.state,
             &self.core,
-            &gschema,
+            gschema,
             lang.as_ref().map(String::as_str),
             &self.started_plugins.borrow(),
         );
@@ -916,7 +918,7 @@ impl MainWin {
 
         let view_id = tokio::executor::current_thread::block_on_all(
             self.core
-                .new_view(file_name.as_ref().map(|s| s.to_string())),
+                .new_view(file_name.as_ref().map(ToString::to_string)),
         )
         .unwrap();
         self.new_view_tx.send((view_id, file_name)).unwrap();
@@ -988,7 +990,7 @@ impl MainWin {
 
         main_win.views.borrow_mut().insert(view_id, edit_view);
         if let Some(empty_ev) = old_ev {
-            Self::close_view(&main_win, &empty_ev);
+            Self::close_view(main_win, &empty_ev);
         }
     }
 
@@ -997,7 +999,7 @@ impl MainWin {
     /// # Returns
     ///
     /// - `SaveAction` determining if all `EditView`s have been closed.
-    fn close_all(main_win: Rc<Self>) -> SaveAction {
+    fn close_all(main_win: &Rc<Self>) -> SaveAction {
         trace!("{}", gettext("Closing all EditViews"));
         // Get all views that we currently have opened
         let views = { main_win.views.borrow().clone() };
@@ -1005,7 +1007,7 @@ impl MainWin {
         let actions: Vec<SaveAction> = views
             .iter()
             .map(|(_, ev)| {
-                let save_action = Self::close_view(&main_win.clone(), &ev);
+                let save_action = Self::close_view(&main_win.clone(), ev);
                 if save_action != SaveAction::Cancel {
                     main_win.views.borrow_mut().remove(&ev.view_id);
                 }
@@ -1039,7 +1041,7 @@ impl MainWin {
     fn close(main_win: &Rc<Self>) -> SaveAction {
         trace!("{}", gettext("Closing current Editview"));
         if let Some(edit_view) = main_win.get_current_edit_view() {
-            Self::close_view(&main_win, &edit_view)
+            Self::close_view(main_win, &edit_view)
         } else {
             SaveAction::Cancel
         }
@@ -1122,7 +1124,7 @@ impl MainWin {
                 if let Some(page_num) = main_win.notebook.page_num(&w) {
                     main_win.notebook.remove_page(Some(page_num));
                 }
-                main_win.w_to_ev.borrow_mut().remove(&w.clone());
+                main_win.w_to_ev.borrow_mut().remove(&w);
             }
             main_win
                 .view_id_to_w
@@ -1164,7 +1166,7 @@ pub fn new_settings() -> Settings {
     }
 }
 
-/// Connect changes in our GSchema to actions in Tau. E.g. when the `draw-trailing-spaces` key has
+/// Connect changes in our `GSchema` to actions in Tau. E.g. when the `draw-trailing-spaces` key has
 /// been modified we make sure to set this in the `MainState` (so that the `EditView`s actually notice
 /// the change) and redraw the current one so that the user sees what has changed.
 pub fn connect_settings_change(main_win: &Rc<MainWin>, core: &Client) {
@@ -1315,7 +1317,7 @@ pub fn connect_settings_change(main_win: &Rc<MainWin>, core: &Client) {
 
                     let syntax_config: HashMap<String, SyntaxParams> = val
                         .iter()
-                        .map(|s| s.as_str())
+                        .map(GString::as_str)
                         .map(|s| {
                             serde_json::from_str(s)
                                 .map_err(|e| error!("{} {}", gettext("Failed to deserialize syntax config"), e))
@@ -1333,8 +1335,8 @@ pub fn connect_settings_change(main_win: &Rc<MainWin>, core: &Client) {
                 },
                 // We load these during startup
                 "window-height" | "window-width" | "window-maximized" => {}
-                _key => {
-                    warn!("{}: {}", gettext("Unknown key change event"), _key)
+                key => {
+                    warn!("{}: {}", gettext("Unknown key change event"), key)
                 }
             }
         }));
