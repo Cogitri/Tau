@@ -93,6 +93,13 @@ impl WinProp {
     }
 }
 
+/// Indicates which plugins, which have tight integration with Tau, have been started
+#[derive(Debug, Default, PartialEq)]
+pub struct StartedPlugins {
+    /// Provides auto-indention and syntax highlighting
+    pub syntect: bool,
+}
+
 /// The `MainWin` is (as the name suggests) tau's main window. It holds buttons like `Open` and `Save`
 /// and holds the `EditViews`, which do the actual editing. Refer to [the module level docs](main/index.html)
 /// for more information.
@@ -121,6 +128,8 @@ pub struct MainWin {
     request_tx: crossbeam_channel::Sender<XiRequest>,
     /// A `HashMap` containing the different configs for each syntax
     syntax_config: RefCell<HashMap<String, SyntaxParams>>,
+    /// Indicates which special plugins (for which we have to do additional work) have been started
+    started_plugins: RefCell<StartedPlugins>,
 }
 
 impl MainWin {
@@ -218,6 +227,7 @@ impl MainWin {
             properties,
             request_tx,
             syntax_config: RefCell::new(syntax_config),
+            started_plugins: RefCell::new(Default::default()),
         });
 
         connect_settings_change(&main_win, &core);
@@ -483,7 +493,6 @@ impl MainWin {
             XiEvent::Notification(notification) => match notification {
                 Alert(alert) => self.alert(alert),
                 AvailableThemes(themes) => self.available_themes(themes),
-                AvailablePlugins(plugins) => self.available_plugins(plugins),
                 ConfigChanged(config) => self.config_changed(config),
                 DefStyle(style) => self.def_style(style),
                 FindStatus(status) => self.find_status(status),
@@ -566,26 +575,6 @@ impl MainWin {
         state.styles.insert(0, selection_style);
     }
 
-    /// Get the available plugins and throw and error msg if we're missing syntect, which
-    /// we need for a lot of stuff
-    pub fn available_plugins(&self, params: xrl::AvailablePlugins) {
-        let mut has_syntect = false;
-
-        for x in &params.plugins {
-            if &x.name == "xi-syntect-plugin" {
-                has_syntect = true;
-            }
-        }
-
-        // FIXME: add a "don't show this again"!
-        if !has_syntect {
-            ErrorDialog::new(ErrorMsg {
-                msg: format!("{}: {:?}", gettext("Couldn't find syntect plugin, functionality will be limited! Only found the following plugins"), params.plugins),
-                fatal: false,
-            });
-        }
-    }
-
     /// Forward `ConfigChanged` to the respective `EditView`
     pub fn config_changed(&self, params: xrl::ConfigChanged) {
         let views = self.views.borrow();
@@ -638,20 +627,37 @@ impl MainWin {
         }
     }
 
-    fn plugin_started(&self, _params: xrl::PluginStarted) {}
+    fn plugin_started(&self, params: xrl::PluginStarted) {
+        if params.plugin == "xi-syntect-plugin" {
+            self.started_plugins.borrow_mut().syntect = true;
+            if let Some(ev) = self.views.borrow().get(&params.view_id) {
+                ev.view_item
+                    .statusbar
+                    .insert_spaces_button
+                    .set_sensitive(true);
+                ev.view_item
+                    .statusbar
+                    .auto_indention_button
+                    .set_sensitive(true);
+            }
+        }
+    }
 
     /// Open an error dialog if a plugin has crashed
     fn plugin_stopped(&self, params: xrl::PluginStoped) {
-        ErrorDialog::new(ErrorMsg {
-            msg: format!(
-                "{} {} {} {}",
-                gettext("Plugin"),
-                params.plugin,
-                gettext("has crashed"),
-                gettext("functionality will be limited")
-            ),
-            fatal: false,
-        });
+        if params.plugin == "xi-syntect-plugin" {
+            self.started_plugins.borrow_mut().syntect = false;
+            if let Some(ev) = self.views.borrow().get(&params.view_id) {
+                ev.view_item
+                    .statusbar
+                    .insert_spaces_button
+                    .set_sensitive(false);
+                ev.view_item
+                    .statusbar
+                    .auto_indention_button
+                    .set_sensitive(false);
+            }
+        }
     }
 
     /// Measure the width of a string for Xi and send it the result. Used for line wrapping.
@@ -851,6 +857,7 @@ impl MainWin {
             &self.core,
             &gschema,
             lang.as_ref().map(String::as_str),
+            &self.started_plugins.borrow(),
         );
     }
 

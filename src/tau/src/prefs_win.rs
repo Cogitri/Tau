@@ -1,3 +1,4 @@
+use crate::main_win::StartedPlugins;
 use crate::syntax_config::*;
 use editview::MainState;
 use gettextrs::gettext;
@@ -26,6 +27,7 @@ impl PrefsWin {
         core: &Client,
         gschema: &GSchema,
         current_syntax: Option<&str>,
+        started_plugins: &StartedPlugins,
     ) -> Self {
         let builder = Builder::new_from_resource("/org/gnome/Tau/prefs_win.glade");
 
@@ -60,6 +62,13 @@ impl PrefsWin {
         let draw_all_spaces_radio: RadioButton =
             builder.get_object("spaces_all_radio_button").unwrap();
 
+        let syntect_warn_automatic_indention_image: Image = builder
+            .get_object("syntect_warn_automatic_indention_image")
+            .unwrap();
+        let syntect_warn_insert_spaces_image: Image = builder
+            .get_object("syntect_warn_insert_spaces_image")
+            .unwrap();
+
         let syntax_config_combo_box: ComboBoxText =
             builder.get_object("syntax_config_combo_box").unwrap();
         let syntax_config_insert_spaces_checkbutton: CheckButton = builder
@@ -90,6 +99,15 @@ impl PrefsWin {
             .map(|sc: SyntaxParams| (sc.domain.syntax.clone(), sc))
             .collect();
         let syntax_config = Rc::new(RefCell::new(syntax_config));
+
+        if !started_plugins.syntect {
+            let gettext_msg = gettext("Couldn't find the xi-syntect-plugin. As such these settings won't work in the current session.");
+            syntect_warn_insert_spaces_image.set_visible(true);
+            syntect_warn_insert_spaces_image.set_tooltip_text(Some(&gettext_msg));
+
+            syntect_warn_automatic_indention_image.set_visible(true);
+            syntect_warn_automatic_indention_image.set_tooltip_text(Some(&gettext_msg));
+        }
 
         let font_desc: &String = &gschema.get_key("font");
         font_chooser_widget.set_font_desc(&FontDescription::from_string(font_desc));
