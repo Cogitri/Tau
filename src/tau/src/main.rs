@@ -79,7 +79,7 @@ mod prefs_win;
 mod shortcuts_win;
 mod syntax_config;
 
-use crate::frontend::*;
+use crate::frontend::{TauFrontendBuilder, XiEvent, XiRequest};
 use crate::main_win::MainWin;
 //use crate::panic_handler::PanicHandler;
 use crossbeam_channel::unbounded;

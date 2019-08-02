@@ -1,6 +1,7 @@
 use crate::globals;
 use gettextrs::gettext;
-use gtk::*;
+use gtk::prelude::*;
+use gtk::{AboutDialog, ApplicationWindow};
 use log::trace;
 
 /// The about window, which displays some simple info about tau

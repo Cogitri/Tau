@@ -3,7 +3,12 @@ use gdk::{Cursor, CursorType, DisplayManager, WindowExt};
 use gettextrs::gettext;
 use gio::Resource;
 use glib::Bytes;
-use gtk::*;
+use gtk::prelude::*;
+use gtk::{
+    Adjustment, Box, Builder, Button, CheckButton, EventBox, Grid, Inhibit, Label, Layout,
+    ListStore, Menu, MenuButton, Popover, PositionType, Revealer, ScrolledWindow, SearchBar,
+    SearchEntry, SpinButton, Statusbar, ToggleButton, TreeView, Widget,
+};
 use log::{debug, trace};
 use serde_json::json;
 use std::rc::Rc;
@@ -32,8 +37,8 @@ pub struct EvBar {
 pub struct ViewItem {
     pub root_box: Grid,
     pub ev_scrolled_window: ScrolledWindow,
-    pub edit_area: gtk::Layout,
-    pub linecount: gtk::Layout,
+    pub edit_area: Layout,
+    pub linecount: Layout,
     pub hadj: Adjustment,
     pub vadj: Adjustment,
     pub statusbar: EvBar,

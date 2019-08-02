@@ -1,7 +1,7 @@
 use gettextrs::gettext;
 use gio::prelude::*;
 use gtk::prelude::*;
-use gtk::*;
+use gtk::{ButtonsType, DialogFlags, MessageDialog, MessageType};
 use log::error;
 
 /// A struct holding the error message to be displayed

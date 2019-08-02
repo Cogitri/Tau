@@ -11,7 +11,11 @@ use gettextrs::gettext;
 use gio::{ActionMapExt, ApplicationExt, Resource, SettingsExt, SimpleAction};
 use glib::{Bytes, GString, MainContext, Receiver, Sender};
 use gschema_config_storage::{GSchema, GSchemaExt};
-use gtk::*;
+use gtk::prelude::*;
+use gtk::{
+    Application, ApplicationWindow, Builder, ButtonsType, DialogFlags, FileChooserAction,
+    FileChooserNative, MessageDialog, MessageType, Notebook, ResponseType, Widget,
+};
 use log::{debug, error, info, trace, warn};
 use serde_json::{self, json};
 use std::cell::RefCell;

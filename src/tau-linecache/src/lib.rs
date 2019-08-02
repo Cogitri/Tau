@@ -2,4 +2,4 @@
 
 pub mod linecache;
 
-pub use crate::linecache::*;
+pub use crate::linecache::{Line, LineCache};

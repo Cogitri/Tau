@@ -1,4 +1,5 @@
-use gtk::*;
+use gtk::prelude::*;
+use gtk::{ApplicationWindow, Builder, ShortcutsWindow};
 use log::trace;
 
 /// The shortcuts window, which shows the user all keyboard shortcuts Tau offers

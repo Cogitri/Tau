@@ -2,26 +2,29 @@ use crate::draw_invisible;
 use crate::fonts::Font;
 use crate::main_state::MainState;
 use crate::theme::{color_from_u32, set_margin_source_color, set_source_color, PangoColor};
-use crate::view_item::*;
+use crate::view_item::{FindReplace, TopBar, ViewItem};
 use cairo::Context;
 use crossbeam_channel::{unbounded, Sender};
-use gdk::enums::key;
-use gdk::*;
+use gdk::{
+    enums::key, EventButton, EventKey, EventMotion, EventType, ModifierType, SELECTION_CLIPBOARD,
+    SELECTION_PRIMARY,
+};
 use gettextrs::gettext;
 use gio::SettingsExt;
 use glib::{source::Continue, MainContext, PRIORITY_HIGH};
 use gschema_config_storage::GSchemaExt;
-use gtk::{self, *};
+use gtk::prelude::*;
+use gtk::{ApplicationWindow, Clipboard, Grid, IMContextSimple, MenuButton, TreePath};
 use log::{debug, error, trace, warn};
-use pango::{self, *};
-use pangocairo::functions::*;
+use pango::{Attribute, Direction, FontDescription, TabAlign, TabArray};
+use pangocairo::functions as pangocairofuncs;
 use parking_lot::Mutex;
 use std::cell::RefCell;
 use std::cmp::{max, min};
 use std::rc::Rc;
 use std::sync::Arc;
 use std::u32;
-use tau_linecache::*;
+use tau_linecache::{Line, LineCache};
 use xrl::{Client, ConfigChanges, Query, Status, Update, ViewId};
 
 /// Returned by `EditView::get_text_size()` and used to adjust the scrollbars.
@@ -478,8 +481,8 @@ impl EditView {
                 let pango_ctx = self.view_item.get_pango_ctx();
                 let layout = self.create_layout_for_line(&pango_ctx, line, &tabs);
                 // debug!("width={}", layout.get_extents().1.width);
-                update_layout(cr, &layout);
-                show_layout(cr, &layout);
+                pangocairofuncs::update_layout(cr, &layout);
+                pangocairofuncs::show_layout(cr, &layout);
 
                 // We (mis)use the caret theme color for both tab/spaces drawing and the cursor color.
                 // It'd be nicer if we could use `theme.accent` or similiar here, but sadly that's not
@@ -631,8 +634,8 @@ impl EditView {
                         current_line,
                         linecount_width as usize,
                     );
-                    update_layout(cr, &linecount_layout);
-                    show_layout(cr, &linecount_layout);
+                    pangocairofuncs::update_layout(cr, &linecount_layout);
+                    pangocairofuncs::show_layout(cr, &linecount_layout);
                 }
             }
         }

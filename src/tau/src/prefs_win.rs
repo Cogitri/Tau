@@ -1,13 +1,17 @@
 use crate::main_win::StartedPlugins;
-use crate::syntax_config::*;
+use crate::syntax_config::{Changes, Domain, SyntaxParams};
 use editview::MainState;
 use gettextrs::gettext;
 use gio::{SettingsBindFlags, SettingsExt};
 use glib::GString;
 use gschema_config_storage::{GSchema, GSchemaExt};
-use gtk::*;
+use gtk::prelude::*;
+use gtk::{
+    ApplicationWindow, Builder, Button, CheckButton, ComboBoxText, FontChooserWidget, Image, Label,
+    RadioButton, SpinButton, Switch, ToggleButton, Window,
+};
 use log::{debug, error, trace};
-use pango::*;
+use pango::FontDescription;
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
