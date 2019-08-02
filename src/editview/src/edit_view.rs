@@ -31,6 +31,7 @@ pub struct TextSize {
     /// The width of the entire document
     width: f64,
     /// If the height of the document is contained within the edit_area (if it's smaller)
+    #[allow(dead_code)]
     contained_height: bool,
     /// If the width of the document is contained within the edit_area (if it's smaller)
     contained_width: bool,
