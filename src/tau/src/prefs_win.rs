@@ -11,6 +11,9 @@ use std::collections::HashMap;
 use std::rc::Rc;
 use xrl::Client;
 
+const TAB_SIZE_DEFAULT: f64 = 4.0;
+const INSERT_SPACES_DEFAULT: bool = false;
+
 pub struct PrefsWin {
     pub core: Client,
     pub window: Window,
@@ -75,6 +78,19 @@ impl PrefsWin {
         let syntax_config_tab_size_label: Label =
             builder.get_object("syntax_config_tab_size_label").unwrap();
 
+        let syntax_changes = gschema.settings.get_strv("syntax-config");
+        let syntax_config: HashMap<String, SyntaxParams> = syntax_changes
+            .iter()
+            .map(|s| s.as_str())
+            .map(|s| {
+                serde_json::from_str(s)
+                    .map_err(|e| error!("{} {}", gettext("Failed to deserialize syntax config"), e))
+                    .unwrap()
+            })
+            .map(|sc: SyntaxParams| (sc.domain.syntax.clone(), sc))
+            .collect();
+        let syntax_config = Rc::new(RefCell::new(syntax_config));
+
         let font_desc: &String = &gschema.get_key("font");
         font_chooser_widget.set_font_desc(&FontDescription::from_string(font_desc));
 
@@ -105,7 +121,13 @@ impl PrefsWin {
                             gettext("Setting active syntax in config combo box"),
                             i
                         );
-                        syntax_config_combo_box.set_active(Some(i as u32))
+                        syntax_config_combo_box.set_active(Some(i as u32));
+                        syntax_config_set_buttons(
+                            lang,
+                            &syntax_config.borrow(),
+                            &syntax_config_insert_spaces_checkbutton,
+                            &syntax_config_tab_size_spinbutton,
+                        );
                     }
                 }
             }
@@ -236,39 +258,21 @@ impl PrefsWin {
             SettingsBindFlags::DEFAULT,
         );
 
-        let syntax_changes = gschema.settings.get_strv("syntax-config");
-        let syntax_config: HashMap<String, SyntaxParams> = syntax_changes
-            .iter()
-            .map(|s| s.as_str())
-            .map(|s| {
-                serde_json::from_str(s)
-                    .map_err(|e| error!("{} {}", gettext("Failed to deserialize syntax config"), e))
-                    .unwrap()
-            })
-            .map(|sc: SyntaxParams| (sc.domain.syntax.clone(), sc))
-            .collect();
-        let syntax_config = Rc::new(RefCell::new(syntax_config));
-
-        syntax_config_combo_box.connect_changed(enclose!((syntax_config_insert_spaces_checkbutton, syntax_config_tab_size_spinbutton, syntax_config) move |cb| {
-            if let Some(lang) = cb.get_active_text() {
-                if let Some(config) = syntax_config.borrow().get(lang.as_str()) {
-                    // This is an Option, so set a default here
-                    let insert_spaces = if let Some(setting) = config.changes.translate_tabs_to_spaces {
-                        setting
-                    } else {
-                        false
-                    };
-                    syntax_config_insert_spaces_checkbutton.set_active(insert_spaces);
-
-                    let tab_size = if let Some(setting) = config.changes.tab_size {
-                        f64::from(setting)
-                    } else {
-                        4.0
-                    };
-                    syntax_config_tab_size_spinbutton.set_value(tab_size);
+        syntax_config_combo_box.connect_changed(enclose!((
+            syntax_config_insert_spaces_checkbutton,
+            syntax_config_tab_size_spinbutton,
+            syntax_config,
+            ) move |cb| {
+                if let Some(lang) = cb.get_active_text() {
+                    syntax_config_set_buttons(
+                        lang.as_str(),
+                        &syntax_config.borrow(),
+                        &syntax_config_insert_spaces_checkbutton,
+                        &syntax_config_tab_size_spinbutton,
+                    );
                 }
             }
-        }));
+        ));
 
         syntax_config_apply_button.connect_clicked(
             enclose!((
@@ -345,5 +349,29 @@ impl PrefsWin {
         window.show_all();
 
         prefs_win
+    }
+}
+
+fn syntax_config_set_buttons(
+    lang: &str,
+    syntax_config: &HashMap<String, SyntaxParams>,
+    insert_spaces_checkbutton: &CheckButton,
+    tab_size_spinbutton: &SpinButton,
+) {
+    if let Some(config) = syntax_config.get(lang) {
+        // This is an Option, so set a default here
+        let insert_spaces = if let Some(setting) = config.changes.translate_tabs_to_spaces {
+            setting
+        } else {
+            INSERT_SPACES_DEFAULT
+        };
+        insert_spaces_checkbutton.set_active(insert_spaces);
+
+        let tab_size = if let Some(setting) = config.changes.tab_size {
+            f64::from(setting)
+        } else {
+            TAB_SIZE_DEFAULT
+        };
+        tab_size_spinbutton.set_value(tab_size);
     }
 }
