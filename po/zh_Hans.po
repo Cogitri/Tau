@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: Tau\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-06-17 00:36+0200\n"
-"PO-Revision-Date: 2019-08-01 02:46+0000\n"
+"PO-Revision-Date: 2019-08-02 03:12+0000\n"
 "Last-Translator: Chojan Shang <PsiACE@outlook.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/Tau/"
 "translation/zh_Hans/>\n"
@@ -21,7 +21,6 @@ msgstr ""
 "X-Generator: Weblate 3.8-dev\n"
 
 #: data/org.gnome.Tau.appdata.xml.in:7 data/org.gnome.Tau.desktop.in:3
-#, fuzzy
 msgid "Tau"
 msgstr "Tau"
 
@@ -30,12 +29,10 @@ msgid "GTK frontend for the xi text editor"
 msgstr "文本编辑器 xi 的 GTK 前端"
 
 #: data/org.gnome.Tau.appdata.xml.in:12
-#, fuzzy
 msgid ""
 "Tau is a GTK frontend for the xi text editor written in Rust. It's a very "
 "fast plain text editor."
-msgstr ""
-"Tau，文本编辑器 xi 的 GTK 前端，用 Rust 编写。一款非常快的纯文本编辑器。"
+msgstr "Tau，文本编辑器 xi 的 GTK 前端，用 Rust 编写。一款非常快的纯文本编辑器。"
 
 #: data/org.gnome.Tau.appdata.xml.in:27
 msgid "Rasmus \"Cogitri\" Thomsen"
@@ -47,11 +44,11 @@ msgstr "Tau 文本编辑器"
 
 #: data/org.gnome.Tau.desktop.in:8
 msgid "org.gnome.Tau"
-msgstr ""
+msgstr "org.gnome.Tau"
 
 #: data/org.gnome.Tau.desktop.in:13
 msgid "Text;Editor;Plaintext;Write;gxi;"
-msgstr ""
+msgstr "Text;Editor;Plaintext;Write;gxi;"
 
 #: data/org.gnome.Tau.desktop.in:16
 msgid "Launch a new Tau instance"
@@ -129,11 +126,11 @@ msgstr "设定下一次启动时窗口是否应最大化"
 
 #: data/org.gnome.Tau.gschema.xml:80 src/tau/src/ui/prefs_win.glade:149
 msgid "Tab size"
-msgstr ""
+msgstr "制表符大小"
 
 #: data/org.gnome.Tau.gschema.xml:81
 msgid "Amount of spaces that a tab is wide"
-msgstr ""
+msgstr "一个制表符等于的空格数"
 
 #: data/org.gnome.Tau.gschema.xml:87
 msgid "Insert spaces instead of tabs"
