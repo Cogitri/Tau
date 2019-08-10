@@ -613,8 +613,7 @@ impl EditView {
         cr.rectangle(0.0, 0.0, linecount_width, f64::from(linecount_height));
         cr.fill();
 
-        //FIXME: Xi sends us the 'ln' (logical linenumber) param for this, but that isn't updated on every draw!
-        let mut current_line = first_line;
+        let mut current_line: Option<u64> = None;
         let center_diff =
             (self.edit_font.borrow().font_height - self.interface_font.font_height) / 2.0;
 
@@ -622,8 +621,13 @@ impl EditView {
         for i in first_line..last_line {
             // Keep track of the starting x position
             if let Some(line) = self.line_cache.lock().get_line(i) {
-                if line.line_num.is_some() {
-                    current_line += 1;
+                if let Some(ln) = line.line_num {
+                    if let Some(ref mut cl) = current_line {
+                        *cl += 1;
+                    } else {
+                        current_line = Some(ln)
+                    }
+
                     cr.move_to(
                         0.0,
                         self.edit_font.borrow().font_height * (i as f64) - vadj.get_value()
@@ -632,7 +636,7 @@ impl EditView {
 
                     let linecount_layout = self.create_layout_for_linecount(
                         &pango_ctx,
-                        current_line,
+                        current_line.unwrap(),
                         linecount_width as usize,
                     );
                     pangocairofuncs::update_layout(cr, &linecount_layout);
