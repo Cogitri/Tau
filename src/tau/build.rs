@@ -37,7 +37,6 @@ fn main() {
     println!("cargo:rerun-if-changed=src/ui/app.css");
     println!("cargo:rerun-if-changed=src/ui/prefs_win.glade");
     println!("cargo:rerun-if-changed=src/ui/resources.xml");
-    println!("cargo:rerun-if-changed=src/ui/resources.gresource");
     println!("cargo:rerun-if-changed=src/ui/shortcuts_win.glade");
     println!("cargo:rerun-if-changed=src/ui/tau.glade");
 }
