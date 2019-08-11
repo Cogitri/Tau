@@ -129,8 +129,10 @@ fn main() {
     // it's only called once, so it's fine to move new_view_rx and event_rx into connect_startup
     let new_view_rx_opt = Rc::new(RefCell::new(Some(new_view_rx)));
 
+    let runtime_opt = Rc::new(RefCell::new(None));
+
     application.connect_startup(
-        enclose!((core_opt, application, new_view_rx_opt, new_view_tx) move |_| {
+        enclose!((core_opt, application, new_view_rx_opt, new_view_tx, runtime_opt) move |_| {
                 debug!("{}", gettext("Starting Tau"));
 
             // The channel through which all events from Xi are sent from `crate::frontend::TauFrontend` to
@@ -217,6 +219,8 @@ fn main() {
                 Err(TextDomainError::InvalidLocale(locale)) => warn!("Invalid locale {}", locale),
             }
 
+            runtime_opt.replace(Some(runtime));
+
             setup_config(&core);
 
             MainWin::new(
@@ -226,7 +230,6 @@ fn main() {
                 new_view_tx.clone(),
                 event_rx,
                 request_tx,
-                &Rc::new(RefCell::new(Some(runtime))),
             );
         }),
     );
@@ -235,34 +238,44 @@ fn main() {
         debug!("{}", gettext("Activating new view"));
 
         // It's fine to unwrap here - we already made sure this is Some in connect_startup.
-        let core_locked = core_opt.lock().clone().unwrap().unwrap();
+        let core = core_opt.lock().clone().unwrap().unwrap();
 
-        match tokio::executor::current_thread::block_on_all(core_locked.new_view(None)) {
+        match tokio::runtime::current_thread::block_on_all(core.new_view(None)) {
             Ok(view_id) => new_view_tx.send((view_id, None)).unwrap(),
             Err(e) => error!("{}: '{}'", gettext("Failed to open new, empty view due to error"), e),
         }
     }));
 
-    application.connect_open(enclose!((core_opt) move |_,files,_| {
-        debug!("{}", gettext("Opening new file"));
+    application.connect_open(
+        enclose!((core_opt, new_view_tx) move |_,files,_| {
+                debug!("{}", gettext("Opening new file"));
 
-        // See above for why it's fine to unwrap here.
-        let core_locked = core_opt.lock().clone().unwrap().unwrap();
+                // See above for why it's fine to unwrap here.
+                let core = core_opt.lock().clone().unwrap().unwrap();
+                let paths: Vec<String> = files.iter()
+                    .filter_map(gio::File::get_path)
+                    .map(std::path::PathBuf::into_os_string)
+                    .filter_map(|s| s.into_string().ok())
+                    .collect();
 
-        for file in files {
-            if let Some(path) = file.get_path() {
-                let file =  path.to_str().map(ToString::to_string);
-                match tokio::executor::current_thread::block_on_all(core_locked.new_view(file.clone())) {
-                    Ok(view_id) => new_view_tx.send((view_id, file)).unwrap(),
-                    Err(e) => error!("{}: '{}'; {}: {:#?}", gettext("Failed to open new due to error"), e, gettext("Path"), file),
-                }
+                std::thread::spawn(enclose!((core, new_view_tx) move || {
+                        for file in paths {
+                            match tokio::runtime::current_thread::block_on_all(core.new_view(Some(file.clone()))) {
+                                Ok(view_id) => new_view_tx.send((view_id, Some(file))).unwrap(),
+                                Err(e) => error!("{}: '{}'; {}: {:#?}", gettext("Failed to open new view due to error"), e, gettext("Path"), file),
+                            }
+                        }
+                }));
             }
+        ),
+    );
+
+    application.connect_shutdown(enclose!((runtime_opt)move |_| {
+        debug!("{}", gettext("Shutting down…"));
+        if let Some(runtime) = runtime_opt.borrow_mut().take() {
+            runtime.shutdown_now().wait().unwrap();
         }
     }));
-
-    application.connect_shutdown(move |_| {
-        debug!("{}", gettext("Shutting down…"));
-    });
 
     let args = &args().collect::<Vec<_>>();
     //FIXME: Use handle-local-options once https://github.com/gtk-rs/gtk/issues/580 is a thing

@@ -5,7 +5,6 @@ use crate::prefs_win::PrefsWin;
 use crate::shortcuts_win::ShortcutsWin;
 use crate::syntax_config::SyntaxParams;
 use editview::{theme::u32_from_color, EditView, MainState, Settings};
-use futures::future::Future;
 use gdk_pixbuf::Pixbuf;
 use gettextrs::gettext;
 use gio::{ActionMapExt, ApplicationExt, Resource, SettingsExt, SimpleAction};
@@ -22,7 +21,6 @@ use std::cell::RefCell;
 use std::collections::{BTreeMap, HashMap};
 use std::convert::TryFrom;
 use std::rc::Rc;
-use tokio::runtime::Runtime;
 use xrl::{Client, Style, ViewId, XiNotification};
 
 pub const RESOURCE: &[u8] = include_bytes!("ui/resources.gresource");
@@ -152,8 +150,6 @@ impl MainWin {
         event_rx: Receiver<XiEvent>,
         // The `Receiver` on which we receive requests from `xi-core`
         request_tx: crossbeam_channel::Sender<XiRequest>,
-        // The tokio runtime, we only use this to shut it down with Tau
-        tokio_runtime: &Rc<RefCell<Option<Runtime>>>,
     ) -> Rc<Self> {
         let gbytes = Bytes::from_static(RESOURCE);
         let resource = Resource::new_from_data(&gbytes).unwrap();
@@ -241,7 +237,7 @@ impl MainWin {
         // This is called when the window is closed with the 'X' or via the application menu, etc.
         main_win
             .window
-            .connect_delete_event(enclose!((main_win, tokio_runtime) move |window, _| {
+            .connect_delete_event(enclose!((main_win) move |window, _| {
                 // Only destroy the window when the user has saved the changes or closes without saving
                 if Self::close_all(&main_win) == SaveAction::Cancel {
                     debug!("{}", gettext("User chose to cancel exiting"));
@@ -249,9 +245,6 @@ impl MainWin {
                 } else {
                     debug!("{}", gettext("User chose to close the application"));
                     main_win.properties.borrow().save();
-                    if let Some(runtime) = tokio_runtime.borrow_mut().take() {
-                        runtime.shutdown_now().wait().unwrap();
-                    }
                     window.destroy();
                     Inhibit(false)
                 }
