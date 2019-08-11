@@ -932,7 +932,7 @@ impl EditView {
             let (col, line) = self.da_px_to_cell(x, y);
             self.core.drag(self.view_id, line, col);
         }
-        Inhibit(false)
+        Inhibit(true)
     }
 
     /// Handles all (special) key press events, e.g. copy, pasting, PgUp/Down etc.
