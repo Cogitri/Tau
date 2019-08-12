@@ -1,3 +1,76 @@
+## Changes in v0.9.0
+
+### Feature changes
+
+ - (tau): Set default_tab_size for EditView if the syntax defines it
+ - (editview): add UI to set tab_size,auto_indent and insert_spaces per EditView
+ - (i18n): create sv translation
+ - (tau): add per-syntax configuration for tab-size and insert-spaces
+ - (tau): use Ctrl+G/Ctrl+Shift+G shortcut for find_next/find_prev
+ - (tau): add shortcuts win
+ - (i18n): create bn translation
+ - (editview): add a context menu when doing a right click
+ - (editview): support toggling cursor visibility
+ - (editview|tau): close tabs upon middle-clicking on it
+ - (po): add French
+ - (gxi): add custom css to make scrollbar smaller
+ - (editview|gxi): draw tabs/spaces with cairo instead of just replacing their symbols
+ - (editview|gxi): reintroduce capability to draw trailing tabs
+ - (editview): update LineCache in another thread
+
+### Bugfixes
+
+ - (editview): Inhibit in connect_motion_notify_event, fixing mouse movement after dragging
+ - (tau): don't block on getting view_id in connect_open, fixes opening multiple files
+ - (editview): use Line's 'line_num' field for determing the first linenumber in linecount
+ - (editview): call EditView::update_visible_scroll_region in EditView::update
+ - (tau): fix setting the values of insert_spaces/tab_size buttons for the initial syntax
+ - (tau): Make it possible to unset syntax configs or only partially set them
+ - (tau): call WindowExt::close() instead of Window::destroy() in "app.quit"
+ - (tau): don't use the same Adjustment for general and syntax tab_size spinbutton
+ - (i18n): update lang (Chinese (Simplified))
+ - (i18n): update lang (Chinese (Traditional))
+ - (i18n): update lang (Chinese (Simplified))
+ - (i18n): update lang (Chinese (Simplified))
+ - (tau): fix BorrowMut crash in MainWin::handle_save_button
+ - (tau): reset GSettings keys if they contain bad values
+ - (tau): set ranges on window-{width,height}, tab-size&column-right-margin in GSchema
+ - (tau): reset theme name in GSettings too when previous theme isn't available
+ - (editview): only send find_prev/find_next msg to xi-core if we're in search mode
+ - (tau): print a better error msg if we can't find the xi-core binary
+ - (tau): allow not highlighting spaces&tabs
+ - (i18n): update lang (Norwegian Bokmål)
+ - (editview): set syntax_label's text when creating an EditView too
+ - (tau): add padding to syntax selection to center it
+ - (i18n): update lang (Chinese (Simplified))
+ - (i18n): update lang (Chinese (Traditional))
+ - (i18n): update lang (Dutch)
+ - (i18n): update lang (Norwegian Bokmål)
+ - (i18n): update lang (Dutch)
+ - (editview): Pango uses byte-index for characters, not char index!
+ - (editview): pay attention to newlines on trailing tabs/spaces
+ - (editview): scroll to the entire length of the EditView
+ - (editview): call `EditView::update_visible_scroll_region` when vadj's value changes
+ - (i18n): update lang (French)
+ - (i18n): update lang (German)
+ - (i18n): update lang (Dutch)
+ - (i18n): update lang (German)
+ - (i18n): update lang (Chinese (Traditional))
+ - (i18n): update lang (Chinese (Simplified))
+ - (i18n): update lang (German)
+ - (po): apply rename to Tau and regen
+ - (gxi): upon exiting gxi also shutdown the tokio runtime
+ - (editview): don't block on copy/cut
+ - (editview): do modify selection on find_{next,pref}
+ - (gxi): don't register resource twice
+ - (gxi): fix rebuilding when env variables change
+ - (editview): fix last_line detection in update_visibile_scroll_region
+ - (editview): avoid looping between languaged_changed and set_language
+ - (gxi|editview): don't assume avail_languages is set in stone after creation of EditView
+ - (editview): disable lang selection if there are no langs available
+ - (prefs_win): disable word-wrap for now
+ - (gxi): make the channel for creating EditViews high priority
+
 ## Changes in v0.8.1
 
 ### Feature changes
