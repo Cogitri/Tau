@@ -9,3 +9,7 @@ members = [
 [profile.release]
 lto = true
 codegen-units = 1
+
+[patch.crates-io]
+onig = { git="https://github.com/kornelski/rust-onig", branch="default-bindgen" }
+onig_sys = { git="https://github.com/kornelski/rust-onig", branch="default-bindgen" }
