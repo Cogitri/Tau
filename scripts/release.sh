@@ -23,7 +23,7 @@ ginst() {
 	cp -rf $@ "${DIST}"
 }
 
-ginst build.rs \
+ginst \
 	Cargo.toml \
 	Cargo.lock \
 	meson.build \
@@ -38,7 +38,7 @@ ginst build.rs \
 
 pushd "${SRC}"/vendor/xi-editor/rust
 mkdir -p "${DIST}"/vendor/xi-editor/rust/.cargo/
-cargo vendor xi-vendor --no-merge-sources | sed -r 's|(^directory = ).*(vendor.*)|\1"\2|g' > "${DIST}"/vendor/xi-editor/rust/.cargo/config
+cargo vendor xi-vendor --no-merge-sources | sed -r 's|(^directory = ).*(xi-vendor.*)|\1"\2|g' > "${DIST}"/vendor/xi-editor/rust/.cargo/config
 ginst xi-vendor
 mv "${DIST}"/xi-vendor "${DIST}"/vendor/xi-editor/rust/
 popd
