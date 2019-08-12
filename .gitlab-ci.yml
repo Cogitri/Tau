@@ -3,6 +3,8 @@ image: rust:latest
 stages:
   - qa
   - test
+  - flatpak
+  - review
 
 variables:
   RUST_BACKTRACE: 1
@@ -11,6 +13,18 @@ variables:
   GETTEXT_BIN_DIR : /usr/bin
   GETTEXT_LIB_DIR: /usr/lib/gettext
   GETTEXT_INCLUDE_DIR: /usr/include
+  BUNDLE: "org.gnome.Tau.flatpak"
+  MANIFEST_PATH: "flatpak/org.gnome.Tau.yml"
+  DBUS_ID: "org.gnome.Tau"
+
+
+.flatpak_cache_template: &flatpak_cache
+  cache:
+    key: "flatpak"
+    paths:
+      - .flatpak-builder/cache/
+      - _build/target/
+
 
 before_script:
   - apt-get update -qq && apt-get install -y libgtk-3-dev gettext appstream-util desktop-file-utils meson
@@ -49,3 +63,55 @@ test-cross:
     - apt-get install -y gettext appstream-util desktop-file-utils meson libglib2.0-bin # native deps of gxi
     - meson build
     - ninja -C build # Can't run tests for crosscompiled binaries
+
+flatpak:
+  image: "registry.gitlab.gnome.org/gnome/gnome-runtime-images/rust_bundle:master"
+  stage: "test"
+  script:
+    # Switch to https://hub.docker.com/r/freedesktopsdk/sdk once images for 18.08 are available or we can upgrade to 19.08
+    - flatpak-builder --force-clean app ${MANIFEST_PATH}
+
+    # Build the flatpak repo
+    - flatpak-builder --run app ${MANIFEST_PATH} meson --prefix=/app _build
+    - flatpak-builder --run app ${MANIFEST_PATH} ninja -C _build install
+
+    # Create a flatpak bundle
+    - flatpak build-export repo app
+    - flatpak build-bundle repo ${BUNDLE} ${DBUS_ID}
+
+  artifacts:
+    paths:
+      - "${BUNDLE}"
+    expire_in: 2 days
+  <<: *flatpak_cache
+
+
+review:
+  stage: review
+  dependencies:
+    - flatpak
+  script:
+    - echo "Generating flatpak deployment"
+  artifacts:
+    paths:
+      - "${BUNDLE}"
+    expire_in: 30 days
+  environment:
+    name: "review/${CI_COMMIT_REF_NAME}"
+    url: "https://gitlab.gnome.org/$CI_PROJECT_PATH/-/jobs/$CI_JOB_ID/artifacts/raw/${BUNDLE}"
+    on_stop: stop_review
+  except:
+    - master@World/Tau
+    - tags
+
+stop_review:
+  stage: review
+  script:
+    - echo "Stopping flatpak deployment"
+  when: manual
+  environment:
+    name: "review/${CI_COMMIT_REF_NAME}"
+    action: stop
+  except:
+    - master@World/Tau
+    - tags
