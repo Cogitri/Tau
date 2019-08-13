@@ -1,3 +1,14 @@
+## Changes in v0.9.1
+
+### Feature changes
+
+ - No new features
+
+### Bugfixes
+
+ - (editview): Fix dragging for some users
+ - (meson): use full path to xi-core when using system xi-core
+
 ## Changes in v0.9.0
 
 ### Feature changes

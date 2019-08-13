@@ -32,6 +32,15 @@
 	</provides>
 
 	<releases>
+		<release version="0.9.1" date="2019-08-13">
+			<p>
+				This is the first patch release of Tau's 0.9 series. It contains a fix for a
+				misconfigured cargo-vendor config file, which would cause build failures when
+				building from release tarballs, fixes installations which use system xi-core
+				but don't have xi-core in their PATH during runtime and fixes dragging for some
+				users.
+			</p>
+		</release>
 		<release version="0.9.0" date="2019-08-12">
 			<p>
 				This release changes gxi's name to Tau! Please note that settings aren't 
