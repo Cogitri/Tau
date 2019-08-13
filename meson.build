@@ -72,9 +72,9 @@ else
 endif
 
 if xi_opt == 'builtin'
-xi_binary_path = join_paths(tau_libexecdir, 'xi-core')
+  xi_binary_path = join_paths(tau_libexecdir, 'xi-core')
 else
-  xi_binary_path = 'xi-core'
+  xi_binary_path = xi_core.path()
 endif
 
 custom_target('cargo-build-tau',
