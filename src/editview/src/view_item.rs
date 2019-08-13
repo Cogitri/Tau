@@ -5,12 +5,13 @@ use gio::Resource;
 use glib::Bytes;
 use gtk::prelude::*;
 use gtk::{
-    Adjustment, Box, Builder, Button, CheckButton, EventBox, Grid, Inhibit, Label, Layout,
-    ListStore, Menu, MenuButton, Popover, PositionType, Revealer, ScrolledWindow, SearchBar,
-    SearchEntry, SpinButton, Statusbar, ToggleButton, TreeView, Widget,
+    Adjustment, Box, Builder, Button, CheckButton, EventBox, GestureDrag, Grid, Inhibit, Label,
+    Layout, ListStore, Menu, MenuButton, Popover, PositionType, Revealer, ScrolledWindow,
+    SearchBar, SearchEntry, SpinButton, Statusbar, ToggleButton, TreeView, Widget,
 };
 use log::{debug, trace};
 use serde_json::json;
+use std::cell::RefCell;
 use std::rc::Rc;
 
 const RESOURCE: &[u8] = include_bytes!("ui/resources.gresource");
@@ -32,6 +33,16 @@ pub struct EvBar {
     pub tab_width_label: Label,
 }
 
+#[derive(Clone)]
+pub struct Gestures {
+    pub drag: GestureDrag,
+    drag_data: Rc<RefCell<DragData>>,
+}
+
+struct DragData {
+    start_x: f64,
+    start_y: f64,
+}
 /// The `ViewItem` contains the various GTK parts related to the `edit_area` of the `EditView`
 #[derive(Clone)]
 pub struct ViewItem {
@@ -43,6 +54,7 @@ pub struct ViewItem {
     pub vadj: Adjustment,
     pub statusbar: EvBar,
     pub context_menu: Menu,
+    pub gestures: Gestures,
 }
 
 impl ViewItem {
@@ -91,7 +103,8 @@ impl ViewItem {
         //FIXME: This should take IsA<Widget> so we don't have to upcast to a widget
         context_menu.set_property_attach_widget(Some(&edit_area.clone().upcast::<Widget>()));
 
-        let ev_scrolled_window = builder.get_object("ev_scrolled_window").unwrap();
+        let ev_scrolled_window: ScrolledWindow = builder.get_object("ev_scrolled_window").unwrap();
+        let drag = GestureDrag::new(&ev_scrolled_window);
         let hbox: Grid = builder.get_object("ev_root_widget").unwrap();
         hbox.show_all();
 
@@ -104,6 +117,13 @@ impl ViewItem {
             ev_scrolled_window,
             context_menu,
             root_box: hbox,
+            gestures: Gestures {
+                drag,
+                drag_data: Rc::new(RefCell::new(DragData {
+                    start_x: 0.0,
+                    start_y: 0.0,
+                })),
+            },
         }
     }
 
@@ -130,10 +150,33 @@ impl ViewItem {
                 edit_view.handle_key_press_event(ek)
             }));
 
-        self.ev_scrolled_window
-            .connect_motion_notify_event(enclose!((edit_view) move |_,em| {
-               edit_view.handle_drag(em)
-            }));
+        let drag_data = &self.gestures.drag_data;
+
+        self.gestures.drag.connect_drag_begin(
+            enclose!((edit_view, drag_data) move |_, start_x, start_y| {
+                let new_data = DragData {
+                    start_x,
+                    start_y,
+                };
+                drag_data.replace(new_data);
+                let (col, line) = edit_view.da_px_to_cell(start_x, start_y);
+                edit_view.core.click_point_select(edit_view.view_id, line, col);
+            }),
+        );
+
+        self.gestures.drag.connect_drag_update(
+            enclose!((edit_view, drag_data) move |_, offset_x, offset_y| {
+                let drag_data = drag_data.borrow();
+                edit_view.handle_drag(drag_data.start_x + offset_x, drag_data.start_y + offset_y);
+            }),
+        );
+
+        self.gestures.drag.connect_drag_end(
+            enclose!((edit_view, drag_data) move |_, offset_x, offset_y| {
+                let drag_data = drag_data.borrow();
+                edit_view.handle_drag(drag_data.start_x + offset_x, drag_data.start_y + offset_y);
+            }),
+        );
 
         self.ev_scrolled_window.connect_realize(|w| {
             // Set the text cursor

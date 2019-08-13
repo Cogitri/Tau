@@ -6,7 +6,7 @@ use crate::view_item::{FindReplace, TopBar, ViewItem};
 use cairo::Context;
 use crossbeam_channel::{unbounded, Sender};
 use gdk::{
-    enums::key, EventButton, EventKey, EventMotion, EventType, ModifierType, SELECTION_CLIPBOARD,
+    enums::key, EventButton, EventKey, EventType, ModifierType, SELECTION_CLIPBOARD,
     SELECTION_PRIMARY,
 };
 use gettextrs::gettext;
@@ -926,13 +926,9 @@ impl EditView {
 
     /// Handle selecting line(s) by dragging the mouse across them while having the left mouse
     /// button clicked.
-    pub fn handle_drag(&self, em: &EventMotion) -> Inhibit {
-        if em.get_state().contains(ModifierType::BUTTON1_MASK) {
-            let (x, y) = em.get_position();
-            let (col, line) = self.da_px_to_cell(x, y);
-            self.core.drag(self.view_id, line, col);
-        }
-        Inhibit(true)
+    pub fn handle_drag(&self, x: f64, y: f64) {
+        let (col, line) = self.da_px_to_cell(x, y);
+        self.core.drag(self.view_id, line, col);
     }
 
     /// Handles all (special) key press events, e.g. copy, pasting, PgUp/Down etc.
