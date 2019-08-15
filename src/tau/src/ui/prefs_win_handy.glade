@@ -285,6 +285,22 @@
             </child>
             <child>
               <object class="HdyPreferencesRow">
+                <property name="title" translatable="yes">Automatic Saving</property>
+                <property name="visible">True</property>
+                <child>
+                  <object class="GtkCheckButton" id="save_when_out_of_focus_checkbutton">
+                    <property name="label" translatable="yes">Save files when the Tau goes out of focus</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">False</property>
+                    <property name="draw_indicator">True</property>
+                    <property name="margin">6</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="HdyPreferencesRow">
                 <property name="title" translatable="yes">Drawing Tabs and Spaces</property>
                 <property name="visible">True</property>
                 <child>

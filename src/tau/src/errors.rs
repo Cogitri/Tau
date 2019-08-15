@@ -20,6 +20,12 @@ pub struct ErrorMsg {
     pub fatal: bool,
 }
 
+impl ErrorMsg {
+    pub fn new(msg: String, fatal: bool) -> Self {
+        Self { msg, fatal }
+    }
+}
+
 /// A simple `ErrorDialog` used for if stuff goes south.
 #[derive(Clone)]
 pub struct ErrorDialog {

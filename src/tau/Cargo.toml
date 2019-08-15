@@ -20,11 +20,12 @@ handy = ["libhandy", "gtk_v3_22"]
 
 [dependencies]
 cairo-rs = "0.7"
+chrono = "0.4"
 crossbeam-channel = "0.3"
+dirs = "2"
 editview = { path="../editview" }
 enclose = "1"
 env_logger = "0.6"
-failure = "0.1"
 futures = "0.1"
 gdk = "0.11"
 gdk-pixbuf = "0.7"

@@ -4,6 +4,7 @@ use crate::frontend::{XiEvent, XiRequest};
 use crate::prefs_win::PrefsWin;
 use crate::shortcuts_win::ShortcutsWin;
 use crate::syntax_config::SyntaxParams;
+use chrono::{DateTime, Utc};
 use editview::{theme::u32_from_color, EditView, MainState, Settings};
 use gdk_pixbuf::Pixbuf;
 use gettextrs::gettext;
@@ -132,8 +133,10 @@ pub struct MainWin {
     syntax_config: RefCell<HashMap<String, SyntaxParams>>,
     /// Indicates which special plugins (for which we have to do additional work) have been started
     started_plugins: RefCell<StartedPlugins>,
-    /// The GtkHeaderbar of Tau, to set different titles
+    /// The `GtkHeaderbar` of Tau, to set different titles
     header_bar: HeaderBar,
+    /// Whether or not the `MainWin` is saving right now
+    saving: RefCell<bool>,
 }
 
 impl MainWin {
@@ -189,6 +192,8 @@ impl MainWin {
 
         let settings = new_settings();
 
+        let gschema = settings.gschema.clone();
+
         let main_state = Rc::new(RefCell::new(MainState {
             settings,
             theme_name,
@@ -200,12 +205,7 @@ impl MainWin {
             selected_language: Default::default(),
         }));
 
-        let syntax_changes = main_state
-            .borrow()
-            .settings
-            .gschema
-            .settings
-            .get_strv("syntax-config");
+        let syntax_changes = gschema.settings.get_strv("syntax-config");
         let syntax_config: HashMap<String, SyntaxParams> = syntax_changes
             .iter()
             .map(GString::as_str)
@@ -232,6 +232,7 @@ impl MainWin {
             state: main_state,
             syntax_config: RefCell::new(syntax_config),
             started_plugins: RefCell::new(Default::default()),
+            saving: RefCell::new(false),
         });
 
         main_win.connect_settings_change();
@@ -297,6 +298,27 @@ impl MainWin {
                 if notebook.get_n_pages() == 0 {
                     main_win.header_bar.set_title(Some(&gettext("Tau")));
                 }
+            }));
+
+        main_win
+            .window
+            .connect_focus_out_event(enclose!((main_win, gschema) move |_, _| {
+                // main_win.saving is true if we're currently saving via a save dialog, so don't try
+                // to save again here
+                if gschema.settings.get_boolean("save-when-out-of-focus") && !*main_win.saving.borrow() {
+                    for ev in main_win.views.borrow().values() {
+                        let old_name = ev.file_name.borrow().clone();
+                        match main_win.autosave_view(old_name, ev.view_id) {
+                            Ok(file_name) => ev.set_file(&file_name),
+                            Err(e) => {
+                                let msg = ErrorMsg::new(e, false);
+                                ErrorDialog::new(msg);
+                            }
+                        }
+                    }
+                }
+
+                Inhibit(false)
             }));
 
         // Below here we connect all actions, meaning that these closures will be run when the respective
@@ -912,6 +934,48 @@ impl MainWin {
             }),
         );
     }
+
+    fn autosave_view(&self, file_name: Option<String>, view_id: ViewId) -> Result<String, String> {
+        if let Some(name) = file_name {
+            self.core.save(view_id, &name);
+            Ok(name)
+        } else {
+            let mut doc_dir = match dirs::data_dir() {
+                Some(dir) => dir,
+                None => {
+                    return Err(gettext("Couldn't get Documents dir to autosave unnamed file. Please make sure 'XDG_DATA_DIR' or similiar is set."));
+                }
+            };
+
+            doc_dir.push("tau");
+            doc_dir.push("autosave");
+
+            if let Err(e) = std::fs::create_dir_all(&doc_dir) {
+                return Err(format!("{}: {}", gettext("Couldn't get Documents dir to autosave unnamed file. Please make sure 'XDG_DATA_DIR' or similiar is set."), e));
+            }
+
+            let now: DateTime<Utc> = Utc::now();
+            let time_string = format!("tau-autosave-{}", now.format("%Y-%m-%d-%H-%M"));
+
+            doc_dir.push(&time_string);
+
+            // If file exists already, save it as Untitled.n
+            let mut n = None::<u8>;
+            while doc_dir.is_file() {
+                if let Some(ref mut n) = n {
+                    *n += 1;
+                    doc_dir.set_file_name(&format!("{}.{}", time_string, n));
+                } else {
+                    n = Some(1);
+                    doc_dir.set_file_name(&format!("{}.{}", time_string, n.unwrap()));
+                }
+            }
+
+            let name = doc_dir.to_string_lossy().into_owned();
+            self.core.save(view_id, &name);
+            Ok(name)
+        }
+    }
 }
 
 /// Generate a new `Settings` object, which we pass to the `EditView` to set its behaviour.
@@ -1070,8 +1134,10 @@ impl MainWinExt for Rc<MainWin> {
                 ResponseType::Other(SaveAction::Save as u16),
             );
             ask_save_dialog.set_default_response(ResponseType::Other(SaveAction::Cancel as u16));
+            self.saving.replace(true);
             let ret: i32 = ask_save_dialog.run().into();
             ask_save_dialog.destroy();
+            self.saving.replace(false);
             match SaveAction::try_from(ret) {
                 Ok(SaveAction::Save) => {
                     self.handle_save_button();
@@ -1350,7 +1416,9 @@ impl MainWinExt for Rc<MainWin> {
             }
         }));
 
+        self.saving.replace(true);
         fcn.run();
+        self.saving.replace(false);
     }
 
     /// Save the `EditView`'s document if a filename is set, or open a filesaver
@@ -1483,6 +1551,8 @@ impl MainWinExt for Rc<MainWin> {
             }
         }
 
+        self.saving.replace(true);
         fcn.run();
+        self.saving.replace(false);
     }
 }

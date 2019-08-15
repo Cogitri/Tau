@@ -168,6 +168,14 @@
                 A JSON string containing syntax specific settings (e.g. tab-width of 2 for YML)
             </description>
         </key>
+
+        <key name="save-when-out-of-focus" type="b">
+            <default>false</default>
+            <summary>Save when Tau moves out of focus</summary>
+            <description>
+                Automatically save all open files when Tau moves out of focus
+            </description>
+        </key>
     </schema>
 
 </schemalist>

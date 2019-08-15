@@ -333,6 +333,21 @@
               </packing>
             </child>
             <child>
+              <object class="GtkCheckButton" id="save_when_out_of_focus_checkbutton">
+                <property name="label" translatable="yes">Save files when the Tau goes out of focus</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">False</property>
+                <property name="draw_indicator">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="padding">6</property>
+                <property name="position">7</property>
+              </packing>
+            </child>
+            <child>
               <object class="GtkGrid">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
@@ -344,7 +359,7 @@
                   <object class="GtkLabel">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">Tabs</property>
+                    <property name="label" translatable="yes">Highlight tabs</property>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
@@ -355,7 +370,7 @@
                   <object class="GtkLabel">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">Spaces</property>
+                    <property name="label" translatable="yes">Highlight spaces</property>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
@@ -515,7 +530,7 @@
                 <property name="expand">False</property>
                 <property name="fill">True</property>
                 <property name="padding">6</property>
-                <property name="position">7</property>
+                <property name="position">8</property>
               </packing>
             </child>
           </object>
