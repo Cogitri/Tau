@@ -136,7 +136,7 @@
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
             <property name="action_name">app.shortcuts</property>
-            <property name="text" translatable="yes">Shortcuts</property>
+            <property name="text" translatable="yes">Keyboard Shortcuts</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -150,7 +150,7 @@
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
             <property name="action_name">app.about</property>
-            <property name="text" translatable="yes">About</property>
+            <property name="text" translatable="yes">About Tau</property>
           </object>
           <packing>
             <property name="expand">False</property>
