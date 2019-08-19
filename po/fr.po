@@ -2,13 +2,14 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the tau package.
 # filman230 <filman230@hotmail.fr>, 2019.
+# Nicolas Granger <nicolas.granger.m@gmail.com>, 2019.
 msgid ""
 msgstr ""
 "Project-Id-Version: tau\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-06-17 00:36+0200\n"
-"PO-Revision-Date: 2019-06-21 22:02+0000\n"
-"Last-Translator: filman230 <filman230@hotmail.fr>\n"
+"PO-Revision-Date: 2019-08-19 13:24+0000\n"
+"Last-Translator: Nicolas Granger <nicolas.granger.m@gmail.com>\n"
 "Language-Team: French <https://hosted.weblate.org/projects/Tau/translation/"
 "fr/>\n"
 "Language: fr\n"
@@ -16,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 3.7\n"
+"X-Generator: Weblate 3.8\n"
 
 #: data/org.gnome.Tau.appdata.xml.in:7 data/org.gnome.Tau.desktop.in:3
 msgid "Tau"
@@ -55,7 +56,6 @@ msgid "Launch a new Tau instance"
 msgstr "Lancer une nouvelle instance de Tau"
 
 #: data/org.gnome.Tau.gschema.xml:9
-#, fuzzy
 msgid "Xi-Editor's theme"
 msgstr "Thème de Xi-Editor"
 
