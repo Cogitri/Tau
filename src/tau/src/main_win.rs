@@ -913,12 +913,16 @@ impl MainWin {
     fn req_new_view(&self, file_name: Option<String>) {
         trace!("{}", gettext("Requesting new view"));
 
-        let view_id = tokio::executor::current_thread::block_on_all(
-            self.core
-                .new_view(file_name.as_ref().map(ToString::to_string)),
-        )
-        .unwrap();
-        self.new_view_tx.send((view_id, file_name)).unwrap();
+        let core = self.core.clone();
+        let new_view_tx = self.new_view_tx.clone();
+        std::thread::spawn(move || {
+            let view_id = tokio::executor::current_thread::block_on_all(
+                core.new_view(file_name.as_ref().map(ToString::to_string)),
+            )
+            .unwrap();
+
+            new_view_tx.send((view_id, file_name)).unwrap();
+        });
     }
 
     /// When `xi-core` tells us to create a new view, we have to do multiple things:
