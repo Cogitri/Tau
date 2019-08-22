@@ -176,7 +176,6 @@
         <property name="vadjustment">vadj</property>
         <property name="hscrollbar_policy">always</property>
         <property name="vscrollbar_policy">always</property>
-        <property name="shadow_type">in</property>
         <child>
           <object class="GtkLayout" id="edit_area">
             <property name="visible">True</property>
