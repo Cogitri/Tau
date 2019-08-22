@@ -59,63 +59,79 @@ impl Font {
 #[cfg(test)]
 mod test {
     use crate::fonts::Font;
-    use ::fontconfig::fontconfig;
     use pango::prelude::*;
     use pango::FontDescription;
-    use std::ffi::CString;
 
     #[test]
     fn test_font_metrics() {
-        unsafe {
-            let fonts_dir = CString::new("tests/assets").unwrap();
-            let ret = fontconfig::FcConfigAppFontAddDir(
-                fontconfig::FcConfigGetCurrent(),
-                fonts_dir.as_ptr() as *const u8,
-            );
-            if ret != 1 {
-                panic!("Couldn't set fontconfig dir!");
-            }
+        let font_map = pangocairo::FontMap::get_default().unwrap();
+
+        let fonts: Vec<String> = font_map
+            .list_families()
+            .iter()
+            .filter_map(|s| s.get_name())
+            .map(|s| s.as_str().to_string())
+            .collect();
+
+        if !fonts.contains(&"Source Code Pro".to_string()) {
+            panic!("Couldn't find font 'Source Code Pro' required for test!");
         }
 
-        let font_map = pangocairo::FontMap::get_default().unwrap();
         let pango_ctx = font_map.create_context().unwrap();
 
+        let mut font = Font::new(
+            &pango_ctx,
+            FontDescription::from_string("Source Code Pro 12"),
+        );
+
+        font.font_ascent = font.font_ascent.ceil();
+        font.font_descent = font.font_descent.ceil();
+
         assert_eq!(
-            Font::new(&pango_ctx, FontDescription::from_string("Vera 12")),
+            font,
             Font {
-                font_ascent: 15.0,
-                font_descent: 4.0,
-                font_height: 19.0,
-                font_width: 9.0,
-                font_desc: FontDescription::from_string("Vera 12"),
+                font_ascent: 16.0,
+                font_descent: 5.0,
+                font_height: 21.0,
+                font_width: 10.0,
+                font_desc: FontDescription::from_string("Source Code Pro 12"),
             }
         )
     }
 
     #[test]
     fn test_bold_font_metrics() {
-        unsafe {
-            let fonts_dir = CString::new("tests/assets").unwrap();
-            let ret = fontconfig::FcConfigAppFontAddDir(
-                fontconfig::FcConfigGetCurrent(),
-                fonts_dir.as_ptr() as *const u8,
-            );
-            if ret != 1 {
-                panic!("Couldn't set fontconfig dir!");
-            }
+        let font_map = pangocairo::FontMap::get_default().unwrap();
+
+        let fonts: Vec<String> = font_map
+            .list_families()
+            .iter()
+            .filter_map(|s| s.get_name())
+            .map(|s| s.as_str().to_string())
+            .collect();
+
+        if !fonts.contains(&"Source Code Pro".to_string()) {
+            panic!("Couldn't find font 'Source Code Pro' required for test!");
         }
 
-        let font_map = pangocairo::FontMap::get_default().unwrap();
         let pango_ctx = font_map.create_context().unwrap();
 
+        let mut font = Font::new(
+            &pango_ctx,
+            FontDescription::from_string("Source Code Pro Bold 12"),
+        );
+
+        font.font_ascent = font.font_ascent.ceil();
+        font.font_descent = font.font_descent.ceil();
+
         assert_eq!(
-            Font::new(&pango_ctx, FontDescription::from_string("VeraBold 12")),
+            font,
             Font {
-                font_ascent: 15.0,
-                font_descent: 4.0,
-                font_height: 19.0,
-                font_width: 9.0,
-                font_desc: FontDescription::from_string("VeraBold 12"),
+                font_ascent: 16.0,
+                font_descent: 5.0,
+                font_height: 21.0,
+                font_width: 10.0,
+                font_desc: FontDescription::from_string("Source Code Pro Bold 12"),
             }
         )
     }

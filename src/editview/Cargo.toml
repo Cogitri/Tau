@@ -38,6 +38,3 @@ syntect = "3"
 tau-linecache = { path="../tau-linecache" }
 tokio = "0.1"
 xrl = "0.0.8"
-
-[dev-dependencies]
-servo-fontconfig = "0.4"
