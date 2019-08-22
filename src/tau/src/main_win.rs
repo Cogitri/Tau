@@ -835,6 +835,17 @@ impl MainWin {
                 }
         }));
 
+        if let Some(w) = main_win
+            .view_id_to_w
+            .borrow()
+            .get(&edit_view.view_id)
+            .map(Clone::clone)
+        {
+            if let Some(page_num) = main_win.notebook.page_num(&w) {
+                main_win.notebook.set_property_page(page_num as i32);
+            }
+        }
+
         fcn.run();
     }
 
