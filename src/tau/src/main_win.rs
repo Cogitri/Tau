@@ -400,14 +400,6 @@ impl MainWin {
             application.add_action(&close_action);
         }
         {
-            let close_all_action = SimpleAction::new("close_all", None);
-            close_all_action.connect_activate(enclose!((main_win) move |_,_| {
-                trace!("{} 'close_all' {}", gettext("Handling"), gettext("action"));
-                Self::close_all(&main_win);
-            }));
-            application.add_action(&close_all_action);
-        }
-        {
             let shortcuts_action = SimpleAction::new("shortcuts", None);
             shortcuts_action.connect_activate(enclose!((main_win) move |_, _| {
                 trace!("{} 'shortcuts' {}", gettext("Handling"), gettext("action"));
