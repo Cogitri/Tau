@@ -379,7 +379,7 @@ impl MainWin {
             let save_action = SimpleAction::new("save", None);
             save_action.connect_activate(enclose!((main_win) move |_,_| {
                 trace!("{} 'save' {}", gettext("Handling"), gettext("action"));
-                Self::handle_save_button(&main_win.clone());
+                Self::handle_save_button(&main_win);
             }));
             application.add_action(&save_action);
         }
@@ -387,15 +387,23 @@ impl MainWin {
             let save_as_action = SimpleAction::new("save_as", None);
             save_as_action.connect_activate(enclose!((main_win) move |_,_| {
                 trace!("{} 'save_as' {}", gettext("Handling"), gettext("action"));
-                Self::current_save_as(&main_win.clone());
+                Self::current_save_as(&main_win);
             }));
             application.add_action(&save_as_action);
+        }
+        {
+            let save_all_action = SimpleAction::new("save_all", None);
+            save_all_action.connect_activate(enclose!((main_win) move |_,_| {
+                trace!("{} 'save_all' {}", gettext("Handling"), gettext("action"));
+                Self::save_all(&main_win);
+            }));
+            application.add_action(&save_all_action);
         }
         {
             let close_action = SimpleAction::new("close", None);
             close_action.connect_activate(enclose!((main_win) move |_,_| {
                 trace!("{} 'close' {}", gettext("Handling"), gettext("action"));
-                Self::close(&main_win.clone());
+                Self::close(&main_win);
             }));
             application.add_action(&close_action);
         }
@@ -1000,7 +1008,7 @@ impl MainWin {
         let actions: Vec<SaveAction> = views
             .iter()
             .map(|(_, ev)| {
-                let save_action = Self::close_view(&main_win.clone(), ev);
+                let save_action = Self::close_view(&main_win, ev);
                 if save_action != SaveAction::Cancel {
                     main_win.views.borrow_mut().remove(&ev.view_id);
                 }
@@ -1127,6 +1135,17 @@ impl MainWin {
             main_win.core.close_view(edit_view.view_id);
         }
         save_action
+    }
+
+    pub fn save_all(main_win: &Rc<Self>) {
+        for edit_view in main_win.views.borrow().values() {
+            let name = { edit_view.file_name.borrow().clone() };
+            if let Some(ref file_name) = name {
+                main_win.core.save(edit_view.view_id, file_name);
+            } else {
+                Self::save_as(main_win, &edit_view);
+            }
+        }
     }
 }
 
