@@ -71,17 +71,17 @@ test-cross:
     - ninja -C build # Can't run tests for crosscompiled binaries
 
 flatpak:
+  # Switch to https://hub.docker.com/r/freedesktopsdk/sdk once images for 18.08 are available or we can upgrade to 19.08
   image: "registry.gitlab.gnome.org/gnome/gnome-runtime-images/rust_bundle:master"
   stage: "test"
   script:
-    # Switch to https://hub.docker.com/r/freedesktopsdk/sdk once images for 18.08 are available or we can upgrade to 19.08
-    - flatpak-builder --force-clean app ${MANIFEST_PATH}
-
     # Build the flatpak repo
+    - flatpak-builder --stop-at Tau app ${MANIFEST_PATH}
     - flatpak-builder --run app ${MANIFEST_PATH} meson --prefix=/app _build
     - flatpak-builder --run app ${MANIFEST_PATH} ninja -C _build install
 
     # Create a flatpak bundle
+    - flatpak-builder --finish-only app ${MANIFEST_PATH}
     - flatpak build-export repo app
     - flatpak build-bundle repo ${BUNDLE} ${DBUS_ID}
 
