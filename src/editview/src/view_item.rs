@@ -152,17 +152,15 @@ impl ViewItem {
 
         let drag_data = &self.gestures.drag_data;
 
-        self.gestures.drag.connect_drag_begin(
-            enclose!((edit_view, drag_data) move |_, start_x, start_y| {
+        self.gestures
+            .drag
+            .connect_drag_begin(enclose!((drag_data) move |_, start_x, start_y| {
                 let new_data = DragData {
                     start_x,
                     start_y,
                 };
                 drag_data.replace(new_data);
-                let (col, line) = edit_view.da_px_to_cell(start_x, start_y);
-                edit_view.core.click_point_select(edit_view.view_id, line, col);
-            }),
-        );
+            }));
 
         self.gestures.drag.connect_drag_update(
             enclose!((edit_view, drag_data) move |_, offset_x, offset_y| {
