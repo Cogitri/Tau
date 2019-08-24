@@ -817,27 +817,27 @@ impl MainWin {
     fn req_new_view(&self, file_name: Option<String>) {
         trace!("{}", gettext("Requesting new view"));
 
-        let core = self.core.clone();
-        let new_view_tx = self.new_view_tx.clone();
-        std::thread::spawn(move || {
-            match tokio::runtime::current_thread::block_on_all(
-                core.new_view(file_name.as_ref().map(ToString::to_string)),
-            ) {
-                Ok(view_id) => new_view_tx.send(Ok((view_id, file_name))).unwrap(),
-                Err(e) => {
-                    if let xrl::ClientError::ErrorReturned(value) = e {
-                        let err: XiClientError = serde_json::from_value(value).unwrap();
-                        new_view_tx
-                            .send(Err(format!(
-                                "{}: '{}'",
-                                gettext("Failed to open new view due to error"),
-                                err.message
-                            )))
-                            .unwrap()
+        std::thread::spawn(
+            enclose!((self.new_view_tx => new_view_tx, self.core => core) move || {
+                match tokio::runtime::current_thread::block_on_all(
+                    core.new_view(file_name.as_ref().map(ToString::to_string)),
+                ) {
+                    Ok(view_id) => new_view_tx.send(Ok((view_id, file_name))).unwrap(),
+                    Err(e) => {
+                        if let xrl::ClientError::ErrorReturned(value) = e {
+                            let err: XiClientError = serde_json::from_value(value).unwrap();
+                            new_view_tx
+                                .send(Err(format!(
+                                    "{}: '{}'",
+                                    gettext("Failed to open new view due to error"),
+                                    err.message
+                                )))
+                                .unwrap()
+                        }
                     }
-                }
-            };
-        });
+                };
+            }),
+        );
     }
 }
 

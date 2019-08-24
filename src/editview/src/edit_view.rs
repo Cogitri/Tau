@@ -117,13 +117,12 @@ impl EditView {
 
         im_context.set_client_window(parent.get_window().as_ref());
 
-        let linecache = edit_view.line_cache.clone();
-        std::thread::spawn(move || loop {
+        std::thread::spawn(enclose!((edit_view.line_cache => linecache) move || loop {
             while let Ok(update) = update_recv.recv() {
                 linecache.lock().update(update);
             }
             error!("{}", gettext("Xi-Update sender disconnected"));
-        });
+        }));
 
         gschema
             .settings
@@ -1181,15 +1180,15 @@ impl EditView {
             Continue(false)
         });
 
-        let core = self.core.clone();
-        let view_id = self.view_id;
         //TODO: Spawn a future on glib's mainloop instead once that is stable.
-        std::thread::spawn(move || {
-            let board_future = core.cut(view_id);
+        std::thread::spawn(
+            enclose!((self.core => core, self.view_id => view_id) move || {
+                let board_future = core.cut(view_id);
 
-            let val = tokio::runtime::current_thread::block_on_all(board_future).unwrap();
-            clipboard_tx.send(val).unwrap();
-        });
+                let val = tokio::runtime::current_thread::block_on_all(board_future).unwrap();
+                clipboard_tx.send(val).unwrap();
+            }),
+        );
     }
 
     /// Copies text to the clipboard
@@ -1208,15 +1207,15 @@ impl EditView {
             Continue(false)
         });
 
-        let core = self.core.clone();
-        let view_id = self.view_id;
         //TODO: Spawn a future on glib's mainloop instead once that is stable.
-        std::thread::spawn(move || {
-            let board_future = core.copy(view_id);
+        std::thread::spawn(
+            enclose!((self.core => core, self.view_id => view_id) move || {
+                let board_future = core.copy(view_id);
 
-            let val = tokio::runtime::current_thread::block_on_all(board_future).unwrap();
-            clipboard_tx.send(val).unwrap();
-        });
+                let val = tokio::runtime::current_thread::block_on_all(board_future).unwrap();
+                clipboard_tx.send(val).unwrap();
+            }),
+        );
     }
 
     /// Copies text to primary clipboard
@@ -1234,39 +1233,41 @@ impl EditView {
             Continue(false)
         });
 
-        let core = self.core.clone();
-        let view_id = self.view_id;
         //TODO: Spawn a future on glib's mainloop instead once that is stable.
-        std::thread::spawn(move || {
-            let board_future = core.copy(view_id);
+        std::thread::spawn(
+            enclose!((self.core => core, self.view_id => view_id) move || {
+                let board_future = core.copy(view_id);
 
-            let val = tokio::runtime::current_thread::block_on_all(board_future).unwrap();
-            clipboard_tx.send(val).unwrap();
-        });
+                let val = tokio::runtime::current_thread::block_on_all(board_future).unwrap();
+                clipboard_tx.send(val).unwrap();
+            }),
+        );
     }
 
     /// Pastes text from the clipboard into the EditView
     pub fn do_paste(&self) {
         debug!("{}", gettext("Pasting text"));
-        let core = self.core.clone();
-        let view_id = self.view_id;
-        Clipboard::get(&SELECTION_CLIPBOARD).request_text(enclose!((view_id) move |_, text| {
-            if let Some(clip_content) = text {
-                core.insert(view_id, clip_content);
-            }
-        }));
+
+        Clipboard::get(&SELECTION_CLIPBOARD).request_text(
+            enclose!((self.core => core, self.view_id => view_id) move |_, text| {
+                if let Some(clip_content) = text {
+                    core.insert(view_id, clip_content);
+                }
+            }),
+        );
     }
 
     pub fn do_paste_primary(&self, line: u64, col: u64) {
         debug!("{}", gettext("Pasting primary text"));
-        let core = self.core.clone();
-        let view_id = self.view_id;
-        Clipboard::get(&SELECTION_PRIMARY).request_text(enclose!((view_id) move |_, text| {
-            core.click_point_select(view_id, line, col);
-            if let Some(clip_content) = text {
-                core.insert(view_id, clip_content);
-            }
-        }));
+
+        Clipboard::get(&SELECTION_PRIMARY).request_text(
+            enclose!((self.core => core, self.view_id => view_id) move |_, text| {
+                core.click_point_select(view_id, line, col);
+                if let Some(clip_content) = text {
+                    core.insert(view_id, clip_content);
+                }
+            }),
+        );
     }
 
     /// Resize the EditView

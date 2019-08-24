@@ -150,27 +150,25 @@ impl ViewItem {
                 edit_view.handle_key_press_event(ek)
             }));
 
-        let drag_data = &self.gestures.drag_data;
-
-        self.gestures
-            .drag
-            .connect_drag_begin(enclose!((drag_data) move |_, start_x, start_y| {
+        self.gestures.drag.connect_drag_begin(
+            enclose!((self.gestures.drag_data => drag_data) move |_, start_x, start_y| {
                 let new_data = DragData {
                     start_x,
                     start_y,
                 };
                 drag_data.replace(new_data);
-            }));
+            }),
+        );
 
         self.gestures.drag.connect_drag_update(
-            enclose!((edit_view, drag_data) move |_, offset_x, offset_y| {
+            enclose!((edit_view, self.gestures.drag_data => drag_data) move |_, offset_x, offset_y| {
                 let drag_data = drag_data.borrow();
                 edit_view.handle_drag(drag_data.start_x + offset_x, drag_data.start_y + offset_y);
             }),
         );
 
         self.gestures.drag.connect_drag_end(
-            enclose!((edit_view, drag_data) move |_, offset_x, offset_y| {
+            enclose!((edit_view, self.gestures.drag_data => drag_data) move |_, offset_x, offset_y| {
                 let drag_data = drag_data.borrow();
                 edit_view.handle_drag(drag_data.start_x + offset_x, drag_data.start_y + offset_y);
                 edit_view.do_copy_primary();
@@ -498,7 +496,7 @@ impl FindReplace {
                 ev.stop_replace();
             }));
 
-        let restart_search = move |edit_view: Rc<EditView>| {
+        let restart_search = move |edit_view: &Rc<EditView>| {
             let text_opt = { edit_view.find_replace.search_entry.get_text() };
             if let Some(text) = text_opt {
                 edit_view.search_changed(Some(text.to_string()));
@@ -508,13 +506,13 @@ impl FindReplace {
         };
 
         self.use_regex_button
-            .connect_toggled(enclose!((ev) move |_| restart_search(ev.clone())));
+            .connect_toggled(enclose!((ev) move |_| restart_search(&ev)));
 
         self.whole_word_button
-            .connect_toggled(enclose!((ev) move |_| restart_search(ev.clone())));
+            .connect_toggled(enclose!((ev) move |_| restart_search(&ev)));
 
         self.case_sensitive_button
-            .connect_toggled(enclose!((ev) move |_| restart_search(ev.clone())));
+            .connect_toggled(enclose!((ev) move |_| restart_search(&ev)));
 
         self.search_entry.connect_activate(enclose!((ev) move |_| {
             ev.find_next();
