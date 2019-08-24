@@ -975,6 +975,9 @@ impl MainWin {
                 Some(&edit_view.top_bar.event_box),
                 position,
             );
+            main_win
+                .notebook
+                .set_tab_reorderable(&edit_view.root_widget, true);
             if let Some(w) = main_win.notebook.get_nth_page(Some(page_num)) {
                 main_win
                     .w_to_ev
