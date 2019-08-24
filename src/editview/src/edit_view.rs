@@ -138,6 +138,8 @@ impl EditView {
             .view_item
             .set_avail_langs(&main_state.borrow().avail_languages);
 
+        edit_view.view_item.ev_scrolled_window.grab_focus();
+
         edit_view
     }
 
