@@ -461,9 +461,11 @@ impl EditView {
 
         let tabs = self.get_tabs();
 
+        let line_cache = self.line_cache.lock();
+
         for i in first_line..last_line {
             // Keep track of the starting x position
-            if let Some(line) = self.line_cache.lock().get_line(i) {
+            if let Some(line) = line_cache.get_line(i) {
                 if self.main_state.borrow().settings.highlight_line && !line.cursor.is_empty() {
                     set_source_color(cr, theme.line_highlight);
                     cr.rectangle(
@@ -523,7 +525,14 @@ impl EditView {
                     });
                 }
 
-                if self.main_state.borrow().settings.trailing_spaces {
+                // If the next line is a soft broken line we don't want to display trailing spaces since they're actually
+                // not trailing: they're required for the linebreak to occur.
+                if self.main_state.borrow().settings.trailing_spaces
+                    && line_cache
+                        .get_line(i + 1)
+                        .map(|line| line.line_num.is_some())
+                        .unwrap_or(true)
+                {
                     let pos = draw_invisible::Rectangle::from_layout_index(
                         draw_invisible::spaces::trailing(
                             line.text.replace("\n", "").replace("\r\n", "").as_str(),
