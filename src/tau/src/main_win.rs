@@ -30,7 +30,7 @@ pub const RESOURCE: &[u8] = include_bytes!("ui/resources.gresource");
 /// - `CloseWithoutSave` (discard pending changes and close view)
 /// - `Cancel` (cancel the action and return to editing)
 #[derive(Debug, PartialEq)]
-enum SaveAction {
+pub enum SaveAction {
     /// Symbols that we should save&close
     Save = 100,
     //// Symbols that we should close w/o save
@@ -230,7 +230,7 @@ impl MainWin {
             started_plugins: RefCell::new(Default::default()),
         });
 
-        connect_settings_change(&main_win, &main_win.core);
+        main_win.connect_settings_change();
 
         main_win.window.set_application(Some(&application.clone()));
 
@@ -239,7 +239,7 @@ impl MainWin {
             .window
             .connect_delete_event(enclose!((main_win) move |window, _| {
                 // Only destroy the window when the user has saved the changes or closes without saving
-                if Self::close_all(&main_win) == SaveAction::Cancel {
+                if main_win.close_all() == SaveAction::Cancel {
                     debug!("{}", gettext("User chose to cancel exiting"));
                     Inhibit(true)
                 } else {
@@ -271,7 +271,7 @@ impl MainWin {
             let open_action = SimpleAction::new("open", None);
             open_action.connect_activate(enclose!((main_win) move |_,_| {
                 trace!("{} 'open' {}", gettext("Handling"), gettext("action"));
-                Self::handle_open_button(&main_win);
+                main_win.handle_open_button();
             }));
             application.add_action(&open_action);
         }
@@ -287,7 +287,7 @@ impl MainWin {
             let prefs_action = SimpleAction::new("prefs", None);
             prefs_action.connect_activate(enclose!((main_win) move |_,_| {
                 trace!("{} 'prefs' {}", gettext("Handling"), gettext("action"));
-                Self::prefs(&main_win)
+                main_win.prefs()
             }));
             application.add_action(&prefs_action);
         }
@@ -295,7 +295,7 @@ impl MainWin {
             let about_action = SimpleAction::new("about", None);
             about_action.connect_activate(enclose!((main_win) move |_,_| {
                 trace!("{} 'about' {}", gettext("Handling"), gettext("action"));
-                Self::about(&main_win)
+                main_win.about()
             }));
             application.add_action(&about_action);
         }
@@ -303,7 +303,7 @@ impl MainWin {
             let find_action = SimpleAction::new("find", None);
             find_action.connect_activate(enclose!((main_win) move |_,_| {
                 trace!("{} 'find' {}", gettext("Handling"), gettext("action"));
-                Self::find(&main_win);
+                main_win.find();
             }));
             application.add_action(&find_action);
         }
@@ -311,7 +311,7 @@ impl MainWin {
             let replace_action = SimpleAction::new("replace", None);
             replace_action.connect_activate(enclose!((main_win) move |_,_| {
                 trace!("{} 'replace' {}", gettext("Handling"), gettext("action"));
-                Self::replace(&main_win);
+                main_win.replace()
             }));
             application.add_action(&replace_action);
         }
@@ -379,7 +379,7 @@ impl MainWin {
             let save_action = SimpleAction::new("save", None);
             save_action.connect_activate(enclose!((main_win) move |_,_| {
                 trace!("{} 'save' {}", gettext("Handling"), gettext("action"));
-                Self::handle_save_button(&main_win);
+                main_win.handle_save_button();
             }));
             application.add_action(&save_action);
         }
@@ -387,7 +387,7 @@ impl MainWin {
             let save_as_action = SimpleAction::new("save_as", None);
             save_as_action.connect_activate(enclose!((main_win) move |_,_| {
                 trace!("{} 'save_as' {}", gettext("Handling"), gettext("action"));
-                Self::current_save_as(&main_win);
+                main_win.current_save_as();
             }));
             application.add_action(&save_as_action);
         }
@@ -395,7 +395,7 @@ impl MainWin {
             let save_all_action = SimpleAction::new("save_all", None);
             save_all_action.connect_activate(enclose!((main_win) move |_,_| {
                 trace!("{} 'save_all' {}", gettext("Handling"), gettext("action"));
-                Self::save_all(&main_win);
+                main_win.save_all();
             }));
             application.add_action(&save_all_action);
         }
@@ -403,7 +403,7 @@ impl MainWin {
             let close_action = SimpleAction::new("close", None);
             close_action.connect_activate(enclose!((main_win) move |_,_| {
                 trace!("{} 'close' {}", gettext("Handling"), gettext("action"));
-                Self::close(&main_win);
+                main_win.close();
             }));
             application.add_action(&close_action);
         }
@@ -437,7 +437,7 @@ impl MainWin {
             quit_action.connect_activate(enclose!((main_win) move |_,_| {
                 trace!("{} 'quit' {}", gettext("Handling"), gettext("action"));
                 // Same as in connect_destroy, only quit if the user saves or wants to close without saving
-                if Self::close_all(&main_win) == SaveAction::Cancel {
+                if main_win.close_all() == SaveAction::Cancel {
                     debug!("{}", gettext("User chose to not quit application"));
                 } else {
                     debug!("{}", gettext("User chose to quit application"));
@@ -465,7 +465,7 @@ impl MainWin {
         new_view_rx.attach(
             Some(&main_context),
             enclose!((main_win) move |(view_id, path)| {
-                Self::new_view_response(&main_win, path, view_id);
+                main_win.new_view_response(path, view_id);
                 Continue(true)
             }),
         );
@@ -473,7 +473,7 @@ impl MainWin {
         event_rx.attach(
             Some(&main_context),
             enclose!((main_win) move |ev| {
-                    Self::handle_event(&main_win, ev);
+                    main_win.handle_event(ev);
                     Continue(true)
             }),
         );
@@ -732,123 +732,6 @@ impl MainWin {
         }
     }
 
-    /// Display the FileChooserNative for opening, send the result to the Xi core.
-    /// Don't use FileChooserDialog here, it doesn't work for Flatpaks.
-    /// This may call the GTK main loop.  There must not be any RefCell borrows out while this
-    /// function runs.
-    pub fn handle_open_button(main_win: &Rc<Self>) {
-        let fcn = FileChooserNative::new(
-            Some(gettext("Open a file to edit").as_str()),
-            Some(&main_win.window),
-            FileChooserAction::Open,
-            Some(gettext("Open").as_str()),
-            Some(gettext("Cancel").as_str()),
-        );
-        fcn.set_transient_for(Some(&main_win.window.clone()));
-        fcn.set_select_multiple(true);
-
-        fcn.connect_response(enclose!((main_win) move |fcd, res| {
-            debug!(
-                "{}: {:#?}",
-                gettext("FileChooserNative open response"),
-                res
-            );
-
-            if res == ResponseType::Accept {
-                for file in fcd.get_filenames() {
-                    let file_str = file.to_string_lossy().into_owned();
-                    match std::fs::File::open(&file_str) {
-                        Ok(_) => main_win.req_new_view(Some(file_str)),
-                        Err(e) => {
-                            let err_msg = format!("{} '{}': {}", &gettext("Couldn't open file"), &file_str, &e.to_string());
-                            ErrorDialog::new(ErrorMsg{msg: err_msg, fatal: false});
-                        }
-                    }
-                }
-            }
-        }));
-
-        fcn.run();
-    }
-
-    /// Save the `EditView`'s document if a filename is set, or open a filesaver
-    /// dialog for the user to choose a name
-    pub fn handle_save_button(main_win: &Rc<Self>) {
-        if let Some(edit_view) = main_win.get_current_edit_view() {
-            let name = { edit_view.file_name.borrow().clone() };
-            if let Some(ref file_name) = name {
-                main_win.core.save(edit_view.view_id, file_name);
-            } else {
-                Self::save_as(main_win, &edit_view);
-            }
-        }
-    }
-
-    /// Open a filesaver dialog for the user to choose a name where to save the
-    /// file and save to it.
-    fn current_save_as(main_win: &Rc<Self>) {
-        if let Some(edit_view) = main_win.get_current_edit_view() {
-            Self::save_as(main_win, &edit_view);
-        }
-    }
-
-    /// Display the FileChooserNative, send the result to the Xi core.
-    /// Don't use FileChooserDialog here, it doesn't work for Flatpaks.
-    /// This may call the GTK main loop.  There must not be any RefCell borrows out while this
-    /// function runs.
-    fn save_as(main_win: &Rc<Self>, edit_view: &Rc<EditView>) {
-        let fcn = FileChooserNative::new(
-            Some(gettext("Save file").as_str()),
-            Some(&main_win.window),
-            FileChooserAction::Save,
-            Some(gettext("Save").as_str()),
-            Some(gettext("Cancel").as_str()),
-        );
-        fcn.set_transient_for(Some(&main_win.window.clone()));
-        fcn.set_current_name("");
-
-        fcn.connect_response(enclose!((edit_view, main_win) move |fcd, res| {
-            debug!(
-                "{}: {:#?}",
-                gettext("FileChooserNative save response"),
-                res
-            );
-
-            if res == ResponseType::Accept {
-                for file in fcd.get_filenames() {
-                    let file_str = &file.to_string_lossy().into_owned();
-                    if let Some(file) = fcd.get_filename() {
-                        match &std::fs::OpenOptions::new().write(true).create(true).open(&file) {
-                            Ok(_) => {
-                                debug!("{} {:?}", gettext("Saving file"), &file);
-                                let file = file.to_string_lossy();
-                                main_win.core.save(edit_view.view_id, &file);
-                                edit_view.set_file(&file);
-                            }
-                        Err(e) => {
-                            let err_msg = format!("{} '{}': {}", &gettext("Couldn't save file"), &file_str, &e.to_string());
-                            ErrorDialog::new(ErrorMsg {msg: err_msg, fatal: false});
-                        }
-                    }
-                }
-            }
-                }
-        }));
-
-        if let Some(w) = main_win
-            .view_id_to_w
-            .borrow()
-            .get(&edit_view.view_id)
-            .map(Clone::clone)
-        {
-            if let Some(page_num) = main_win.notebook.page_num(&w) {
-                main_win.notebook.set_property_page(page_num as i32);
-            }
-        }
-
-        fcn.run();
-    }
-
     /// Open a `PrefsWin` for the user to configure things like the theme
     fn prefs(&self) {
         let gschema = { &self.properties.borrow().gschema };
@@ -935,232 +818,6 @@ impl MainWin {
             new_view_tx.send((view_id, file_name)).unwrap();
         });
     }
-
-    /// When `xi-core` tells us to create a new view, we have to do multiple things:
-    ///
-    /// 1) Check if the current `EditView` is empty (doesn't contain ANY text). If so, replace that `EditView`
-    ///    with the new `EditView`. That way we don't stack empty, useless views.
-    /// 2) Connect the ways to close the `EditView`, either via a middle click or by clicking the X of the tab
-    fn new_view_response(main_win: &Rc<Self>, file_name: Option<String>, view_id: ViewId) {
-        trace!("{}", gettext("Creating new EditView"));
-        let mut old_ev = None;
-
-        let position = if let Some(curr_ev) = main_win.get_current_edit_view() {
-            if curr_ev.is_empty() {
-                old_ev = Some(curr_ev.clone());
-                if let Some(w) = main_win.view_id_to_w.borrow().get(&curr_ev.view_id) {
-                    main_win.notebook.page_num(w)
-                } else {
-                    None
-                }
-            } else {
-                None
-            }
-        } else {
-            None
-        };
-
-        let hamburger_button = main_win.builder.get_object("hamburger_button").unwrap();
-        let edit_view = EditView::new(
-            &main_win.state,
-            &main_win.core,
-            &hamburger_button,
-            file_name,
-            view_id,
-            &main_win.window,
-        );
-        {
-            let page_num = main_win.notebook.insert_page(
-                &edit_view.root_widget,
-                Some(&edit_view.top_bar.event_box),
-                position,
-            );
-            main_win
-                .notebook
-                .set_tab_reorderable(&edit_view.root_widget, true);
-            if let Some(w) = main_win.notebook.get_nth_page(Some(page_num)) {
-                main_win
-                    .w_to_ev
-                    .borrow_mut()
-                    .insert(w.clone(), edit_view.clone());
-                main_win.view_id_to_w.borrow_mut().insert(view_id, w);
-            }
-
-            edit_view.top_bar.close_button.connect_clicked(
-                enclose!((main_win, edit_view) move |_| {
-                    Self::close_view(&main_win, &edit_view);
-                }),
-            );
-
-            edit_view.top_bar.event_box.connect_button_press_event(
-                enclose!((main_win, edit_view) move |_, eb| {
-                    // 2 == middle click
-                    if eb.get_button() == 2 {
-                        Self::close_view(&main_win, &edit_view);
-                    }
-                    Inhibit(false)
-                }),
-            );
-        }
-
-        main_win.views.borrow_mut().insert(view_id, edit_view);
-        if let Some(empty_ev) = old_ev {
-            Self::close_view(main_win, &empty_ev);
-        }
-    }
-
-    /// Close all `EditView`s, checking if the user wants to close them if there are unsaved changes
-    ///
-    /// # Returns
-    ///
-    /// - `SaveAction` determining if all `EditView`s have been closed.
-    fn close_all(main_win: &Rc<Self>) -> SaveAction {
-        trace!("{}", gettext("Closing all EditViews"));
-        // Get all views that we currently have opened
-        let views = { main_win.views.borrow().clone() };
-        // Close each one of them
-        let actions: Vec<SaveAction> = views
-            .iter()
-            .map(|(_, ev)| {
-                let save_action = Self::close_view(&main_win, ev);
-                if save_action != SaveAction::Cancel {
-                    main_win.views.borrow_mut().remove(&ev.view_id);
-                }
-                save_action
-            })
-            .collect();
-
-        // If the user _doesn't_ want us to close one of the Views (because its not pristine he chose
-        // 'cancel' we want to return SaveAction::Cancel, so that connect_destroy and quit do
-        // not close the entire application and as such the EditView.
-        let mut cancel = false;
-
-        actions.iter().for_each(|action| {
-            if let SaveAction::Cancel = action {
-                cancel = true
-            }
-        });
-
-        if cancel {
-            SaveAction::Cancel
-        } else {
-            SaveAction::CloseWithoutSave
-        }
-    }
-
-    /// Close the current `EditView`
-    ///
-    /// # Returns
-    ///
-    /// - `SaveAction` determining if the `EdtiView` has been closed.
-    fn close(main_win: &Rc<Self>) -> SaveAction {
-        trace!("{}", gettext("Closing current Editview"));
-        if let Some(edit_view) = main_win.get_current_edit_view() {
-            Self::close_view(main_win, &edit_view)
-        } else {
-            SaveAction::Cancel
-        }
-    }
-
-    /// Close a specific `EditView`. Changes the `GtkNotebook` to the supplied `EditView`, so that the
-    /// user can see which one is being closed. Presents the user a close dialog giving him the choice
-    /// of either saving, aborting or closing without saving, if the `EditView` has unsaved changes.
-    ///
-    /// # Returns
-    ///
-    /// `SaveAction` determining which choice the user has made in the save dialog
-    fn close_view(main_win: &Rc<Self>, edit_view: &Rc<EditView>) -> SaveAction {
-        trace!("{} {}", gettext("Closing Editview"), edit_view.view_id);
-        let save_action = if *edit_view.pristine.borrow() {
-            // If it's pristine we don't ask the user if he really wants to quit because everything
-            // is saved already and as such always close without saving
-            SaveAction::CloseWithoutSave
-        } else {
-            // Change the tab to the EditView we want to ask the user about saving to give him a
-            // change to review that action
-            if let Some(w) = main_win
-                .view_id_to_w
-                .borrow()
-                .get(&edit_view.view_id)
-                .map(Clone::clone)
-            {
-                if let Some(page_num) = main_win.notebook.page_num(&w) {
-                    main_win.notebook.set_property_page(page_num as i32);
-                }
-            }
-
-            let ask_save_dialog = MessageDialog::new(
-                Some(&main_win.window),
-                DialogFlags::all(),
-                MessageType::Question,
-                ButtonsType::None,
-                gettext("Save unsaved changes").as_str(),
-            );
-            ask_save_dialog.add_button(
-                &gettext("Close Without Saving"),
-                ResponseType::Other(SaveAction::CloseWithoutSave as u16),
-            );
-            ask_save_dialog.add_button(
-                &gettext("Cancel"),
-                ResponseType::Other(SaveAction::Cancel as u16),
-            );
-            ask_save_dialog.add_button(
-                &gettext("Save"),
-                ResponseType::Other(SaveAction::Save as u16),
-            );
-            ask_save_dialog.set_default_response(ResponseType::Other(SaveAction::Cancel as u16));
-            let ret: i32 = ask_save_dialog.run().into();
-            ask_save_dialog.destroy();
-            match SaveAction::try_from(ret) {
-                Ok(SaveAction::Save) => {
-                    Self::handle_save_button(main_win);
-                    SaveAction::Save
-                }
-                Ok(SaveAction::CloseWithoutSave) => SaveAction::CloseWithoutSave,
-                Err(_) => {
-                    warn!(
-                        "{}",
-                        &gettext("Save dialog has been destroyed before the user clicked a button")
-                    );
-                    SaveAction::Cancel
-                }
-                _ => SaveAction::Cancel,
-            }
-        };
-        debug!("SaveAction: {:?}", save_action);
-
-        if save_action != SaveAction::Cancel {
-            if let Some(w) = main_win
-                .view_id_to_w
-                .borrow()
-                .get(&edit_view.view_id)
-                .map(Clone::clone)
-            {
-                if let Some(page_num) = main_win.notebook.page_num(&w) {
-                    main_win.notebook.remove_page(Some(page_num));
-                }
-                main_win.w_to_ev.borrow_mut().remove(&w);
-            }
-            main_win
-                .view_id_to_w
-                .borrow_mut()
-                .remove(&edit_view.view_id);
-            main_win.views.borrow_mut().remove(&edit_view.view_id);
-            main_win.core.close_view(edit_view.view_id);
-        }
-        save_action
-    }
-
-    pub fn save_all(main_win: &Rc<Self>) {
-        for edit_view in main_win.views.borrow().values() {
-            let name = { edit_view.file_name.borrow().clone() };
-            if let Some(ref file_name) = name {
-                main_win.core.save(edit_view.view_id, file_name);
-            } else {
-                Self::save_as(main_win, &edit_view);
-            }
-        }
-    }
 }
 
 /// Generate a new `Settings` object, which we pass to the `EditView` to set its behaviour.
@@ -1192,14 +849,179 @@ pub fn new_settings() -> Settings {
     }
 }
 
-/// Connect changes in our `GSchema` to actions in Tau. E.g. when the `draw-trailing-spaces` key has
-/// been modified we make sure to set this in the `MainState` (so that the `EditView`s actually notice
-/// the change) and redraw the current one so that the user sees what has changed.
-pub fn connect_settings_change(main_win: &Rc<MainWin>, core: &Client) {
-    let gschema = main_win.state.borrow().settings.gschema.clone();
-    gschema
-        .settings
-        .connect_changed(enclose!((gschema, main_win, core) move |_, key| {
+/// An Extension trait for `MainWin`. This is implemented for `Rc<MainWin>`, allowing for a nicer
+/// API (where we can do stuff like `self.close()` instead of `Self::close(main_win)`).
+pub trait MainWinExt {
+    fn close(&self) -> SaveAction;
+
+    fn close_all(&self) -> SaveAction;
+
+    fn close_view(&self, edit_view: &Rc<EditView>) -> SaveAction;
+
+    fn connect_settings_change(&self);
+
+    fn current_save_as(&self);
+
+    fn handle_open_button(&self);
+
+    fn handle_save_button(&self);
+
+    fn new_view_response(&self, file_name: Option<String>, view_id: ViewId);
+
+    fn save_all(&self);
+
+    fn save_as(&self, edit_view: &Rc<EditView>);
+}
+
+impl MainWinExt for Rc<MainWin> {
+    /// Close the current `EditView`
+    ///
+    /// # Returns
+    ///
+    /// - `SaveAction` determining if the `EdtiView` has been closed.
+    fn close(&self) -> SaveAction {
+        trace!("{}", gettext("Closing current Editview"));
+        if let Some(edit_view) = self.get_current_edit_view() {
+            self.close_view(&edit_view)
+        } else {
+            SaveAction::Cancel
+        }
+    }
+
+    /// Close all `EditView`s, checking if the user wants to close them if there are unsaved changes
+    ///
+    /// # Returns
+    ///
+    /// - `SaveAction` determining if all `EditView`s have been closed.
+    fn close_all(&self) -> SaveAction {
+        trace!("{}", gettext("Closing all EditViews"));
+        // Get all views that we currently have opened
+        let views = { self.views.borrow().clone() };
+        // Close each one of them
+        let actions: Vec<SaveAction> = views
+            .iter()
+            .map(|(_, ev)| {
+                let save_action = self.close_view(ev);
+                if save_action != SaveAction::Cancel {
+                    self.views.borrow_mut().remove(&ev.view_id);
+                }
+                save_action
+            })
+            .collect();
+
+        // If the user _doesn't_ want us to close one of the Views (because its not pristine he chose
+        // 'cancel' we want to return SaveAction::Cancel, so that connect_destroy and quit do
+        // not close the entire application and as such the EditView.
+        let mut cancel = false;
+
+        actions.iter().for_each(|action| {
+            if let SaveAction::Cancel = action {
+                cancel = true
+            }
+        });
+
+        if cancel {
+            SaveAction::Cancel
+        } else {
+            SaveAction::CloseWithoutSave
+        }
+    }
+
+    /// Close a specific `EditView`. Changes the `GtkNotebook` to the supplied `EditView`, so that the
+    /// user can see which one is being closed. Presents the user a close dialog giving him the choice
+    /// of either saving, aborting or closing without saving, if the `EditView` has unsaved changes.
+    ///
+    /// # Returns
+    ///
+    /// `SaveAction` determining which choice the user has made in the save dialog
+    fn close_view(&self, edit_view: &Rc<EditView>) -> SaveAction {
+        trace!("{} {}", gettext("Closing Editview"), edit_view.view_id);
+        let save_action = if *edit_view.pristine.borrow() {
+            // If it's pristine we don't ask the user if he really wants to quit because everything
+            // is saved already and as such always close without saving
+            SaveAction::CloseWithoutSave
+        } else {
+            // Change the tab to the EditView we want to ask the user about saving to give him a
+            // change to review that action
+            if let Some(w) = self
+                .view_id_to_w
+                .borrow()
+                .get(&edit_view.view_id)
+                .map(Clone::clone)
+            {
+                if let Some(page_num) = self.notebook.page_num(&w) {
+                    self.notebook.set_property_page(page_num as i32);
+                }
+            }
+
+            let ask_save_dialog = MessageDialog::new(
+                Some(&self.window),
+                DialogFlags::all(),
+                MessageType::Question,
+                ButtonsType::None,
+                gettext("Save unsaved changes").as_str(),
+            );
+            ask_save_dialog.add_button(
+                &gettext("Close Without Saving"),
+                ResponseType::Other(SaveAction::CloseWithoutSave as u16),
+            );
+            ask_save_dialog.add_button(
+                &gettext("Cancel"),
+                ResponseType::Other(SaveAction::Cancel as u16),
+            );
+            ask_save_dialog.add_button(
+                &gettext("Save"),
+                ResponseType::Other(SaveAction::Save as u16),
+            );
+            ask_save_dialog.set_default_response(ResponseType::Other(SaveAction::Cancel as u16));
+            let ret: i32 = ask_save_dialog.run().into();
+            ask_save_dialog.destroy();
+            match SaveAction::try_from(ret) {
+                Ok(SaveAction::Save) => {
+                    self.handle_save_button();
+                    SaveAction::Save
+                }
+                Ok(SaveAction::CloseWithoutSave) => SaveAction::CloseWithoutSave,
+                Err(_) => {
+                    warn!(
+                        "{}",
+                        &gettext("Save dialog has been destroyed before the user clicked a button")
+                    );
+                    SaveAction::Cancel
+                }
+                _ => SaveAction::Cancel,
+            }
+        };
+        debug!("SaveAction: {:?}", save_action);
+
+        if save_action != SaveAction::Cancel {
+            if let Some(w) = self
+                .view_id_to_w
+                .borrow()
+                .get(&edit_view.view_id)
+                .map(Clone::clone)
+            {
+                if let Some(page_num) = self.notebook.page_num(&w) {
+                    self.notebook.remove_page(Some(page_num));
+                }
+                self.w_to_ev.borrow_mut().remove(&w);
+            }
+            self.view_id_to_w.borrow_mut().remove(&edit_view.view_id);
+            self.views.borrow_mut().remove(&edit_view.view_id);
+            self.core.close_view(edit_view.view_id);
+        }
+        save_action
+    }
+
+    /// Connect changes in our `GSchema` to actions in Tau. E.g. when the `draw-trailing-spaces` key has
+    /// been modified we make sure to set this in the `MainState` (so that the `EditView`s actually notice
+    /// the change) and redraw the current one so that the user sees what has changed.
+    fn connect_settings_change(&self) {
+        let gschema = self.state.borrow().settings.gschema.clone();
+        let core = &self.core;
+        gschema
+            .settings
+            .connect_changed(enclose!((gschema, self => main_win, core) move |_, key| {
             trace!("Key '{}' has changed!", key);
             match key {
                 "draw-trailing-spaces" => {
@@ -1366,4 +1188,204 @@ pub fn connect_settings_change(main_win: &Rc<MainWin>, core: &Client) {
                 }
             }
         }));
+    }
+
+    /// Open a filesaver dialog for the user to choose a name where to save the
+    /// file and save to it.
+    fn current_save_as(&self) {
+        if let Some(edit_view) = self.get_current_edit_view() {
+            self.save_as(&edit_view);
+        }
+    }
+
+    /// Display the FileChooserNative for opening, send the result to the Xi core.
+    /// Don't use FileChooserDialog here, it doesn't work for Flatpaks.
+    /// This may call the GTK main loop.  There must not be any RefCell borrows out while this
+    /// function runs.
+    fn handle_open_button(&self) {
+        let fcn = FileChooserNative::new(
+            Some(gettext("Open a file to edit").as_str()),
+            Some(&self.window),
+            FileChooserAction::Open,
+            Some(gettext("Open").as_str()),
+            Some(gettext("Cancel").as_str()),
+        );
+        fcn.set_transient_for(Some(&self.window.clone()));
+        fcn.set_select_multiple(true);
+
+        fcn.connect_response(enclose!((self => main_win) move |fcd, res| {
+            debug!(
+                "{}: {:#?}",
+                gettext("FileChooserNative open response"),
+                res
+            );
+
+            if res == ResponseType::Accept {
+                for file in fcd.get_filenames() {
+                    let file_str = file.to_string_lossy().into_owned();
+                    match std::fs::File::open(&file_str) {
+                        Ok(_) => main_win.req_new_view(Some(file_str)),
+                        Err(e) => {
+                            let err_msg = format!("{} '{}': {}", &gettext("Couldn't open file"), &file_str, &e.to_string());
+                            ErrorDialog::new(ErrorMsg{msg: err_msg, fatal: false});
+                        }
+                    }
+                }
+            }
+        }));
+
+        fcn.run();
+    }
+
+    /// Save the `EditView`'s document if a filename is set, or open a filesaver
+    /// dialog for the user to choose a name
+    fn handle_save_button(&self) {
+        if let Some(edit_view) = self.get_current_edit_view() {
+            let name = { edit_view.file_name.borrow().clone() };
+            if let Some(ref file_name) = name {
+                self.core.save(edit_view.view_id, file_name);
+            } else {
+                self.save_as(&edit_view);
+            }
+        }
+    }
+
+    /// When `xi-core` tells us to create a new view, we have to do multiple things:
+    ///
+    /// 1) Check if the current `EditView` is empty (doesn't contain ANY text). If so, replace that `EditView`
+    ///    with the new `EditView`. That way we don't stack empty, useless views.
+    /// 2) Connect the ways to close the `EditView`, either via a middle click or by clicking the X of the tab
+    fn new_view_response(&self, file_name: Option<String>, view_id: ViewId) {
+        trace!("{}", gettext("Creating new EditView"));
+        let mut old_ev = None;
+
+        let position = if let Some(curr_ev) = self.get_current_edit_view() {
+            if curr_ev.is_empty() {
+                old_ev = Some(curr_ev.clone());
+                if let Some(w) = self.view_id_to_w.borrow().get(&curr_ev.view_id) {
+                    self.notebook.page_num(w)
+                } else {
+                    None
+                }
+            } else {
+                None
+            }
+        } else {
+            None
+        };
+
+        let hamburger_button = self.builder.get_object("hamburger_button").unwrap();
+        let edit_view = EditView::new(
+            &self.state,
+            &self.core,
+            &hamburger_button,
+            file_name,
+            view_id,
+            &self.window,
+        );
+        {
+            let page_num = self.notebook.insert_page(
+                &edit_view.root_widget,
+                Some(&edit_view.top_bar.event_box),
+                position,
+            );
+            self.notebook
+                .set_tab_reorderable(&edit_view.root_widget, true);
+            if let Some(w) = self.notebook.get_nth_page(Some(page_num)) {
+                self.w_to_ev
+                    .borrow_mut()
+                    .insert(w.clone(), edit_view.clone());
+                self.view_id_to_w.borrow_mut().insert(view_id, w);
+            }
+
+            edit_view.top_bar.close_button.connect_clicked(
+                enclose!((self => main_win, edit_view) move |_| {
+                    main_win.close_view(&edit_view);
+                }),
+            );
+
+            edit_view.top_bar.event_box.connect_button_press_event(
+                enclose!((self => main_win, edit_view) move |_, eb| {
+                    // 2 == middle click
+                    if eb.get_button() == 2 {
+                        main_win.close_view(&edit_view);
+                    }
+                    Inhibit(false)
+                }),
+            );
+        }
+
+        self.views.borrow_mut().insert(view_id, edit_view);
+        if let Some(empty_ev) = old_ev {
+            self.close_view(&empty_ev);
+        }
+    }
+
+    fn save_all(&self) {
+        for edit_view in self.views.borrow().values() {
+            let name = { edit_view.file_name.borrow().clone() };
+            if let Some(ref file_name) = name {
+                self.core.save(edit_view.view_id, file_name);
+            } else {
+                self.save_as(&edit_view);
+            }
+        }
+    }
+
+    /// Display the FileChooserNative, send the result to the Xi core.
+    /// Don't use FileChooserDialog here, it doesn't work for Flatpaks.
+    /// This may call the GTK main loop.  There must not be any RefCell borrows out while this
+    /// function runs.
+    fn save_as(&self, edit_view: &Rc<EditView>) {
+        let fcn = FileChooserNative::new(
+            Some(gettext("Save file").as_str()),
+            Some(&self.window),
+            FileChooserAction::Save,
+            Some(gettext("Save").as_str()),
+            Some(gettext("Cancel").as_str()),
+        );
+        fcn.set_transient_for(Some(&self.window.clone()));
+        fcn.set_current_name("");
+
+        fcn.connect_response(enclose!((edit_view, self => main_win) move |fcd, res| {
+            debug!(
+                "{}: {:#?}",
+                gettext("FileChooserNative save response"),
+                res
+            );
+
+            if res == ResponseType::Accept {
+                for file in fcd.get_filenames() {
+                    let file_str = &file.to_string_lossy().into_owned();
+                    if let Some(file) = fcd.get_filename() {
+                        match &std::fs::OpenOptions::new().write(true).create(true).open(&file) {
+                            Ok(_) => {
+                                debug!("{} {:?}", gettext("Saving file"), &file);
+                                let file = file.to_string_lossy();
+                                main_win.core.save(edit_view.view_id, &file);
+                                edit_view.set_file(&file);
+                            }
+                        Err(e) => {
+                            let err_msg = format!("{} '{}': {}", &gettext("Couldn't save file"), &file_str, &e.to_string());
+                            ErrorDialog::new(ErrorMsg {msg: err_msg, fatal: false});
+                        }
+                    }
+                }
+            }
+                }
+        }));
+
+        if let Some(w) = self
+            .view_id_to_w
+            .borrow()
+            .get(&edit_view.view_id)
+            .map(Clone::clone)
+        {
+            if let Some(page_num) = self.notebook.page_num(&w) {
+                self.notebook.set_property_page(page_num as i32);
+            }
+        }
+
+        fcn.run();
+    }
 }
