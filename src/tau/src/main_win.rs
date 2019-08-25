@@ -1,5 +1,5 @@
 use crate::about_win::AboutWin;
-use crate::errors::{ErrorDialog, ErrorMsg};
+use crate::errors::{ErrorDialog, ErrorMsg, XiClientError};
 use crate::frontend::{XiEvent, XiRequest};
 use crate::prefs_win::PrefsWin;
 use crate::shortcuts_win::ShortcutsWin;
@@ -125,7 +125,7 @@ pub struct MainWin {
     /// The `WinProp` Struct, used for saving the window state during shutdown
     properties: RefCell<WinProp>,
     /// A glib `Sender` from whom we receive something when we should create new `EditView`s.
-    new_view_tx: Sender<(ViewId, Option<String>)>,
+    new_view_tx: Sender<Result<(ViewId, Option<String>), String>>,
     /// A crossbeam_channel `Sender` from whom we receive something when Xi requests something.
     request_tx: crossbeam_channel::Sender<XiRequest>,
     /// A `HashMap` containing the different configs for each syntax
@@ -143,9 +143,9 @@ impl MainWin {
         // The `xi-core` we can send commands to
         core: Client,
         // The `Receiver` we get requests to open new views from
-        new_view_rx: Receiver<(ViewId, Option<String>)>,
+        new_view_rx: Receiver<Result<(ViewId, Option<String>), String>>,
         // The `Sender` to open new views
-        new_view_tx: Sender<(ViewId, Option<String>)>,
+        new_view_tx: Sender<Result<(ViewId, Option<String>), String>>,
         // The `Receiver` on which we receive messages from `xi-core`
         event_rx: Receiver<XiEvent>,
         // The `Receiver` on which we receive requests from `xi-core`
@@ -464,8 +464,18 @@ impl MainWin {
         // also receive this from `connect_open`/`connect_activate` in main.rs
         new_view_rx.attach(
             Some(&main_context),
-            enclose!((main_win) move |(view_id, path)| {
-                main_win.new_view_response(path, view_id);
+            enclose!((main_win) move |res| {
+                match res {
+                    Ok((view_id, path)) => main_win.new_view_response(path, view_id),
+                    Err(e) => {
+                        ErrorDialog::new(
+                            ErrorMsg {
+                                msg: e,
+                                fatal: false
+                            }
+                        );
+                    },
+                }
                 Continue(true)
             }),
         );
@@ -810,12 +820,23 @@ impl MainWin {
         let core = self.core.clone();
         let new_view_tx = self.new_view_tx.clone();
         std::thread::spawn(move || {
-            let view_id = tokio::executor::current_thread::block_on_all(
+            match tokio::runtime::current_thread::block_on_all(
                 core.new_view(file_name.as_ref().map(ToString::to_string)),
-            )
-            .unwrap();
-
-            new_view_tx.send((view_id, file_name)).unwrap();
+            ) {
+                Ok(view_id) => new_view_tx.send(Ok((view_id, file_name))).unwrap(),
+                Err(e) => {
+                    if let xrl::ClientError::ErrorReturned(value) = e {
+                        let err: XiClientError = serde_json::from_value(value).unwrap();
+                        new_view_tx
+                            .send(Err(format!(
+                                "{}: '{}'",
+                                gettext("Failed to open new view due to error"),
+                                err.message
+                            )))
+                            .unwrap()
+                    }
+                }
+            };
         });
     }
 }

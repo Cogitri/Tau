@@ -3,6 +3,13 @@ use gio::prelude::*;
 use gtk::prelude::*;
 use gtk::{ButtonsType, DialogFlags, MessageDialog, MessageType};
 use log::error;
+use serde::Deserialize;
+
+#[derive(Deserialize, Clone)]
+pub struct XiClientError {
+    pub code: i64,
+    pub message: String,
+}
 
 /// A struct holding the error message to be displayed
 #[derive(Clone, Debug)]

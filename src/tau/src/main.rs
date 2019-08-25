@@ -82,6 +82,7 @@ mod syntax_config;
 use crate::frontend::{TauFrontendBuilder, XiEvent, XiRequest};
 use crate::main_win::MainWin;
 //use crate::panic_handler::PanicHandler;
+use crate::errors::XiClientError;
 use crossbeam_channel::unbounded;
 use futures::stream::Stream;
 use futures::{future, future::Future};
@@ -119,7 +120,7 @@ fn main() {
 
     // The channel to signal MainWin to create a new tab with an EditView
     let (new_view_tx, new_view_rx) =
-        MainContext::channel::<(ViewId, Option<String>)>(glib::PRIORITY_HIGH);
+        MainContext::channel::<Result<(ViewId, Option<String>), String>>(glib::PRIORITY_HIGH);
     // Set this to none here so we can move it into the closures without actually starting Xi every time.
     // This significantly improves startup time when Tau is already opened and you open a new file via
     // the CLI.
@@ -241,8 +242,13 @@ fn main() {
         let core = core_opt.lock().clone().unwrap().unwrap();
 
         match tokio::runtime::current_thread::block_on_all(core.new_view(None)) {
-            Ok(view_id) => new_view_tx.send((view_id, None)).unwrap(),
-            Err(e) => error!("{}: '{}'", gettext("Failed to open new, empty view due to error"), e),
+            Ok(view_id) => new_view_tx.send(Ok((view_id, None))).unwrap(),
+            Err(e) => {
+                if let xrl::ClientError::ErrorReturned(value) = e {
+                    let err: XiClientError = serde_json::from_value(value).unwrap();
+                    new_view_tx.send(Err(format!("{}: '{}'", gettext("Failed to open new view due to error"), err.message))).unwrap()
+                }
+            },
         }
     }));
 
@@ -261,8 +267,13 @@ fn main() {
                 std::thread::spawn(enclose!((core, new_view_tx) move || {
                         for file in paths {
                             match tokio::runtime::current_thread::block_on_all(core.new_view(Some(file.clone()))) {
-                                Ok(view_id) => new_view_tx.send((view_id, Some(file))).unwrap(),
-                                Err(e) => error!("{}: '{}'; {}: {:#?}", gettext("Failed to open new view due to error"), e, gettext("Path"), file),
+                                Ok(view_id) => new_view_tx.send(Ok((view_id, Some(file)))).unwrap(),
+                                Err(e) => {
+                                    if let xrl::ClientError::ErrorReturned(value) = e {
+                                        let err: XiClientError = serde_json::from_value(value).unwrap();
+                                        new_view_tx.send(Err(format!("{}: '{}'", gettext("Failed to open new view due to error"), err.message))).unwrap()
+                                    }
+                                },
                             }
                         }
                 }));
