@@ -173,6 +173,7 @@ impl ViewItem {
             enclose!((edit_view, drag_data) move |_, offset_x, offset_y| {
                 let drag_data = drag_data.borrow();
                 edit_view.handle_drag(drag_data.start_x + offset_x, drag_data.start_y + offset_y);
+                edit_view.do_copy_primary(edit_view.view_id);
             }),
         );
 
