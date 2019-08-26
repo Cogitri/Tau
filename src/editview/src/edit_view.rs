@@ -795,10 +795,35 @@ impl EditView {
             col
         );
 
-        self.view_item
-            .statusbar
-            .line_label
-            .set_text(&format!("{}: {}", gettext("Line"), line + 1));
+        // xi initially sends a 'scroll_to' with line == 0 when the linecache doesn't have lines in
+        // it yet, so the below function would keep going forever. Make sure line isn't 0 so it's actually
+        // a valid line with a line_number
+        if line != 0 {
+            let mut n = 0;
+            let linecache = self.line_cache.lock();
+            // get the first line with a line_num
+            while linecache
+                .get_line(line - n)
+                .and_then(|l| l.line_num)
+                .is_none()
+            {
+                n += 1
+            }
+
+            self.view_item.statusbar.line_label.set_text(&format!(
+                "{}: {}",
+                gettext("Line"),
+                linecache
+                    .get_line(line - n)
+                    .and_then(|l| l.line_num)
+                    .unwrap()
+            ));
+        } else {
+            self.view_item
+                .statusbar
+                .line_label
+                .set_text(&format!("{}: {}", gettext("Line"), 1));
+        }
         self.view_item
             .statusbar
             .column_label
