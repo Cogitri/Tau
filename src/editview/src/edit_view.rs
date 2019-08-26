@@ -25,6 +25,7 @@ use std::rc::Rc;
 use std::sync::Arc;
 use std::u32;
 use tau_linecache::{Line, LineCache};
+use unicode_segmentation::UnicodeSegmentation;
 use xrl::{Client, ConfigChanges, Query, Status, Update, ViewId};
 
 /// Returned by `EditView::get_text_size()` and used to adjust the scrollbars.
@@ -286,14 +287,25 @@ impl EditView {
 
             let layout = self.create_layout_for_line(&pango_ctx, line, &self.get_tabs());
             let (_, index, trailing) = layout.xy_to_index(x as i32 * pango::SCALE, 0);
-            index + trailing
+
+            let byte_index = (index + trailing) as u64;
+
+            let last_char = UnicodeSegmentation::graphemes(line.text.as_str(), true).last();
+            let last_char_byte_width = last_char.map(|s| s.as_bytes().len()).unwrap_or(1) as u64;
+
+            // This is messy, but we have to add the length of the last character to the index,
+            // since pango (?) otherwise always assumes that it's only one byte long, when it
+            // can actually be multiple bytes long.
+            if byte_index + last_char_byte_width - 1 == line.text.bytes().len() as u64 {
+                byte_index + (last_char_byte_width - 1) as u64
+            } else {
+                byte_index
+            }
         } else {
             0
         };
-        (
-            index as u64,
-            (y / self.edit_font.borrow().font_height) as u64,
-        )
+
+        (index, (y / self.edit_font.borrow().font_height) as u64)
     }
 
     /// Allocate the space our DrawingArea needs.
