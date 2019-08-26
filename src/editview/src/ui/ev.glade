@@ -245,7 +245,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="valign">baseline</property>
-                    <property name="icon_name">go-up</property>
+                    <property name="icon_name">go-up-symbolic</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -297,7 +297,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="valign">baseline</property>
-                    <property name="icon_name">go-up</property>
+                    <property name="icon_name">go-up-symbolic</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
