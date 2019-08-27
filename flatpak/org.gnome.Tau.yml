@@ -19,6 +19,20 @@ build-options:
   build-args:
     - --share=network
 modules:
+  - name: libhandy
+    buildsystem: meson
+    config-opts:
+      - -Dprofiling=false
+      - -Dintrospection=enabled
+      - -Dgtk_doc=false
+      - -Dtests=false
+      - -Dexamples=false
+      - -Dvapi=false
+      - -Dglade_catalog=disabled
+    sources:
+      - type: archive
+        url: https://gitlab.gnome.org/Community/Purism/libhandy/-/archive/v0.0.10/libhandy-v0.0.10.tar.gz
+        sha256: 9f4528c07bdb9796300ff0efb165cdc48cfcd7f28952c9d776de15b735844981
   - name: Tau
     buildsystem: meson
     sources:
