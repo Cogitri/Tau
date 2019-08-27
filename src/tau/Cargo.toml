@@ -33,6 +33,7 @@ gschema-config-storage = { path="../gschema-config-storage" }
 gtk = { version="0.7", features = ["v3_20"] }
 human-panic = "1"
 log = "0.4"
+libhandy = "0.4"
 pango = { version="0.7", features = ["v1_38"] }
 pangocairo = "0.8"
 parking_lot = "0.9"

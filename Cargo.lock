@@ -576,6 +576,44 @@ version = "0.2.62"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
+name = "libhandy"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "bitflags 1.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "gdk 0.11.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "gdk-sys 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "gio 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "gio-sys 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "glib 0.8.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "glib-sys 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "gobject-sys 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "gtk 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "gtk-sys 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "lazy_static 1.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "libc 0.2.62 (registry+https://github.com/rust-lang/crates.io-index)",
+ "libhandy-sys 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "pango 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "libhandy-sys"
+version = "0.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "gdk 0.11.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "gdk-sys 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "gio 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "gio-sys 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "glib-sys 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "gobject-sys 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "gtk-sys 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "libc 0.2.62 (registry+https://github.com/rust-lang/crates.io-index)",
+ "pango-sys 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "pkg-config 0.3.15 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
 name = "line-wrap"
 version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1266,6 +1304,7 @@ dependencies = [
  "gschema-config-storage 0.3.0",
  "gtk 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "human-panic 1.0.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "libhandy 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "log 0.4.8 (registry+https://github.com/rust-lang/crates.io-index)",
  "pango 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "pangocairo 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -1715,6 +1754,8 @@ dependencies = [
 "checksum lazy_static 1.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
 "checksum lazycell 1.2.1 (registry+https://github.com/rust-lang/crates.io-index)" = "b294d6fa9ee409a054354afc4352b0b9ef7ca222c69b8812cbea9e7d2bf3783f"
 "checksum libc 0.2.62 (registry+https://github.com/rust-lang/crates.io-index)" = "34fcd2c08d2f832f376f4173a231990fa5aef4e99fb569867318a227ef4c06ba"
+"checksum libhandy 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = "7195919b261667e13240c14004c3fdc1a07a77ee865a9e0da5c2a4e134171c25"
+"checksum libhandy-sys 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)" = "17019593005fd387b0d2f6e5b29533796e3206e9f433dbf74846a609ceeb5fbf"
 "checksum line-wrap 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)" = "f30344350a2a51da54c1d53be93fade8a237e545dbcc4bdbe635413f2117cab9"
 "checksum linked-hash-map 0.5.2 (registry+https://github.com/rust-lang/crates.io-index)" = "ae91b68aebc4ddb91978b11a1b02ddd8602a05ec19002801c5666000e05e0f83"
 "checksum locale_config 0.2.3 (registry+https://github.com/rust-lang/crates.io-index)" = "73ac19ebe45489e5d53b4346d8b90bb3dd03275c5fdf2ce22a982516d86b535c"

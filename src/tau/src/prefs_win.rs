@@ -8,8 +8,9 @@ use gschema_config_storage::{GSchema, GSchemaExt};
 use gtk::prelude::*;
 use gtk::{
     ApplicationWindow, Builder, Button, CheckButton, ComboBoxText, FontChooserWidget, Image, Label,
-    RadioButton, SpinButton, Switch, ToggleButton, Window,
+    RadioButton, SpinButton, Switch, ToggleButton,
 };
+use libhandy::PreferencesWindow;
 use log::{debug, error, trace};
 use pango::FontDescription;
 use std::cell::RefCell;
@@ -22,7 +23,7 @@ const INSERT_SPACES_DEFAULT: bool = false;
 
 pub struct PrefsWin {
     pub core: Client,
-    pub window: Window,
+    pub window: PreferencesWindow,
 }
 
 impl PrefsWin {
@@ -34,9 +35,9 @@ impl PrefsWin {
         current_syntax: Option<&str>,
         started_plugins: &StartedPlugins,
     ) -> Self {
-        let builder = Builder::new_from_resource("/org/gnome/Tau/prefs_win.glade");
+        let builder = Builder::new_from_resource("/org/gnome/Tau/prefs_win_handy.glade");
 
-        let window: Window = builder.get_object("prefs_win").unwrap();
+        let window: PreferencesWindow = builder.get_object("prefs_win").unwrap();
         let font_chooser_widget: FontChooserWidget =
             builder.get_object("font_chooser_widget").unwrap();
         let theme_combo_box: ComboBoxText = builder.get_object("theme_combo_box").unwrap();
@@ -363,15 +364,13 @@ impl PrefsWin {
                 }
         ));
 
-        let prefs_win = Self {
-            core: core.clone(),
-            window: window.clone(),
-        };
-
         window.set_transient_for(Some(parent));
         window.show_all();
 
-        prefs_win
+        Self {
+            core: core.clone(),
+            window,
+        }
     }
 }
 
