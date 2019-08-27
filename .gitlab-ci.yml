@@ -27,7 +27,7 @@ variables:
 
 
 before_script:
-  - apt-get update -qq && apt-get install -y libgtk-3-dev gettext appstream-util desktop-file-utils meson
+  - apt-get update -qq && apt-get install -y libgtk-3-dev gettext appstream-util desktop-file-utils meson gobject-introspection libgirepository1.0-dev
 
 qa:
   stage: qa
@@ -46,6 +46,11 @@ test-native:
     - unzip 1.050R-it.zip
     - cp source-code-pro-*-it/OTF/*.otf ~/.fonts/
     - fc-cache -f -v
+    - wget https://gitlab.gnome.org/Community/Purism/libhandy/-/archive/v0.0.10/libhandy-v0.0.10.tar.gz
+    - tar xf libhandy-v0.0.10.tar.gz
+    - cd libhandy-v0.0.10
+    - meson -Dprofiling=false -Dintrospection=enabled -Dgtk_doc=false -Dtests=false -Dexamples=false -Dvapi=false -Dglade_vatalog=disabled build
+    - ninja -C build install
     - popd
     - meson _build
     - ninja -C _build test || cargo test --all
