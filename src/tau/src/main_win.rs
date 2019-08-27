@@ -320,7 +320,7 @@ impl MainWin {
             copy_action.connect_activate(enclose!((main_win) move |_,_| {
                 trace!("{} 'copy' {}", gettext("Handling"), gettext("action"));
                 if let Some(ev) = main_win.get_current_edit_view() {
-                    ev.do_copy(ev.view_id)
+                    ev.do_copy()
                 }
             }));
             application.add_action(&copy_action);
@@ -330,7 +330,7 @@ impl MainWin {
             cut_action.connect_activate(enclose!((main_win) move |_,_| {
                 trace!("{} 'cut' {}", gettext("Handling"), gettext("action"));
                 if let Some(ev) = main_win.get_current_edit_view() {
-                    ev.do_cut(ev.view_id)
+                    ev.do_cut()
                 }
             }));
             application.add_action(&cut_action);
@@ -340,7 +340,7 @@ impl MainWin {
             paste_action.connect_activate(enclose!((main_win) move |_,_| {
                 trace!("{} 'paste' {}", gettext("Handling"), gettext("action"));
                 if let Some(ev) = main_win.get_current_edit_view() {
-                    ev.do_paste(ev.view_id)
+                    ev.do_paste()
                 }
             }));
             application.add_action(&paste_action);

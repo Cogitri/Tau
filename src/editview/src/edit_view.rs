@@ -948,21 +948,21 @@ impl EditView {
             1 => {
                 if eb.get_state().contains(ModifierType::SHIFT_MASK) {
                     self.core.click_range_select(self.view_id, line, col);
-                    self.do_copy_primary(self.view_id);
+                    self.do_copy_primary();
                 } else if eb.get_state().contains(ModifierType::CONTROL_MASK) {
                     self.core.click_toggle_sel(self.view_id, line, col);
                 } else if eb.get_event_type() == EventType::DoubleButtonPress {
                     self.core.click_word_select(self.view_id, line, col);
-                    self.do_copy_primary(self.view_id);
+                    self.do_copy_primary();
                 } else if eb.get_event_type() == EventType::TripleButtonPress {
                     self.core.click_line_select(self.view_id, line, col);
-                    self.do_copy_primary(self.view_id);
+                    self.do_copy_primary();
                 } else {
                     self.core.click_point_select(self.view_id, line, col);
                 }
             }
             2 => {
-                self.do_paste_primary(self.view_id, line, col);
+                self.do_paste_primary(line, col);
             }
             3 => {
                 #[cfg(feature = "gtk_v3_22")]
@@ -1021,13 +1021,13 @@ impl EditView {
                 self.core.delete(view_id);
             }
             key::KP_Delete | key::Delete if norm && shift => {
-                self.do_cut(view_id);
+                self.do_cut();
             }
             key::KP_Insert | key::Insert if !alt && !meta && !shift && ctrl => {
-                self.do_copy(view_id);
+                self.do_copy();
             }
             key::KP_Insert | key::Insert if norm && shift => {
-                self.do_paste(view_id);
+                self.do_paste();
             }
             key::BackSpace if norm => {
                 self.core.del(view_id);
@@ -1059,21 +1059,21 @@ impl EditView {
             }
             key::Up | key::KP_Up if norm && shift => {
                 self.core.up_sel(view_id);
-                self.do_copy_primary(view_id);
+                self.do_copy_primary();
             }
             key::Down | key::KP_Down if norm && shift => {
                 self.core.down_sel(view_id);
-                self.do_copy_primary(view_id);
+                self.do_copy_primary();
             }
 
             key::Left | key::KP_Left if norm && shift => {
                 self.core.left_sel(view_id);
-                self.do_copy_primary(view_id);
+                self.do_copy_primary();
             }
 
             key::Right | key::KP_Right if norm && shift => {
                 self.core.right_sel(view_id);
-                self.do_copy_primary(view_id);
+                self.do_copy_primary();
             }
             key::Left | key::KP_Left if ctrl && !shift => {
                 self.core.move_word_left(view_id);
@@ -1083,11 +1083,11 @@ impl EditView {
             }
             key::Left | key::KP_Left if ctrl && shift => {
                 self.core.move_word_left_sel(view_id);
-                self.do_copy_primary(view_id);
+                self.do_copy_primary();
             }
             key::Right | key::KP_Right if ctrl && shift => {
                 self.core.move_word_right_sel(view_id);
-                self.do_copy_primary(view_id);
+                self.do_copy_primary();
             }
             key::Home | key::KP_Home if norm && !shift => {
                 self.core.line_start(view_id);
@@ -1097,11 +1097,11 @@ impl EditView {
             }
             key::Home | key::KP_Home if norm && shift => {
                 self.core.line_start_sel(view_id);
-                self.do_copy_primary(view_id);
+                self.do_copy_primary();
             }
             key::End | key::KP_End if norm && shift => {
                 self.core.line_end_sel(view_id);
-                self.do_copy_primary(view_id);
+                self.do_copy_primary();
             }
             key::Home | key::KP_Home if ctrl && !shift => {
                 self.core.document_begin(view_id);
@@ -1111,11 +1111,11 @@ impl EditView {
             }
             key::Home | key::KP_Home if ctrl && shift => {
                 self.core.document_begin_sel(view_id);
-                self.do_copy_primary(view_id);
+                self.do_copy_primary();
             }
             key::End | key::KP_End if ctrl && shift => {
                 self.core.document_end_sel(view_id);
-                self.do_copy_primary(view_id);
+                self.do_copy_primary();
             }
             key::Page_Up | key::KP_Page_Up if norm && !shift => {
                 self.core.page_up(view_id);
@@ -1125,11 +1125,11 @@ impl EditView {
             }
             key::Page_Up | key::KP_Page_Up if norm && shift => {
                 self.core.page_up_sel(view_id);
-                self.do_copy_primary(view_id);
+                self.do_copy_primary();
             }
             key::Page_Down | key::KP_Page_Down if norm && shift => {
                 self.core.page_down_sel(view_id);
-                self.do_copy_primary(view_id);
+                self.do_copy_primary();
             }
             key::Escape => {
                 self.stop_search();
@@ -1141,16 +1141,16 @@ impl EditView {
             }
             key::a | key::backslash | key::slash if ctrl => {
                 self.core.select_all(view_id);
-                self.do_copy_primary(view_id);
+                self.do_copy_primary();
             }
             key::c if ctrl => {
-                self.do_copy(view_id);
+                self.do_copy();
             }
             key::v if ctrl => {
-                self.do_paste(view_id);
+                self.do_paste();
             }
             key::x if ctrl => {
-                self.do_cut(view_id);
+                self.do_cut();
             }
             key::z if ctrl => {
                 self.core.undo(view_id);
@@ -1167,7 +1167,7 @@ impl EditView {
     }
 
     /// Copies text to the clipboard
-    pub fn do_cut(&self, view_id: ViewId) {
+    pub fn do_cut(&self) {
         debug!("{}", gettext("Adding cutting text op to idle queue"));
 
         let (clipboard_tx, clipboard_rx) =
@@ -1182,6 +1182,7 @@ impl EditView {
         });
 
         let core = self.core.clone();
+        let view_id = self.view_id;
         //TODO: Spawn a future on glib's mainloop instead once that is stable.
         std::thread::spawn(move || {
             let board_future = core.cut(view_id);
@@ -1192,7 +1193,7 @@ impl EditView {
     }
 
     /// Copies text to the clipboard
-    pub fn do_copy(&self, view_id: ViewId) {
+    pub fn do_copy(&self) {
         debug!("{}", gettext("Adding copying text op to idle queue"));
 
         let (clipboard_tx, clipboard_rx) =
@@ -1208,6 +1209,7 @@ impl EditView {
         });
 
         let core = self.core.clone();
+        let view_id = self.view_id;
         //TODO: Spawn a future on glib's mainloop instead once that is stable.
         std::thread::spawn(move || {
             let board_future = core.copy(view_id);
@@ -1218,7 +1220,7 @@ impl EditView {
     }
 
     /// Copies text to primary clipboard
-    pub fn do_copy_primary(&self, view_id: ViewId) {
+    pub fn do_copy_primary(&self) {
         debug!("{}", gettext("Adding selection text op to idle queue"));
 
         let (clipboard_tx, clipboard_rx) =
@@ -1233,6 +1235,7 @@ impl EditView {
         });
 
         let core = self.core.clone();
+        let view_id = self.view_id;
         //TODO: Spawn a future on glib's mainloop instead once that is stable.
         std::thread::spawn(move || {
             let board_future = core.copy(view_id);
@@ -1243,9 +1246,10 @@ impl EditView {
     }
 
     /// Pastes text from the clipboard into the EditView
-    pub fn do_paste(&self, view_id: ViewId) {
+    pub fn do_paste(&self) {
         debug!("{}", gettext("Pasting text"));
         let core = self.core.clone();
+        let view_id = self.view_id;
         Clipboard::get(&SELECTION_CLIPBOARD).request_text(enclose!((view_id) move |_, text| {
             if let Some(clip_content) = text {
                 core.insert(view_id, clip_content);
@@ -1253,9 +1257,10 @@ impl EditView {
         }));
     }
 
-    pub fn do_paste_primary(&self, view_id: ViewId, line: u64, col: u64) {
+    pub fn do_paste_primary(&self, line: u64, col: u64) {
         debug!("{}", gettext("Pasting primary text"));
         let core = self.core.clone();
+        let view_id = self.view_id;
         Clipboard::get(&SELECTION_PRIMARY).request_text(enclose!((view_id) move |_, text| {
             core.click_point_select(view_id, line, col);
             if let Some(clip_content) = text {
@@ -1265,9 +1270,10 @@ impl EditView {
     }
 
     /// Resize the EditView
-    pub fn do_resize(&self, view_id: ViewId, width: i32, height: i32) {
-        trace!("{} '{}'", gettext("Resizing EditView"), view_id);
-        self.core.resize(view_id, width, height);
+    pub fn do_resize(&self, width: i32, height: i32) {
+        trace!("{} '{}'", gettext("Resizing EditView"), self.view_id);
+
+        self.core.resize(self.view_id, width, height);
     }
 
     /// Opens the find dialog (Ctrl+F)
@@ -1383,7 +1389,7 @@ impl EditView {
         if self.find_replace.search_bar.get_search_mode() {
             self.core
                 .find_next(self.view_id, true, true, xrl::ModifySelection::Set);
-            self.do_copy_primary(self.view_id);
+            self.do_copy_primary();
         }
     }
 
@@ -1392,7 +1398,7 @@ impl EditView {
         if self.find_replace.search_bar.get_search_mode() {
             self.core
                 .find_prev(self.view_id, true, true, xrl::ModifySelection::Set);
-            self.do_copy_primary(self.view_id);
+            self.do_copy_primary();
         }
     }
 

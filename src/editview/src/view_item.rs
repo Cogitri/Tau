@@ -173,7 +173,7 @@ impl ViewItem {
             enclose!((edit_view, drag_data) move |_, offset_x, offset_y| {
                 let drag_data = drag_data.borrow();
                 edit_view.handle_drag(drag_data.start_x + offset_x, drag_data.start_y + offset_y);
-                edit_view.do_copy_primary(edit_view.view_id);
+                edit_view.do_copy_primary();
             }),
         );
 
@@ -191,7 +191,7 @@ impl ViewItem {
         self.edit_area.connect_size_allocate(enclose!((edit_view) move |_,alloc| {
             debug!("{}: {}={} {}={}", gettext("Size changed to"), gettext("width"), alloc.width, gettext("height"), alloc.height);
             edit_view.da_size_allocate(alloc.width, alloc.height);
-            edit_view.do_resize(edit_view.view_id,alloc.width, alloc.height);
+            edit_view.do_resize(alloc.width, alloc.height);
         }));
 
         self.linecount
