@@ -28,9 +28,16 @@ You need the following dependencies installed:
 	* Cairo >= 1.16
 	* GDK-Pixbuf-2.0
 	* GLib-2.0 >= 2.36
-	* GTK+3>= 3.20
+	* GTK+3 >= 3.20
 	* Pango >= 1.38
 	* Rust >= 1.35 # required for one of our deps
+
+You can enable optional functionality with the `libhandy` meson switch,
+like a more compact settings menu. You need the following dependencies
+installed for that:
+
+	* libhandy >= 0.10
+	* GTK+3 >= 3.24.1
 
 You have two ways of installing Tau:
 
