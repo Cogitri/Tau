@@ -10,14 +10,15 @@ set -e
 # $5 -> Name of the binary created by cargo inside target/
 # $6 -> Whether we should enable gtk3_22 support, enabled automatically
 # if we have gtk+-3.0 >= 3.22
+# $7 -> Whether we should enable libhandy support
 
 # These variables are used by Tau itself in src/globals.rs
 # to decide where to look for certain system components
-export TAU_PLUGIN_DIR="${7}"
-export TAU_LOCALEDIR="${8}"
-export TAU_VERSION="${9}"
-export TAU_XI_BINARY_PATH="${10}"
-export GRESOURCE_BINARY_PATH="${11}"
+export TAU_PLUGIN_DIR="${8}"
+export TAU_LOCALEDIR="${9}"
+export TAU_VERSION="${10}"
+export TAU_XI_BINARY_PATH="${11}"
+export GRESOURCE_BINARY_PATH="${12}"
 
 # ANSI codes for getting colors and resetting it
 RED='\033[0;31m'
@@ -34,11 +35,19 @@ echo -e \
 
 cd "$1"
 
-if [ "$6" = "true" ]; then
+# https://github.com/rust-lang/cargo/issues/5015
+if [ "$5" = "tau" ]; then
+    manifest_path="--manifest-path=${1}/src/tau/Cargo.toml"
+fi
+
+# libhandy needs GTK3.24 so we're guarenteed to have >=3.22
+if [ "$7" = "enabled" ]; then
+    features="--features handy"
+elif [ "$6" = "true" ]; then
     features="--features gtk_v3_22"
 fi
 
-cargo build --target-dir "${4}" --release ${features}
+cargo build --target-dir "${4}" ${manifest_path} --release ${features}
 
 # Cargo can place this here if we're crosscompiling
 if [ -f "${4}/${RUST_TARGET}/release/${5}" ]; then

@@ -10,7 +10,6 @@ use gtk::{
     ApplicationWindow, Builder, Button, CheckButton, ComboBoxText, FontChooserWidget, Image, Label,
     RadioButton, SpinButton, Switch, ToggleButton,
 };
-use libhandy::PreferencesWindow;
 use log::{debug, error, trace};
 use pango::FontDescription;
 use std::cell::RefCell;
@@ -18,9 +17,21 @@ use std::collections::HashMap;
 use std::rc::Rc;
 use xrl::Client;
 
+#[cfg(not(feature = "libhandy"))]
+use gtk::Window;
+#[cfg(feature = "libhandy")]
+use libhandy::PreferencesWindow;
+
 const TAB_SIZE_DEFAULT: f64 = 4.0;
 const INSERT_SPACES_DEFAULT: bool = false;
 
+#[cfg(not(feature = "libhandy"))]
+pub struct PrefsWin {
+    pub core: Client,
+    pub window: Window,
+}
+
+#[cfg(feature = "libhandy")]
 pub struct PrefsWin {
     pub core: Client,
     pub window: PreferencesWindow,
@@ -35,9 +46,16 @@ impl PrefsWin {
         current_syntax: Option<&str>,
         started_plugins: &StartedPlugins,
     ) -> Self {
+        #[cfg(feature = "libhandy")]
         let builder = Builder::new_from_resource("/org/gnome/Tau/prefs_win_handy.glade");
+        #[cfg(not(feature = "libhandy"))]
+        let builder = Builder::new_from_resource("/org/gnome/Tau/prefs_win.glade");
 
+        #[cfg(feature = "libhandy")]
         let window: PreferencesWindow = builder.get_object("prefs_win").unwrap();
+        #[cfg(not(feature = "libhandy"))]
+        let window: Window = builder.get_object("prefs_win").unwrap();
+
         let font_chooser_widget: FontChooserWidget =
             builder.get_object("font_chooser_widget").unwrap();
         let theme_combo_box: ComboBoxText = builder.get_object("theme_combo_box").unwrap();

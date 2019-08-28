@@ -64,7 +64,6 @@ pub fn set_margin_source_color(cr: &cairo::Context, color: Option<Color>) {
 
     set_source_color(cr, source_color);
 }
-
 /// Explode an u32 into its individual RGBA values
 pub const fn color_from_u32(c: u32) -> Color {
     Color {

@@ -9,8 +9,6 @@ dependency('gio-2.0', version: '>= 2.38')
 dependency('cairo', version: '>= 1')
 dependency('pango', version: '>=1.38')
 dependency('gtk+-3.0', version: '>= 3.20')
-# This is only used to decide what transition code to use for the search/replace Popover
-opt_gtk3_22_dep = dependency('gtk+-3.0', version: '>= 3.22', required: false)
 
 tau_prefix = get_option('prefix')
 tau_bindir = join_paths(tau_prefix, get_option('bindir'))
@@ -43,6 +41,37 @@ elif xi_opt == 'system'
   endif
 endif
 
+gtk3_22 = 'false'
+
+libhandy_opt = get_option('libhandy')
+
+# Check for libhandy. It needs GTK+3.24 which lots of stable distros (e.g. Debian, Ubuntu LTS) don't
+# ship yet. If libhandy is found we're guarenteed to have GTK 3.22.
+if libhandy_opt == 'auto'
+  libhandy_dep = dependency('libhandy-0.0', version: '>=0.0.10', required: false)
+  if libhandy_dep.found()
+    message('Found libhandy, enabling mobile support and fancier widgets')
+    libhandy_opt = 'enabled'
+    gtk3_22 = 'true'
+  else
+    message('Couldn\'t find libhandy, disabling mobile support and fancier widgets. Please install libhandy if possible')
+    libhandy_opt = 'disabled'
+    opt_gtk3_22_dep = dependency('gtk+-3.0', version: '>= 3.22', required: false)
+  endif
+elif libhandy_opt == 'enabled'
+  dependency('libhandy-0.0', version: '>=0.0.10')
+  gtk3_22 = 'true'
+else
+  # This is only used to decide what transition code to use for the search/replace Popover
+  opt_gtk3_22_dep = dependency('gtk+-3.0', version: '>= 3.22', required: false)
+endif
+
+# We may already set it to true above since libhandy needs GTK+3.24.1, so we're guarenteed
+# to have >=3.22 already.
+if gtk3_22 == 'false' and opt_gtk3_22_dep.found()
+    gtk3_22='true'
+endif
+
 sources = files(
   'src/gschema-config-storage/src/lib.rs',
   'src/gschema-config-storage/src/pref_storage.rs',
@@ -65,12 +94,6 @@ sources = files(
   'Cargo.lock',
 )
 
-if opt_gtk3_22_dep.found()
-  gtk3_22='true'
-else
-  gtk3_22='false'
-endif
-
 if xi_opt == 'builtin'
   xi_binary_path = join_paths(tau_libexecdir, 'xi-core')
 else
@@ -90,6 +113,7 @@ custom_target('cargo-build-tau',
                                   meson.current_build_dir(),
                                   'tau',
                                   gtk3_22,
+                                  libhandy_opt,
                                   tau_plugin_dir,
                                   tau_localedir,
                                   meson.project_version(),
@@ -130,6 +154,7 @@ if xi_opt == 'builtin'
                                     '@OUTPUT@',
                                     xi_vendor_target_dir,
                                     'xi-core',
+                                    '',
                                     '',
                                     tau_plugin_dir,
                                     tau_localedir,
