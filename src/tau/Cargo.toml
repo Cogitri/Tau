@@ -14,7 +14,7 @@ build = "build.rs"
 [features]
 default = []
 
-gtk_v3_22 = ["gtk/v3_22"]
+gtk_v3_22 = ["gtk/v3_22", "editview/gtk_v3_22"]
 
 [dependencies]
 cairo-rs = "0.7"
