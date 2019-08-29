@@ -1005,7 +1005,7 @@ impl EditView {
             ek.get_length(),
             gettext("group"),
             ek.get_group(),
-            gettext("unicode"),
+            gettext("Unicode"),
             ::gdk::keyval_to_unicode(ek.get_keyval())
         );
         let view_id = self.view_id;
