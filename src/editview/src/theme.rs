@@ -6,6 +6,7 @@ pub struct PangoColor {
     pub r: u16,
     pub g: u16,
     pub b: u16,
+    pub a: u16,
 }
 
 impl From<Color> for PangoColor {
@@ -15,6 +16,7 @@ impl From<Color> for PangoColor {
             r: u16::from(c.r) << 8,
             g: u16::from(c.g) << 8,
             b: u16::from(c.b) << 8,
+            a: u16::from(c.a) << 8,
         }
     }
 }

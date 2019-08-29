@@ -747,6 +747,10 @@ impl EditView {
                 attr.set_start_index(start_index);
                 attr.set_end_index(end_index);
                 attr_list.insert(attr);
+                let mut alpha_attr = Attribute::new_foreground_alpha(pango_color.a).unwrap();
+                alpha_attr.set_start_index(start_index);
+                alpha_attr.set_end_index(end_index);
+                attr_list.insert(alpha_attr);
             }
 
             if let Some(background) = line_style.and_then(|s| s.bg_color) {
@@ -756,6 +760,10 @@ impl EditView {
                 attr.set_start_index(start_index);
                 attr.set_end_index(end_index);
                 attr_list.insert(attr);
+                let mut alpha_attr = Attribute::new_background_alpha(pango_color.a).unwrap();
+                alpha_attr.set_start_index(start_index);
+                alpha_attr.set_end_index(end_index);
+                attr_list.insert(alpha_attr);
             }
 
             if let Some(weight) = line_style.and_then(|s| s.weight) {
