@@ -30,10 +30,10 @@ fn main() {
         panic!("Can't continue build without GResources!");
     }
 
-    println!("cargo:rerun-if-env-changed=GXI_LOCALEDIR");
-    println!("cargo:rerun-if-env-changed=GXI_VERSION");
-    println!("cargo:rerun-if-env-changed=GXI_PLUGIN_DIR");
-    println!("cargo:rerun-if-env-changed=GXI_XI_BINARY_PATH");
+    println!("cargo:rerun-if-env-changed=TAU_LOCALEDIR");
+    println!("cargo:rerun-if-env-changed=TAU_VERSION");
+    println!("cargo:rerun-if-env-changed=TAU_PLUGIN_DIR");
+    println!("cargo:rerun-if-env-changed=TAU_XI_BINARY_PATH");
     println!("cargo:rerun-if-changed=src/ui/app.css");
     println!("cargo:rerun-if-changed=src/ui/prefs_win.glade");
     println!("cargo:rerun-if-changed=src/ui/resources.xml");
