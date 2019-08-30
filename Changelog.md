@@ -1,3 +1,31 @@
+## Changes in v0.9.2
+
+### Feature changes
+
+ - (tau): make tabs reorderable via mouse drag
+
+### Bugfixes
+
+ - (editview): honour style's fore-&background alpha
+ - (tau): actually enable gtk_v3_22 for editview if enabled for tau
+ - (tau): copy selected text into primary clipboard
+ - (editview): fix cursor position if last char of line is more than one byte long
+ - (editview): fix line indicator in statusbar if document contains broken lines
+ - (i18n): update lang (French)
+ - (tau): replace arrow labels in status bar with symbolic variants
+ - (tau): show user ErrorDialog when opening file fails
+ - (editview): don't display trailing space if following line is soft broken
+ - (tau): GtkNotebook shouldn't be possible to focus
+ - (tau): do not reserve space for subtitle in headerbar
+ - (editview): grab focus upon creation
+ - (tau): do not send click on drag even start
+ - (editview): remove the frame from EditView's ScrolledWindow
+ - (tau): change page to the to be saved EditView in MainWin::save_as
+ - (tau): fix 'Save All' button
+ - (tau): don't offer Quit/Close (All) in primary menu
+ - (tau): don't block in MainWin::req_new_view
+ - (tau): use standard names for Keyboard Shortcuts and About <application> in app menu
+
 ## Changes in v0.9.1
 
 ### Feature changes

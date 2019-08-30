@@ -33,6 +33,33 @@
 	</provides>
 
 	<releases>
+		<release version="0.9.2" date="2019-08-30">
+			<p>
+				This is the second patch release of Tau's 0.9 series. It contains the following feature changes:
+			</p>
+
+			<ul>
+				<li>make tabs reorderable via mouse drag</li>
+			</ul>
+
+			<p>
+			And the following bug fixes:
+			</p>
+
+			<ul>
+				<li>honour style's fore- and background alpha</li>
+				<li>copy selected text into primary clipboard</li>
+				<li>fix cursor position if last char of line is more than one byte long</li>
+				<li>fix line indicator in statusbar if document contains broken lines</li>
+				<li>replace arrow labels in status bar with symbolic variants</li>
+				<li>show user ErrorDialog when opening file fails</li>
+				<li>don't display trailing space if following line is soft broken</li>
+				<li>remove the frame from EditView's ScrolledWindow</li>
+				<li>Enable the 'Save All' button</li>
+				<li>Don't block when opening a new view</li>
+				<li>Use standard names for Keyboard Shortcuts and About Tau</li>
+			</ul>
+		</release>
 		<release version="0.9.1" date="2019-08-13">
 			<p>
 				This is the first patch release of Tau's 0.9 series. It contains a fix for a

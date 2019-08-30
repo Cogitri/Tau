@@ -1249,7 +1249,7 @@ dependencies = [
 
 [[package]]
 name = "tau"
-version = "0.9.1"
+version = "0.9.2"
 dependencies = [
  "cairo-rs 0.7.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "crossbeam-channel 0.3.9 (registry+https://github.com/rust-lang/crates.io-index)",
