@@ -1,14 +1,16 @@
 <a href="https://gitlab.gnome.org/World/tau">
-    <img src="./data/icons//hicolor/scalable/apps/org.gnome.Tau.svg" alt="gxi logo" title="gxi" align="right" height="100" />
+    <img src="./data/icons//hicolor/scalable/apps/org.gnome.Tau.svg" alt="Tau logo" title="Tau" align="right" height="100" />
 </a>
 
 # Tau
-[![Drone CI Build Status](https://drone.exqa.de/api/badges/Cogitri/Tau/status.svg)](https://drone.exqa.de/Cogitri/Tau)
-[![Travis CI Build Status](https://travis-ci.com/Cogitri/Tau.svg?branch=master)](https://travis-ci.com/Cogitri/Tau)
+[![Gitlab CI status](https://gitlab.gnome.org/World/Tau/badges/master/pipeline.svg)](https://gitlab.gnome.org/World/Tau/commits/master)
 [![Translation Progress](https://hosted.weblate.org/widgets/Tau/-/translation/svg-badge.svg)](https://hosted.weblate.org/engage/Tau/?utm_source=widget)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/2711/badge)](https://bestpractices.coreinfrastructure.org/projects/2711)
+<a href="https://flathub.org/apps/details/org.gnome.Tau">
+<img src="https://flathub.org/assets/badges/flathub-badge-i-en.png" width="190px" />
+</a>
 
-GTK frontend, written in Rust, for the [xi editor](https://github.com/google/xi-editor).
+GTK frontend, written in Rust, for the [xi editor](https://github.com/xi-editor/xi-editor).
 Previously called gxi, development now continues under the name "Tau".
 
 ![screenshot](/data/screenshot.png?raw=true)
@@ -44,10 +46,8 @@ You have two ways of installing Tau:
 
 #### Installation with cargo (e.g. for developing)
 
-#### Installing the syntect plugin
-
 ```sh
-# install the syntect plugin, which adds a lot of funtionality to gxi,
+# install the syntect plugin, which adds a lot of funtionality to Tau,
 # but isn't strictly required.
 export XI_CONFIG_DIR="${PWD}"
 make -C vendor/xi-editor/rust/syntect-plugin install
@@ -89,31 +89,42 @@ Visit [Weblate](https://hosted.weblate.org/engage/Tau/) to translate Tau.
 
 ### Installation on Arch/Manjaro
 
-There are two packages for Tau in Arch Linux's
-[AUR](https://aur.archlinux.org/). The first is the regular release cycle
-package [gxi](https://aur.archlinux.org/packages/gxi/) and the second is the git
-repository tracking package
-[gxi-git](https://aur.archlinux.org/packages/gxi-git/). Building and installing
-(including dependencies) the first package can be accomplished with:
+There's currently one package for Tau in Arch Linux's
+[AUR](https://aur.archlinux.org/), [tau-editor-git](https://aur.archlinux.org/packages/tau-editor-git/).  Building and installing (including dependencies) the first package
+can be accomplished with:
 
 ```sh
-yay -S gxi
+yay -S tau-editor-git
 ```
 
 Alternatively use `makepkg`:
 
 ```sh
-curl -L -O https://aur.archlinux.org/cgit/aur.git/snapshot/gxi.tar.gz
-tar -xvf gxi.tar.gz
+curl -L -O https://aur.archlinux.org/cgit/aur.git/snapshot/tau-editor-git.tar.gz
+tar xvf tau-editor-git.tar.gz
 cd gxi
 makepkg -Csri
 ```
 
-Building and installing the git tracking package is identical, just replace all occurrences of
-`gxi` with `gxi-git`.
-
 Please consult the [Arch Wiki](https://wiki.archlinux.org/index.php/Arch_User_Repository#Installing_packages)
 for more information regarding installing packages from the AUR.
+
+### Installation on Alpine Linux
+
+```sh
+apk add tau
+```
+
+### Installation on Void Linux
+
+```sh
+xbps-install -S tau
+```
+
+### Flatpak
+
+You can install the Tau Flatpak as described on [Flathub](https://flathub.org/apps/details/org.gnome.Tau)
+
 
 ### Installation on Windows
 
