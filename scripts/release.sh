@@ -5,7 +5,7 @@ if ! [ "$MESON_BUILD_ROOT" ]; then
     exit 1
 fi
 
-if ! cargo vendor --help >/dev/null 2>&1; then
+if ! cargo-vendor vendor --help >/dev/null 2>&1; then
 	echo "Couldn't find cargo-vendor, exiting!"
 	exit 1
 fi
@@ -38,22 +38,21 @@ ginst \
 
 pushd "${SRC}"/vendor/xi-editor/rust
 mkdir -p "${DIST}"/vendor/xi-editor/rust/.cargo/
-cargo vendor xi-vendor --no-merge-sources | sed -r 's|(^directory = ).*(xi-vendor.*)|\1"\2|g' > "${DIST}"/vendor/xi-editor/rust/.cargo/config
+cargo-vendor vendor xi-vendor --no-merge-sources | sed -r 's|(^directory = ).*(xi-vendor.*)|\1"\2|g' > "${DIST}"/vendor/xi-editor/rust/.cargo/config
 ginst xi-vendor
 mv "${DIST}"/xi-vendor "${DIST}"/vendor/xi-editor/rust/
 popd
 
-# cargo vendor
 pushd "${SRC}"/vendor/xi-editor/rust/syntect-plugin/
 mkdir -p "${DIST}"/vendor/xi-editor/rust/syntect-plugin/.cargo/
 # Replace full path with relative path via sed
-cargo vendor --no-merge-sources | sed -r 's|(^directory = ).*(vendor.*)|\1"\2|g' > "${DIST}"/vendor/xi-editor/rust/syntect-plugin/.cargo/config
+cargo-vendor vendor --no-merge-sources | sed -r 's|(^directory = ).*(vendor.*)|\1"\2|g' > "${DIST}"/vendor/xi-editor/rust/syntect-plugin/.cargo/config
 popd
 
 ginst vendor
 
 mkdir "${DIST}"/.cargo
-cargo vendor cargo-vendor | sed 's/^directory = ".*"/directory = "cargo-vendor"/g' > "${DIST}"/.cargo/config
+cargo-vendor vendor cargo-vendor | sed 's/^directory = ".*"/directory = "cargo-vendor"/g' > "${DIST}"/.cargo/config
 ginst cargo-vendor
 ginst .cargo
 
