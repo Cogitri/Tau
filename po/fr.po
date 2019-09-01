@@ -3,13 +3,14 @@
 # This file is distributed under the same license as the tau package.
 # filman230 <filman230@hotmail.fr>, 2019.
 # Nicolas Granger <nicolas.granger.m@gmail.com>, 2019.
+# Éfrit <Efrit@posteo.net>, 2019.
 msgid ""
 msgstr ""
 "Project-Id-Version: tau\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-06-17 00:36+0200\n"
-"PO-Revision-Date: 2019-08-19 13:24+0000\n"
-"Last-Translator: Nicolas Granger <nicolas.granger.m@gmail.com>\n"
+"PO-Revision-Date: 2019-09-01 23:25+0000\n"
+"Last-Translator: Éfrit <Efrit@posteo.net>\n"
 "Language-Team: French <https://hosted.weblate.org/projects/Tau/translation/"
 "fr/>\n"
 "Language: fr\n"
@@ -17,7 +18,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 3.8\n"
+"X-Generator: Weblate 3.9-dev\n"
 
 #: data/org.gnome.Tau.appdata.xml.in:7 data/org.gnome.Tau.desktop.in:3
 msgid "Tau"
@@ -25,23 +26,23 @@ msgstr "Tau"
 
 #: data/org.gnome.Tau.appdata.xml.in:8
 msgid "GTK frontend for the xi text editor"
-msgstr "Interface GTK pour l'éditeur de texte Xi"
+msgstr "Interface GTK pour l’éditeur de texte Xi"
 
 #: data/org.gnome.Tau.appdata.xml.in:12
 msgid ""
 "Tau is a GTK frontend for the xi text editor written in Rust. It's a very "
 "fast plain text editor."
 msgstr ""
-"Tau est une interface GTK pour l'éditeur de texte Xi, écrit en Rust. C'est "
-"un éditeur de texte brut très rapide."
+"Tau est une interface GTK écrite en Rust pour Xi, un éditeur de texte brut "
+"très rapide."
 
 #: data/org.gnome.Tau.appdata.xml.in:27
 msgid "Rasmus \"Cogitri\" Thomsen"
-msgstr "Rasmus \"Cogitri\" Thomsen"
+msgstr "Rasmus « Cogitri » Thomsen"
 
 #: data/org.gnome.Tau.desktop.in:5
 msgid "The Tau text editor"
-msgstr "L'éditeur de texte Tau"
+msgstr "L’éditeur de texte Tau"
 
 #: data/org.gnome.Tau.desktop.in:8
 msgid "org.gnome.Tau"
@@ -57,37 +58,35 @@ msgstr "Lancer une nouvelle instance de Tau"
 
 #: data/org.gnome.Tau.gschema.xml:9
 msgid "Xi-Editor's theme"
-msgstr "Thème de Xi-Editor"
+msgstr "Thème de l’éditeur Xi"
 
 #: data/org.gnome.Tau.gschema.xml:10
 msgid "Sets the theme used for the editing area"
-msgstr "Applique le thème utilisé pour la zone d'édition"
+msgstr "Définit le thème utilisé pour la zone d’édition"
 
 #: data/org.gnome.Tau.gschema.xml:17
-#, fuzzy
 msgid "Draw trailing spaces"
-msgstr "Afficher les espaces de fin"
+msgstr "Afficher les espaces finales"
 
 #: data/org.gnome.Tau.gschema.xml:18
 msgid "Draw spaces which are at the end of a line"
-msgstr "Afficher les espaces qui sont à la fin d'une ligne"
+msgstr "Afficher les espaces qui sont à la fin d’une ligne"
 
 #: data/org.gnome.Tau.gschema.xml:25
-#, fuzzy
 msgid "Draw leading spaces"
-msgstr "Afficher les espaces de début de ligne"
+msgstr "Afficher les espaces initiales"
 
 #: data/org.gnome.Tau.gschema.xml:26
 msgid "Draw spaces which are at the beginning of a line"
-msgstr "Afficher les espaces qui sont au début d'une ligne"
+msgstr "Afficher les espaces qui sont au début d’une ligne"
 
 #: data/org.gnome.Tau.gschema.xml:33
 msgid "Draw all spaces"
-msgstr "Afficher tous les espaces"
+msgstr "Afficher toutes les espaces"
 
 #: data/org.gnome.Tau.gschema.xml:34
 msgid "Draw spaces, no matter the position"
-msgstr "Afficher les espaces, peu importe la position"
+msgstr "Afficher les espaces, quelle que soit la position"
 
 #: data/org.gnome.Tau.gschema.xml:41
 msgid "Draw a right hand margin"
@@ -98,7 +97,6 @@ msgid "Draw a right hand margin to limit the text width"
 msgstr "Afficher une marge à droite pour limiter la largeur du texte"
 
 #: data/org.gnome.Tau.gschema.xml:49
-#, fuzzy
 msgid "At what column to display the margin"
 msgstr "À quelle colonne afficher la marge"
 
@@ -108,7 +106,7 @@ msgstr "Définit la colonne à laquelle la marge doit être affichée"
 
 #: data/org.gnome.Tau.gschema.xml:57
 msgid "Whether the current line should be highlighted"
-msgstr "Si la ligne actuelle doit être mise en évidence"
+msgstr "Si la ligne courante doit être surlignée"
 
 #: data/org.gnome.Tau.gschema.xml:58
 msgid ""
@@ -119,86 +117,72 @@ msgstr ""
 "navigation dans le document"
 
 #: data/org.gnome.Tau.gschema.xml:65
-#, fuzzy
 msgid "Sets the height of the window in the next startup"
-msgstr "Règle la hauteur de la fenêtre au prochain démarrage"
+msgstr "Définit la hauteur de la fenêtre au prochain démarrage"
 
 #: data/org.gnome.Tau.gschema.xml:70
-#, fuzzy
 msgid "Sets the width of the window in the next startup"
-msgstr "Règle la largeur de la fenêtre au prochain démarrage"
+msgstr "Définit la largeur de la fenêtre au prochain démarrage"
 
 #: data/org.gnome.Tau.gschema.xml:75
-#, fuzzy
 msgid "Sets if the window should be maximized during the next startup"
-msgstr "Définit si la fenêtre doit être maximisée pour le prochain démarrage"
+msgstr "Définit si la fenêtre doit être maximisée au prochain démarrage"
 
 #: data/org.gnome.Tau.gschema.xml:80 src/tau/src/ui/prefs_win.glade:149
 msgid "Tab size"
 msgstr "Taille de la tabulation"
 
 #: data/org.gnome.Tau.gschema.xml:81
-#, fuzzy
 msgid "Amount of spaces that a tab is wide"
-msgstr "Nombre d'espaces occupés par une tabulation"
+msgstr "Nombre d’espaces occupées par une tabulation"
 
 #: data/org.gnome.Tau.gschema.xml:87
 msgid "Insert spaces instead of tabs"
-msgstr "Insérer des espaces au lieu de tabulations"
+msgstr "Insérer des espaces au lieu des tabulations"
 
 #: data/org.gnome.Tau.gschema.xml:88
 msgid "Whether spaces should be inserted instead of tabs"
-msgstr "Si des espaces doivent être insérés à la place des tabulations"
+msgstr "Si des espaces doivent être insérées au lieu des tabulations"
 
 #: data/org.gnome.Tau.gschema.xml:93
-#, fuzzy
 msgid "Treat indention with spaces like tabs"
-msgstr "Traite les indentations avec des espaces comme des tabulations"
+msgstr "Traiter les indentations avec des espaces comme des tabulations"
 
 #: data/org.gnome.Tau.gschema.xml:94
-#, fuzzy
 msgid ""
 "If translate-tabs-to-spaces is true, backspaces will delete multiple spaces, "
 "up to the previous tab stop"
 msgstr ""
-"Si la conversion des tabulations vers des espaces est activée, retour "
-"arrière supprimera plusieurs espaces, jusqu'à l'arrêt de tabulation "
-"précédent."
+"Si la conversion des tabulations en espaces est activée,  retour arrière "
+"supprimera plusieurs espaces, jusqu’au taquet de tabulation précédent"
 
 #: data/org.gnome.Tau.gschema.xml:99
-#, fuzzy
 msgid "Automatically match document's indention on newlines"
 msgstr ""
-"Fait correspondre automatiquement l'indentation du document sur les "
+"Faire correspondre automatiquement l’indentation du document sur les "
 "nouvelles lignes"
 
 #: data/org.gnome.Tau.gschema.xml:104
-#, fuzzy
 msgid "The font used for editing"
-msgstr "La police utilisée pour l'édition"
+msgstr "La fonte utilisée pour l’édition"
 
 #: data/org.gnome.Tau.gschema.xml:109 src/tau/src/ui/prefs_win.glade:184
-#, fuzzy
 msgid "Wrap lines at the end of the document"
-msgstr "Retour automatique à la ligne à la fin du document"
+msgstr "Renvoi automatique à la ligne à la fin du document"
 
 #: data/org.gnome.Tau.gschema.xml:114
-#, fuzzy
 msgid "Draw trailing tabs"
-msgstr "Afficher les tabulations de fin de ligne"
+msgstr "Afficher les tabulations finales"
 
 #: data/org.gnome.Tau.gschema.xml:115
-#, fuzzy
 msgid "Draw tabs which are at the end of a line"
-msgstr "Afficher les espaces qui sont à la fin de la ligne"
+msgstr "Afficher les tabulations qui sont à la fin de la ligne"
 
 #: data/org.gnome.Tau.gschema.xml:122
-#, fuzzy
 msgid "Draw leading tabs"
-msgstr "Afficher les tabulations de début de ligne"
+msgstr "Afficher les tabulations initiales"
 
 #: data/org.gnome.Tau.gschema.xml:123
-#, fuzzy
 msgid "Draw tabs which are at the beginning of a line"
 msgstr "Afficher les tabulations qui sont au début de la ligne"
 
@@ -208,14 +192,13 @@ msgstr "Afficher toutes les tabulations"
 
 #: data/org.gnome.Tau.gschema.xml:131
 msgid "Draw all tabs, no matter the position"
-msgstr "Afficher toutes les tabulations, peu importe la position"
+msgstr "Afficher toutes les tabulations, quelle que soit la position"
 
 #: src/editview/src/ui/ev.glade:97
 msgid "document-text"
-msgstr "document-text"
+msgstr "document-texte"
 
 #: src/editview/src/ui/ev.glade:104 src/editview/src/ui/ev.glade:219
-#, fuzzy
 msgid "text"
 msgstr "Texte"
 
@@ -235,7 +218,7 @@ msgstr "Basculer entre Rechercher et Rechercher et remplacer"
 #: src/editview/src/ui/find_replace.glade:103
 msgid "Show or hide search options such as case sensitivity"
 msgstr ""
-"Afficher ou cacher les options de recherche telles que la sensibilité à la "
+"Afficher ou masquer les options de recherche telle que la sensibilité à la "
 "casse"
 
 #: src/editview/src/ui/find_replace.glade:140
@@ -249,21 +232,19 @@ msgstr "Tout remplacer"
 
 #: src/editview/src/ui/find_replace.glade:191
 msgid "Regular expressions"
-msgstr "Expression régulière"
+msgstr "Expressions régulières"
 
 #: src/editview/src/ui/find_replace.glade:206
-#, fuzzy
 msgid "Case sensitive"
-msgstr "Respecter la casse"
+msgstr "Sensibilité à la casse"
 
 #: src/editview/src/ui/find_replace.glade:220
-#, fuzzy
 msgid "Match whole word only"
-msgstr "Mots entiers seulement"
+msgstr "Mot entier seulement"
 
 #: src/editview/src/ui/find_replace.glade:245
 msgid "No Results"
-msgstr "Pas de résultat"
+msgstr "Aucun résultat"
 
 #: src/tau/src/ui/prefs_win.glade:17 src/tau/src/ui/tau.glade:139
 msgid "Preferences"
@@ -275,33 +256,29 @@ msgstr "Thème"
 
 #: src/tau/src/ui/prefs_win.glade:64
 msgid "Font"
-msgstr "Police"
+msgstr "Fonte"
 
 #: src/tau/src/ui/prefs_win.glade:112
 msgid "Appearance"
 msgstr "Apparence"
 
 #: src/tau/src/ui/prefs_win.glade:169
-#, fuzzy
 msgid "Delete spaces up to the previous tab stop"
-msgstr "Supprimer les espaces jusqu'à la tabulation précédente"
+msgstr "Supprimer les espaces jusqu’au taquet de tabulation précédent"
 
 #: src/tau/src/ui/prefs_win.glade:203
-#, fuzzy
 msgid "Display right margin at the column:"
-msgstr "Afficher la marge droite dans la colonne"
+msgstr "Afficher la marge droite à la colonne :"
 
 #: src/tau/src/ui/prefs_win.glade:242
 msgid "Highlight the current line"
-msgstr "Surligner la ligne actuelle"
+msgstr "Surligner la ligne courante"
 
 #: src/tau/src/ui/prefs_win.glade:267
-#, fuzzy
 msgid "Tabs"
 msgstr "Tabulations"
 
 #: src/tau/src/ui/prefs_win.glade:276 src/tau/src/ui/prefs_win.glade:320
-#, fuzzy
 msgid "Trailing"
 msgstr "À la fin"
 
@@ -310,7 +287,6 @@ msgid "All"
 msgstr "Tous"
 
 #: src/tau/src/ui/prefs_win.glade:306 src/tau/src/ui/prefs_win.glade:361
-#, fuzzy
 msgid "Leading"
 msgstr "Au début"
 
@@ -320,7 +296,7 @@ msgstr "Espaces"
 
 #: src/tau/src/ui/prefs_win.glade:390
 msgid "Editing"
-msgstr "Éditeur"
+msgstr "Édition"
 
 #: src/tau/src/ui/tau.glade:22
 msgid "Save As…"
@@ -376,32 +352,28 @@ msgid "Save"
 msgstr "Enregistrer"
 
 #: src/editview/src/edit_view.rs:67 src/tau/src/main_win.rs:747
-#, fuzzy
 msgid "Creating new EditView"
-msgstr "Créer une nouvelle EditView"
+msgstr "Créer une nouvelle vue d’édition"
 
 #: src/editview/src/edit_view.rs:106
-#, fuzzy
 msgid "Xi-Update sender disconnected"
-msgstr "Émetteur Xi-Update déconnecté"
+msgstr "Expéditeur Xi-Update déconnecté"
 
 #: src/editview/src/edit_view.rs:136
 msgid "Connecting"
 msgstr "Connexion"
 
 #: src/editview/src/edit_view.rs:137
-#, fuzzy
 msgid "events for EditView"
-msgstr "évènements pour EditView"
+msgstr "évènements pour la vue d’édition"
 
 #: src/editview/src/edit_view.rs:150 src/editview/src/edit_view.rs:152
 msgid "Untitled"
 msgstr "Sans titre"
 
 #: src/editview/src/edit_view.rs:163
-#, fuzzy
 msgid "Setting title for EditView"
-msgstr "Définir le titre de EditView"
+msgstr "Définition du titre pour la vue d’édition"
 
 #: src/editview/src/edit_view.rs:176 src/editview/src/edit_view.rs:213
 #: src/editview/src/edit_view.rs:247 src/editview/src/edit_view.rs:293
@@ -416,7 +388,6 @@ msgstr "Définir le titre de EditView"
 #: src/tau/src/main_win.rs:509 src/tau/src/main_win.rs:517
 #: src/tau/src/main_win.rs:543 src/tau/src/main_win.rs:560
 #: src/tau/src/main_win.rs:591
-#, fuzzy
 msgid "Handling"
 msgstr "Traitement"
 
@@ -425,19 +396,16 @@ msgstr "Traitement"
 #: src/editview/src/edit_view.rs:321 src/editview/src/edit_view.rs:601
 #: src/editview/src/edit_view.rs:793 src/editview/src/edit_view.rs:902
 #: src/editview/src/edit_view.rs:952
-#, fuzzy
 msgid "for EditView"
-msgstr "pour EditView"
+msgstr "pour la vue d’édition"
 
 #: src/editview/src/edit_view.rs:193
-#, fuzzy
 msgid "Setting edit font to"
-msgstr "Réglage de la police d'édition sur"
+msgstr "Définition de la fonte d’édition à"
 
 #: src/editview/src/edit_view.rs:277
-#, fuzzy
 msgid "Allocating DrawingArea size"
-msgstr "Allouer la taille de DrawingArea"
+msgstr "Allocation de la taille de la zone d’affichage"
 
 #: src/editview/src/edit_view.rs:278
 msgid "Width"
@@ -448,14 +416,12 @@ msgid "Height"
 msgstr "Hauteur"
 
 #: src/editview/src/edit_view.rs:308
-#, fuzzy
 msgid "Updating visible scroll region"
 msgstr "Mise à jour de la zone de défilement visible"
 
 #: src/editview/src/edit_view.rs:395
-#, fuzzy
 msgid "Drawing EditView"
-msgstr "Affichage de EditView"
+msgstr "Affichage de la vue d’édition"
 
 #: src/editview/src/edit_view.rs:396
 msgid "vertical adjustment"
@@ -474,16 +440,14 @@ msgid "Column"
 msgstr "Colonne"
 
 #: src/editview/src/edit_view.rs:891
-#, fuzzy
 msgid ""
 "Couldn't update hscrollbar value because I couldn't get the line to scroll "
 "to!"
 msgstr ""
-"Impossible de mettre à jour la valeur de hscrollbar parce que je n'arrivait "
-"pas à faire défiler la ligne !"
+"Impossible de mettre à jour la valeur de hscrollbar parce que je ne pouvais "
+"pas faire défiler la ligne !"
 
 #: src/editview/src/edit_view.rs:958
-#, fuzzy
 msgid "Processing key press"
 msgstr "Traitement de la touche pressée"
 
@@ -509,35 +473,32 @@ msgstr "unicode"
 
 #: src/editview/src/edit_view.rs:1112
 msgid "Adding cutting text op to idle queue"
-msgstr "Ajout d'une opération de découpage de texte dans la file en attente"
+msgstr "Ajout d’une opération de découpage de texte dans la file d’attente"
 
 #: src/editview/src/edit_view.rs:1137
 msgid "Adding copying text op to idle queue"
-msgstr "Ajout d'une opération de copie de texte dans la file en attente"
+msgstr "Ajout d’une opération de copie de texte dans la file d’attente"
 
 #. if let Some(text) = Clipboard::get(&SELECTION_CLIPBOARD).wait_for_text() {
 #. self.core.insert(view_id, &text);
 #. }
 #: src/editview/src/edit_view.rs:1165
 msgid "Pasting text"
-msgstr "Coller le texte"
+msgstr "Collage du texte"
 
 #: src/editview/src/edit_view.rs:1175
-#, fuzzy
 msgid "Pasting primary text"
-msgstr "Coller le texte primaire"
+msgstr "Collage du texte primaire"
 
 #: src/editview/src/edit_view.rs:1187
 msgid "Resizing EditView"
-msgstr "Redimensionnement de EditView"
+msgstr "Redimensionnement de la vue d’édition"
 
 #: src/editview/src/edit_view.rs:1345
-#, fuzzy
 msgid "Changing language to"
 msgstr "Changer la langue en"
 
 #: src/editview/src/edit_view.rs:1350
-#, fuzzy
 msgid "Language has been changed to"
 msgstr "La langue a été changée en"
 
@@ -546,84 +507,76 @@ msgid "Plain Text"
 msgstr "Texte brut"
 
 #: src/editview/src/edit_view.rs:1371
-#, fuzzy
 msgid "Couldn't determine what position the following language is in"
-msgstr ""
-"Impossible de déterminer dans quelle position se trouve la langue suivante"
+msgstr "Impossible de déterminer la position de la langue suivante"
 
 #: src/tau/src/about_win.rs:16
 msgid "GTK frontend for the xi text editor, written in Rust"
-msgstr "Interface GTK pour l'éditeur de texte Xi, écrit en Rust"
+msgstr "Interface GTK pour l’éditeur de texte Xi, écrit en Rust"
 
 #: src/tau/src/about_win.rs:24
-#, fuzzy
 msgid "translator-credits"
-msgstr "crédits de traducteur"
+msgstr "traducteurs"
 
 #: src/tau/src/about_win.rs:30
-#, fuzzy
 msgid "Showing about window"
 msgstr "Affichage de la fenêtre À propos"
 
 #: src/tau/src/errors.rs:30
 msgid "No default application"
-msgstr "Pas d'application par défaut"
+msgstr "Aucune application par défaut"
 
 #: src/tau/src/errors.rs:32
-#, fuzzy
 msgid "Default application has wrong type"
-msgstr "Le type d'application par défaut est incorrect"
+msgstr "Le type de l’application par défaut est incorrect"
 
 #: src/tau/src/main.rs:115
 msgid "Start a new instance of the application"
-msgstr "Démarrer une nouvelle instance de l'application"
+msgstr "Démarrer une nouvelle instance de l’application"
 
 #: src/tau/src/main.rs:135
 msgid "Starting Tau"
-msgstr "Lancement de Tau"
+msgstr "Démarrage de Tau"
 
 #: src/tau/src/main.rs:239
 msgid "Activating new view"
-msgstr "Activer une nouvelle vue"
+msgstr "Activation d’une nouvelle vue"
 
 #: src/tau/src/main.rs:246
 msgid "Failed to open new, empty view due to error"
-msgstr "Échec de l'ouverture d'une nouvelle vue vide en raison d'une erreur"
+msgstr "Échec de l’ouverture d’une nouvelle vue vide en raison d’une erreur"
 
 #: src/tau/src/main.rs:251
 msgid "Opening new file"
-msgstr "Ouverture d'un nouveau fichier"
+msgstr "Ouverture d’un nouveau fichier"
 
 #: src/tau/src/main.rs:261
-#, fuzzy
 msgid "Failed to open new due to error"
-msgstr "Échec d'une nouvelle ouverture en raison d'une erreur"
+msgstr "Échec de l’ouverture d’un nouveau fichier en raison d’une erreur"
 
 #: src/tau/src/main.rs:261
 msgid "Path"
-msgstr "Chemin"
+msgstr "Chemin d’accès"
 
 #: src/tau/src/main.rs:268
 msgid "Shutting down…"
 msgstr "Extinction…"
 
 #: src/tau/src/main_win.rs:127
-#, fuzzy
 msgid "Failed to get default CssProvider!"
-msgstr "Échec d'obtention du CssProvider par défaut !"
+msgstr "Échec de l’obtention du CssProvider par défaut !"
 
 #: src/tau/src/main_win.rs:149
 msgid "Theme name"
 msgstr "Nom du thème"
 
 #: src/tau/src/main_win.rs:186
-#, fuzzy
 msgid "User chose to cancel exiting"
-msgstr "L'utilisateur a choisi d'annuler la fermeture"
+msgstr "L’utilisateur a choisi d’annuler la fermeture"
 
 #: src/tau/src/main_win.rs:189
 msgid "User chose to close the application"
-msgstr "L'utilisateur a choisi de fermer l'application"
+msgstr "L’utilisateur a choisi de fermer l’application"
 
 #: src/tau/src/main_win.rs:214 src/tau/src/main_win.rs:222
 #: src/tau/src/main_win.rs:230 src/tau/src/main_win.rs:238
@@ -636,40 +589,37 @@ msgstr "action"
 
 #: src/tau/src/main_win.rs:298
 msgid "User chose to not quit application"
-msgstr "L'utilisateur a choisi de ne pas quitter l'application"
+msgstr "L’utilisateur a choisi de ne pas quitter l’application"
 
 #: src/tau/src/main_win.rs:300
 msgid "User chose to quit application"
-msgstr "L'utilisateur a choisi de quitter l'application"
+msgstr "L’utilisateur a choisi de quitter l’application"
 
 #: src/tau/src/main_win.rs:372
 msgid "Showing main window"
 msgstr "Affichage de la fenêtre principale"
 
 #: src/tau/src/main_win.rs:391
-#, fuzzy
 msgid "Handling XiEvent"
-msgstr "Traitement de XiEvent"
+msgstr "Traitement de l’évènement Xi"
 
 #: src/tau/src/main_win.rs:433
-#, fuzzy
 msgid "isn't available, setting to default"
-msgstr "n'est pas disponible, réglage à défaut"
+msgstr "n’est pas disponible, définition à la valeur par défaut"
 
 #: src/tau/src/main_win.rs:476
 msgid ""
 "Couldn't find syntect plugin, functionality will be limited! Only found the "
 "following plugins"
 msgstr ""
-"Impossible de trouver l'extension syntect, les fonctionnalités seront "
-"limitées ! Seules les extensions suivantes ont été trouvées"
+"Impossible de trouver le greffon syntect, les fonctionnalités seront "
+"limitées ! Seuls les greffons suivants ont été trouvés"
 
 #: src/tau/src/main_win.rs:533
 msgid "Plugin"
-msgstr "Extension"
+msgstr "Greffon"
 
 #: src/tau/src/main_win.rs:535
-#, fuzzy
 msgid "has crashed"
 msgstr "a planté"
 
@@ -687,22 +637,20 @@ msgid "Cancel"
 msgstr "Annuler"
 
 #: src/tau/src/main_win.rs:616
-#, fuzzy
 msgid "FileChooserNative open response"
-msgstr "Réponse de FileChooserNative sur l'ouverture"
+msgstr "Réponse de FileChooserNative sur l’ouverture"
 
 #: src/tau/src/main_win.rs:626
 msgid "Couldn't open file"
-msgstr "Échec de l'ouverture du fichier"
+msgstr "Impossible d’ouvrir le fichier"
 
 #: src/tau/src/main_win.rs:661
 msgid "Save file"
 msgstr "Enregistrer le fichier"
 
 #: src/tau/src/main_win.rs:673
-#, fuzzy
 msgid "FileChooserNative save response"
-msgstr "Réponse de FileChooserNative  sur l'enregistrement"
+msgstr "Réponse de FileChooserNative sur l’enregistrement"
 
 #: src/tau/src/main_win.rs:683
 msgid "Saving file"
@@ -710,39 +658,35 @@ msgstr "Enregistrement du fichier"
 
 #: src/tau/src/main_win.rs:690
 msgid "Couldn't save file"
-msgstr "Impossible d'enregistrer le fichier"
+msgstr "Impossible d’enregistrer le fichier"
 
 #: src/tau/src/main_win.rs:731
-#, fuzzy
 msgid ""
 "Couldn't get current EditView. This may only mean that you don't have an "
 "editing tab open right now."
 msgstr ""
-"Impossible d'obtenir l'EditView actuel. Cela peut seulement signifier que "
-"vous n'avez pas d'onglet d'édition ouvert en ce moment."
+"Impossible d’obtenir la vue d’édition courante. Cela peut seulement "
+"signifier que vous n’avez pas d’onglet d’édition ouvert en ce moment."
 
 #: src/tau/src/main_win.rs:736
 msgid "Requesting new view"
-msgstr "Demande d'une nouvelle vue"
+msgstr "Demande d’une nouvelle vue"
 
 #: src/tau/src/main_win.rs:807
-#, fuzzy
 msgid "Closing all EditViews"
-msgstr "Fermer tous les EditViews"
+msgstr "Fermeture de toutes les vues d’édition"
 
 #: src/tau/src/main_win.rs:841
-#, fuzzy
 msgid "Closing current Editview"
-msgstr "Fermer l'EditView courant"
+msgstr "Fermeture de la vue d’édition courante"
 
 #: src/tau/src/main_win.rs:852
-#, fuzzy
 msgid "Closing Editview"
-msgstr "Fermer l'EditView"
+msgstr "Fermeture de la vue d’édition"
 
 #: src/tau/src/main_win.rs:879
 msgid "Save unsaved changes"
-msgstr "Enregistrer les modifications non sauvegardées"
+msgstr "Enregistrer les modifications non enregistrées"
 
 #: src/tau/src/main_win.rs:882
 msgid "Close Without Saving"
@@ -751,22 +695,20 @@ msgstr "Fermer sans enregistrer"
 #: src/tau/src/main_win.rs:905
 msgid "Save dialog has been destroyed before the user clicked a button"
 msgstr ""
-"La boîte de dialogue Enregistrer a été détruite avant que l'utilisateur ne "
+"La boîte de dialogue Enregistrer a été détruite avant que l’utilisateur ne "
 "clique sur un bouton"
 
 #: src/tau/src/main_win.rs:1097
-#, fuzzy
 msgid "Unknown key change event"
-msgstr "Événement de changement de touche inconnu"
+msgstr "Évènement de changement de touche inconnu"
 
 #: src/tau/src/panic_handler.rs:39
-#, fuzzy
 msgid "gxi crash reporter"
 msgstr "Rapporteur de plantage de Tau"
 
 #: src/tau/src/panic_handler.rs:49
 msgid "It seems like gxi has crashed, sorry!"
-msgstr "Il semblerait que Tau a planté, désolé !"
+msgstr "Il semblerait que Tau ait planté, désolé !"
 
 #: src/tau/src/panic_handler.rs:50
 msgid ""
@@ -774,7 +716,7 @@ msgid ""
 "can fix it! Thank you =)"
 msgstr ""
 "Veuillez envoyer le contenu du fichier ci-dessous à notre outil de suivi des "
-"problèmes sur GitHub pour que nous puissions le corriger ! Merci =)"
+"problèmes sur GitHub pour que nous puissions le corriger ! Merci =)"
 
 #: src/tau/src/panic_handler.rs:53
 msgid "File"
@@ -786,7 +728,7 @@ msgstr "URL"
 
 #: src/tau/src/prefs_win.rs:61
 msgid "Setting active theme"
-msgstr "Réglage du thème actif"
+msgstr "Définition du thème actif"
 
 #: src/tau/src/prefs_win.rs:70
 msgid "Theme changed to"
