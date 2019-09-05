@@ -732,11 +732,16 @@ impl EditView {
         layout.set_font_description(Some(&self.edit_font.borrow().font_desc));
         layout.set_text(&line.text);
 
-        let mut ix = 0;
-        let attr_list = pango::AttrList::new();
+        // Pango attributes need to be added in reverse order of the style list
+        // Find the end index of the last style first
+        let mut end_index = 0u32;
         for style in &line.styles {
-            let start_index = (ix + style.offset) as u32;
-            let end_index = (ix + style.offset + style.length as i64) as u32;
+            end_index += (style.offset + style.length as i64) as u32;
+        }
+
+        let attr_list = pango::AttrList::new();
+        for style in line.styles.iter().rev() {
+            let start_index = (u64::from(end_index) - style.length) as u32;
             let main_state = self.main_state.borrow();
             let line_style = main_state.styles.get(&(style.style_id as usize));
 
@@ -746,11 +751,11 @@ impl EditView {
                     Attribute::new_foreground(pango_color.r, pango_color.g, pango_color.b).unwrap();
                 attr.set_start_index(start_index);
                 attr.set_end_index(end_index);
-                attr_list.insert(attr);
+                attr_list.change(attr);
                 let mut alpha_attr = Attribute::new_foreground_alpha(pango_color.a).unwrap();
                 alpha_attr.set_start_index(start_index);
                 alpha_attr.set_end_index(end_index);
-                attr_list.insert(alpha_attr);
+                attr_list.change(alpha_attr);
             }
 
             if let Some(background) = line_style.and_then(|s| s.bg_color) {
@@ -759,11 +764,11 @@ impl EditView {
                     Attribute::new_background(pango_color.r, pango_color.g, pango_color.b).unwrap();
                 attr.set_start_index(start_index);
                 attr.set_end_index(end_index);
-                attr_list.insert(attr);
+                attr_list.change(attr);
                 let mut alpha_attr = Attribute::new_background_alpha(pango_color.a).unwrap();
                 alpha_attr.set_start_index(start_index);
                 alpha_attr.set_end_index(end_index);
-                attr_list.insert(alpha_attr);
+                attr_list.change(alpha_attr);
             }
 
             if let Some(weight) = line_style.and_then(|s| s.weight) {
@@ -771,7 +776,7 @@ impl EditView {
                     Attribute::new_weight(pango::Weight::__Unknown(weight as i32)).unwrap();
                 attr.set_start_index(start_index);
                 attr.set_end_index(end_index);
-                attr_list.insert(attr);
+                attr_list.change(attr);
             }
 
             if let Some(italic) = line_style.and_then(|s| s.italic) {
@@ -782,7 +787,7 @@ impl EditView {
                 };
                 attr.set_start_index(start_index);
                 attr.set_end_index(end_index);
-                attr_list.insert(attr);
+                attr_list.change(attr);
             }
 
             if let Some(underline) = line_style.and_then(|s| s.underline) {
@@ -793,10 +798,10 @@ impl EditView {
                 };
                 attr.set_start_index(start_index);
                 attr.set_end_index(end_index);
-                attr_list.insert(attr);
+                attr_list.change(attr);
             }
 
-            ix += style.offset + style.length as i64;
+            end_index = (i64::from(start_index) - style.offset) as u32;
         }
 
         layout.set_attributes(Some(&attr_list));
