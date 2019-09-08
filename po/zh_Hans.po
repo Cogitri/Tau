@@ -4,13 +4,14 @@
 # Elizabeth Sherrock <lizzyd710@gmail.com>, 2019.
 # Yulin Shen <sylxjtu@outlook.com>, 2019.
 # Chojan Shang <PsiACE@outlook.com>, 2019.
+# Dingzhong Chen <wsxy162@gmail.com>, 2019.
 msgid ""
 msgstr ""
 "Project-Id-Version: Tau\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-06-17 00:36+0200\n"
-"PO-Revision-Date: 2019-08-02 03:12+0000\n"
-"Last-Translator: Chojan Shang <PsiACE@outlook.com>\n"
+"PO-Revision-Date: 2019-09-08 19:25+0000\n"
+"Last-Translator: Dingzhong Chen <wsxy162@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/Tau/"
 "translation/zh_Hans/>\n"
 "Language: zh_Hans\n"
@@ -18,7 +19,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 3.8-dev\n"
+"X-Generator: Weblate 3.9-dev\n"
 
 #: data/org.gnome.Tau.appdata.xml.in:7 data/org.gnome.Tau.desktop.in:3
 msgid "Tau"
@@ -134,29 +135,29 @@ msgstr "一个制表符等于的空格数"
 
 #: data/org.gnome.Tau.gschema.xml:87
 msgid "Insert spaces instead of tabs"
-msgstr ""
+msgstr "插入空格而非制表符"
 
 #: data/org.gnome.Tau.gschema.xml:88
 msgid "Whether spaces should be inserted instead of tabs"
-msgstr ""
+msgstr "是否代替制表符，以空格插入"
 
 #: data/org.gnome.Tau.gschema.xml:93
 msgid "Treat indention with spaces like tabs"
-msgstr ""
+msgstr "以类似制表符的方式使用空格处理缩进"
 
 #: data/org.gnome.Tau.gschema.xml:94
 msgid ""
 "If translate-tabs-to-spaces is true, backspaces will delete multiple spaces, "
 "up to the previous tab stop"
-msgstr ""
+msgstr "如果 translate-tabs-to-spaces 为真（true），退格键将删除多个空格，直到上个制表符的位置"
 
 #: data/org.gnome.Tau.gschema.xml:99
 msgid "Automatically match document's indention on newlines"
-msgstr ""
+msgstr "自动匹配文档的换行缩进"
 
 #: data/org.gnome.Tau.gschema.xml:104
 msgid "The font used for editing"
-msgstr ""
+msgstr "编辑区使用的字体"
 
 #: data/org.gnome.Tau.gschema.xml:109 src/tau/src/ui/prefs_win.glade:184
 msgid "Wrap lines at the end of the document"
@@ -164,27 +165,27 @@ msgstr "在视图的末尾换行, 而不是提供滚动"
 
 #: data/org.gnome.Tau.gschema.xml:114
 msgid "Draw trailing tabs"
-msgstr ""
+msgstr "绘制尾随制表符"
 
 #: data/org.gnome.Tau.gschema.xml:115
 msgid "Draw tabs which are at the end of a line"
-msgstr ""
+msgstr "绘制位于行尾的制表符"
 
 #: data/org.gnome.Tau.gschema.xml:122
 msgid "Draw leading tabs"
-msgstr ""
+msgstr "绘制前导制表符"
 
 #: data/org.gnome.Tau.gschema.xml:123
 msgid "Draw tabs which are at the beginning of a line"
-msgstr ""
+msgstr "绘制位于行首的制表符"
 
 #: data/org.gnome.Tau.gschema.xml:130
 msgid "Draw all tabs"
-msgstr ""
+msgstr "绘制全部制表符"
 
 #: data/org.gnome.Tau.gschema.xml:131
 msgid "Draw all tabs, no matter the position"
-msgstr ""
+msgstr "绘制所有制表符，不论其位置"
 
 #: src/editview/src/ui/ev.glade:97
 msgid "document-text"
@@ -254,7 +255,7 @@ msgstr "外观"
 
 #: src/tau/src/ui/prefs_win.glade:169
 msgid "Delete spaces up to the previous tab stop"
-msgstr ""
+msgstr "删除空格直到上个制表符的位置"
 
 #: src/tau/src/ui/prefs_win.glade:203
 msgid "Display right margin at the column:"
@@ -266,23 +267,23 @@ msgstr "突出显示当前行"
 
 #: src/tau/src/ui/prefs_win.glade:267
 msgid "Tabs"
-msgstr ""
+msgstr "制表符"
 
 #: src/tau/src/ui/prefs_win.glade:276 src/tau/src/ui/prefs_win.glade:320
 msgid "Trailing"
-msgstr ""
+msgstr "尾随"
 
 #: src/tau/src/ui/prefs_win.glade:291 src/tau/src/ui/prefs_win.glade:335
 msgid "All"
-msgstr ""
+msgstr "全部"
 
 #: src/tau/src/ui/prefs_win.glade:306 src/tau/src/ui/prefs_win.glade:361
 msgid "Leading"
-msgstr ""
+msgstr "前导"
 
 #: src/tau/src/ui/prefs_win.glade:352
 msgid "Spaces"
-msgstr ""
+msgstr "空格"
 
 #: src/tau/src/ui/prefs_win.glade:390
 msgid "Editing"
@@ -347,23 +348,23 @@ msgstr "创建新的编辑视图"
 
 #: src/editview/src/edit_view.rs:106
 msgid "Xi-Update sender disconnected"
-msgstr ""
+msgstr "Xi-Update 发送程序已断开连接"
 
 #: src/editview/src/edit_view.rs:136
 msgid "Connecting"
-msgstr ""
+msgstr "正在连接"
 
 #: src/editview/src/edit_view.rs:137
 msgid "events for EditView"
-msgstr ""
+msgstr "编辑视图的事件"
 
 #: src/editview/src/edit_view.rs:150 src/editview/src/edit_view.rs:152
 msgid "Untitled"
-msgstr ""
+msgstr "无标题"
 
 #: src/editview/src/edit_view.rs:163
 msgid "Setting title for EditView"
-msgstr ""
+msgstr "设定编辑视图的标题"
 
 #: src/editview/src/edit_view.rs:176 src/editview/src/edit_view.rs:213
 #: src/editview/src/edit_view.rs:247 src/editview/src/edit_view.rs:293
@@ -379,23 +380,24 @@ msgstr ""
 #: src/tau/src/main_win.rs:543 src/tau/src/main_win.rs:560
 #: src/tau/src/main_win.rs:591
 msgid "Handling"
-msgstr ""
+msgstr "正在处理"
 
 #: src/editview/src/edit_view.rs:177 src/editview/src/edit_view.rs:214
 #: src/editview/src/edit_view.rs:248 src/editview/src/edit_view.rs:294
 #: src/editview/src/edit_view.rs:321 src/editview/src/edit_view.rs:601
 #: src/editview/src/edit_view.rs:793 src/editview/src/edit_view.rs:902
 #: src/editview/src/edit_view.rs:952
+#, fuzzy
 msgid "for EditView"
-msgstr ""
+msgstr "对于编辑视图"
 
 #: src/editview/src/edit_view.rs:193
 msgid "Setting edit font to"
-msgstr ""
+msgstr "将编辑字体设为"
 
 #: src/editview/src/edit_view.rs:277
 msgid "Allocating DrawingArea size"
-msgstr ""
+msgstr "正在分配绘图区域大小"
 
 #: src/editview/src/edit_view.rs:278
 msgid "Width"
@@ -423,21 +425,21 @@ msgstr "水平调整"
 
 #: src/editview/src/edit_view.rs:802
 msgid "Line"
-msgstr ""
+msgstr "行"
 
 #: src/editview/src/edit_view.rs:806
 msgid "Column"
-msgstr ""
+msgstr "列"
 
 #: src/editview/src/edit_view.rs:891
 msgid ""
 "Couldn't update hscrollbar value because I couldn't get the line to scroll "
 "to!"
-msgstr ""
+msgstr "无法更新 hscrollbar 值，因为无法获取要滚动到的行！"
 
 #: src/editview/src/edit_view.rs:958
 msgid "Processing key press"
-msgstr ""
+msgstr "正在处理按键"
 
 #: src/editview/src/edit_view.rs:959
 msgid "value"
@@ -484,11 +486,11 @@ msgstr "调整编辑视图的大小"
 
 #: src/editview/src/edit_view.rs:1345
 msgid "Changing language to"
-msgstr ""
+msgstr "正在更改语言为"
 
 #: src/editview/src/edit_view.rs:1350
 msgid "Language has been changed to"
-msgstr ""
+msgstr "语言已更改为"
 
 #: src/editview/src/edit_view.rs:1353
 msgid "Plain Text"
@@ -496,7 +498,7 @@ msgstr "纯文本"
 
 #: src/editview/src/edit_view.rs:1371
 msgid "Couldn't determine what position the following language is in"
-msgstr ""
+msgstr "无法确定以下语言所处的位置"
 
 #: src/tau/src/about_win.rs:16
 msgid "GTK frontend for the xi text editor, written in Rust"
@@ -520,7 +522,7 @@ msgstr "没有默认应用程序"
 
 #: src/tau/src/main.rs:115
 msgid "Start a new instance of the application"
-msgstr ""
+msgstr "启动一个应用程序的新实例"
 
 #: src/tau/src/main.rs:135
 msgid "Starting Tau"
@@ -532,7 +534,7 @@ msgstr "激活新视图"
 
 #: src/tau/src/main.rs:246
 msgid "Failed to open new, empty view due to error"
-msgstr ""
+msgstr "打开新视图失败，因出错而清空视图"
 
 #: src/tau/src/main.rs:251
 msgid "Opening new file"
@@ -540,11 +542,11 @@ msgstr "打开新文件"
 
 #: src/tau/src/main.rs:261
 msgid "Failed to open new due to error"
-msgstr ""
+msgstr "由于出错而无法打开新视图"
 
 #: src/tau/src/main.rs:261
 msgid "Path"
-msgstr ""
+msgstr "路径"
 
 #: src/tau/src/main.rs:268
 msgid "Shutting down…"
@@ -552,7 +554,7 @@ msgstr "关闭…"
 
 #: src/tau/src/main_win.rs:127
 msgid "Failed to get default CssProvider!"
-msgstr ""
+msgstr "获取默认 CssProvider 失败！"
 
 #: src/tau/src/main_win.rs:149
 msgid "Theme name"
@@ -572,8 +574,9 @@ msgstr "用户选择关闭应用程序"
 #: src/tau/src/main_win.rs:262 src/tau/src/main_win.rs:270
 #: src/tau/src/main_win.rs:278 src/tau/src/main_win.rs:286
 #: src/tau/src/main_win.rs:295
+#, fuzzy
 msgid "action"
-msgstr ""
+msgstr "动作"
 
 #: src/tau/src/main_win.rs:298
 msgid "User chose to not quit application"
@@ -585,11 +588,11 @@ msgstr "用户选择退出应用程序"
 
 #: src/tau/src/main_win.rs:372
 msgid "Showing main window"
-msgstr ""
+msgstr "正显示主窗口"
 
 #: src/tau/src/main_win.rs:391
 msgid "Handling XiEvent"
-msgstr ""
+msgstr "正在处理 XiEvent"
 
 #: src/tau/src/main_win.rs:433
 msgid "isn't available, setting to default"
@@ -607,7 +610,7 @@ msgstr "插件"
 
 #: src/tau/src/main_win.rs:535
 msgid "has crashed"
-msgstr ""
+msgstr "已崩溃"
 
 #: src/tau/src/main_win.rs:536
 msgid "functionality will be limited"
@@ -615,7 +618,7 @@ msgstr "功能将受到限制"
 
 #: src/tau/src/main_win.rs:604
 msgid "Open a file to edit"
-msgstr ""
+msgstr "打开文件以编辑"
 
 #: src/tau/src/main_win.rs:608 src/tau/src/main_win.rs:665
 #: src/tau/src/main_win.rs:886
@@ -682,7 +685,7 @@ msgstr "在用户单击按钮之前，保存对话框已被销毁"
 
 #: src/tau/src/main_win.rs:1097
 msgid "Unknown key change event"
-msgstr ""
+msgstr "未知的按键值更改事件"
 
 #: src/tau/src/panic_handler.rs:39
 msgid "gxi crash reporter"
