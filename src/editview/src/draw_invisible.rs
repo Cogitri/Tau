@@ -74,6 +74,21 @@ pub mod spaces {
             .flat_map(|(ch, i)| if ch == b' ' { Some(i) } else { None })
     }
 
+    /// Get all spaces in a string from `start_index` to `start_index + length`
+    pub fn all_from(text: &str, start_index: u64, length: u64) -> impl Iterator<Item = i32> + '_ {
+        text.chars()
+            .skip(start_index as usize)
+            .take(length as usize)
+            .enumerate()
+            .filter_map(move |(num, ch)| {
+                if ch == ' ' {
+                    Some((num as u64 + start_index) as i32)
+                } else {
+                    None
+                }
+            })
+    }
+
     /// Get leading spaces in a string
     ///
     /// # Example
@@ -120,6 +135,21 @@ pub mod tabs {
         text.bytes()
             .zip(0..)
             .flat_map(|(ch, i)| if ch == b'\t' { Some(i) } else { None })
+    }
+
+    /// Get all tabs in a string from `start_index` to `start_index + length`
+    pub fn all_from(text: &str, start_index: u64, length: u64) -> impl Iterator<Item = i32> + '_ {
+        text.chars()
+            .skip(start_index as usize)
+            .take(length as usize)
+            .enumerate()
+            .filter_map(move |(num, ch)| {
+                if ch == '\t' {
+                    Some((num as u64 + start_index) as i32)
+                } else {
+                    None
+                }
+            })
     }
 
     /// Get leading tabs in a string

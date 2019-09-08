@@ -534,6 +534,27 @@ impl EditView {
                         r.y = self.edit_font.borrow().font_height * i as f64 - vadj.get_value();
                         r.draw_tab(cr);
                     });
+                } else if self.main_state.borrow().settings.selection_tabs {
+                    let mut style_index = 0u64;
+                    for style in line.styles.iter() {
+                        style_index += style.offset as u64;
+                        if style.style_id == 0 {
+                            let pos = draw_invisible::Rectangle::from_layout_index(
+                                draw_invisible::tabs::all_from(
+                                    line.text.as_str(),
+                                    style_index,
+                                    style.length,
+                                ),
+                                &layout,
+                            );
+                            pos.filter(|r| r.width != 0.0).for_each(|mut r| {
+                                r.y = self.edit_font.borrow().font_height * i as f64
+                                    - vadj.get_value();
+                                r.draw_tab(cr);
+                            });
+                        }
+                        style_index += style.length;
+                    }
                 }
 
                 // If the next line is a soft broken line we don't want to display trailing spaces since they're actually
@@ -572,6 +593,27 @@ impl EditView {
                         r.y = self.edit_font.borrow().font_height * i as f64 - vadj.get_value();
                         r.draw_space(cr);
                     });
+                } else if self.main_state.borrow().settings.selection_spaces {
+                    let mut style_index = 0u64;
+                    for style in line.styles.iter() {
+                        style_index += style.offset as u64;
+                        if style.style_id == 0 {
+                            let pos = draw_invisible::Rectangle::from_layout_index(
+                                draw_invisible::spaces::all_from(
+                                    line.text.as_str(),
+                                    style_index,
+                                    style.length,
+                                ),
+                                &layout,
+                            );
+                            pos.filter(|r| r.width != 0.0).for_each(|mut r| {
+                                r.y = self.edit_font.borrow().font_height * i as f64
+                                    - vadj.get_value();
+                                r.draw_space(cr);
+                            });
+                        }
+                        style_index += style.length;
+                    }
                 }
 
                 if self.main_state.borrow().settings.draw_cursor {

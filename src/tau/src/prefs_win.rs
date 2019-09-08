@@ -77,12 +77,16 @@ impl PrefsWin {
             builder.get_object("tabs_trailing_radio_button").unwrap();
         let draw_leading_tabs_radio: RadioButton =
             builder.get_object("tabs_leading_radio_button").unwrap();
+        let draw_selection_tabs_radio: RadioButton =
+            builder.get_object("tabs_selection_radio_button").unwrap();
         let draw_all_tabs_radio: RadioButton = builder.get_object("tabs_all_radio_button").unwrap();
 
         let draw_trailing_spaces_radio: RadioButton =
             builder.get_object("spaces_trailing_radio_button").unwrap();
         let draw_leading_spaces_radio: RadioButton =
             builder.get_object("spaces_leading_radio_button").unwrap();
+        let draw_selection_spaces_radio: RadioButton =
+            builder.get_object("spaces_selection_radio_button").unwrap();
         let draw_all_spaces_radio: RadioButton =
             builder.get_object("spaces_all_radio_button").unwrap();
 
@@ -231,6 +235,13 @@ impl PrefsWin {
         );
 
         gschema.settings.bind(
+            "draw-selection-spaces",
+            &draw_selection_spaces_radio,
+            "active",
+            SettingsBindFlags::DEFAULT,
+        );
+
+        gschema.settings.bind(
             "draw-all-spaces",
             &draw_all_spaces_radio,
             "active",
@@ -275,6 +286,13 @@ impl PrefsWin {
         gschema.settings.bind(
             "draw-leading-tabs",
             &draw_leading_tabs_radio,
+            "active",
+            SettingsBindFlags::DEFAULT,
+        );
+
+        gschema.settings.bind(
+            "draw-selection-tabs",
+            &draw_selection_tabs_radio,
             "active",
             SettingsBindFlags::DEFAULT,
         );

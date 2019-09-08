@@ -373,7 +373,7 @@
                     <property name="group">tabs_none_radio_button</property>
                   </object>
                   <packing>
-                    <property name="left_attach">4</property>
+                    <property name="left_attach">5</property>
                     <property name="top_attach">1</property>
                   </packing>
                 </child>
@@ -388,7 +388,7 @@
                     <property name="group">spaces_none_radio_button</property>
                   </object>
                   <packing>
-                    <property name="left_attach">4</property>
+                    <property name="left_attach">5</property>
                     <property name="top_attach">0</property>
                   </packing>
                 </child>
@@ -403,7 +403,7 @@
                     <property name="group">spaces_none_radio_button</property>
                   </object>
                   <packing>
-                    <property name="left_attach">3</property>
+                    <property name="left_attach">4</property>
                     <property name="top_attach">0</property>
                   </packing>
                 </child>
@@ -418,7 +418,7 @@
                     <property name="group">tabs_none_radio_button</property>
                   </object>
                   <packing>
-                    <property name="left_attach">3</property>
+                    <property name="left_attach">4</property>
                     <property name="top_attach">1</property>
                   </packing>
                 </child>
@@ -433,13 +433,43 @@
                     <property name="group">spaces_none_radio_button</property>
                   </object>
                   <packing>
-                    <property name="left_attach">2</property>
+                    <property name="left_attach">3</property>
                     <property name="top_attach">0</property>
                   </packing>
                 </child>
                 <child>
                   <object class="GtkRadioButton" id="tabs_leading_radio_button">
                     <property name="label" translatable="yes">Leading</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">False</property>
+                    <property name="active">True</property>
+                    <property name="draw_indicator">True</property>
+                    <property name="group">tabs_none_radio_button</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">3</property>
+                    <property name="top_attach">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkRadioButton" id="spaces_selection_radio_button">
+                    <property name="label" translatable="yes">Selected</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">False</property>
+                    <property name="active">True</property>
+                    <property name="draw_indicator">True</property>
+                    <property name="group">spaces_none_radio_button</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">2</property>
+                    <property name="top_attach">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkRadioButton" id="tabs_selection_radio_button">
+                    <property name="label" translatable="yes">Selected</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>

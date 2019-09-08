@@ -28,6 +28,14 @@
             </description>
         </key>
 
+        <key name="draw-selection-spaces" type="b">
+            <default>false</default>
+            <summary>Draw selected spaces</summary>
+            <description>
+                Draw spaces whenever they are selected
+            </description>
+        </key>
+
         <key name="draw-all-spaces" type="b">
             <default>false</default>
             <summary>Draw all spaces</summary>
@@ -126,6 +134,14 @@
             <summary>Draw leading tabs</summary>
             <description>
                 Draw tabs which are at the beginning of a line
+            </description>
+        </key>
+
+        <key name="draw-selection-tabs" type="b">
+            <default>false</default>
+            <summary>Draw selected tabs</summary>
+            <description>
+                Draw tabs whenever they are selected
             </description>
         </key>
 

@@ -857,6 +857,7 @@ pub fn new_settings() -> Settings {
         trailing_spaces: gschema.get_key("draw-trailing-spaces"),
         all_spaces: gschema.get_key("draw-all-spaces"),
         leading_spaces: gschema.get_key("draw-leading-spaces"),
+        selection_spaces: gschema.get_key("draw-selection-spaces"),
         highlight_line: gschema.get_key("highlight-line"),
         right_margin: gschema.get_key("draw-right-margin"),
         column_right_margin: gschema.get_key("column-right-margin"),
@@ -864,6 +865,7 @@ pub fn new_settings() -> Settings {
         trailing_tabs: gschema.get_key("draw-trailing-tabs"),
         all_tabs: gschema.get_key("draw-all-tabs"),
         leading_tabs: gschema.get_key("draw-leading-tabs"),
+        selection_tabs: gschema.get_key("draw-selection-tabs"),
         draw_cursor: gschema.get_key("draw-cursor"),
         interface_font,
         gschema,
@@ -1059,6 +1061,13 @@ impl MainWinExt for Rc<MainWin> {
                         ev.view_item.edit_area.queue_draw();
                     }
                 }
+                "draw-selection-spaces" => {
+                    let val = gschema.get_key("draw-selection-spaces");
+                    main_win.state.borrow_mut().settings.selection_spaces = val;
+                    if let Some(ev) = main_win.get_current_edit_view() {
+                        ev.view_item.edit_area.queue_draw();
+                    }
+                }
                 "draw-all-spaces" => {
                     let val = gschema.get_key("draw-all-spaces");
                     main_win.state.borrow_mut().settings.all_spaces = val;
@@ -1076,6 +1085,13 @@ impl MainWinExt for Rc<MainWin> {
                 "draw-leading-tabs" => {
                     let val = gschema.get_key("draw-leading-tabs");
                     main_win.state.borrow_mut().settings.leading_tabs = val;
+                    if let Some(ev) = main_win.get_current_edit_view() {
+                        ev.view_item.edit_area.queue_draw();
+                    }
+                }
+                "draw-selection-tabs" => {
+                    let val = gschema.get_key("draw-selection-tabs");
+                    main_win.state.borrow_mut().settings.selection_tabs = val;
                     if let Some(ev) = main_win.get_current_edit_view() {
                         ev.view_item.edit_area.queue_draw();
                     }
