@@ -13,7 +13,7 @@ use gschema_config_storage::{GSchema, GSchemaExt};
 use gtk::prelude::*;
 use gtk::{
     Application, ApplicationWindow, Builder, ButtonsType, DialogFlags, FileChooserAction,
-    FileChooserNative, MessageDialog, MessageType, Notebook, ResponseType, Widget,
+    FileChooserNative, HeaderBar, MessageDialog, MessageType, Notebook, ResponseType, Widget,
 };
 use log::{debug, error, info, trace, warn};
 use serde_json::{self, json};
@@ -132,6 +132,8 @@ pub struct MainWin {
     syntax_config: RefCell<HashMap<String, SyntaxParams>>,
     /// Indicates which special plugins (for which we have to do additional work) have been started
     started_plugins: RefCell<StartedPlugins>,
+    /// The GtkHeaderbar of Tau, to set different titles
+    header_bar: HeaderBar,
 }
 
 impl MainWin {
@@ -169,6 +171,7 @@ impl MainWin {
 
         let properties = RefCell::new(WinProp::new(&application));
         let window: ApplicationWindow = builder.get_object("appwindow").unwrap();
+        let header_bar = builder.get_object("header_bar").unwrap();
 
         let icon = Pixbuf::new_from_resource("/org/gnome/Tau/org.gnome.Tau.svg");
         window.set_icon(icon.ok().as_ref());
@@ -222,6 +225,7 @@ impl MainWin {
             new_view_tx,
             properties,
             request_tx,
+            header_bar,
             views: Default::default(),
             w_to_ev: Default::default(),
             view_id_to_w: Default::default(),
@@ -262,6 +266,26 @@ impl MainWin {
                 if ! maximized {
                     properties.width = win_size.0;
                     properties.height = win_size.1;
+                }
+            }));
+
+        main_win
+            .notebook
+            .connect_switch_page(enclose!((main_win) move |_,ev_widget,_| {
+                if let Some(ev) = main_win.w_to_ev.borrow().get(&ev_widget) {
+                    if let Some(ref path_string) = &*ev.file_name.borrow() {
+                        if let Some(name) = std::path::Path::new(path_string).file_name() {
+                            if !*ev.pristine.borrow() {
+                                main_win.header_bar.set_title(Some(&format!("*{}", &name.to_string_lossy())));
+                            } else {
+                                main_win.header_bar.set_title(Some(&name.to_string_lossy()));
+                            }
+                        }
+                    } else if !*ev.pristine.borrow() {
+                        main_win.header_bar.set_title(Some(&format!("*{}", gettext("Untitled"))));
+                    } else {
+                        main_win.header_bar.set_title(Some(&gettext("Untitled")));
+                    }
                 }
             }));
 
@@ -467,7 +491,16 @@ impl MainWin {
             enclose!((main_win) move |res| {
                 match res {
                     Ok((view_id, path)) => {
+                        if let Some(ref path_string) = path {
+                            if let Some(name) = std::path::Path::new(path_string).file_name() {
+                                main_win.header_bar.set_title(Some(&name.to_string_lossy()));
+                            }
+                        } else {
+                            main_win.header_bar.set_title(Some(&gettext("Untitled")));
+                        }
+
                         main_win.new_view_response(path, view_id);
+
                         if main_win.notebook.get_n_pages() > 1 {
                             main_win.notebook.set_show_tabs(true);
                         }
@@ -624,7 +657,32 @@ impl MainWin {
         trace!("{} 'update': {:?}", gettext("Handling"), params);
         let views = self.views.borrow();
         if let Some(ev) = views.get(&params.view_id) {
-            ev.update(params)
+            let view_id = params.view_id;
+            let pristine = params.pristine;
+
+            ev.update(params);
+
+            if let Some(w) = self.view_id_to_w.borrow().get(&view_id).map(Clone::clone) {
+                if let Some(page_num) = self.notebook.page_num(&w) {
+                    if Some(page_num) == self.notebook.get_current_page() {
+                        if let Some(name) = std::path::Path::new(
+                            &ev.file_name
+                                .borrow()
+                                .clone()
+                                .unwrap_or_else(|| gettext("Untitled")),
+                        )
+                        .file_name()
+                        {
+                            let mut full_title = String::new();
+                            if !pristine {
+                                full_title.push('*');
+                            }
+                            full_title.push_str(&name.to_string_lossy());
+                            self.header_bar.set_title(Some(&full_title));
+                        }
+                    }
+                }
+            }
         }
     }
 
