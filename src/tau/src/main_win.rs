@@ -466,7 +466,12 @@ impl MainWin {
             Some(&main_context),
             enclose!((main_win) move |res| {
                 match res {
-                    Ok((view_id, path)) => main_win.new_view_response(path, view_id),
+                    Ok((view_id, path)) => {
+                        main_win.new_view_response(path, view_id);
+                        if main_win.notebook.get_n_pages() > 1 {
+                            main_win.notebook.set_show_tabs(true);
+                        }
+                    },
                     Err(e) => {
                         ErrorDialog::new(
                             ErrorMsg {
@@ -1032,6 +1037,12 @@ impl MainWinExt for Rc<MainWin> {
             self.view_id_to_w.borrow_mut().remove(&edit_view.view_id);
             self.views.borrow_mut().remove(&edit_view.view_id);
             self.core.close_view(edit_view.view_id);
+
+            // If we only have 0 or 1 EditViews left (and as such 0/1 tabs, which
+            // means the user can't switch tabs anyway) don't display tabs
+            if self.notebook.get_n_pages() < 2 {
+                self.notebook.set_show_tabs(false);
+            }
         }
         save_action
     }
