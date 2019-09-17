@@ -1363,22 +1363,6 @@ impl MainWinExt for Rc<MainWin> {
     /// 2) Connect the ways to close the `EditView`, either via a middle click or by clicking the X of the tab
     fn new_view_response(&self, file_name: Option<String>, view_id: ViewId) {
         trace!("{}", gettext("Creating new EditView"));
-        let mut old_ev = None;
-
-        let position = if let Some(curr_ev) = self.get_current_edit_view() {
-            if curr_ev.is_empty() {
-                old_ev = Some(curr_ev.clone());
-                if let Some(w) = self.view_id_to_w.borrow().get(&curr_ev.view_id) {
-                    self.notebook.page_num(w)
-                } else {
-                    None
-                }
-            } else {
-                None
-            }
-        } else {
-            None
-        };
 
         let hamburger_button = self.builder.get_object("hamburger_button").unwrap();
         let edit_view = EditView::new(
@@ -1393,7 +1377,7 @@ impl MainWinExt for Rc<MainWin> {
             let page_num = self.notebook.insert_page(
                 &edit_view.root_widget,
                 Some(&edit_view.top_bar.event_box),
-                position,
+                None,
             );
             self.notebook
                 .set_tab_reorderable(&edit_view.root_widget, true);
@@ -1422,9 +1406,6 @@ impl MainWinExt for Rc<MainWin> {
         }
 
         self.views.borrow_mut().insert(view_id, edit_view);
-        if let Some(empty_ev) = old_ev {
-            self.close_view(&empty_ev);
-        }
     }
 
     fn save_all(&self) {
