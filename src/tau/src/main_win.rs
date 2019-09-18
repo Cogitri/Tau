@@ -289,6 +289,16 @@ impl MainWin {
                 }
             }));
 
+        main_win
+            .notebook
+            .connect_page_removed(enclose!((main_win) move |notebook,_,_| {
+                // Set a sensible title if no tab is open (and we can't display a
+                // document's name)
+                if notebook.get_n_pages() == 0 {
+                    main_win.header_bar.set_title(Some(&gettext("Tau")));
+                }
+            }));
+
         // Below here we connect all actions, meaning that these closures will be run when the respective
         // action is triggered (e.g. by a button press)
         {
