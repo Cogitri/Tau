@@ -178,7 +178,18 @@ impl EditView {
         if !*self.pristine.borrow() {
             full_title.push('*');
         }
-        full_title.push_str(&title);
+
+        let mut graphemes: Vec<_> = UnicodeSegmentation::graphemes(title.as_str(), true).collect();
+        let num_graphemes = graphemes.len();
+
+        if num_graphemes < 24 {
+            full_title.push_str(&title);
+        } else {
+            graphemes.splice(12..num_graphemes - 12, ["…"].iter().copied());
+            graphemes.iter().for_each(|gr| {
+                full_title.push_str(gr);
+            });
+        }
 
         trace!(
             "{} '{}': {}",
