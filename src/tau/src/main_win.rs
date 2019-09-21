@@ -6,7 +6,7 @@ use crate::prefs_win::PrefsWin;
 use crate::shortcuts_win::ShortcutsWin;
 use crate::syntax_config::SyntaxParams;
 use chrono::{DateTime, Utc};
-use editview::{theme::u32_from_color, EditView, MainState, Settings};
+use editview::{theme::u32_from_color, EditView, MainState};
 use gdk_pixbuf::Pixbuf;
 use gettextrs::gettext;
 use gio::{ActionMapExt, ApplicationExt, Resource, SettingsExt, SimpleAction};
@@ -191,7 +191,7 @@ impl MainWin {
         let theme_name = properties.borrow().gschema.get_key("theme-name");
         debug!("{}: {}", gettext("Theme name"), &theme_name);
 
-        let settings = new_settings();
+        let settings = functions::new_settings();
 
         let gschema = settings.gschema.clone();
 
@@ -1006,37 +1006,6 @@ impl MainWin {
             self.core.save(view_id, &name);
             Ok(name)
         }
-    }
-}
-
-/// Generate a new `Settings` object, which we pass to the `EditView` to set its behaviour.
-pub fn new_settings() -> Settings {
-    let gschema = GSchema::new("org.gnome.Tau");
-    let interface_font = {
-        use gtk::SettingsExt;
-        let gtk_settings = gtk::Settings::get_default().unwrap();
-        gtk_settings
-            .get_property_gtk_font_name()
-            .unwrap()
-            .to_string()
-    };
-
-    Settings {
-        trailing_spaces: gschema.get_key("draw-trailing-spaces"),
-        all_spaces: gschema.get_key("draw-all-spaces"),
-        leading_spaces: gschema.get_key("draw-leading-spaces"),
-        selection_spaces: gschema.get_key("draw-selection-spaces"),
-        highlight_line: gschema.get_key("highlight-line"),
-        right_margin: gschema.get_key("draw-right-margin"),
-        column_right_margin: gschema.get_key("column-right-margin"),
-        edit_font: gschema.get_key("font"),
-        trailing_tabs: gschema.get_key("draw-trailing-tabs"),
-        all_tabs: gschema.get_key("draw-all-tabs"),
-        leading_tabs: gschema.get_key("draw-leading-tabs"),
-        selection_tabs: gschema.get_key("draw-selection-tabs"),
-        draw_cursor: gschema.get_key("draw-cursor"),
-        interface_font,
-        gschema,
     }
 }
 
