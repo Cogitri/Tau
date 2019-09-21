@@ -44,7 +44,7 @@ pub struct TextSize {
 /// The `EditView` is the part of Tau that does the actual editing. This is where you edit documents.
 pub struct EditView {
     pub(crate) core: Client,
-    main_state: Rc<RefCell<MainState>>,
+    pub(crate) main_state: Rc<RefCell<MainState>>,
     pub view_id: ViewId,
     pub file_name: RefCell<Option<String>>,
     pub pristine: RefCell<bool>,
@@ -53,7 +53,7 @@ pub struct EditView {
     pub view_item: ViewItem,
     line_cache: Arc<Mutex<LineCache>>,
     pub(crate) find_replace: FindReplace,
-    edit_font: RefCell<Font>,
+    pub(crate) edit_font: RefCell<Font>,
     interface_font: Font,
     im_context: IMContextSimple,
     update_sender: Sender<Update>,

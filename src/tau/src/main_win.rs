@@ -1,6 +1,7 @@
 use crate::about_win::AboutWin;
 use crate::errors::{ErrorDialog, ErrorMsg, XiClientError};
 use crate::frontend::{XiEvent, XiRequest};
+use crate::functions;
 use crate::prefs_win::PrefsWin;
 use crate::shortcuts_win::ShortcutsWin;
 use crate::syntax_config::SyntaxParams;
@@ -488,6 +489,28 @@ impl MainWin {
             application.add_action(&find_next_action);
         }
         {
+            let increase_font_size_action = SimpleAction::new("increase_font_size", None);
+            increase_font_size_action.connect_activate(enclose!((gschema) move |_,_| {
+                let font: String = gschema.get_key("font");
+                if let Some((name, mut size)) = functions::get_font_properties(&font) {
+                    size += 1.0;
+                    gschema.set_key("font", format!("{} {}", name, size)).map_err(|e| error!("{} {}", gettext("Failed to increase font size due to error"), e)).unwrap();
+                }
+            }));
+            application.add_action(&increase_font_size_action);
+        }
+        {
+            let decrease_font_size_action = SimpleAction::new("decrease_font_size", None);
+            decrease_font_size_action.connect_activate(enclose!((gschema) move |_,_| {
+                let font: String = gschema.get_key("font");
+                if let Some((name, mut size)) = functions::get_font_properties(&font) {
+                    size -= 1.0;
+                    gschema.set_key("font", format!("{} {}", name, size)).map_err(|e| error!("{} {}", gettext("Failed to increase font size due to error"), e)).unwrap();
+                }
+            }));
+            application.add_action(&decrease_font_size_action);
+        }
+        {
             // This is called when we run app.quit, e.g. via Ctrl+Q
             let quit_action = SimpleAction::new("quit", None);
             quit_action.connect_activate(enclose!((main_win) move |_,_| {
@@ -513,6 +536,14 @@ impl MainWin {
         application.set_accels_for_action("app.close", &["<Primary>w"]);
         application.set_accels_for_action("app.find_next", &["<Primary>g"]);
         application.set_accels_for_action("app.find_prev", &["<Primary><Shift>g"]);
+        application.set_accels_for_action(
+            "app.increase_font_size",
+            &["<Primary>plus", "<Primary>KP_Add"],
+        );
+        application.set_accels_for_action(
+            "app.decrease_font_size",
+            &["<Primary>minus", "<Primary>KP_Subtract"],
+        );
 
         let main_context = MainContext::default();
 
@@ -1299,10 +1330,7 @@ impl MainWinExt for Rc<MainWin> {
                 }
                 "font" => {
                     let val: String = gschema.get_key("font");
-                    let font_vec = val.split_whitespace().collect::<Vec<_>>();
-                    if let Some((size, splitted_name)) = font_vec.split_last() {
-                        let font_name = splitted_name.join(" ");
-                        let font_size = size.parse::<f32>().unwrap();
+                    if let Some((font_name, font_size)) = functions::get_font_properties(&val) {
                         core.modify_user_config(
                             "general",
                             json!({ "font_face": font_name, "font_size": font_size })

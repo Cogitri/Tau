@@ -3,13 +3,14 @@ use gdk::{Cursor, CursorType, DisplayManager, WindowExt};
 use gettextrs::gettext;
 use gio::Resource;
 use glib::Bytes;
+use gschema_config_storage::pref_storage::GSchemaExt;
 use gtk::prelude::*;
 use gtk::{
-    Adjustment, Box, Builder, Button, CheckButton, EventBox, GestureDrag, Grid, Inhibit, Label,
-    Layout, ListStore, Menu, MenuButton, Popover, PositionType, Revealer, ScrolledWindow,
-    SearchBar, SearchEntry, SpinButton, Statusbar, ToggleButton, TreeView, Widget,
+    Adjustment, Box, Builder, Button, CheckButton, EventBox, GestureDrag, GestureZoom, Grid,
+    Inhibit, Label, Layout, ListStore, Menu, MenuButton, Popover, PositionType, Revealer,
+    ScrolledWindow, SearchBar, SearchEntry, SpinButton, Statusbar, ToggleButton, TreeView, Widget,
 };
-use log::{debug, trace};
+use log::{debug, error, trace};
 use serde_json::json;
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -37,6 +38,7 @@ pub struct EvBar {
 pub struct Gestures {
     pub drag: GestureDrag,
     drag_data: Rc<RefCell<DragData>>,
+    pub zoom: GestureZoom,
 }
 
 struct DragData {
@@ -105,6 +107,7 @@ impl ViewItem {
 
         let ev_scrolled_window: ScrolledWindow = builder.get_object("ev_scrolled_window").unwrap();
         let drag = GestureDrag::new(&ev_scrolled_window);
+        let zoom = GestureZoom::new(&ev_scrolled_window);
         let hbox: Grid = builder.get_object("ev_root_widget").unwrap();
         hbox.show_all();
 
@@ -123,6 +126,7 @@ impl ViewItem {
                     start_x: 0.0,
                     start_y: 0.0,
                 })),
+                zoom,
             },
         }
     }
@@ -287,6 +291,27 @@ impl ViewItem {
             .connect_scroll_event(enclose!((edit_view) move |_,es| {
                     edit_view.view_item.ev_scrolled_window.emit("scroll-event", &[&es.to_value()]).unwrap();
                     Inhibit(false)
+            }));
+
+        self.gestures
+            .zoom.connect_scale_changed(enclose!((edit_view) move |_, factor| {
+                let gschema = { edit_view.main_state.borrow().settings.gschema.clone() };
+                let font_desc = &edit_view.edit_font.borrow().font_desc;
+                // The factor is between ~0.1 and ~2.0 usually. It's updated every time the position of the user's finger changes,
+                // so this can potentially happen multiple times per second. As such just add 1.0 times the factor to the font size
+                // to not let it blow up too quickly. Also substract with one and then take times -1 enlarge the font while
+                // pinching and make it smaller when we stretch
+                let font_size = f64::round(f64::from(font_desc.get_size() / pango::SCALE) - 1.0 * (factor - 1.0));
+                // don't allow too small font sizes, which aren't readable (or crash the thing, we can't go under 1!)
+                if font_size < 5.0 {
+                    return;
+                }
+                let font_string = format!("{} {}",
+                    font_desc.get_family().map(|s| s.as_str().to_string()).unwrap(),
+                    font_size,
+                );
+                gschema.set_key("font", font_string).map_err(|e| error!("{} {}", gettext("Failed to increase font size due to error"), e)).unwrap()
+                ;
             }));
     }
 

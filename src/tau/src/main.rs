@@ -72,6 +72,7 @@ extern crate enclose;
 mod about_win;
 mod errors;
 mod frontend;
+mod functions;
 mod globals;
 mod main_win;
 //mod panic_handler;
