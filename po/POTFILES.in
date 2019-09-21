@@ -8,14 +8,25 @@ src/editview/src/ui/ev.glade
 src/editview/src/ui/find_replace.glade
 src/editview/src/ui/close_tab.glade
 src/tau/src/ui/prefs_win.glade
+src/tau/src/ui/prefs_win_handy.glade
 src/tau/src/ui/tau.glade
 
 # source files
-src/editview/src/edit_view.rs
-src/tau/src/about_win.rs
-src/tau/src/errors.rs
-src/tau/src/frontend.rs
-src/tau/src/main.rs
-src/tau/src/main_win.rs
-src/tau/src/panic_handler.rs
-src/tau/src/prefs_win.rs
+./src/editview/src/draw_invisible.rs
+./src/editview/src/edit_view.rs
+./src/editview/src/fonts.rs
+./src/editview/src/lib.rs
+./src/editview/src/main_state.rs
+./src/editview/src/theme.rs
+./src/editview/src/view_item.rs
+./src/tau/src/about_win.rs
+./src/tau/src/errors.rs
+./src/tau/src/frontend.rs
+./src/tau/src/functions.rs
+./src/tau/src/globals.rs
+./src/tau/src/main.rs
+./src/tau/src/main_win.rs
+./src/tau/src/panic_handler.rs
+./src/tau/src/prefs_win.rs
+./src/tau/src/shortcuts_win.rs
+./src/tau/src/syntax_config.rs
