@@ -1,5 +1,5 @@
 use crate::edit_view::EditView;
-use gdk::{Cursor, CursorType, DisplayManager, WindowExt};
+use gdk::{Cursor, CursorType, DisplayManager, ScrollDirection, WindowExt};
 use gettextrs::gettext;
 use gio::Resource;
 use glib::Bytes;
@@ -312,6 +312,23 @@ impl ViewItem {
                 );
                 gschema.set_key("font", font_string).map_err(|e| error!("{} {}", gettext("Failed to increase font size due to error"), e)).unwrap()
                 ;
+            }));
+
+        self.ev_scrolled_window
+            .connect_scroll_event(enclose!((edit_view) move |_,es| {
+                // Only redraw the linecount if we're scrolling up or down.
+                match es.get_direction() {
+                    ScrollDirection::Up|ScrollDirection::Down => edit_view.view_item.linecount.queue_draw(),
+                    ScrollDirection::Smooth => {
+                        if let Some((_, scroll_delta_horizontal)) = es.get_scroll_deltas() {
+                            if scroll_delta_horizontal != 0.0 {
+                                edit_view.view_item.linecount.queue_draw();
+                            }
+                        }
+                    }
+                    _ => (),
+                }
+                Inhibit(false)
             }));
     }
 
