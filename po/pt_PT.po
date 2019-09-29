@@ -1,0 +1,908 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the tau package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: tau\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-09-29 19:09+0200\n"
+"PO-Revision-Date: 2019-09-30 00:13+0200\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.2.3\n"
+"Last-Translator: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: pt_PT\n"
+
+#: data/org.gnome.Tau.appdata.xml.in:7 data/org.gnome.Tau.desktop.in:3
+#: src/tau/src/main_win.rs:300
+msgid "Tau"
+msgstr ""
+
+#: data/org.gnome.Tau.appdata.xml.in:8
+msgid "GTK frontend for the xi text editor"
+msgstr ""
+
+#: data/org.gnome.Tau.appdata.xml.in:13
+msgid ""
+"Tau is a GTK frontend for the xi text editor written in Rust. It's a very "
+"fast plain text editor."
+msgstr ""
+
+#: data/org.gnome.Tau.desktop.in:5
+msgid "The Tau text editor"
+msgstr ""
+
+#: data/org.gnome.Tau.desktop.in:8
+msgid "org.gnome.Tau"
+msgstr ""
+
+#: data/org.gnome.Tau.desktop.in:13
+msgid "Text;Editor;Plaintext;Write;gxi;"
+msgstr ""
+
+#: data/org.gnome.Tau.desktop.in:16
+msgid "Launch a new Tau instance"
+msgstr ""
+
+#: data/org.gnome.Tau.gschema.xml:9
+msgid "Xi-Editor's theme"
+msgstr ""
+
+#: data/org.gnome.Tau.gschema.xml:10
+msgid "Sets the theme used for the editing area"
+msgstr ""
+
+#: data/org.gnome.Tau.gschema.xml:17
+msgid "Draw trailing spaces"
+msgstr ""
+
+#: data/org.gnome.Tau.gschema.xml:18
+msgid "Draw spaces which are at the end of a line"
+msgstr ""
+
+#: data/org.gnome.Tau.gschema.xml:25
+msgid "Draw leading spaces"
+msgstr ""
+
+#: data/org.gnome.Tau.gschema.xml:26
+msgid "Draw spaces which are at the beginning of a line"
+msgstr ""
+
+#: data/org.gnome.Tau.gschema.xml:33
+msgid "Draw selected spaces"
+msgstr ""
+
+#: data/org.gnome.Tau.gschema.xml:34
+msgid "Draw spaces whenever they are selected"
+msgstr ""
+
+#: data/org.gnome.Tau.gschema.xml:41
+msgid "Draw all spaces"
+msgstr ""
+
+#: data/org.gnome.Tau.gschema.xml:42
+msgid "Draw spaces, no matter the position"
+msgstr ""
+
+#: data/org.gnome.Tau.gschema.xml:49
+msgid "Draw a right hand margin"
+msgstr ""
+
+#: data/org.gnome.Tau.gschema.xml:50
+msgid "Draw a right hand margin to limit the text width"
+msgstr ""
+
+#: data/org.gnome.Tau.gschema.xml:58
+msgid "At what column to display the margin"
+msgstr ""
+
+#: data/org.gnome.Tau.gschema.xml:59
+msgid "Sets the column at which the margin should be drawn"
+msgstr ""
+
+#: data/org.gnome.Tau.gschema.xml:66
+msgid "Whether the current line should be highlighted"
+msgstr ""
+
+#: data/org.gnome.Tau.gschema.xml:67
+msgid ""
+"Sets if the current line should be highlighted, which eases navigation "
+"through the document"
+msgstr ""
+
+#: data/org.gnome.Tau.gschema.xml:75
+msgid "Sets the height of the window in the next startup"
+msgstr ""
+
+#: data/org.gnome.Tau.gschema.xml:81
+msgid "Sets the width of the window in the next startup"
+msgstr ""
+
+#: data/org.gnome.Tau.gschema.xml:86
+msgid "Sets if the window should be maximized during the next startup"
+msgstr ""
+
+#: data/org.gnome.Tau.gschema.xml:92 src/editview/src/ui/ev.glade:75
+#: src/tau/src/ui/prefs_win.glade:154 src/tau/src/ui/prefs_win.glade:579
+#: src/tau/src/ui/prefs_win_handy.glade:177
+#: src/tau/src/ui/prefs_win_handy.glade:555
+msgid "Tab size"
+msgstr ""
+
+#: data/org.gnome.Tau.gschema.xml:93
+msgid "Amount of spaces that a tab is wide"
+msgstr ""
+
+#: data/org.gnome.Tau.gschema.xml:99 src/editview/src/ui/ev.glade:36
+#: src/tau/src/ui/prefs_win.glade:304 src/tau/src/ui/prefs_win.glade:634
+#: src/tau/src/ui/prefs_win_handy.glade:202
+#: src/tau/src/ui/prefs_win_handy.glade:610
+msgid "Insert spaces instead of tabs"
+msgstr ""
+
+#: data/org.gnome.Tau.gschema.xml:100
+msgid "Whether spaces should be inserted instead of tabs"
+msgstr ""
+
+#: data/org.gnome.Tau.gschema.xml:105
+msgid "Treat indention with spaces like tabs"
+msgstr ""
+
+#: data/org.gnome.Tau.gschema.xml:106
+msgid ""
+"If translate-tabs-to-spaces is true, backspaces will delete multiple spaces, "
+"up to the previous tab stop"
+msgstr ""
+
+#: data/org.gnome.Tau.gschema.xml:111
+msgid "Automatically match document's indention on newlines"
+msgstr ""
+
+#: data/org.gnome.Tau.gschema.xml:116
+msgid "The font used for editing"
+msgstr ""
+
+#: data/org.gnome.Tau.gschema.xml:121 src/tau/src/ui/prefs_win.glade:189
+#: src/tau/src/ui/prefs_win_handy.glade:102
+msgid "Wrap lines at the end of the document"
+msgstr ""
+
+#: data/org.gnome.Tau.gschema.xml:126
+msgid "Draw trailing tabs"
+msgstr ""
+
+#: data/org.gnome.Tau.gschema.xml:127
+msgid "Draw tabs which are at the end of a line"
+msgstr ""
+
+#: data/org.gnome.Tau.gschema.xml:134
+msgid "Draw leading tabs"
+msgstr ""
+
+#: data/org.gnome.Tau.gschema.xml:135
+msgid "Draw tabs which are at the beginning of a line"
+msgstr ""
+
+#: data/org.gnome.Tau.gschema.xml:142
+msgid "Draw selected tabs"
+msgstr ""
+
+#: data/org.gnome.Tau.gschema.xml:143
+msgid "Draw tabs whenever they are selected"
+msgstr ""
+
+#: data/org.gnome.Tau.gschema.xml:150
+msgid "Draw all tabs"
+msgstr ""
+
+#: data/org.gnome.Tau.gschema.xml:151
+msgid "Draw all tabs, no matter the position"
+msgstr ""
+
+#: data/org.gnome.Tau.gschema.xml:158
+msgid "Draw the cursor"
+msgstr ""
+
+#: data/org.gnome.Tau.gschema.xml:159
+msgid "Whether to draw the cursor"
+msgstr ""
+
+#: data/org.gnome.Tau.gschema.xml:166
+msgid "Syntax specific settings"
+msgstr ""
+
+#: data/org.gnome.Tau.gschema.xml:167
+msgid ""
+"A JSON string containing syntax specific settings (e.g. tab-width of 2 for "
+"YML)"
+msgstr ""
+
+#: data/org.gnome.Tau.gschema.xml:174
+msgid "Save when Tau moves out of focus"
+msgstr ""
+
+#: data/org.gnome.Tau.gschema.xml:175
+msgid "Automatically save all open files when Tau moves out of focus"
+msgstr ""
+
+#: src/editview/src/ui/ev.glade:21 src/tau/src/ui/prefs_win.glade:266
+#: src/tau/src/ui/prefs_win_handy.glade:241
+msgid "Enable automatic indention"
+msgstr ""
+
+#: src/editview/src/ui/ev.glade:59 src/editview/src/ui/ev.glade:322
+#: src/editview/src/ui/ev.glade:335 src/tau/src/ui/prefs_win.glade:138
+#: src/tau/src/ui/prefs_win_handy.glade:161
+msgid "0"
+msgstr ""
+
+#: src/editview/src/ui/ev.glade:187
+msgid "document-text"
+msgstr ""
+
+#: src/editview/src/ui/ev.glade:194 src/editview/src/ui/ev.glade:363
+msgid "text"
+msgstr ""
+
+#: src/editview/src/ui/find_replace.glade:32
+msgid "Find"
+msgstr ""
+
+#: src/editview/src/ui/find_replace.glade:82
+msgid "Switch between Search and Search-and-Replace"
+msgstr ""
+
+#: src/editview/src/ui/find_replace.glade:103
+msgid "Show or hide search options such as case sensitivity"
+msgstr ""
+
+#: src/editview/src/ui/find_replace.glade:140
+#: src/editview/src/ui/find_replace.glade:150
+msgid "Replace"
+msgstr ""
+
+#: src/editview/src/ui/find_replace.glade:162
+msgid "Replace All"
+msgstr ""
+
+#: src/editview/src/ui/find_replace.glade:191
+msgid "Regular expressions"
+msgstr ""
+
+#: src/editview/src/ui/find_replace.glade:206
+msgid "Case sensitive"
+msgstr ""
+
+#: src/editview/src/ui/find_replace.glade:220
+msgid "Match whole word only"
+msgstr ""
+
+#: src/editview/src/ui/find_replace.glade:245
+msgid "No Results"
+msgstr ""
+
+#: src/tau/src/ui/prefs_win.glade:22 src/tau/src/ui/prefs_win_handy.glade:22
+#: src/tau/src/ui/tau.glade:100
+msgid "Preferences"
+msgstr ""
+
+#: src/tau/src/ui/prefs_win.glade:47 src/tau/src/main_win.rs:642
+msgid "Theme"
+msgstr ""
+
+#: src/tau/src/ui/prefs_win.glade:69
+msgid "Font"
+msgstr ""
+
+#: src/tau/src/ui/prefs_win.glade:117
+msgid "Appearance"
+msgstr ""
+
+#: src/tau/src/ui/prefs_win.glade:174 src/tau/src/ui/prefs_win_handy.glade:276
+msgid "Delete spaces up to the previous tab stop"
+msgstr ""
+
+#: src/tau/src/ui/prefs_win.glade:208 src/tau/src/ui/prefs_win_handy.glade:46
+msgid "Display right margin at the column:"
+msgstr ""
+
+#: src/tau/src/ui/prefs_win.glade:247 src/tau/src/ui/prefs_win_handy.glade:86
+msgid "Highlight the current line"
+msgstr ""
+
+#: src/tau/src/ui/prefs_win.glade:337 src/tau/src/ui/prefs_win_handy.glade:292
+msgid "Save files when the Tau goes out of focus"
+msgstr ""
+
+#: src/tau/src/ui/prefs_win.glade:362
+msgid "Highlight tabs"
+msgstr ""
+
+#: src/tau/src/ui/prefs_win.glade:373
+msgid "Highlight spaces"
+msgstr ""
+
+#: src/tau/src/ui/prefs_win.glade:382 src/tau/src/ui/prefs_win.glade:397
+#: src/tau/src/ui/prefs_win_handy.glade:340
+#: src/tau/src/ui/prefs_win_handy.glade:355
+msgid "All"
+msgstr ""
+
+#: src/tau/src/ui/prefs_win.glade:412 src/tau/src/ui/prefs_win.glade:427
+#: src/tau/src/ui/prefs_win_handy.glade:370
+#: src/tau/src/ui/prefs_win_handy.glade:385
+msgid "Trailing"
+msgstr ""
+
+#: src/tau/src/ui/prefs_win.glade:442 src/tau/src/ui/prefs_win.glade:457
+#: src/tau/src/ui/prefs_win_handy.glade:400
+#: src/tau/src/ui/prefs_win_handy.glade:415
+msgid "Leading"
+msgstr ""
+
+#: src/tau/src/ui/prefs_win.glade:472 src/tau/src/ui/prefs_win.glade:487
+#: src/tau/src/ui/prefs_win_handy.glade:430
+#: src/tau/src/ui/prefs_win_handy.glade:445
+msgid "Selected"
+msgstr ""
+
+#: src/tau/src/ui/prefs_win.glade:502 src/tau/src/ui/prefs_win.glade:516
+#: src/tau/src/ui/prefs_win_handy.glade:460
+#: src/tau/src/ui/prefs_win_handy.glade:474
+msgid "None"
+msgstr ""
+
+#: src/tau/src/ui/prefs_win.glade:545
+msgid "Editing"
+msgstr ""
+
+#: src/tau/src/ui/prefs_win.glade:561 src/tau/src/ui/prefs_win_handy.glade:543
+msgid "What language to apply these settings for"
+msgstr ""
+
+#: src/tau/src/ui/prefs_win.glade:593 src/tau/src/ui/prefs_win_handy.glade:569
+msgid "1"
+msgstr ""
+
+#: src/tau/src/ui/prefs_win.glade:680 src/tau/src/ui/prefs_win_handy.glade:534
+msgid "Syntax Configuration"
+msgstr ""
+
+#: src/tau/src/ui/prefs_win_handy.glade:38
+msgid "Right-hand Margin"
+msgstr ""
+
+#: src/tau/src/ui/prefs_win_handy.glade:82
+msgid "Line Highlighting"
+msgstr ""
+
+#: src/tau/src/ui/prefs_win_handy.glade:99
+msgid "Line Wrapping"
+msgstr ""
+
+#: src/tau/src/ui/prefs_win_handy.glade:121
+msgid "Theme Configuration"
+msgstr ""
+
+#: src/tau/src/ui/prefs_win_handy.glade:149 src/editview/src/view_item.rs:98
+#: src/editview/src/view_item.rs:233
+msgid "Tab Size"
+msgstr ""
+
+#: src/tau/src/ui/prefs_win_handy.glade:194
+msgid "Inserting Spaces Instead of Tabs"
+msgstr ""
+
+#: src/tau/src/ui/prefs_win_handy.glade:233
+msgid "Automatic Indention"
+msgstr ""
+
+#: src/tau/src/ui/prefs_win_handy.glade:272
+msgid "Use Tab Stops for Spaces"
+msgstr ""
+
+#: src/tau/src/ui/prefs_win_handy.glade:288
+msgid "Automatic Saving"
+msgstr ""
+
+#: src/tau/src/ui/prefs_win_handy.glade:304
+msgid "Drawing Tabs and Spaces"
+msgstr ""
+
+#: src/tau/src/ui/prefs_win_handy.glade:318
+msgid "Tabs"
+msgstr ""
+
+#: src/tau/src/ui/prefs_win_handy.glade:330
+msgid "Spaces"
+msgstr ""
+
+#: src/tau/src/ui/prefs_win_handy.glade:506
+msgid "Font Configuration"
+msgstr ""
+
+#: src/tau/src/ui/tau.glade:22
+msgid "Save As…"
+msgstr ""
+
+#: src/tau/src/ui/tau.glade:36
+msgid "Save All"
+msgstr ""
+
+#: src/tau/src/ui/tau.glade:61
+msgid "Find…"
+msgstr ""
+
+#: src/tau/src/ui/tau.glade:75
+msgid "Replace…"
+msgstr ""
+
+#: src/tau/src/ui/tau.glade:125
+msgid "Help"
+msgstr ""
+
+#: src/tau/src/ui/tau.glade:139
+msgid "Keyboard Shortcuts"
+msgstr ""
+
+#: src/tau/src/ui/tau.glade:153
+msgid "About Tau"
+msgstr ""
+
+#: src/tau/src/ui/tau.glade:188 src/tau/src/main_win.rs:1389
+msgid "Open"
+msgstr ""
+
+#: src/tau/src/ui/tau.glade:229 src/tau/src/main_win.rs:1133
+#: src/tau/src/main_win.rs:1506
+msgid "Save"
+msgstr ""
+
+#: src/editview/src/edit_view.rs:76 src/tau/src/main_win.rs:1440
+msgid "Creating new EditView"
+msgstr ""
+
+#: src/editview/src/edit_view.rs:124
+msgid "Xi-Update sender disconnected"
+msgstr ""
+
+#: src/editview/src/edit_view.rs:158
+msgid "Connecting"
+msgstr ""
+
+#: src/editview/src/edit_view.rs:159
+msgid "events for EditView"
+msgstr ""
+
+#: src/editview/src/edit_view.rs:172 src/editview/src/edit_view.rs:174
+#: src/tau/src/main_win.rs:287 src/tau/src/main_win.rs:289
+#: src/tau/src/main_win.rs:562 src/tau/src/main_win.rs:735
+msgid "Untitled"
+msgstr ""
+
+#: src/editview/src/edit_view.rs:196
+msgid "Setting title for EditView"
+msgstr ""
+
+#: src/editview/src/edit_view.rs:209 src/editview/src/edit_view.rs:246
+#: src/editview/src/edit_view.rs:281 src/editview/src/edit_view.rs:341
+#: src/editview/src/edit_view.rs:366 src/editview/src/edit_view.rs:654
+#: src/editview/src/edit_view.rs:868 src/editview/src/edit_view.rs:1002
+#: src/editview/src/edit_view.rs:1057 src/tau/src/main_win.rs:330
+#: src/tau/src/main_win.rs:338 src/tau/src/main_win.rs:346
+#: src/tau/src/main_win.rs:354 src/tau/src/main_win.rs:362
+#: src/tau/src/main_win.rs:370 src/tau/src/main_win.rs:378
+#: src/tau/src/main_win.rs:388 src/tau/src/main_win.rs:398
+#: src/tau/src/main_win.rs:408 src/tau/src/main_win.rs:418
+#: src/tau/src/main_win.rs:428 src/tau/src/main_win.rs:438
+#: src/tau/src/main_win.rs:446 src/tau/src/main_win.rs:454
+#: src/tau/src/main_win.rs:462 src/tau/src/main_win.rs:470
+#: src/tau/src/main_win.rs:478 src/tau/src/main_win.rs:486
+#: src/tau/src/main_win.rs:517 src/tau/src/main_win.rs:720
+#: src/tau/src/main_win.rs:755 src/tau/src/main_win.rs:800
+#: src/tau/src/main_win.rs:819 src/tau/src/main_win.rs:851
+msgid "Handling"
+msgstr ""
+
+#: src/editview/src/edit_view.rs:210 src/editview/src/edit_view.rs:247
+#: src/editview/src/edit_view.rs:282 src/editview/src/edit_view.rs:342
+#: src/editview/src/edit_view.rs:367 src/editview/src/edit_view.rs:655
+#: src/editview/src/edit_view.rs:869 src/editview/src/edit_view.rs:1003
+#: src/editview/src/edit_view.rs:1058
+msgid "for EditView"
+msgstr ""
+
+#: src/editview/src/edit_view.rs:225
+msgid "Setting edit font to"
+msgstr ""
+
+#: src/editview/src/edit_view.rs:325
+msgid "Allocating DrawingArea size"
+msgstr ""
+
+#: src/editview/src/edit_view.rs:326
+msgid "Width"
+msgstr ""
+
+#: src/editview/src/edit_view.rs:328
+msgid "Height"
+msgstr ""
+
+#: src/editview/src/edit_view.rs:354
+msgid "Updating visible scroll region"
+msgstr ""
+
+#: src/editview/src/edit_view.rs:440
+msgid "Drawing EditView"
+msgstr ""
+
+#: src/editview/src/edit_view.rs:441
+msgid "vertical adjustment"
+msgstr ""
+
+#: src/editview/src/edit_view.rs:444
+msgid "horizontal adjustment"
+msgstr ""
+
+#: src/editview/src/edit_view.rs:892 src/editview/src/edit_view.rs:902
+msgid "Line"
+msgstr ""
+
+#: src/editview/src/edit_view.rs:907
+msgid "Column"
+msgstr ""
+
+#: src/editview/src/edit_view.rs:992
+msgid ""
+"Couldn't update hscrollbar value because I couldn't get the line to scroll "
+"to!"
+msgstr ""
+
+#: src/editview/src/edit_view.rs:1064
+msgid "Processing key press"
+msgstr ""
+
+#: src/editview/src/edit_view.rs:1065
+msgid "value"
+msgstr ""
+
+#: src/editview/src/edit_view.rs:1067
+msgid "state"
+msgstr ""
+
+#: src/editview/src/edit_view.rs:1069
+msgid "length"
+msgstr ""
+
+#: src/editview/src/edit_view.rs:1071
+msgid "group"
+msgstr ""
+
+#: src/editview/src/edit_view.rs:1073
+msgid "Unicode"
+msgstr ""
+
+#: src/editview/src/edit_view.rs:1236
+msgid "Adding cutting text op to idle queue"
+msgstr ""
+
+#: src/editview/src/edit_view.rs:1262
+msgid "Adding copying text op to idle queue"
+msgstr ""
+
+#: src/editview/src/edit_view.rs:1289
+msgid "Adding selection text op to idle queue"
+msgstr ""
+
+#: src/editview/src/edit_view.rs:1315
+msgid "Pasting text"
+msgstr ""
+
+#: src/editview/src/edit_view.rs:1327
+msgid "Pasting primary text"
+msgstr ""
+
+#: src/editview/src/edit_view.rs:1341
+msgid "Resizing EditView"
+msgstr ""
+
+#: src/editview/src/edit_view.rs:1506
+msgid "Changing language to"
+msgstr ""
+
+#: src/editview/src/edit_view.rs:1511
+msgid "Language has been changed to"
+msgstr ""
+
+#. We localized it ourselves, so we have to turn it into English again when sending it to Xi
+#: src/editview/src/edit_view.rs:1514 src/editview/src/view_item.rs:217
+#: src/editview/src/view_item.rs:349
+msgid "Plain Text"
+msgstr ""
+
+#: src/editview/src/edit_view.rs:1532
+msgid "Couldn't determine what position the following language is in"
+msgstr ""
+
+#: src/editview/src/fonts.rs:25
+msgid "Failed to load Pango font set"
+msgstr ""
+
+#: src/editview/src/fonts.rs:28
+msgid "Failed to load Pango font metrics"
+msgstr ""
+
+#: src/editview/src/fonts.rs:33
+msgid "Pango font size"
+msgstr ""
+
+#: src/editview/src/fonts.rs:42
+msgid "Font metrics"
+msgstr ""
+
+#: src/editview/src/view_item.rs:139
+msgid "Connecting events of EditView"
+msgstr ""
+
+#: src/editview/src/view_item.rs:194
+msgid "Size changed to"
+msgstr ""
+
+#: src/editview/src/view_item.rs:194
+msgid "width"
+msgstr ""
+
+#: src/editview/src/view_item.rs:194
+msgid "height"
+msgstr ""
+
+#: src/editview/src/view_item.rs:313 src/tau/src/main_win.rs:497
+#: src/tau/src/main_win.rs:508
+msgid "Failed to increase font size due to error"
+msgstr ""
+
+#: src/editview/src/view_item.rs:339
+msgid "Failed to get Pango context"
+msgstr ""
+
+#: src/editview/src/view_item.rs:475
+msgid "Connecting FindReplace events for EditView"
+msgstr ""
+
+#: src/tau/src/about_win.rs:17
+msgid "GTK frontend for the xi text editor, written in Rust"
+msgstr ""
+
+#: src/tau/src/about_win.rs:25
+msgid "translator-credits"
+msgstr ""
+
+#: src/tau/src/about_win.rs:31
+msgid "Showing about window"
+msgstr ""
+
+#: src/tau/src/errors.rs:43
+msgid "No default application"
+msgstr ""
+
+#: src/tau/src/errors.rs:45
+msgid "Default application has wrong type"
+msgstr ""
+
+#: src/tau/src/functions.rs:71 src/tau/src/main_win.rs:1312
+msgid "Failed to get font configuration"
+msgstr ""
+
+#: src/tau/src/functions.rs:72 src/tau/src/functions.rs:103
+#: src/tau/src/main_win.rs:1312 src/tau/src/main_win.rs:1340
+msgid "Resetting."
+msgstr ""
+
+#: src/tau/src/functions.rs:102 src/tau/src/main_win.rs:215
+#: src/tau/src/main_win.rs:1340 src/tau/src/main_win.rs:1350
+#: src/tau/src/prefs_win.rs:127
+msgid "Failed to deserialize syntax config"
+msgstr ""
+
+#: src/tau/src/main.rs:116
+msgid "Start a new instance of the application"
+msgstr ""
+
+#: src/tau/src/main.rs:136
+msgid "Starting Tau"
+msgstr ""
+
+#: src/tau/src/main.rs:238
+msgid "Activating new view"
+msgstr ""
+
+#: src/tau/src/main.rs:248 src/tau/src/main.rs:273 src/tau/src/main_win.rs:958
+msgid "Failed to open new view due to error"
+msgstr ""
+
+#: src/tau/src/main.rs:256
+msgid "Opening new file"
+msgstr ""
+
+#: src/tau/src/main.rs:284
+msgid "Shutting down…"
+msgstr ""
+
+#: src/tau/src/main_win.rs:169
+msgid "Failed to get default CssProvider!"
+msgstr ""
+
+#: src/tau/src/main_win.rs:192
+msgid "Theme name"
+msgstr ""
+
+#: src/tau/src/main_win.rs:249
+msgid "User chose to cancel exiting"
+msgstr ""
+
+#: src/tau/src/main_win.rs:252
+msgid "User chose to close the application"
+msgstr ""
+
+#: src/tau/src/main_win.rs:330 src/tau/src/main_win.rs:338
+#: src/tau/src/main_win.rs:346 src/tau/src/main_win.rs:354
+#: src/tau/src/main_win.rs:362 src/tau/src/main_win.rs:370
+#: src/tau/src/main_win.rs:378 src/tau/src/main_win.rs:388
+#: src/tau/src/main_win.rs:398 src/tau/src/main_win.rs:408
+#: src/tau/src/main_win.rs:418 src/tau/src/main_win.rs:428
+#: src/tau/src/main_win.rs:438 src/tau/src/main_win.rs:446
+#: src/tau/src/main_win.rs:454 src/tau/src/main_win.rs:462
+#: src/tau/src/main_win.rs:470 src/tau/src/main_win.rs:478
+#: src/tau/src/main_win.rs:486 src/tau/src/main_win.rs:517
+msgid "action"
+msgstr ""
+
+#: src/tau/src/main_win.rs:520
+msgid "User chose to not quit application"
+msgstr ""
+
+#: src/tau/src/main_win.rs:522
+msgid "User chose to quit application"
+msgstr ""
+
+#: src/tau/src/main_win.rs:592
+msgid "Showing main window"
+msgstr ""
+
+#: src/tau/src/main_win.rs:601
+msgid "Handling XiEvent"
+msgstr ""
+
+#: src/tau/src/main_win.rs:644
+msgid "isn't available, setting to default"
+msgstr ""
+
+#: src/tau/src/main_win.rs:655
+msgid "Failed to set theme name in GSettings due to error"
+msgstr ""
+
+#: src/tau/src/main_win.rs:859
+msgid "Setting the following to the syntax attached tab size"
+msgstr ""
+
+#: src/tau/src/main_win.rs:864
+msgid "No tab size attached to the syntax"
+msgstr ""
+
+#: src/tau/src/main_win.rs:938
+msgid ""
+"Couldn't get current EditView. This may only mean that you don't have an "
+"editing tab open right now."
+msgstr ""
+
+#: src/tau/src/main_win.rs:944
+msgid "Requesting new view"
+msgstr ""
+
+#: src/tau/src/main_win.rs:977 src/tau/src/main_win.rs:985
+msgid ""
+"Couldn't get Documents dir to autosave unnamed file. Please make sure "
+"'XDG_DATA_DIR' or similiar is set."
+msgstr ""
+
+#: src/tau/src/main_win.rs:1043
+msgid "Closing current Editview"
+msgstr ""
+
+#: src/tau/src/main_win.rs:1057
+msgid "Closing all EditViews"
+msgstr ""
+
+#: src/tau/src/main_win.rs:1098
+msgid "Closing Editview"
+msgstr ""
+
+#: src/tau/src/main_win.rs:1122
+msgid "Save unsaved changes"
+msgstr ""
+
+#: src/tau/src/main_win.rs:1125
+msgid "Close Without Saving"
+msgstr ""
+
+#: src/tau/src/main_win.rs:1129 src/tau/src/main_win.rs:1390
+#: src/tau/src/main_win.rs:1507
+msgid "Cancel"
+msgstr ""
+
+#: src/tau/src/main_win.rs:1150
+msgid "Save dialog has been destroyed before the user clicked a button"
+msgstr ""
+
+#: src/tau/src/main_win.rs:1366
+msgid "Unknown key change event"
+msgstr ""
+
+#: src/tau/src/main_win.rs:1386
+msgid "Open a file to edit"
+msgstr ""
+
+#: src/tau/src/main_win.rs:1398
+msgid "FileChooserNative open response"
+msgstr ""
+
+#: src/tau/src/main_win.rs:1408
+msgid "Couldn't open file"
+msgstr ""
+
+#: src/tau/src/main_win.rs:1503
+msgid "Save file"
+msgstr ""
+
+#: src/tau/src/main_win.rs:1515
+msgid "FileChooserNative save response"
+msgstr ""
+
+#: src/tau/src/main_win.rs:1525
+msgid "Saving file"
+msgstr ""
+
+#: src/tau/src/main_win.rs:1531
+msgid "Couldn't save file"
+msgstr ""
+
+#: src/tau/src/panic_handler.rs:39
+msgid "gxi crash reporter"
+msgstr ""
+
+#: src/tau/src/panic_handler.rs:49
+msgid "It seems like gxi has crashed, sorry!"
+msgstr ""
+
+#: src/tau/src/panic_handler.rs:50
+msgid ""
+"Please send the contents of the file below to our GitHub issue tracker so we "
+"can fix it! Thank you =)"
+msgstr ""
+
+#: src/tau/src/panic_handler.rs:53
+msgid "File"
+msgstr ""
+
+#: src/tau/src/panic_handler.rs:53
+msgid "URL"
+msgstr ""
+
+#: src/tau/src/prefs_win.rs:135
+msgid ""
+"Couldn't find the xi-syntect-plugin. As such these settings won't work in "
+"the current session."
+msgstr ""
+
+#: src/tau/src/prefs_win.rs:170
+msgid "Setting active syntax in config combo box"
+msgstr ""
+
+#: src/tau/src/prefs_win.rs:188
+msgid "Theme changed to"
+msgstr ""
