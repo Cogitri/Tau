@@ -205,7 +205,7 @@ fn main() {
             glib::set_application_name("Tau");
 
             // No need to gettext this, gettext doesn't work yet
-            match TextDomain::new("Tau")
+            match TextDomain::new("tau")
                 .push(crate::globals::LOCALEDIR.unwrap_or("po"))
                 .init()
             {
