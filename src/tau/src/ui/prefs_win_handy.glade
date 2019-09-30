@@ -94,6 +94,22 @@
               </object>
             </child>
             <child>
+              <object>
+                <property name="title" translatable="yes">Show Linecount</property>
+                <property name="visible">True</property>
+                <child>
+                  <object class="GtkCheckButton" id="show_linecount_checkbutton">
+                    <property name="label" translatable="yes">Show the linecount in the editing pane</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">False</property>
+                    <property name="draw_indicator">True</property>
+                    <property name="margin">6</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
               <object class="HdyPreferencesRow">
                 <property name="visible">True</property>
                 <property name="title" translatable="yes">Line Wrapping</property>

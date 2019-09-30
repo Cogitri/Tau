@@ -85,6 +85,11 @@ impl EditView {
             FontDescription::from_string(&main_state.borrow().settings.interface_font),
         );
 
+        // We should it by default, so need to do anything if this is true
+        if !main_state.borrow().settings.show_linecount {
+            view_item.linecount.hide();
+        }
+
         let (update_sender, update_recv) = unbounded();
 
         let edit_view = Rc::new(Self {
@@ -655,6 +660,7 @@ impl EditView {
             gettext("for EditView"),
             self.view_id
         );
+
         let theme = &self.main_state.borrow().theme;
         let linecount_height = self.view_item.linecount.get_allocated_height();
 

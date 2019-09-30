@@ -41,6 +41,7 @@ pub fn new_settings() -> Settings {
         leading_tabs: gschema.get_key("draw-leading-tabs"),
         selection_tabs: gschema.get_key("draw-selection-tabs"),
         draw_cursor: gschema.get_key("draw-cursor"),
+        show_linecount: gschema.get_key("show-linecount"),
         interface_font,
         gschema,
     }

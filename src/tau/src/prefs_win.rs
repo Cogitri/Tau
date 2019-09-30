@@ -75,6 +75,8 @@ impl PrefsWin {
         let save_when_out_of_focus_checkbutton: ToggleButton = builder
             .get_object("save_when_out_of_focus_checkbutton")
             .unwrap();
+        let show_lintcount_checkbutton: ToggleButton =
+            builder.get_object("show_linecount_checkbutton").unwrap();
 
         let draw_trailing_tabs_radio: RadioButton =
             builder.get_object("tabs_trailing_radio_button").unwrap();
@@ -324,6 +326,13 @@ impl PrefsWin {
         gschema.settings.bind(
             "save-when-out-of-focus",
             &save_when_out_of_focus_checkbutton,
+            "active",
+            SettingsBindFlags::DEFAULT,
+        );
+
+        gschema.settings.bind(
+            "show-linecount",
+            &show_lintcount_checkbutton,
             "active",
             SettingsBindFlags::DEFAULT,
         );

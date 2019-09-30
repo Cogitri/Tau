@@ -1360,6 +1360,22 @@ impl MainWinExt for Rc<MainWin> {
                         ev.view_item.edit_area.queue_draw();
                     }
                 },
+                "show-linecount" => {
+                    let val = gschema.get_key("show-linecount");
+                    main_win.state.borrow_mut().settings.show_linecount = val;
+
+                    for ev in main_win.w_to_ev.borrow().values() {
+                        if val {
+                            ev.view_item.linecount.show()
+                        } else {
+                            ev.view_item.linecount.hide()
+                        }
+                    }
+
+                    if let Some(ev) = main_win.get_current_edit_view() {
+                        ev.view_item.edit_area.queue_draw();
+                    }
+                }
                 // We load these during startup
                 "window-height" | "window-width" | "window-maximized" => {}
                 key => {

@@ -176,6 +176,14 @@
                 Automatically save all open files when Tau moves out of focus
             </description>
         </key>
+
+        <key name="show-linecount" type="b">
+            <default>true</default>
+            <summary>Show linecount</summary>
+            <description>
+                Whether or not to show the linecount in the editing pane
+            </description>
+        </key>
     </schema>
 
 </schemalist>

@@ -19,6 +19,7 @@ pub struct Settings {
     pub interface_font: String,
     pub edit_font: String,
     pub draw_cursor: bool,
+    pub show_linecount: bool,
 }
 
 pub struct MainState {
