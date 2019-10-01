@@ -12,7 +12,7 @@ target
 /po/*.mo
 /po/*.pot
 # flatpak stuff
-.flatpak-builder/**
+.flatpak-builder
 gxi/**
 repo/**
 cargo-vendor/**
