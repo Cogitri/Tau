@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Copyright 2019 Rasmus Thomsen <oss@cogitri.dev> -->
 <component type="desktop-application">
-	<id>org.gnome.Tau</id>
+	<id>@application_id@</id>
 	<metadata_license>CC0-1.0</metadata_license>
 	<project_license>MIT</project_license>
 	<name>Tau</name>
@@ -71,8 +71,8 @@
 		</release>
 		<release version="0.9.0" date="2019-08-12">
 			<p>
-				This release changes gxi's name to Tau! Please note that settings aren't 
-				migrated due to some changes in how configuration is handled, sorry for the 
+				This release changes gxi's name to Tau! Please note that settings aren't
+				migrated due to some changes in how configuration is handled, sorry for the
 				inconvinience.
 				This release brings some big changes with it, so please see the Changelog.md in
 				the git repository for more info. Here's the important stuff though:

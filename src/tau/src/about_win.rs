@@ -23,7 +23,7 @@ impl AboutWin {
         about_dialog.set_program_name(glib::get_application_name().unwrap().as_str());
         about_dialog.set_website(Some("https://gitlab.gnome.org/World/tau"));
         about_dialog.set_translator_credits(Some(gettext("translator-credits").as_str()));
-        about_dialog.set_logo_icon_name(Some("org.gnome.tau"));
+        about_dialog.set_logo_icon_name(Some(globals::APP_ID.unwrap_or("org.gnome.TauDevel")));
 
         about_dialog.set_authors(&["Brian Vincent", "Rasmus Thomsen"]);
 

@@ -1,7 +1,11 @@
 desktop_file = i18n.merge_file ('desktop-file',
   type: 'desktop',
-  input: 'org.gnome.Tau.desktop.in',
-  output: 'org.gnome.Tau.desktop',
+  input: configure_file(
+    input: files('org.gnome.Tau.desktop.in.in'),
+    output: 'org.gnome.Tau.desktop.in',
+    configuration: conf,
+  ),
+  output: '@0@.desktop'.format(application_id),
   po_dir: tau_podir,
   install: true,
   install_dir: join_paths (tau_datadir, 'applications'),
@@ -19,8 +23,12 @@ if desktop_file_validate.found()
 endif
 
 appdata_file = i18n.merge_file ('appdata-file',
-input: 'org.gnome.Tau.appdata.xml.in',
-  output: 'org.gnome.Tau.appdata.xml',
+  input: configure_file(
+    input: files('org.gnome.Tau.appdata.xml.in.in'),
+    output: 'org.gnome.Tau.appdata.xml.in',
+    configuration: conf,
+  ),
+  output: '@0@.appdata.xml'.format(application_id),
   po_dir: tau_podir,
   install: true,
   install_dir: join_paths (tau_datadir, 'metainfo'),
@@ -56,6 +64,6 @@ if compile_schemas.found()
   )
 endif
 
-
-install_subdir('icons', install_dir: tau_datadir)
 install_data('org.gnome.Tau.gschema.xml', install_dir: join_paths(tau_datadir, 'glib-2.0', 'schemas'))
+
+subdir('icons')

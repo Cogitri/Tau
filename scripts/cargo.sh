@@ -19,6 +19,9 @@ export TAU_LOCALEDIR="${9}"
 export TAU_VERSION="${10}"
 export TAU_XI_BINARY_PATH="${11}"
 export GRESOURCE_BINARY_PATH="${12}"
+export TAU_APP_ID="${13}"
+# In case we're in development mode this will be "Tau (Development)"
+export TAU_NAME="${14}"
 
 # ANSI codes for getting colors and resetting it
 RED='\033[0;31m'

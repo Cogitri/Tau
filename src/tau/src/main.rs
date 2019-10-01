@@ -105,8 +105,11 @@ fn main() {
 
     env_logger::Builder::from_default_env().init();
 
-    let application = Application::new(Some("org.gnome.Tau"), ApplicationFlags::HANDLES_OPEN)
-        .unwrap_or_else(|_| panic!("Failed to create the GTK+ application"));
+    let application = Application::new(
+        Some(crate::globals::APP_ID.unwrap_or("org.gnome.TauDevel")),
+        ApplicationFlags::HANDLES_OPEN,
+    )
+    .unwrap_or_else(|_| panic!("Failed to create the GTK+ application"));
 
     application.add_main_option(
         "new-instance",
@@ -202,7 +205,7 @@ fn main() {
                 future::ok(())
             }));
 
-            glib::set_application_name("Tau");
+            glib::set_application_name(crate::globals::NAME.unwrap_or("Tau (Development)"));
 
             // No need to gettext this, gettext doesn't work yet
             match TextDomain::new("tau")

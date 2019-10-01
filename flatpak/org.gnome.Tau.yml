@@ -5,6 +5,11 @@ sdk: org.gnome.Sdk
 sdk-extensions:
   - org.freedesktop.Sdk.Extension.rust-stable
 command: tau
+tags:
+  - devel
+  - development
+  - nightly
+desktop-file-name-suffix: " (Development)"
 finish-args:
   - --share=ipc
   - --socket=x11
@@ -35,6 +40,8 @@ modules:
         sha256: 9f4528c07bdb9796300ff0efb165cdc48cfcd7f28952c9d776de15b735844981
   - name: Tau
     buildsystem: meson
+    config-opts:
+      - -Dprofile=development
     sources:
       - type: git
         url: https://gitlab.gnome.org/World/Tau

@@ -77,8 +77,8 @@ impl WinProp {
     /// # Panics
     ///
     /// This will panic if there's no GSchema of the name of the `Application`s id.
-    pub fn new(application: &Application) -> Self {
-        let gschema = GSchema::new(application.get_application_id().unwrap().as_str());
+    pub fn new() -> Self {
+        let gschema = GSchema::new("org.gnome.Tau");
         Self {
             height: gschema.get_key("window-height"),
             width: gschema.get_key("window-width"),
@@ -173,8 +173,15 @@ impl MainWin {
 
         let builder = Builder::new_from_resource("/org/gnome/Tau/tau.glade");
 
-        let properties = RefCell::new(WinProp::new(&application));
+        let properties = RefCell::new(WinProp::new());
         let window: ApplicationWindow = builder.get_object("appwindow").unwrap();
+
+        if let Some(true) = application
+            .get_application_id()
+            .map(|id| id.ends_with("Devel"))
+        {
+            window.get_style_context().add_class("devel");
+        }
         let header_bar = builder.get_object("header_bar").unwrap();
 
         let icon = Pixbuf::new_from_resource("/org/gnome/Tau/org.gnome.Tau.svg");
@@ -297,7 +304,7 @@ impl MainWin {
                 // Set a sensible title if no tab is open (and we can't display a
                 // document's name)
                 if notebook.get_n_pages() == 0 {
-                    main_win.header_bar.set_title(Some(&gettext("Tau")));
+                    main_win.header_bar.set_title(Some(glib::get_application_name().unwrap().as_str()));
                 }
             }));
 

@@ -8,3 +8,10 @@ option('libhandy',
   type: 'combo',
   choices: ['auto', 'enabled', 'disabled'],
 )
+
+option('profile',
+  description: 'Which profile to build for (development enables debugging&changes App ID, allowing parallel execution of different profiles)',
+  type: 'combo',
+  choices: ['default', 'development'],
+  value: 'default',
+)

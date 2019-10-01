@@ -41,6 +41,29 @@ elif xi_opt == 'system'
   endif
 endif
 
+if get_option('profile') == 'development'
+  profile = 'Devel'
+  name_suffix = ' (Development)'
+  vcs_tag = run_command('git', 'rev-parse', '--short', 'HEAD').stdout().strip()
+  if vcs_tag == ''
+    version_suffix = '-devel'
+  else
+    version_suffix = '-@0@'.format (vcs_tag)
+  endif
+else
+  profile = ''
+  name_suffix = ''
+  version_suffix = ''
+endif
+
+application_id = 'org.gnome.Tau@0@'.format(profile)
+name = 'Tau @0@'.format(name_suffix)
+version = '@0@@1@'.format(meson.project_version(), version_suffix)
+
+conf = configuration_data()
+
+conf.set('application_id', application_id)
+
 gtk3_22 = 'false'
 
 libhandy_opt = get_option('libhandy')
@@ -133,9 +156,11 @@ custom_target('cargo-build-tau',
                                   libhandy_opt,
                                   tau_plugin_dir,
                                   tau_localedir,
-                                  meson.project_version(),
+                                  version,
                                   xi_binary_path,
                                   gresource.path(),
+                                  application_id,
+                                  name,
                                  ])
 
 git = find_program('git', native: true, required: false)
