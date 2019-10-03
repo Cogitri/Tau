@@ -362,6 +362,7 @@ impl EditView {
         );
 
         self.core.scroll(self.view_id, first_line, last_line);
+        self.view_item.linecount.queue_draw();
     }
 
     /// Returns the width&height of the entire document
