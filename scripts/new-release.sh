@@ -23,7 +23,7 @@ esac
 
 sed -i "s/version: '$current'/version: '$next'/" meson.build
 sed -i "s/version = \"$current\"/version = \"$next\"/" src/tau/Cargo.toml
-${EDITOR:=nano} data/org.gnome.Tau.appdata.xml.in
+${EDITOR:=nano} data/org.gnome.Tau.appdata.xml.in.in
 
 printf "%s\\n\\n%s" "$(./scripts/make-changelog.sh v${next} v${current})" "$(cat Changelog.md)" > Changelog.md
 
