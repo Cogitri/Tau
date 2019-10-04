@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Generated with glade 3.22.1 -->
-<interface domain="Tau">
+<interface domain="tau">
   <requires lib="gtk+" version="3.16"/>
   <object class="GtkAdjustment" id="margin_spinbutton_adj">
     <property name="upper">1000</property>

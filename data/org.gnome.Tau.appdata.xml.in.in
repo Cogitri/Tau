@@ -6,7 +6,7 @@
 	<project_license>MIT</project_license>
 	<name>Tau</name>
 	<summary>GTK frontend for the xi text editor</summary>
-	<translation type="gettext">Tau</translation>
+	<translation type="gettext">tau</translation>
 	<content_rating type="oars-1.1" />
 
 	<description>
