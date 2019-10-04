@@ -33,6 +33,37 @@
 	</provides>
 
 	<releases>
+		<release version="0.9.3" date="2019-10-04">
+			<p>
+				This is the third patch release of Tau's 0.9 series. It contains the following feature changes:
+			</p>
+
+			<ul>
+				<li>New icon design, by Tobis Bernard</li>
+				<li>Add font increase/decrease shortcuts via touch gestures and CTRL and + or -</li>
+				<li>Add an option to autosave when the window loses focus</li>
+				<li>Display the title of the current document in the headerbar</li>
+				<li>Only display tabs if more than one document is opened</li>
+				<li>Add option to show tabs and spaces on selection</li>
+				<li>Create Spanish translation</li>
+				<li>(Optionally) use libhandy for preferences window</li>
+			</ul>
+
+			<p>
+				And the following bug fixes:
+			</p>
+
+			<ul>
+				<li>Redraw linecount when we scroll up/down</li>
+				<li>Add missing source files to POTFILES.in (translation)</li>
+				<li>Introduce maximal tab length</li>
+				<li>Open new tab without closing empty ones</li>
+				<li>Fix Gettext domain (and as such internationalization)</li>
+				<li>Update French and Chinese (Simplified) translations</li>
+				<li>Use symbolic icon for close button of tabs</li>
+				<li>Fix selecting text in syntax highlighted areas</li>
+			</ul>
+		</release>
 		<release version="0.9.2" date="2019-08-30">
 			<p>
 				This is the second patch release of Tau's 0.9 series. It contains the following feature changes:

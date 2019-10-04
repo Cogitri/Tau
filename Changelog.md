@@ -1,3 +1,30 @@
+## Changes in v0.9.3
+
+### Feature changes
+
+ - (tau): add font increase/decrease shortcuts
+ - (tau): auto-save when window loses focus
+ - (tau): display title of current document in GtkHeaderBar
+ - (tau): only display tabs if more than 1 documents are opened
+ - (editview): show invisibles on selection
+ - (tau): new icon design, by Tobias Bernard (@bertob)
+ - (i18n): create es translation
+ - (tau): use HdyPreferencesWindow for PrefsWin for mobile usability
+
+### Bugfixes
+
+ - (edit_view): redraw linecount when we scroll up/down the ScrolledWindow
+ - (i18n): add missing source files to POTFILES.in
+ - (tau): introduce maximal tab length
+ - (tau): set title to "Tau" instead of last opened document when closing all tabs
+ - (tau): open new tab without closing empty ones
+ - (i18n): add missing langs to LINGUAS
+ - (i18n): update lang (Spanish)
+ - (i18n): update lang (Chinese (Simplified))
+ - (editview): Apply pange style attributes properly
+ - (editview): use `window-close-symbolic` icon for closing editview tabs
+ - (i18n): update lang (French)
+
 ## Changes in v0.9.2
 
 ### Feature changes
