@@ -1,6 +1,6 @@
 # assets
-data/org.gnome.Tau.appdata.xml.in
-data/org.gnome.Tau.desktop.in
+data/org.gnome.Tau.appdata.xml.in.in
+data/org.gnome.Tau.desktop.in.in
 data/org.gnome.Tau.gschema.xml
 
 # glade files
