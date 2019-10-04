@@ -51,7 +51,7 @@ if appstream_util.found()
     test(
         'validate-appdata', appstream_util,
         args: [
-            'validate-relax', '--nonet', appdata_file.full_path(),
+            'validate-strict', '--nonet', appdata_file.full_path(),
 	    ],
     )
    endif

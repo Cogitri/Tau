@@ -102,13 +102,13 @@
 			</p>
 		<p>Feature changes in this release:</p>
 			<ul>
-				<li>(gxi): set gxi's icon as window icon</li>
-				<li>(gxi): add option to launch new instance</li>
+				<li>Set gxi's icon as window icon</li>
+				<li>Add option to launch new instance</li>
 			</ul>
 		<p>Bugfixes in this release</p>
 			<ul>
-			 	<li>(gxi): set gettext domain for glade files</li>
- 				<li>(i18n): update lang (Dutch)</li>
+				<li>Set gettext domain for glade files</li>
+				<li>Update lang (Dutch)</li>
 			</ul>
 		</release>
 		<release version="0.8.0" date="2019-05-29">
@@ -120,82 +120,75 @@
 		</p>
 		<p>Feature changes in this release</p>
 			<ul>
-				<li>(gxi-config-storage): add try_* functions for panic-safe access to GSettings</li>
-				<li>(editview): only draw number in linecount on actual line</li>
-				<li>(editview): add line&amp;column to statusbar</li>
-				<li>(editview): redirect EventScroll from linecount to ev_scroll_window</li>
-				<li>(editview): use ScrolledWindow for overlay scrollbars</li>
-				<li>(po): Add nl</li>
-				<li>(gxi|config_storage): save window state</li>
-				<li>(edit_view): use symbolic close button for tabs</li>
-				<li>(macros): add setup_gtk_panic macro</li>
+				<li>Add try_* functions for panic-safe access to GSettings</li>
+				<li>Only draw number in linecount on actual line</li>
+				<li>Add line&amp;column to statusbar</li>
+				<li>Redirect EventScroll from linecount to ev_scroll_window</li>
+				<li>Use ScrolledWindow for overlay scrollbars</li>
+				<li>Add Dutch translation</li>
+				<li>Save window state</li>
+				<li>Use symbolic close button for tabs</li>
+				<li>Add setup_gtk_panic macro</li>
 			</ul>
 		<p>Bugfixes in this release</p>
 			<ul>
-				<li>(editview): remove uneccesary event masks</li>
-				<li>(gxi): set default size instead of setting a size request on window state restoring</li>
-				<li>(editview): avoid rounding errors in cursor positioning</li>
-				<li>(editview): don't scroll down in scroll_to if vadj' page_size is 1</li>
-				<li>(i18n): update lang (Dutch)</li>
-				<li>(i18n): update lang (Norwegian Bokmål)</li>
-				<li>(editview): grab focus of ev_scrolled_window instead of edit_area</li>
-				<li>(edit_view): set Layout size instead of setting Scrollbar&#39;s upper</li>
-				<li>(i18n): update PO files</li>
-				<li>(gxi): log with timestamp when RUST_LOg sets a custom loglevel, makes for nicer debugging</li>
-				<li>(gxi): log for all crates in our workspace</li>
-				<li>(edit_view): don&#39;t warn on window-{height,maximized,width} GSettings key change</li>
-				<li>(gxi): allow PanicHandler::new to not return Self</li>
-				<li>(gxi-linecache|gxi-peer): derive Default if a new function is present</li>
-				<li>(data): set gettext domain in gschema</li>
-				<li>(main_win): don't include GLADE_SRC file twice</li>
-				<li>(i18n): update lang (German)</li>
+				<li>Remove uneccesary event masks</li>
+				<li>Default size instead of setting a size request on window state restoring</li>
+				<li>Avoid rounding errors in cursor positioning</li>
+				<li>Don't scroll down in scroll_to if vadj' page_size is 1</li>
+				<li>Grab focus of ev_scrolled_window instead of edit_area</li>
+				<li>Set Layout size instead of setting Scrollbar&#39;s upper</li>
+				<li>Update PO files</li>
+				<li>Log with timestamp when RUST_LOg sets a custom loglevel, makes for nicer debugging</li>
+				<li>Log for all crates in our workspace</li>
+				<li>Don&#39;t warn on window-{height,maximized,width} GSettings key change</li>
+				<li>Allow PanicHandler::new to not return Self</li>
+				<li>Derive Default if a new function is present</li>
+				<li>Sset gettext domain in gschema</li>
+				<li>Don't include GLADE_SRC file twice</li>
+				<li>Update languages: German, Dutch, Norwegian Bokmål</li>
 			</ul>
 		</release>
 		<release version="0.7.0" date="2019-05-09">
 			<description>
 				<p>Changes in this release:</p>
 					<ul>
-						<li>(edit_view): keybind Shift+Tab to outdent</li>
-						<li>(edit_view): keybind Escape to stopping the current search</li>
-						<li>(edit_view): keybind Ctrl+Backspace to delete_word_backward</li>
-						<li>(main_win): open in existing tab if there's an empty tab</li>
-						<li>(po): Add zh_Hans and zh-Hant to LINGUAS file</li>
-						<li>(po): add zh_Hans to LINGUAS</li>
-						<li>(po): add zh-Hant to LINGUAS</li>
-						<li>(edit_view|prefs_win): support setting a custom tab size</li>
+						<li>Keybind Shift+Tab to outdent</li>
+						<li>Keybind Escape to stopping the current search</li>
+						<li>Keybind Ctrl+Backspace to delete_word_backward</li>
+						<li>Open in existing tab if there's an empty tab</li>
+						<li>Add zh_Hans and zh-Hant to LINGUAS file</li>
+						<li>Support setting a custom tab size</li>
 					</ul>
 				<p>Bugfixes in this relase:</p>
 					<ul>
-						<li>(ui): remove startup_id property of ApplicationWindow</li>
-						<li>(edit_view): measure FontMetrics in en-US locale</li>
-						<li>(edit_view): use IMContextSimple to fix inserting dead/non latin characters</li>
-						<li>(i18n): update lang (Chinese (Traditional))</li>
-						<li>(i18n): update lang (Chinese (Traditional))</li>
-						<li>(i18n): update lang (Portuguese (Brazil))</li>
-						<li>(i18n): update lang (Norwegian Bokmål)</li>
+						<li>Remove startup_id property of ApplicationWindow</li>
+						<li>Measure FontMetrics in en-US locale</li>
+						<li>Use IMContextSimple to fix inserting dead/non latin characters</li>
+						<li>Update languages: Chinese (Traditional), Portuguese (Brazil) and Norwegian Bokmål </li>
 					</ul>
 			</description>
 		</release>
 		<release version="0.6.2" date="2019-03-31">
 			<description>
-				<p>Bugfix release to fix build on flathub and trace log app_id on startup</p>
+				<p>Bugfix release to fix build on flathub and trace log app_id on startup.</p>
 			</description>
 		</release>
 		<release version="0.6.1" date="2019-03-31">
 			<description>
-				<p>Bugfix release to include meson_options.txt in the release tarballs</p>
+				<p>Bugfix release to include meson_options.txt in the release tarballs.</p>
 			</description>
 		</release>
 		<release version="0.6.0" date="2019-03-31">
 			<description>
 				<p>Changes in this release:</p>
 					<ul>
-						<li>display an ErrorDialog if Xi sends 'error'</li>
+						<li>Display an ErrorDialog if Xi sends 'error'</li>
 						<li>Rework the FindReplace dialog to be more compact</li>
 						<li>Add a regex, case sensitive and whole word matching option to the find dialog</li>
 						<li>Set Ctrl+W as shortcut for closing the current tab</li>
 						<li>Makes cut/copy operations non-blocking (fixes copy/paste when word-wrap is enabled)</li>
-						<li>Rework how the value/upper of the scrollbars is determined. This fixes scrolling when the cursor gets out of the view.</li>
+						<li>Fix scrolling when the cursor goes out of the view</li>
 					</ul>
 			</description>
 		</release>
@@ -231,19 +224,19 @@
 			<description>
 				<p>This release contains the following feature changes: </p>
 					<ul>
-						 <li>(shared_queue): more verbose trace logging</li>
- 						 <li>(main_win): use a thread to handle CoreMsgs instead of add_idle</li>
- 						 <li>(main): display error window if xi-editor crashes</li>
- 						 <li>(edit_view): add newline to end of the file if it doesn't terminate with one</li>
- 						 <li>(edit_view): only draw trailing spaces</li>
- 						 <li>(shared_queue): also use for sending stuff to xi</li>
- 						 <li>(gettext): build against system gettext</li>
+						 <li>More verbose trace logging</li>
+						 <li>Use a thread to handle CoreMsgs instead of add_idle</li>
+						 <li>Display error window if xi-editor crashes</li>
+						 <li>Add newline to end of the file if it doesn't terminate with one</li>
+						 <li>Only draw trailing spaces</li>
+						 <li>Also use for sending stuff to xi</li>
+						 <li>Build against system gettext</li>
 					</ul>
 			</description>
 		</release>
 		<release version="0.4.6" date="2019-01-30">
 			<description>
-				<p>Fix hangs during startup, add 'Replace…' button and shortcut. Adds an option to visually draw spaces/tabs</p>
+				<p>Fix hangs during startup, add 'Replace…' button and shortcut. Adds an option to visually draw spaces/tabs.</p>
 			</description>
 		</release>
 		<release version="0.4.5" date="2019-01-26">
@@ -253,7 +246,7 @@
 		</release>
 		<release version="0.4.4" date="2019-01-24">
 			<description>
-				<p>Use GSettings to determine the default font.</p>
+				<p>Use GSettings to determine the default font, making for a more seamless experience on first start.</p>
 			</description>
 		</release>
 		<release version="0.4.3" date="2019-01-23">
