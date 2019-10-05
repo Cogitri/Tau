@@ -1,131 +1,135 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the tau package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# João Nuno Matos <joao.nuno.matos@fe.up.pt>, 2019.
 msgid ""
 msgstr ""
 "Project-Id-Version: tau\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-29 19:09+0200\n"
-"PO-Revision-Date: 2019-09-30 00:13+0200\n"
-"Language-Team: \n"
+"PO-Revision-Date: 2019-10-05 21:56+0000\n"
+"Last-Translator: João Nuno Matos <joao.nuno.matos@fe.up.pt>\n"
+"Language-Team: Portuguese (Portugal) <https://hosted.weblate.org/projects/"
+"Tau/translation/pt_PT/>\n"
+"Language: pt_PT\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.2.3\n"
-"Last-Translator: \n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"Language: pt_PT\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 3.9-dev\n"
 
 #: data/org.gnome.Tau.appdata.xml.in:7 data/org.gnome.Tau.desktop.in:3
 #: src/tau/src/main_win.rs:300
 msgid "Tau"
-msgstr ""
+msgstr "Tau"
 
 #: data/org.gnome.Tau.appdata.xml.in:8
 msgid "GTK frontend for the xi text editor"
-msgstr ""
+msgstr "Interface em GTK para o editor de texto xi"
 
 #: data/org.gnome.Tau.appdata.xml.in:13
 msgid ""
 "Tau is a GTK frontend for the xi text editor written in Rust. It's a very "
 "fast plain text editor."
 msgstr ""
+"O Tau é uma interface em GTK para o editor de texto xi, escrita em Rust. É "
+"um editor de texto simples muito veloz."
 
 #: data/org.gnome.Tau.desktop.in:5
 msgid "The Tau text editor"
-msgstr ""
+msgstr "O editor de texto Tau"
 
 #: data/org.gnome.Tau.desktop.in:8
 msgid "org.gnome.Tau"
-msgstr ""
+msgstr "org.gnome.Tau"
 
 #: data/org.gnome.Tau.desktop.in:13
 msgid "Text;Editor;Plaintext;Write;gxi;"
-msgstr ""
+msgstr "Texto;Editor;Texto Simples;Escrever;Escrita;gxi;"
 
 #: data/org.gnome.Tau.desktop.in:16
 msgid "Launch a new Tau instance"
-msgstr ""
+msgstr "Abrir uma nova instância do Tau"
 
 #: data/org.gnome.Tau.gschema.xml:9
 msgid "Xi-Editor's theme"
-msgstr ""
+msgstr "O tema do Xi-Editor"
 
 #: data/org.gnome.Tau.gschema.xml:10
 msgid "Sets the theme used for the editing area"
-msgstr ""
+msgstr "Define o tema usado para a área de edição"
 
 #: data/org.gnome.Tau.gschema.xml:17
 msgid "Draw trailing spaces"
-msgstr ""
+msgstr "Desenhar espaços subsequentes"
 
 #: data/org.gnome.Tau.gschema.xml:18
 msgid "Draw spaces which are at the end of a line"
-msgstr ""
+msgstr "Marca os espaços colocados no fim de uma linha"
 
 #: data/org.gnome.Tau.gschema.xml:25
 msgid "Draw leading spaces"
-msgstr ""
+msgstr "Marcar espaços precedentes"
 
 #: data/org.gnome.Tau.gschema.xml:26
 msgid "Draw spaces which are at the beginning of a line"
-msgstr ""
+msgstr "Marca os espaços colocados no início de uma linha"
 
 #: data/org.gnome.Tau.gschema.xml:33
 msgid "Draw selected spaces"
-msgstr ""
+msgstr "Marcar espaços selecionados"
 
 #: data/org.gnome.Tau.gschema.xml:34
 msgid "Draw spaces whenever they are selected"
-msgstr ""
+msgstr "Marca os espaços selecionados"
 
 #: data/org.gnome.Tau.gschema.xml:41
 msgid "Draw all spaces"
-msgstr ""
+msgstr "Marcar todos os espaços"
 
 #: data/org.gnome.Tau.gschema.xml:42
 msgid "Draw spaces, no matter the position"
-msgstr ""
+msgstr "Marca todos os espaços no documento, independentemente da sua posição"
 
 #: data/org.gnome.Tau.gschema.xml:49
 msgid "Draw a right hand margin"
-msgstr ""
+msgstr "Marcar a margem direita"
 
 #: data/org.gnome.Tau.gschema.xml:50
 msgid "Draw a right hand margin to limit the text width"
-msgstr ""
+msgstr "Marca a margem direita do documento, para limitar a largura do texto"
 
 #: data/org.gnome.Tau.gschema.xml:58
 msgid "At what column to display the margin"
-msgstr ""
+msgstr "Em que coluna mostrar a margem"
 
 #: data/org.gnome.Tau.gschema.xml:59
 msgid "Sets the column at which the margin should be drawn"
-msgstr ""
+msgstr "Define a coluna de texto a partir da qual a margem é marcada"
 
 #: data/org.gnome.Tau.gschema.xml:66
 msgid "Whether the current line should be highlighted"
-msgstr ""
+msgstr "Se a linha atual deve ser realçada"
 
 #: data/org.gnome.Tau.gschema.xml:67
 msgid ""
 "Sets if the current line should be highlighted, which eases navigation "
 "through the document"
 msgstr ""
+"Define se a linha atual deve ser realçada, o que facilita a navegação no "
+"documento"
 
 #: data/org.gnome.Tau.gschema.xml:75
 msgid "Sets the height of the window in the next startup"
-msgstr ""
+msgstr "Define a altura da janela na próxima execução do Tau"
 
 #: data/org.gnome.Tau.gschema.xml:81
 msgid "Sets the width of the window in the next startup"
-msgstr ""
+msgstr "Define a largura da janela na próxima execução do Tau"
 
 #: data/org.gnome.Tau.gschema.xml:86
 msgid "Sets if the window should be maximized during the next startup"
-msgstr ""
+msgstr "Define se a janela deve estar maximizada na próxima execução do Tau"
 
 #: data/org.gnome.Tau.gschema.xml:92 src/editview/src/ui/ev.glade:75
 #: src/tau/src/ui/prefs_win.glade:154 src/tau/src/ui/prefs_win.glade:579
