@@ -1,4 +1,3 @@
-use gettextrs::gettext;
 use log::debug;
 use pango::{FontDescription, FontsetExt, Language};
 
@@ -22,15 +21,15 @@ impl Font {
         // font_descent being larger to account for the language's special signs), which breaks cursor positioning.
         let fontset = pango_ctx
             .load_fontset(&font_desc, &Language::from_string("en-US"))
-            .unwrap_or_else(|| panic!("{}", &gettext("Failed to load Pango font set")));
+            .expect("Failed to load Pango font set");
         let metrics = fontset
             .get_metrics()
-            .unwrap_or_else(|| panic!("{}", &gettext("Failed to load Pango font metrics")));
+            .expect("Failed to load Pango font metrics");
 
         let layout = pango::Layout::new(pango_ctx);
         layout.set_text("a");
         let (_, log_extents) = layout.get_extents();
-        debug!("{}: {:?}", gettext("Pango font size"), log_extents);
+        debug!("Pango font size: {:?}", log_extents);
 
         let font_height = f64::from(log_extents.height) / f64::from(pango::SCALE);
         let font_width = f64::from(log_extents.width) / f64::from(pango::SCALE);
@@ -38,12 +37,8 @@ impl Font {
         let font_descent = f64::from(metrics.get_descent()) / f64::from(pango::SCALE);
 
         debug!(
-            "{}: {} {} {} {}",
-            gettext("Font metrics"),
-            font_width,
-            font_height,
-            font_ascent,
-            font_descent
+            "Font Metrics: Width: '{}'; Height: '{}'; Ascent: '{}'; Descent: '{}'",
+            font_width, font_height, font_ascent, font_descent
         );
 
         Self {

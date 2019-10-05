@@ -28,7 +28,7 @@ impl AboutWin {
         about_dialog.set_authors(&["Brian Vincent", "Rasmus Thomsen"]);
 
         about_dialog.set_transient_for(Some(parent));
-        trace!("{}", gettext("Showing about window"));
+        trace!("Showing about window");
         about_dialog.show_all();
 
         Self { about_dialog }

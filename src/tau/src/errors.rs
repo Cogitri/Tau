@@ -1,4 +1,3 @@
-use gettextrs::gettext;
 use gio::prelude::*;
 use gtk::prelude::*;
 use gtk::{ButtonsType, DialogFlags, MessageDialog, MessageType};
@@ -40,9 +39,9 @@ impl ErrorDialog {
     pub fn new(err_msg: ErrorMsg) -> Self {
         error!("{}", err_msg.msg);
         let application = gio::Application::get_default()
-            .unwrap_or_else(|| panic!("{}", &gettext("No default application")))
+            .expect("No default application")
             .downcast::<gtk::Application>()
-            .unwrap_or_else(|_| panic!("{}", &gettext("Default application has wrong type")));
+            .expect("Default application has wrong type");
 
         let err_dialog = MessageDialog::new(
             application.get_active_window().as_ref(),

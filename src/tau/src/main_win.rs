@@ -165,8 +165,7 @@ impl MainWin {
         let provider = gtk::CssProvider::new();
         provider.load_from_resource("/org/gnome/Tau/app.css");
         gtk::StyleContext::add_provider_for_screen(
-            &gdk::Screen::get_default()
-                .unwrap_or_else(|| panic!("{}", gettext("Failed to get default CssProvider!"))),
+            &gdk::Screen::get_default().expect("Failed to get default CssProvider!"),
             &provider,
             gtk::STYLE_PROVIDER_PRIORITY_APPLICATION,
         );
@@ -196,7 +195,7 @@ impl MainWin {
         let notebook: Notebook = builder.get_object("notebook").unwrap();
 
         let theme_name = properties.borrow().gschema.get_key("theme-name");
-        debug!("{}: {}", gettext("Theme name"), &theme_name);
+        debug!("Theme name: '{}'", &theme_name);
 
         let settings = functions::new_settings();
 
@@ -219,7 +218,7 @@ impl MainWin {
             .map(GString::as_str)
             .map(|s| {
                 serde_json::from_str(s)
-                    .map_err(|e| error!("{} {}", gettext("Failed to deserialize syntax config"), e))
+                    .map_err(|e| error!("Failed to deserialize syntax config due to error: {}", e))
                     .unwrap()
             })
             .map(|sc: SyntaxParams| (sc.domain.syntax.clone(), sc))
@@ -253,10 +252,10 @@ impl MainWin {
             .connect_delete_event(enclose!((main_win) move |window, _| {
                 // Only destroy the window when the user has saved the changes or closes without saving
                 if main_win.close_all() == SaveAction::Cancel {
-                    debug!("{}", gettext("User chose to cancel exiting"));
+                    debug!("User chose to cancel exiting");
                     Inhibit(true)
                 } else {
-                    debug!("{}", gettext("User chose to close the application"));
+                    debug!("User chose to close the application");
                     main_win.properties.borrow().save();
                     window.destroy();
                     Inhibit(false)
@@ -334,7 +333,7 @@ impl MainWin {
         {
             let open_action = SimpleAction::new("open", None);
             open_action.connect_activate(enclose!((main_win) move |_,_| {
-                trace!("{} 'open' {}", gettext("Handling"), gettext("action"));
+                trace!("Handling action: 'open'");
                 main_win.handle_open_button();
             }));
             application.add_action(&open_action);
@@ -342,7 +341,7 @@ impl MainWin {
         {
             let new_action = SimpleAction::new("new", None);
             new_action.connect_activate(enclose!((main_win) move |_,_| {
-                trace!("{} 'new' {}", gettext("Handling"), gettext("action"));
+                trace!("Handling action: 'new'");
                 main_win.req_new_view(None);
             }));
             application.add_action(&new_action);
@@ -350,7 +349,7 @@ impl MainWin {
         {
             let prefs_action = SimpleAction::new("prefs", None);
             prefs_action.connect_activate(enclose!((main_win) move |_,_| {
-                trace!("{} 'prefs' {}", gettext("Handling"), gettext("action"));
+                trace!("Handling action: 'prefs'");
                 main_win.prefs()
             }));
             application.add_action(&prefs_action);
@@ -358,7 +357,7 @@ impl MainWin {
         {
             let about_action = SimpleAction::new("about", None);
             about_action.connect_activate(enclose!((main_win) move |_,_| {
-                trace!("{} 'about' {}", gettext("Handling"), gettext("action"));
+                trace!("Handling action: 'about'");
                 main_win.about()
             }));
             application.add_action(&about_action);
@@ -366,7 +365,7 @@ impl MainWin {
         {
             let find_action = SimpleAction::new("find", None);
             find_action.connect_activate(enclose!((main_win) move |_,_| {
-                trace!("{} 'find' {}", gettext("Handling"), gettext("action"));
+                trace!("Handling action: 'find'");
                 main_win.find();
             }));
             application.add_action(&find_action);
@@ -374,7 +373,7 @@ impl MainWin {
         {
             let replace_action = SimpleAction::new("replace", None);
             replace_action.connect_activate(enclose!((main_win) move |_,_| {
-                trace!("{} 'replace' {}", gettext("Handling"), gettext("action"));
+                trace!("Handling action: 'replace'");
                 main_win.replace()
             }));
             application.add_action(&replace_action);
@@ -382,7 +381,7 @@ impl MainWin {
         {
             let copy_action = SimpleAction::new("copy", None);
             copy_action.connect_activate(enclose!((main_win) move |_,_| {
-                trace!("{} 'copy' {}", gettext("Handling"), gettext("action"));
+                trace!("Handling action: 'copy'");
                 if let Some(ev) = main_win.get_current_edit_view() {
                     ev.do_copy()
                 }
@@ -392,7 +391,7 @@ impl MainWin {
         {
             let cut_action = SimpleAction::new("cut", None);
             cut_action.connect_activate(enclose!((main_win) move |_,_| {
-                trace!("{} 'cut' {}", gettext("Handling"), gettext("action"));
+                trace!("Handling action: 'cut'");
                 if let Some(ev) = main_win.get_current_edit_view() {
                     ev.do_cut()
                 }
@@ -402,7 +401,7 @@ impl MainWin {
         {
             let paste_action = SimpleAction::new("paste", None);
             paste_action.connect_activate(enclose!((main_win) move |_,_| {
-                trace!("{} 'paste' {}", gettext("Handling"), gettext("action"));
+                trace!("Handling action: 'paste'");
                 if let Some(ev) = main_win.get_current_edit_view() {
                     ev.do_paste()
                 }
@@ -412,7 +411,7 @@ impl MainWin {
         {
             let undo_action = SimpleAction::new("undo", None);
             undo_action.connect_activate(enclose!((main_win) move |_,_| {
-                trace!("{} 'undo' {}", gettext("Handling"), gettext("action"));
+                trace!("Handling action: 'undo'");
                 if let Some(ev) = main_win.get_current_edit_view() {
                     main_win.core.undo(ev.view_id);
                 }
@@ -422,7 +421,7 @@ impl MainWin {
         {
             let redo_action = SimpleAction::new("redo", None);
             redo_action.connect_activate(enclose!((main_win) move |_,_| {
-                trace!("{} 'redo' {}", gettext("Handling"), gettext("action"));
+                trace!("Handling action: 'redo'");
                 if let Some(ev) = main_win.get_current_edit_view() {
                     main_win.core.redo(ev.view_id);
                 }
@@ -432,7 +431,7 @@ impl MainWin {
         {
             let select_all_action = SimpleAction::new("select_all", None);
             select_all_action.connect_activate(enclose!((main_win) move |_,_| {
-                trace!("{} 'select_all' {}", gettext("Handling"), gettext("action"));
+                trace!("Handling action: 'select_all'");
                 if let Some(ev) = main_win.get_current_edit_view() {
                     main_win.core.select_all(ev.view_id);
                 }
@@ -442,7 +441,7 @@ impl MainWin {
         {
             let save_action = SimpleAction::new("save", None);
             save_action.connect_activate(enclose!((main_win) move |_,_| {
-                trace!("{} 'save' {}", gettext("Handling"), gettext("action"));
+                trace!("Handling action: 'save'");
                 main_win.handle_save_button();
             }));
             application.add_action(&save_action);
@@ -450,7 +449,7 @@ impl MainWin {
         {
             let save_as_action = SimpleAction::new("save_as", None);
             save_as_action.connect_activate(enclose!((main_win) move |_,_| {
-                trace!("{} 'save_as' {}", gettext("Handling"), gettext("action"));
+                trace!("Handling action: 'save_as'");
                 main_win.current_save_as();
             }));
             application.add_action(&save_as_action);
@@ -458,7 +457,7 @@ impl MainWin {
         {
             let save_all_action = SimpleAction::new("save_all", None);
             save_all_action.connect_activate(enclose!((main_win) move |_,_| {
-                trace!("{} 'save_all' {}", gettext("Handling"), gettext("action"));
+                trace!("Handling action: 'save_all'");
                 main_win.save_all();
             }));
             application.add_action(&save_all_action);
@@ -466,7 +465,7 @@ impl MainWin {
         {
             let close_action = SimpleAction::new("close", None);
             close_action.connect_activate(enclose!((main_win) move |_,_| {
-                trace!("{} 'close' {}", gettext("Handling"), gettext("action"));
+                trace!("Handling action: 'close'");
                 main_win.close();
             }));
             application.add_action(&close_action);
@@ -474,7 +473,7 @@ impl MainWin {
         {
             let shortcuts_action = SimpleAction::new("shortcuts", None);
             shortcuts_action.connect_activate(enclose!((main_win) move |_, _| {
-                trace!("{} 'shortcuts' {}", gettext("Handling"), gettext("action"));
+                trace!("Handling action: 'shortcuts'");
                 main_win.shortcuts();
             }));
             application.add_action(&shortcuts_action);
@@ -482,7 +481,7 @@ impl MainWin {
         {
             let find_prev_action = SimpleAction::new("find_prev", None);
             find_prev_action.connect_activate(enclose!((main_win) move |_,_| {
-                trace!("{} 'find_prev' {}", gettext("Handling"), gettext("action"));
+                trace!("Handling action: 'find_prev'");
                 main_win.find_prev();
             }));
             application.add_action(&find_prev_action);
@@ -490,7 +489,7 @@ impl MainWin {
         {
             let find_next_action = SimpleAction::new("find_next", None);
             find_next_action.connect_activate(enclose!((main_win) move |_,_| {
-                trace!("{} 'find_next' {}", gettext("Handling"), gettext("action"));
+                trace!("Handling action: 'find_next'");
                 main_win.find_next();
             }));
             application.add_action(&find_next_action);
@@ -501,7 +500,7 @@ impl MainWin {
                 let font: String = gschema.get_key("font");
                 if let Some((name, mut size)) = functions::get_font_properties(&font) {
                     size += 1.0;
-                    gschema.set_key("font", format!("{} {}", name, size)).map_err(|e| error!("{} {}", gettext("Failed to increase font size due to error"), e)).unwrap();
+                    gschema.set_key("font", format!("{} {}", name, size)).map_err(|e| error!("Failed to increase font size due to error: '{}'", e)).unwrap();
                 }
             }));
             application.add_action(&increase_font_size_action);
@@ -512,7 +511,7 @@ impl MainWin {
                 let font: String = gschema.get_key("font");
                 if let Some((name, mut size)) = functions::get_font_properties(&font) {
                     size -= 1.0;
-                    gschema.set_key("font", format!("{} {}", name, size)).map_err(|e| error!("{} {}", gettext("Failed to increase font size due to error"), e)).unwrap();
+                    gschema.set_key("font", format!("{} {}", name, size)).map_err(|e| error!("Failed to increase font size due to error: '{}'", e)).unwrap();
                 }
             }));
             application.add_action(&decrease_font_size_action);
@@ -521,12 +520,12 @@ impl MainWin {
             // This is called when we run app.quit, e.g. via Ctrl+Q
             let quit_action = SimpleAction::new("quit", None);
             quit_action.connect_activate(enclose!((main_win) move |_,_| {
-                trace!("{} 'quit' {}", gettext("Handling"), gettext("action"));
+                trace!("Handling action: 'quit'");
                 // Same as in connect_destroy, only quit if the user saves or wants to close without saving
                 if main_win.close_all() == SaveAction::Cancel {
-                    debug!("{}", gettext("User chose to not quit application"));
+                    debug!("User chose to not quit application");
                 } else {
-                    debug!("{}", gettext("User chose to quit application"));
+                    debug!("User chose to quit application");
                     main_win.window.close();
                 }
             }));
@@ -596,7 +595,7 @@ impl MainWin {
             }),
         );
 
-        debug!("{}", gettext("Showing main window"));
+        debug!("Showing main window");
         main_win.window.show_all();
 
         main_win
@@ -605,7 +604,7 @@ impl MainWin {
 
 impl MainWin {
     fn handle_event(&self, ev: XiEvent) {
-        trace!("{}: {:?}", gettext("Handling XiEvent"), ev);
+        trace!("Handling msg: {:?}", ev);
         match ev {
             XiEvent::Notification(notification) => match notification {
                 XiNotification::Alert(alert) => self.alert(alert),
@@ -645,10 +644,8 @@ impl MainWin {
 
         if !state.themes.contains(&state.theme_name) {
             error!(
-                "{} {} {}",
-                gettext("Theme"),
+                "Theme '{}' isn't available, setting to default",
                 &state.theme_name,
-                gettext("isn't available, setting to default"),
             );
 
             if let Some(theme_name) = state.themes.first() {
@@ -657,11 +654,7 @@ impl MainWin {
                     .gschema
                     .set_key("theme-name", theme_name.clone())
                     .unwrap_or_else(|e| {
-                        error!(
-                            "{}: {}",
-                            gettext("Failed to set theme name in GSettings due to error"),
-                            e
-                        )
+                        error!("Failed to set theme name in GSettings due to error: {}", e)
                     });
                 state.theme_name = theme_name.clone();
             } else {
@@ -724,7 +717,7 @@ impl MainWin {
 
     /// Forward `Update` to the respective `EditView`
     pub fn update(&self, params: xrl::Update) {
-        trace!("{} 'update': {:?}", gettext("Handling"), params);
+        trace!("Handling msg: 'update': {:?}", params);
         let views = self.views.borrow();
         if let Some(ev) = views.get(&params.view_id) {
             let view_id = params.view_id;
@@ -759,7 +752,7 @@ impl MainWin {
     /// Forward `ScrollTo` to the respective `EditView`. Also set our `GtkNotebook`'s
     /// current page to that `EditView`
     pub fn scroll_to(&self, params: &xrl::ScrollTo) {
-        trace!("{} 'scroll_to' {:?}", gettext("Handling"), params);
+        trace!("Handling msg: 'scroll_to' {:?}", params);
 
         let views = self.views.borrow();
         if let Some(ev) = views.get(&params.view_id) {
@@ -804,7 +797,7 @@ impl MainWin {
 
     /// Measure the width of a string for Xi and send it the result. Used for line wrapping.
     pub fn measure_width(&self, params: xrl::MeasureWidth) {
-        trace!("{} 'measure_width' {:?}", gettext("Handling"), params);
+        trace!("Handling msg: 'measure_width' {:?}", params);
         if let Some(ev) = self.get_current_edit_view() {
             let mut widths = Vec::new();
 
@@ -823,7 +816,7 @@ impl MainWin {
     /// Set available syntaxes in our `MainState` and set the syntax_seletion_sensitivity
     /// of all `EditView`s, so it's unsensitive when we don't have any syntaxes to choose from.
     pub fn available_languages(&self, params: xrl::AvailableLanguages) {
-        debug!("{} 'available_languages' {:?}", gettext("Handling"), params);
+        debug!("Handling msg: 'available_languages' {:?}", params);
         let mut main_state = self.state.borrow_mut();
         main_state.avail_languages.clear();
 
@@ -855,20 +848,19 @@ impl MainWin {
 
     /// Forward `LanguageChanged` to the respective `EditView`
     pub fn language_changed(&self, params: &xrl::LanguageChanged) {
-        debug!("{} 'language_changed' {:?}", gettext("Handling"), params);
+        debug!("Handling msg: 'language_changed' {:?}", params);
         let views = self.views.borrow();
         if let Some(ev) = views.get(&params.view_id) {
             // Set the default_tab_size so the EditView
             if let Some(sc) = self.syntax_config.borrow().get(&params.language_id) {
                 if let Some(tab_size) = sc.changes.tab_size {
                     debug!(
-                        "{}: '{}'",
-                        gettext("Setting the following to the syntax attached tab size"),
-                        tab_size
+                        "Setting the following to the syntax attached tab size: '{}'",
+                        tab_size,
                     );
                     ev.set_default_tab_size(tab_size);
                 } else {
-                    debug!("{}", gettext("No tab size attached to the syntax"));
+                    debug!("No tab size attached to the syntax");
                 }
             }
             ev.language_changed(&params.language_id);
@@ -942,13 +934,13 @@ impl MainWin {
                 }
             }
         }
-        info!("{}", gettext("Couldn't get current EditView. This may only mean that you don't have an editing tab open right now."));
+        info!("Couldn't get current EditView. This may only mean that you don't have an editing tab open right now.");
         None
     }
 
     /// Request a new view from `xi-core` and send
     fn req_new_view(&self, file_name: Option<String>) {
-        trace!("{}", gettext("Requesting new view"));
+        trace!("Requesting new view");
 
         std::thread::spawn(
             enclose!((self.new_view_tx => new_view_tx, self.core => core) move || {
@@ -961,8 +953,7 @@ impl MainWin {
                             let err: XiClientError = serde_json::from_value(value).unwrap();
                             new_view_tx
                                 .send(Err(format!(
-                                    "{}: '{}'",
-                                    gettext("Failed to open new view due to error"),
+                                    "Failed to open new view due to error '{}'",
                                     err.message
                                 )))
                                 .unwrap()
@@ -1047,7 +1038,7 @@ impl MainWinExt for Rc<MainWin> {
     ///
     /// - `SaveAction` determining if the `EdtiView` has been closed.
     fn close(&self) -> SaveAction {
-        trace!("{}", gettext("Closing current Editview"));
+        trace!("Closing current Editview");
         if let Some(edit_view) = self.get_current_edit_view() {
             self.close_view(&edit_view)
         } else {
@@ -1061,7 +1052,7 @@ impl MainWinExt for Rc<MainWin> {
     ///
     /// - `SaveAction` determining if all `EditView`s have been closed.
     fn close_all(&self) -> SaveAction {
-        trace!("{}", gettext("Closing all EditViews"));
+        trace!("Closing all EditViews");
         // Get all views that we currently have opened
         let views = { self.views.borrow().clone() };
         // Close each one of them
@@ -1102,7 +1093,7 @@ impl MainWinExt for Rc<MainWin> {
     ///
     /// `SaveAction` determining which choice the user has made in the save dialog
     fn close_view(&self, edit_view: &Rc<EditView>) -> SaveAction {
-        trace!("{} {}", gettext("Closing Editview"), edit_view.view_id);
+        trace!("Closing Editview {}", edit_view.view_id);
         let save_action = if *edit_view.pristine.borrow() {
             // If it's pristine we don't ask the user if he really wants to quit because everything
             // is saved already and as such always close without saving
@@ -1152,10 +1143,7 @@ impl MainWinExt for Rc<MainWin> {
                 }
                 Ok(SaveAction::CloseWithoutSave) => SaveAction::CloseWithoutSave,
                 Err(_) => {
-                    warn!(
-                        "{}",
-                        &gettext("Save dialog has been destroyed before the user clicked a button")
-                    );
+                    warn!("Save dialog has been destroyed before the user clicked a button");
                     SaveAction::Cancel
                 }
                 _ => SaveAction::Cancel,
@@ -1316,7 +1304,7 @@ impl MainWinExt for Rc<MainWin> {
                             ev.view_item.edit_area.queue_draw();
                         }
                     } else {
-                        error!("{}. {}", gettext("Failed to get font configuration"), gettext("Resetting."));
+                        error!("Failed to get font configuration. Resetting...");
                         gschema.settings.reset("font");
                     }
                 }
@@ -1344,7 +1332,7 @@ impl MainWinExt for Rc<MainWin> {
                                 val,
                             );
                         } else {
-                            error!("{}. {}", gettext("Failed to deserialize syntax config"), gettext("Resetting."));
+                            error!("Failed to deserialize syntax config. Resetting...");
                             gschema.settings.reset("syntax-config");
                         }
                     }
@@ -1354,7 +1342,7 @@ impl MainWinExt for Rc<MainWin> {
                         .map(GString::as_str)
                         .map(|s| {
                             serde_json::from_str(s)
-                                .map_err(|e| error!("{} {}", gettext("Failed to deserialize syntax config"), e))
+                                .map_err(|e| error!("Failed to deserialize syntax config due to error: '{}'", e))
                                 .unwrap()
                         })
                         .map(|sc: SyntaxParams| (sc.domain.syntax.clone(), sc))
@@ -1386,7 +1374,7 @@ impl MainWinExt for Rc<MainWin> {
                 // We load these during startup
                 "window-height" | "window-width" | "window-maximized" => {}
                 key => {
-                    warn!("{}: {}", gettext("Unknown key change event"), key)
+                    error!("Unknown GSettings key change event '{}'. Please make sure your GSchema is up-to-date.", key);
                 }
             }
         }));
@@ -1417,8 +1405,7 @@ impl MainWinExt for Rc<MainWin> {
 
         fcn.connect_response(enclose!((self => main_win) move |fcd, res| {
             debug!(
-                "{}: {:#?}",
-                gettext("FileChooserNative open response"),
+                "FileChooserNative open response: '{:#?}'",
                 res
             );
 
@@ -1460,7 +1447,7 @@ impl MainWinExt for Rc<MainWin> {
     ///    with the new `EditView`. That way we don't stack empty, useless views.
     /// 2) Connect the ways to close the `EditView`, either via a middle click or by clicking the X of the tab
     fn new_view_response(&self, file_name: Option<String>, view_id: ViewId) {
-        trace!("{}", gettext("Creating new EditView"));
+        trace!("Creating new EditView");
 
         let hamburger_button = self.builder.get_object("hamburger_button").unwrap();
         let edit_view = EditView::new(
@@ -1534,8 +1521,7 @@ impl MainWinExt for Rc<MainWin> {
 
         fcn.connect_response(enclose!((edit_view, self => main_win) move |fcd, res| {
             debug!(
-                "{}: {:#?}",
-                gettext("FileChooserNative save response"),
+                "FileChooserNative save response: '{:#?}'",
                 res
             );
 
@@ -1545,7 +1531,7 @@ impl MainWinExt for Rc<MainWin> {
                     if let Some(file) = fcd.get_filename() {
                         match &std::fs::OpenOptions::new().write(true).create(true).open(&file) {
                             Ok(_) => {
-                                debug!("{} {:?}", gettext("Saving file"), &file);
+                                debug!("Saving file '{:?}'", &file);
                                 let file = file.to_string_lossy();
                                 main_win.core.save(edit_view.view_id, &file);
                                 edit_view.set_file(&file);

@@ -73,7 +73,7 @@ impl EditView {
         view_id: ViewId,
         parent: &ApplicationWindow,
     ) -> Rc<Self> {
-        trace!("{}, '{}'", gettext("Creating new EditView"), view_id);
+        trace!("Creating new EditView '{}'", view_id);
         let gschema = main_state.borrow().settings.gschema.clone();
         let default_tab_size: u32 = gschema.get_key("tab-size");
         let view_item = ViewItem::new(default_tab_size);
@@ -126,7 +126,7 @@ impl EditView {
             while let Ok(update) = update_recv.recv() {
                 linecache.lock().update(update);
             }
-            error!("{}", gettext("Xi-Update sender disconnected"));
+            error!("Xi-Update sender disconnected");
         }));
 
         gschema
@@ -159,10 +159,9 @@ impl EditView {
     /// Set the name of the file the EditView is currently editing and calls [update_title](struct.EditView.html#method.update_title)
     pub fn set_file(&self, file_name: &str) {
         trace!(
-            "{} 'FindReplace' {} '{}'",
-            gettext("Connecting"),
-            gettext("events for EditView"),
-            self.view_id
+            "Setting file name of EditView '{}' to '{}'",
+            self.view_id,
+            file_name
         );
         self.file_name.replace(Some(file_name.to_string()));
         self.update_title();
@@ -197,8 +196,7 @@ impl EditView {
         }
 
         trace!(
-            "{} '{}': {}",
-            gettext("Setting title for EditView"),
+            "Setting title for EditView '{}': {}",
             self.view_id,
             full_title
         );
@@ -210,9 +208,7 @@ impl EditView {
     /// need special handling by us though.
     pub fn config_changed(&self, changes: &ConfigChanges) {
         trace!(
-            "{} 'config_changed' {} '{}': {:?}",
-            gettext("Handling"),
-            gettext("for EditView"),
+            "Handling msg: 'config_changed' for EditView '{}': {:?}",
             self.view_id,
             changes
         );
@@ -227,7 +223,7 @@ impl EditView {
         }
 
         if let Some(font_face) = &changes.font_face {
-            debug!("{}: {}", gettext("Setting edit font to"), font_face);
+            debug!("Setting edit font to '{}'", font_face);
             let pango_ctx = self.view_item.get_pango_ctx();
             let font_size = self.edit_font.borrow().font_desc.get_size();
             self.edit_font.replace(Font::new(
@@ -247,9 +243,7 @@ impl EditView {
     /// is pristine (_does not_ has unsaved changes) and queue a new draw of the EditView.
     pub fn update(&self, params: Update) {
         trace!(
-            "{} 'update' {} '{}': {:?}",
-            gettext("Handling"),
-            gettext("for EditView"),
+            "Handling msg: 'update' for EditView '{}': {:?}",
             self.view_id,
             params
         );
@@ -282,9 +276,7 @@ impl EditView {
     /// last pixel.
     pub fn da_px_to_cell(&self, x: f64, y: f64) -> (u64, u64) {
         trace!(
-            "{} 'da_px_to_cell' {} '{}': x: {} y: {}",
-            gettext("Handling"),
-            gettext("for EditView"),
+            "Handling msg: 'da_px_to_cell' for EditView '{}': x: {} y: {}",
             self.view_id,
             x,
             y
@@ -326,12 +318,8 @@ impl EditView {
     /// Allocate the space our DrawingArea needs.
     pub(crate) fn da_size_allocate(&self, da_width: i32, da_height: i32) {
         debug!(
-            "{}: {}: {}, {}: {}",
-            gettext("Allocating DrawingArea size"),
-            gettext("Width"),
-            da_width,
-            gettext("Height"),
-            da_height,
+            "Allocating editing pane size: width: '{}', height: '{}'",
+            da_width, da_height,
         );
 
         self.update_visible_scroll_region();
@@ -342,9 +330,7 @@ impl EditView {
     /// adjusts the scrolling to the visible region.
     pub(crate) fn update_visible_scroll_region(&self) {
         trace!(
-            "{} 'update_visible_scroll_region' {} '{}'",
-            gettext("Handling"),
-            gettext("for EditView"),
+            "Handling msg: 'update_visible_scroll_region' for EditView '{}'",
             self.view_id
         );
         let da_height = self.view_item.edit_area.get_allocated_height();
@@ -355,10 +341,8 @@ impl EditView {
             + 1;
 
         debug!(
-            "{} {} {}",
-            gettext("Updating visible scroll region"),
-            first_line,
-            last_line
+            "Updating visible scroll region: first: '{}', last: '{}'",
+            first_line, last_line
         );
 
         self.core.scroll(self.view_id, first_line, last_line);
@@ -368,9 +352,7 @@ impl EditView {
     /// Returns the width&height of the entire document
     fn get_text_size(&self) -> TextSize {
         trace!(
-            "{} 'get_text_size' {} '{}'",
-            gettext("Handling"),
-            gettext("for EditView"),
+            "Handling msg: 'get_text_size' for EditView '{}'",
             self.view_id
         );
 
@@ -442,12 +424,9 @@ impl EditView {
         let vadj = &self.view_item.vadj;
         let hadj = &self.view_item.hadj;
         trace!(
-            "{}  {}: {}/{}; {}: {}/{}",
-            gettext("Drawing EditView"),
-            gettext("vertical adjustment"),
+            "Drawing EditView. Vertical Adj: {}/{}; Horizontal Adj: {}/{}",
             vadj.get_value(),
             vadj.get_upper(),
-            gettext("horizontal adjustment"),
             hadj.get_value(),
             hadj.get_upper()
         );
@@ -655,12 +634,7 @@ impl EditView {
     /// This draws the linecount. We have this as our own widget to make sure we don't mess up text
     /// selection etc.
     pub fn handle_linecount_draw(&self, cr: &Context) -> Inhibit {
-        trace!(
-            "{} 'linecount_draw' {} '{}'",
-            gettext("Handling"),
-            gettext("for EditView"),
-            self.view_id
-        );
+        trace!("Handling: 'linecount_draw' for EditView '{}'", self.view_id);
 
         let theme = &self.main_state.borrow().theme;
         let linecount_height = self.view_item.linecount.get_allocated_height();
@@ -871,9 +845,7 @@ impl EditView {
     /// Scrolls vertically to the line specified and horizontally to the column specified.
     pub fn scroll_to(&self, line: u64, col: u64) {
         trace!(
-            "{} 'scroll_to' {} '{}': l: {} c: {}",
-            gettext("Handling"),
-            gettext("for EditView"),
+            "Handling msg: 'scroll_to' for EditView '{}': Line: '{}'; Column: '{}'",
             self.view_id,
             line,
             col
@@ -996,7 +968,7 @@ impl EditView {
                     hadj.set_value(max - hadj.get_page_size() + padding);
                 }
             } else {
-                warn!("{}", gettext("Couldn't update hscrollbar value because I couldn't get the line to scroll to!"));
+                warn!("Couldn't update hscrollbar value because I couldn't get the line to scroll to!");
             }
         }
     }
@@ -1005,9 +977,7 @@ impl EditView {
     /// via middle mouse click).
     pub fn handle_button_press(&self, eb: &EventButton) -> Inhibit {
         trace!(
-            "{} 'button_press' {} '{}': {:?}",
-            gettext("Handling"),
-            gettext("for EditView"),
+            "Handling 'button_press' for EditView '{}': {:?}",
             self.view_id,
             eb
         );
@@ -1060,24 +1030,16 @@ impl EditView {
     #[allow(clippy::cognitive_complexity)]
     pub(crate) fn handle_key_press_event(&self, ek: &EventKey) -> Inhibit {
         trace!(
-            "{} 'key_press_event' {} '{}': {:?}",
-            gettext("Handling"),
-            gettext("for EditView"),
+            "Handling 'key_press_event' for EditView '{}': {:?}",
             self.view_id,
             ek
         );
         debug!(
-            "{}: {}={:?}, {}={:?}, {}={:?} {}={:?} {}={:?}",
-            gettext("Processing key press"),
-            gettext("value"),
+            "Processing key press: Value={:?}, State={:?}, Length={:?} Group={:?} Unicode={:?}",
             ek.get_keyval(),
-            gettext("state"),
             ek.get_state(),
-            gettext("length"),
             ek.get_length(),
-            gettext("group"),
             ek.get_group(),
-            gettext("Unicode"),
             ::gdk::keyval_to_unicode(ek.get_keyval())
         );
         let view_id = self.view_id;
@@ -1240,7 +1202,7 @@ impl EditView {
 
     /// Copies text to the clipboard
     pub fn do_cut(&self) {
-        debug!("{}", gettext("Adding cutting text op to idle queue"));
+        debug!("Adding cutting text op to idle queue");
 
         let (clipboard_tx, clipboard_rx) =
             MainContext::sync_channel::<serde_json::value::Value>(PRIORITY_HIGH, 1);
@@ -1266,7 +1228,7 @@ impl EditView {
 
     /// Copies text to the clipboard
     pub fn do_copy(&self) {
-        debug!("{}", gettext("Adding copying text op to idle queue"));
+        debug!("Adding copying text op to idle queue");
 
         let (clipboard_tx, clipboard_rx) =
             MainContext::sync_channel::<serde_json::value::Value>(PRIORITY_HIGH, 1);
@@ -1293,7 +1255,7 @@ impl EditView {
 
     /// Copies text to primary clipboard
     pub fn do_copy_primary(&self) {
-        debug!("{}", gettext("Adding selection text op to idle queue"));
+        debug!("Adding selection text op to idle queue");
 
         let (clipboard_tx, clipboard_rx) =
             MainContext::sync_channel::<serde_json::value::Value>(PRIORITY_HIGH, 1);
@@ -1319,7 +1281,7 @@ impl EditView {
 
     /// Pastes text from the clipboard into the EditView
     pub fn do_paste(&self) {
-        debug!("{}", gettext("Pasting text"));
+        debug!("Pasting text");
 
         Clipboard::get(&SELECTION_CLIPBOARD).request_text(
             enclose!((self.core => core, self.view_id => view_id) move |_, text| {
@@ -1331,7 +1293,7 @@ impl EditView {
     }
 
     pub fn do_paste_primary(&self, line: u64, col: u64) {
-        debug!("{}", gettext("Pasting primary text"));
+        debug!("Pasting primary text");
 
         Clipboard::get(&SELECTION_PRIMARY).request_text(
             enclose!((self.core => core, self.view_id => view_id) move |_, text| {
@@ -1345,7 +1307,7 @@ impl EditView {
 
     /// Resize the EditView
     pub fn do_resize(&self, width: i32, height: i32) {
-        trace!("{} '{}'", gettext("Resizing EditView"), self.view_id);
+        trace!("Resizing EditView '{}'", self.view_id);
 
         self.core.resize(self.view_id, width, height);
     }
@@ -1510,12 +1472,12 @@ impl EditView {
     }
 
     pub fn set_language(&self, lang: &str) {
-        debug!("{} '{:?}'", gettext("Changing language to"), lang);
+        debug!("Changing language to '{:?}'", lang);
         self.core.set_language(self.view_id, lang);
     }
 
     pub fn language_changed(&self, syntax: &str) {
-        debug!("{} '{:?}'", gettext("Language has been changed to"), syntax);
+        debug!("Language has been changed to '{:?}'", syntax);
         // https://github.com/xi-editor/xi-editor/issues/1194
         let lang = if syntax == "" || syntax == "Plain Text" {
             gettext("Plain Text")
@@ -1535,8 +1497,7 @@ impl EditView {
                 .select_path(&TreePath::new_from_string(&format!("{}", pos)));
         } else {
             warn!(
-                "{}: '{}'",
-                gettext("Couldn't determine what position the following language is in"),
+                "Couldn't determine what position the following language is in: '{}'",
                 lang
             )
         }

@@ -134,9 +134,8 @@ impl ViewItem {
     /// Sets up event listeners for the ViewItem
     pub fn connect_events(&self, edit_view: &Rc<EditView>) {
         trace!(
-            "{} '{}'",
+            "Connecting Events for ViewItem of EditView '{}'",
             edit_view.view_id,
-            gettext("Connecting events of EditView")
         );
 
         self.ev_scrolled_window
@@ -190,11 +189,12 @@ impl ViewItem {
             w.grab_focus();
         });
 
-        self.edit_area.connect_size_allocate(enclose!((edit_view) move |_,alloc| {
-            debug!("{}: {}={} {}={}", gettext("Size changed to"), gettext("width"), alloc.width, gettext("height"), alloc.height);
-            edit_view.da_size_allocate(alloc.width, alloc.height);
-            edit_view.do_resize(alloc.width, alloc.height);
-        }));
+        self.edit_area
+            .connect_size_allocate(enclose!((edit_view) move |_,alloc| {
+                debug!("Size changed to: Width: '{}'; Height: '{}'", alloc.width, alloc.height);
+                edit_view.da_size_allocate(alloc.width, alloc.height);
+                edit_view.do_resize(alloc.width, alloc.height);
+            }));
 
         self.linecount
             .connect_draw(enclose!((edit_view) move |_,ctx| {
@@ -310,7 +310,7 @@ impl ViewItem {
                     font_desc.get_family().map(|s| s.as_str().to_string()).unwrap(),
                     font_size,
                 );
-                gschema.set_key("font", font_string).map_err(|e| error!("{} {}", gettext("Failed to increase font size due to error"), e)).unwrap()
+                gschema.set_key("font", font_string).map_err(|e| error!("Failed to increase font size due to error: '{}'", e)).unwrap()
                 ;
             }));
     }
@@ -319,7 +319,7 @@ impl ViewItem {
     pub fn get_pango_ctx(&self) -> pango::Context {
         self.edit_area
             .get_pango_context()
-            .unwrap_or_else(|| panic!("{}", &gettext("Failed to get Pango context")))
+            .expect("Failed to get Pango context")
     }
 
     pub fn set_avail_langs<T>(&self, langs: &[T])
@@ -454,8 +454,7 @@ impl FindReplace {
     /// Sets up event listeners
     pub fn connect_events(&self, ev: &Rc<EditView>) {
         trace!(
-            "{} '{}'",
-            gettext("Connecting FindReplace events for EditView"),
+            "Connecting FindReplace events for EditView '{}'",
             ev.view_id
         );
 

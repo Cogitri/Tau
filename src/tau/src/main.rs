@@ -136,7 +136,7 @@ fn main() {
 
     application.connect_startup(
         enclose!((core_opt, application, new_view_rx_opt, new_view_tx, runtime_opt) move |_| {
-                debug!("{}", gettext("Starting Tau"));
+                debug!("Starting Tau");
 
             // The channel through which all events from Xi are sent from `crate::frontend::TauFrontend` to
             // the MainWin
@@ -238,7 +238,7 @@ fn main() {
     );
 
     application.connect_activate(enclose!((core_opt, new_view_tx) move |_| {
-        debug!("{}", gettext("Activating new view"));
+        debug!("Activating new view");
 
         // It's fine to unwrap here - we already made sure this is Some in connect_startup.
         let core = core_opt.lock().clone().unwrap().unwrap();
@@ -256,7 +256,7 @@ fn main() {
 
     application.connect_open(
         enclose!((core_opt, new_view_tx) move |_,files,_| {
-                debug!("{}", gettext("Opening new file"));
+                debug!("Opening new file");
 
                 // See above for why it's fine to unwrap here.
                 let core = core_opt.lock().clone().unwrap().unwrap();
@@ -284,7 +284,7 @@ fn main() {
     );
 
     application.connect_shutdown(enclose!((runtime_opt)move |_| {
-        debug!("{}", gettext("Shutting down…"));
+        debug!("Shutting down…");
         if let Some(runtime) = runtime_opt.borrow_mut().take() {
             runtime.shutdown_now().wait().unwrap();
         }

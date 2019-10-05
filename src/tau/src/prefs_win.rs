@@ -126,7 +126,7 @@ impl PrefsWin {
             .map(GString::as_str)
             .map(|s| {
                 serde_json::from_str(s)
-                    .map_err(|e| error!("{} {}", gettext("Failed to deserialize syntax config"), e))
+                    .map_err(|e| error!("Failed to deserialize syntax config {}", e))
                     .unwrap()
             })
             .map(|sc: SyntaxParams| (sc.domain.syntax.clone(), sc))
@@ -150,7 +150,7 @@ impl PrefsWin {
             for (i, theme_name) in main_state.themes.iter().enumerate() {
                 theme_combo_box.append_text(theme_name);
                 if &main_state.theme_name == theme_name {
-                    trace!("{}: {}", gettext("Setting active theme"), i);
+                    trace!("Setting active theme number {}; '{}'", i, theme_name);
                     theme_combo_box.set_active(Some(i as u32));
                 }
             }
@@ -168,9 +168,9 @@ impl PrefsWin {
                     syntax_config_combo_box.append_text(lang);
                     if current_syntax == Some(lang) {
                         trace!(
-                            "{}: {}",
-                            gettext("Setting active syntax in config combo box"),
-                            i
+                            "Setting active syntax in config combo box number {}; '{}'",
+                            i,
+                            lang,
                         );
                         syntax_config_combo_box.set_active(Some(i as u32));
                         syntax_config_set_buttons(
@@ -187,7 +187,7 @@ impl PrefsWin {
         theme_combo_box.connect_changed(enclose!((core, main_state, gschema) move |cb|{
             if let Some(theme_name) = cb.get_active_text() {
                 let theme_name = theme_name.to_string();
-                debug!("{} {}", gettext("Theme changed to"), &theme_name);
+                debug!("Theme changed to '{}'", &theme_name);
                 core.set_theme(&theme_name);
 
                 gschema.set_key("theme-name", theme_name.clone()).unwrap();

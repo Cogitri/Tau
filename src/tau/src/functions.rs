@@ -1,5 +1,4 @@
 use editview::Settings;
-use gettextrs::gettext;
 use gio::prelude::*;
 use gschema_config_storage::{GSchema, GSchemaExt};
 use log::error;
@@ -67,11 +66,7 @@ pub fn setup_config(core: &Client) {
     let (font_size, font_name) = if let Some((size, splitted_name)) = font_vec.split_last() {
         (size.parse::<f32>().unwrap_or(14.0), splitted_name.join(" "))
     } else {
-        error!(
-            "{}. {}",
-            gettext("Failed to get font configuration"),
-            gettext("Resetting.")
-        );
+        error!("Failed to get font configuration. Resetting...");
         gschema.settings.reset("font");
         (14.0, "Monospace".to_string())
     };
@@ -98,11 +93,7 @@ pub fn setup_config(core: &Client) {
             tokio::executor::current_thread::block_on_all(core.notify("modify_user_config", val))
                 .unwrap();
         } else {
-            error!(
-                "{}. {}",
-                gettext("Failed to deserialize syntax config"),
-                gettext("Resetting.")
-            );
+            error!("Failed to deserialize syntax config. Resetting...");
             gschema.settings.reset("syntax-config");
         }
     }
