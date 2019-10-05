@@ -28,7 +28,6 @@ src/tau/src/functions.rs
 src/tau/src/globals.rs
 src/tau/src/main.rs
 src/tau/src/main_win.rs
-src/tau/src/panic_handler.rs
 src/tau/src/prefs_win.rs
 src/tau/src/shortcuts_win.rs
 src/tau/src/syntax_config.rs

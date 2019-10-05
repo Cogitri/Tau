@@ -118,7 +118,6 @@ sources = files(
   'src/tau/src/about_win.rs',
   'src/tau/src/prefs_win.rs',
   'src/tau/src/globals.rs',
-  'src/tau/src/panic_handler.rs',
   'src/tau/src/syntax_config.rs',
   'src/tau/src/frontend.rs',
   'src/tau/src/shortcuts_win.rs',

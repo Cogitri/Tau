@@ -75,15 +75,13 @@ mod frontend;
 mod functions;
 mod globals;
 mod main_win;
-//mod panic_handler;
 mod prefs_win;
 mod shortcuts_win;
 mod syntax_config;
 
+use crate::errors::XiClientError;
 use crate::frontend::{TauFrontendBuilder, XiEvent, XiRequest};
 use crate::main_win::MainWin;
-//use crate::panic_handler::PanicHandler;
-use crate::errors::XiClientError;
 use crossbeam_channel::unbounded;
 use futures::stream::Stream;
 use futures::{future, future::Future};
