@@ -30,8 +30,8 @@
         <property name="visible">True</property>
         <child>
           <object class="HdyPreferencesGroup">
-            <property name="title">View</property>
-            <property name="description">Preferences related to the View's look</property>
+            <property name="title" translatable="yes">View</property>
+            <property name="description" translatable="yes">Preferences related to the View’s look</property>
             <property name="visible">True</property>
             <child>
               <object class="HdyPreferencesRow">
@@ -95,11 +95,11 @@
             </child>
             <child>
               <object>
-                <property name="title" translatable="yes">Show Linecount</property>
+                <property name="title" translatable="yes">Show Line Count</property>
                 <property name="visible">True</property>
                 <child>
                   <object class="GtkCheckButton" id="show_linecount_checkbutton">
-                    <property name="label" translatable="yes">Show the linecount in the editing pane</property>
+                    <property name="label" translatable="yes">Show the line count in the editing pane</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
@@ -129,8 +129,8 @@
         </child>
         <child>
           <object class="HdyPreferencesGroup">
-            <property name="title">Theme</property>
-            <property name="description">What theme to use for the editing pane</property>
+            <property name="title" translatable="yes">Theme</property>
+            <property name="description" translatable="yes">What theme to use for the editing pane</property>
             <property name="visible">True</property>
             <child>
               <object class="HdyPreferencesRow">
@@ -153,12 +153,12 @@
     <child>
       <object class="HdyPreferencesPage">
         <property name="icon_name">accessories-text-editor-symbolic</property>
-        <property name="title">Editor</property>
+        <property name="title" translatable="yes">Editor</property>
         <property name="visible">True</property>
         <child>
           <object class="HdyPreferencesGroup">
-            <property name="title">Editor</property>
-            <property name="description">Preferences related to the Editor's behaviour</property>
+            <property name="title" translatable="yes">Editor</property>
+            <property name="description" translatable="yes">Preferences related to the Editor’s behavior</property>
             <property name="visible">True</property>
             <child>
               <object class="HdyPreferencesRow">
@@ -174,7 +174,7 @@
                         <property name="can_focus">True</property>
                         <property name="max_length">4</property>
                         <property name="width_chars">4</property>
-                        <property name="text" translatable="yes">0</property>
+                        <property name="text">0</property>
                         <property name="input_purpose">digits</property>
                         <property name="adjustment">tab_size_spinbutton_adj</property>
                         <property name="climb_rate">2</property>
@@ -510,12 +510,12 @@
   <child>
     <object class="HdyPreferencesPage">
       <property name="icon_name">format-text-italic-symbolic</property>
-      <property name="title">Fonts</property>
+      <property name="title" translatable="yes">Fonts</property>
       <property name="visible">True</property>
       <child>
         <object class="HdyPreferencesGroup">
-          <property name="title">Font</property>
-          <property name="description">What font to use in the editing pnae</property>
+          <property name="title" translatable="yes">Font</property>
+          <property name="description" translatable="yes">What font to use in the editing pane</property>
           <property name="visible">True</property>
           <child>
             <object class="HdyPreferencesRow">
@@ -538,12 +538,12 @@
   <child>
     <object class="HdyPreferencesPage">
       <property name="icon_name">non-starred-symbolic</property>
-      <property name="title">Syntax Configuration</property>
+      <property name="title" translatable="yes">Syntax Configuration</property>
       <property name="visible">True</property>
       <child>
         <object class="HdyPreferencesGroup">
-          <property name="title">Syntax Configuration</property>
-          <property name="description">Specify syntax specific configuration</property>
+          <property name="title" translatable="yes">Syntax Configuration</property>
+          <property name="description" translatable="yes">Specify syntax specific configuration</property>
           <property name="visible">True</property>
           <child>
             <object class="HdyPreferencesRow">
@@ -582,7 +582,7 @@
                       <property name="can_focus">True</property>
                       <property name="max_length">4</property>
                       <property name="width_chars">4</property>
-                      <property name="text" translatable="yes">1</property>
+                      <property name="text">1</property>
                       <property name="input_purpose">digits</property>
                       <property name="adjustment">syntax_tab_size_spinbutton_adj</property>
                       <property name="climb_rate">2</property>

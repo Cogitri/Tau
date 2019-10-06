@@ -6,7 +6,7 @@
 
         <key name="theme-name" type="s">
             <default>"InspiredGitHub"</default>
-            <summary>Xi-Editor's theme</summary>
+            <summary>Xi-Editor’s theme</summary>
             <description>
                 Sets the theme used for the editing area
             </description>
@@ -72,18 +72,18 @@
         <key name="window-height" type="i">
             <default>900</default>
             <range min="150"/>
-            <summary>Sets the height of the window in the next startup</summary>
+            <summary>Sets the height of the window in the next start-up</summary>
         </key>
 
         <key name="window-width" type="i">
             <default>700</default>
             <range min="150"/>
-            <summary>Sets the width of the window in the next startup</summary>
+            <summary>Sets the width of the window in the next start-up</summary>
         </key>
 
         <key name="window-maximized" type="b">
             <default>false</default>
-            <summary>Sets if the window should be maximized during the next startup</summary>
+            <summary>Sets if the window should be maximized during the next start-up</summary>
         </key>
 
         <key name="tab-size" type="u">
@@ -103,12 +103,12 @@
         <key name="use-tab-stops" type="b">
             <default>true</default>
             <summary>Treat indention with spaces like tabs</summary>
-            <description>If translate-tabs-to-spaces is true, backspaces will delete multiple spaces, up to the previous tab stop</description>
+            <description>If “translate-tabs-to-spaces” is true, Backspace will delete multiple spaces, up to the previous tab stop</description>
         </key>
 
         <key name="auto-indent" type="b">
             <default>true</default>
-            <summary>Automatically match document's indention on newlines</summary>
+            <summary>Automatically match document’s indention on newlines</summary>
         </key>
 
         <key name="font" type="s">
@@ -165,7 +165,7 @@
             <default>['{"domain": { "syntax": "Makefile" }, "changes": { "translate_tabs_to_spaces": false} }', '{ "domain": { "syntax": "YAML" }, "changes": { "translate_tabs_to_spaces": true, "tab_size": 2} }']</default>
             <summary>Syntax specific settings</summary>
             <description>
-                A JSON string containing syntax specific settings (e.g. tab-width of 2 for YML)
+                A JSON string containing syntax specific settings (e.g. tab width of 2 for YAML)
             </description>
         </key>
 
@@ -179,9 +179,9 @@
 
         <key name="show-linecount" type="b">
             <default>true</default>
-            <summary>Show linecount</summary>
+            <summary>Show line count</summary>
             <description>
-                Whether or not to show the linecount in the editing pane
+                Whether or not to show the line count in the editing pane
             </description>
         </key>
     </schema>

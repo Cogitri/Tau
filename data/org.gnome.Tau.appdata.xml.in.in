@@ -11,7 +11,7 @@
 
 	<description>
 		<p>
-			Tau is a GTK frontend for the xi text editor written in Rust. It's a very
+			Tau is a GTK frontend for the xi text editor written in Rust. It’s a very
 			fast plain text editor.
 		</p>
 	</description>
@@ -25,7 +25,7 @@
 	</screenshots>
 
 	<url type="homepage">https://gitlab.gnome.org/World/Tau</url>
-	<developer_name>Rasmus "Cogitri" Thomsen</developer_name>
+	<developer_name>Rasmus “Cogitri” Thomsen</developer_name>
 	<update_contact>oss@cogitri.dev</update_contact>
 
 	<provides>

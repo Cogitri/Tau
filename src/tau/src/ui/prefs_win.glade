@@ -135,7 +135,7 @@
                     <property name="can_focus">True</property>
                     <property name="max_length">4</property>
                     <property name="width_chars">4</property>
-                    <property name="text" translatable="yes">0</property>
+                    <property name="text">0</property>
                     <property name="input_purpose">digits</property>
                     <property name="adjustment">tab_size_spinbutton_adj</property>
                     <property name="climb_rate">2</property>
@@ -349,7 +349,7 @@
             </child>
             <child>
               <object class="GtkCheckButton" id="show_linecount_checkbutton">
-                <property name="label" translatable="yes">Show Linecount</property>
+                <property name="label" translatable="yes">Show Line Count</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">False</property>
@@ -604,7 +604,7 @@
                     <property name="can_focus">True</property>
                     <property name="max_length">4</property>
                     <property name="width_chars">4</property>
-                    <property name="text" translatable="yes">1</property>
+                    <property name="text">1</property>
                     <property name="input_purpose">digits</property>
                     <property name="adjustment">syntax_tab_size_spinbutton_adj</property>
                     <property name="climb_rate">2</property>

@@ -134,7 +134,7 @@ impl PrefsWin {
         let syntax_config = Rc::new(RefCell::new(syntax_config));
 
         if !started_plugins.syntect {
-            let gettext_msg = gettext("Couldn't find the xi-syntect-plugin. As such these settings won't work in the current session.");
+            let gettext_msg = gettext("Couldn’t find the xi-syntect-plugin. As such these settings won’t work in the current session.");
             syntect_warn_insert_spaces_image.set_visible(true);
             syntect_warn_insert_spaces_image.set_tooltip_text(Some(&gettext_msg));
 
