@@ -76,12 +76,12 @@ pub mod spaces {
 
     /// Get all spaces in a string from `start_index` to `start_index + length`
     pub fn all_from(text: &str, start_index: u64, length: u64) -> impl Iterator<Item = i32> + '_ {
-        text.chars()
+        text.bytes()
             .skip(start_index as usize)
             .take(length as usize)
             .enumerate()
             .filter_map(move |(num, ch)| {
-                if ch == ' ' {
+                if ch == b' ' {
                     Some((num as u64 + start_index) as i32)
                 } else {
                     None
@@ -139,12 +139,12 @@ pub mod tabs {
 
     /// Get all tabs in a string from `start_index` to `start_index + length`
     pub fn all_from(text: &str, start_index: u64, length: u64) -> impl Iterator<Item = i32> + '_ {
-        text.chars()
+        text.bytes()
             .skip(start_index as usize)
             .take(length as usize)
             .enumerate()
             .filter_map(move |(num, ch)| {
-                if ch == '\t' {
+                if ch == b'\t' {
                     Some((num as u64 + start_index) as i32)
                 } else {
                     None
