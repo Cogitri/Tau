@@ -280,6 +280,7 @@ impl MainWin {
         main_win
             .notebook
             .connect_switch_page(enclose!((main_win) move |_,ev_widget,_| {
+                // adjust headerbar title
                 if let Some(ev) = main_win.w_to_ev.borrow().get(&ev_widget) {
                     if let Some(ref path_string) = &*ev.file_name.borrow() {
                         if let Some(name) = std::path::Path::new(path_string).file_name() {
@@ -295,6 +296,9 @@ impl MainWin {
                         main_win.header_bar.set_title(Some(&gettext("Untitled")));
                     }
                 }
+
+                // stop all searches and close dialogs
+                main_win.views.borrow().values().for_each(|view| view.stop_search());
             }));
 
         main_win
