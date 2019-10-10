@@ -184,14 +184,14 @@
             <property name="vexpand">True</property>
             <child internal-child="accessible">
               <object class="AtkObject" id="edit_area-atkobject">
-                <property name="AtkObject::accessible-role" translatable="yes">Document text</property>
+                <property name="AtkObject::accessible-role">document-text</property>
               </object>
             </child>
           </object>
         </child>
         <child internal-child="accessible">
           <object class="AtkObject" id="ev_scrolled_window-atkobject">
-            <property name="AtkObject::accessible-role" translatable="yes">Text</property>
+            <property name="AtkObject::accessible-role">text</property>
           </object>
         </child>
       </object>
@@ -360,7 +360,7 @@
     </child>
     <child internal-child="accessible">
       <object class="AtkObject" id="ev_root_widget-atkobject">
-        <property name="AtkObject::accessible-role" translatable="yes">Text</property>
+        <property name="AtkObject::accessible-role">text</property>
       </object>
     </child>
   </object>
