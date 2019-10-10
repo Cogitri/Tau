@@ -78,6 +78,7 @@ mod main_win;
 mod prefs_win;
 mod shortcuts_win;
 mod syntax_config;
+mod view_history;
 
 use crate::errors::XiClientError;
 use crate::frontend::{TauFrontendBuilder, XiEvent, XiRequest};

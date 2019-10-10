@@ -5,6 +5,7 @@ use crate::functions;
 use crate::prefs_win::PrefsWin;
 use crate::shortcuts_win::ShortcutsWin;
 use crate::syntax_config::SyntaxParams;
+use crate::view_history::{ViewHistory, ViewHistoryExt};
 use chrono::{DateTime, Utc};
 use editview::{theme::u32_from_color, EditView, MainState};
 use gdk_pixbuf::Pixbuf;
@@ -138,6 +139,8 @@ pub struct MainWin {
     header_bar: HeaderBar,
     /// Whether or not the `MainWin` is saving right now
     saving: RefCell<bool>,
+    /// Tab history
+    view_history: Rc<RefCell<ViewHistory>>,
 }
 
 impl MainWin {
@@ -224,6 +227,8 @@ impl MainWin {
             .map(|sc: SyntaxParams| (sc.domain.syntax.clone(), sc))
             .collect();
 
+        let view_history = ViewHistory::new(&notebook);
+
         let main_win = Rc::new(Self {
             core,
             window,
@@ -233,6 +238,7 @@ impl MainWin {
             properties,
             request_tx,
             header_bar,
+            view_history,
             views: Default::default(),
             w_to_ev: Default::default(),
             view_id_to_w: Default::default(),
@@ -282,6 +288,7 @@ impl MainWin {
             .connect_switch_page(enclose!((main_win) move |_,ev_widget,_| {
                 // adjust headerbar title
                 if let Some(ev) = main_win.w_to_ev.borrow().get(&ev_widget) {
+                    // Update window title
                     if let Some(ref path_string) = &*ev.file_name.borrow() {
                         if let Some(name) = std::path::Path::new(path_string).file_name() {
                             if !*ev.pristine.borrow() {
@@ -300,10 +307,9 @@ impl MainWin {
                 // stop all searches and close dialogs
                 main_win.views.borrow().values().for_each(|view| view.stop_search());
             }));
-
         main_win
             .notebook
-            .connect_page_removed(enclose!((main_win) move |notebook,_,_| {
+            .connect_page_removed(enclose!((main_win) move |notebook, _, _| {
                 // Set a sensible title if no tab is open (and we can't display a
                 // document's name)
                 if notebook.get_n_pages() == 0 {
@@ -535,6 +541,22 @@ impl MainWin {
             }));
             application.add_action(&quit_action);
         }
+        {
+            let cycle_backward_action = SimpleAction::new("cycle_backward", None);
+            cycle_backward_action.connect_activate(enclose!((main_win) move |_,_| {
+                trace!("Handling action: 'cycle-backward'");
+                main_win.view_history.cycle_backward();
+            }));
+            application.add_action(&cycle_backward_action);
+        }
+        {
+            let cycle_forward_action = SimpleAction::new("cycle_forward", None);
+            cycle_forward_action.connect_activate(enclose!((main_win) move |_,_| {
+                trace!("Handling action: 'cycle-forward'");
+                main_win.view_history.cycle_forward();
+            }));
+            application.add_action(&cycle_forward_action);
+        }
 
         // Put keyboard shortcuts here
         application.set_accels_for_action("app.find", &["<Primary>f"]);
@@ -554,6 +576,8 @@ impl MainWin {
             "app.decrease_font_size",
             &["<Primary>minus", "<Primary>KP_Subtract"],
         );
+        application.set_accels_for_action("app.cycle_backward", &["<Primary>Tab"]);
+        application.set_accels_for_action("app.cycle_forward", &["<Primary><Shift>Tab"]);
 
         let main_context = MainContext::default();
 
