@@ -4,7 +4,6 @@
 
 # Tau
 [![Gitlab CI status](https://gitlab.gnome.org/World/Tau/badges/master/pipeline.svg)](https://gitlab.gnome.org/World/Tau/commits/master)
-[![Translation Progress](https://hosted.weblate.org/widgets/Tau/-/translation/svg-badge.svg)](https://hosted.weblate.org/engage/Tau/?utm_source=widget)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/2711/badge)](https://bestpractices.coreinfrastructure.org/projects/2711)
 <a href="https://flathub.org/apps/details/org.gnome.Tau">
 <img src="https://flathub.org/assets/badges/flathub-badge-i-en.png" width="190px" />
@@ -83,7 +82,7 @@ Please see the docs on https://gxi.cogitri.dev/docs to learn more about Tau's in
 
 ### Translating
 
-Visit [Weblate](https://hosted.weblate.org/engage/Tau/) to translate Tau.
+Visit [GNOME's Damned Lies Platform](https://l10n.gnome.org/module/tau/) to translate Tau.
 
 ## Install on different platforms
 

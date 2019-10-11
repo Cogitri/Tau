@@ -9,7 +9,7 @@ The EditView GTK widget, backed by Xi. Below is a screenshot of it being used in
 Please see the docs on https://gxi.cogitri.dev/docs to learn more about Tau's inner workings. 
 [gtk-rs' site](https://gtk-rs.org/) offers documentation and examples about how gtk-rs works.
 
-Visit [Weblate](https://hosted.weblate.org/engage/gxi/) to translate Tau and its components.
+Visit [GNOME's Damned Lies Platform](https://l10n.gnome.org/module/tau/) to translate Tau and its components.
 
 ## Native Dependencies
 	* Cairo >= 1.16
