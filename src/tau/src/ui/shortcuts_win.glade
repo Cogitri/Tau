@@ -40,17 +40,17 @@
                 </child>
                 <child>
                     <object class="GtkShortcutsGroup">
-                        <property name="title" translatable="yes">Navigation</property>
+                        <property name="title" translatable="yes" context="shortcut window">Navigation</property>
                         <child>
                             <object class="GtkShortcutsShortcut">
                                 <property name="accelerator">&lt;ctrl&gt;Tab</property>
-                                <property name="title" translatable="yes">Cycle tab history backward</property>
+                                <property name="title" translatable="yes" context="shortcut window">Cycle tab history backward</property>
                             </object>
                         </child>
                         <child>
                             <object class="GtkShortcutsShortcut">
                                 <property name="accelerator">&lt;ctrl&gt;&lt;shift&gt;Tab</property>
-                                <property name="title" translatable="yes">Cycle tab history forward</property>
+                                <property name="title" translatable="yes" context="shortcut window">Cycle tab history forward</property>
                             </object>
                         </child>
                     </object>
