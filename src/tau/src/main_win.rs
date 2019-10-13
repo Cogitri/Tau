@@ -8,6 +8,7 @@ use crate::syntax_config::SyntaxParams;
 use crate::view_history::{ViewHistory, ViewHistoryExt};
 use chrono::{DateTime, Utc};
 use editview::{theme::u32_from_color, EditView, MainState};
+use gdk::{enums::key, ModifierType};
 use gdk_pixbuf::Pixbuf;
 use gettextrs::gettext;
 use gio::{ActionMapExt, ApplicationExt, Resource, SettingsExt, SimpleAction};
@@ -489,22 +490,6 @@ impl MainWin {
             application.add_action(&shortcuts_action);
         }
         {
-            let find_prev_action = SimpleAction::new("find_prev", None);
-            find_prev_action.connect_activate(enclose!((main_win) move |_,_| {
-                trace!("Handling action: 'find_prev'");
-                main_win.find_prev();
-            }));
-            application.add_action(&find_prev_action);
-        }
-        {
-            let find_next_action = SimpleAction::new("find_next", None);
-            find_next_action.connect_activate(enclose!((main_win) move |_,_| {
-                trace!("Handling action: 'find_next'");
-                main_win.find_next();
-            }));
-            application.add_action(&find_next_action);
-        }
-        {
             let increase_font_size_action = SimpleAction::new("increase_font_size", None);
             increase_font_size_action.connect_activate(enclose!((gschema) move |_,_| {
                 let font: String = gschema.get_key("font");
@@ -566,8 +551,6 @@ impl MainWin {
         application.set_accels_for_action("app.quit", &["<Primary>q"]);
         application.set_accels_for_action("app.replace", &["<Primary>r"]);
         application.set_accels_for_action("app.close", &["<Primary>w"]);
-        application.set_accels_for_action("app.find_next", &["<Primary>g"]);
-        application.set_accels_for_action("app.find_prev", &["<Primary><Shift>g"]);
         application.set_accels_for_action(
             "app.increase_font_size",
             &["<Primary>plus", "<Primary>KP_Add"],
@@ -578,6 +561,32 @@ impl MainWin {
         );
         application.set_accels_for_action("app.cycle_backward", &["<Primary>Tab"]);
         application.set_accels_for_action("app.cycle_forward", &["<Primary><Shift>Tab"]);
+
+        main_win
+            .window
+            .connect_key_press_event(enclose!((main_win) move |_, ek| {
+                let key_val = ek.get_keyval();
+                let ctrl = ek.get_state().contains(ModifierType::CONTROL_MASK);
+
+                if let Some(edit_view) = main_win.get_current_edit_view() {
+                    match key_val {
+                        key::Return | key::KP_Enter if ctrl => {
+                            Inhibit(edit_view.find_all())
+                        },
+                        key::g if ctrl => {
+                            Inhibit(edit_view.find_next())
+                        },
+                        key::G if ctrl => {
+                            Inhibit(edit_view.find_prev())
+                        },
+                        _ => {
+                            Inhibit(false)
+                        }
+                    }
+                } else {
+                    Inhibit(false)
+                }
+            }));
 
         let main_context = MainContext::default();
 
@@ -931,18 +940,6 @@ impl MainWin {
     fn find(&self) {
         if let Some(edit_view) = self.get_current_edit_view() {
             edit_view.start_search();
-        }
-    }
-
-    fn find_prev(&self) {
-        if let Some(edit_view) = self.get_current_edit_view() {
-            edit_view.find_prev();
-        }
-    }
-
-    fn find_next(&self) {
-        if let Some(edit_view) = self.get_current_edit_view() {
-            edit_view.find_next();
         }
     }
 

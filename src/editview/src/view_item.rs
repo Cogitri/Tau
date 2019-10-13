@@ -397,6 +397,7 @@ pub struct FindReplace {
     pub search_entry: SearchEntry,
     pub go_down_button: Button,
     pub go_up_button: Button,
+    pub find_all_button: Button,
     pub popover: Popover,
     pub show_replace_button: ToggleButton,
     pub show_options_button: ToggleButton,
@@ -420,6 +421,7 @@ impl FindReplace {
         let search_entry = builder.get_object("search_entry").unwrap();
         let go_down_button = builder.get_object("go_down_button").unwrap();
         let go_up_button = builder.get_object("go_up_button").unwrap();
+        let find_all_button = builder.get_object("find_all_button").unwrap();
         let use_regex_button = builder.get_object("use_regex_button").unwrap();
         let case_sensitive_button = builder.get_object("case_sensitive_button").unwrap();
         let whole_word_button = builder.get_object("whole_word_button").unwrap();
@@ -439,6 +441,7 @@ impl FindReplace {
             search_entry,
             go_down_button,
             go_up_button,
+            find_all_button,
             use_regex_button,
             popover,
             show_replace_button,
@@ -563,5 +566,10 @@ impl FindReplace {
         self.go_up_button.connect_clicked(enclose!((ev) move |_| {
             ev.find_prev();
         }));
+
+        self.find_all_button
+            .connect_clicked(enclose!((ev) move |_| {
+                ev.find_all();
+            }));
     }
 }

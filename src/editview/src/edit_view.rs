@@ -1421,21 +1421,49 @@ impl EditView {
     }
 
     /// Go to the next match in the find/replace dialog
-    pub fn find_next(&self) {
+    ///
+    /// #Returns
+    ///
+    /// Returns `true` if search mode is activated, `false` otherwise
+    pub fn find_next(&self) -> bool {
         if self.find_replace.search_bar.get_search_mode() {
             self.core
                 .find_next(self.view_id, true, true, xrl::ModifySelection::Set);
             self.do_copy_primary();
+            true
+        } else {
+            false
         }
     }
 
     /// Go the to previous match in the find/replace dialog
-    pub fn find_prev(&self) {
+    ///
+    /// #Returns
+    ///
+    /// Returns `true` if search mode is activated, `false` otherwise
+    pub fn find_prev(&self) -> bool {
         if self.find_replace.search_bar.get_search_mode() {
             self.core
                 .find_prev(self.view_id, true, true, xrl::ModifySelection::Set);
             self.do_copy_primary();
+            true
+        } else {
+            false
         }
+    }
+
+    /// Select all matches of the search
+    ///
+    /// #Returns
+    ///
+    /// Returns `true` if search mode is activated, `false` otherwise
+    pub fn find_all(&self) -> bool {
+        if self.find_replace.search_bar.get_search_mode() {
+            self.core.find_all(self.view_id);
+            self.do_copy_primary();
+            return true;
+        }
+        false
     }
 
     /// Tells xi-editor that we're searching for a different string (or none) now

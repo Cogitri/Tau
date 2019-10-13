@@ -75,6 +75,26 @@
                   </packing>
                 </child>
                 <child>
+                  <object class="GtkButton" id="find_all_button">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">False</property>
+                    <property name="tooltip_text" translatable="yes">Find and select all search matches</property>
+                    <child>
+                      <object class="GtkImage">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="icon_name">edit-find-symbolic</property>
+                        <property name="icon_size">1</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="left_attach">3</property>
+                    <property name="top_attach">0</property>
+                  </packing>
+                </child>
+                <child>
                   <object class="GtkToggleButton" id="show_replace_button">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
@@ -90,7 +110,7 @@
                     </child>
                   </object>
                   <packing>
-                    <property name="left_attach">3</property>
+                    <property name="left_attach">4</property>
                     <property name="top_attach">0</property>
                   </packing>
                 </child>
@@ -110,7 +130,7 @@
                     </child>
                   </object>
                   <packing>
-                    <property name="left_attach">4</property>
+                    <property name="left_attach">5</property>
                     <property name="top_attach">0</property>
                   </packing>
                 </child>
