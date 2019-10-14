@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tau\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Tau/issues\n"
-"POT-Creation-Date: 2019-10-10 13:35+0000\n"
-"PO-Revision-Date: 2019-10-10 15:42+0200\n"
+"POT-Creation-Date: 2019-10-13 12:14+0000\n"
+"PO-Revision-Date: 2019-10-14 16:10+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -285,37 +285,41 @@ msgid "Find"
 msgstr "Wyszukiwanie"
 
 #: src/editview/src/ui/find_replace.glade:82
+msgid "Find and select all search matches"
+msgstr "Wyszukuje i zaznacza wszystkie wyniki"
+
+#: src/editview/src/ui/find_replace.glade:102
 msgid "Switch between Search and Search-and-Replace"
 msgstr "Przełącza między wyszukiwaniem a wyszukiwaniem i zastępowaniem"
 
-#: src/editview/src/ui/find_replace.glade:103
+#: src/editview/src/ui/find_replace.glade:123
 msgid "Show or hide search options such as case sensitivity"
 msgstr ""
 "Wyświetla lub ukrywa opcje wyszukiwania, takie jak rozróżnianie wielkości "
 "znaków"
 
-#: src/editview/src/ui/find_replace.glade:140
-#: src/editview/src/ui/find_replace.glade:150
+#: src/editview/src/ui/find_replace.glade:160
+#: src/editview/src/ui/find_replace.glade:170
 msgid "Replace"
 msgstr "Zastąp"
 
-#: src/editview/src/ui/find_replace.glade:162
+#: src/editview/src/ui/find_replace.glade:182
 msgid "Replace All"
 msgstr "Zastąp wszystko"
 
-#: src/editview/src/ui/find_replace.glade:191
+#: src/editview/src/ui/find_replace.glade:211
 msgid "Regular expressions"
 msgstr "Wyrażenia regularne"
 
-#: src/editview/src/ui/find_replace.glade:206
+#: src/editview/src/ui/find_replace.glade:226
 msgid "Case sensitive"
 msgstr "Rozróżnianie małych i wielkich liter"
 
-#: src/editview/src/ui/find_replace.glade:220
+#: src/editview/src/ui/find_replace.glade:240
 msgid "Match whole word only"
 msgstr "Tylko całe wyrazy"
 
-#: src/editview/src/ui/find_replace.glade:245
+#: src/editview/src/ui/find_replace.glade:265
 msgid "No Results"
 msgstr "Brak wyników"
 
@@ -385,6 +389,11 @@ msgid "Find the previous match"
 msgstr "Wyszukanie poprzedniego wyniku"
 
 #: src/tau/src/ui/shortcuts_win.glade:88
+msgctxt "shortcut window"
+msgid "Find all matches"
+msgstr "Wyszukanie wszystkich wyników"
+
+#: src/tau/src/ui/shortcuts_win.glade:94
 msgctxt "shortcut window"
 msgid "Go to line"
 msgstr "Przejście do wiersza"
@@ -596,18 +605,18 @@ msgstr "Skróty klawiszowe"
 msgid "About Tau"
 msgstr "O programie"
 
-#: src/tau/src/ui/tau.glade:188 src/tau/src/main_win.rs:1428
+#: src/tau/src/ui/tau.glade:188 src/tau/src/main_win.rs:1425
 msgid "Open"
 msgstr "Otwórz"
 
-#: src/tau/src/ui/tau.glade:229 src/tau/src/main_win.rs:1159
-#: src/tau/src/main_win.rs:1544
+#: src/tau/src/ui/tau.glade:229 src/tau/src/main_win.rs:1156
+#: src/tau/src/main_win.rs:1541
 msgid "Save"
 msgstr "Zapisz"
 
 #: src/editview/src/edit_view.rs:176 src/editview/src/edit_view.rs:178
-#: src/tau/src/main_win.rs:301 src/tau/src/main_win.rs:303
-#: src/tau/src/main_win.rs:596 src/tau/src/main_win.rs:763
+#: src/tau/src/main_win.rs:302 src/tau/src/main_win.rs:304
+#: src/tau/src/main_win.rs:605 src/tau/src/main_win.rs:772
 msgid "Untitled"
 msgstr "Bez tytułu"
 
@@ -620,7 +629,7 @@ msgid "Column"
 msgstr "Kolumna"
 
 #. We localized it ourselves, so we have to turn it into English again when sending it to Xi
-#: src/editview/src/edit_view.rs:1483 src/editview/src/view_item.rs:217
+#: src/editview/src/edit_view.rs:1511 src/editview/src/view_item.rs:217
 #: src/editview/src/view_item.rs:332
 msgid "Plain Text"
 msgstr "Zwykły tekst"
@@ -643,7 +652,7 @@ msgstr "Uruchamia nowe wystąpienie programu"
 msgid "Failed to open new view due to error"
 msgstr "Otwarcie nowego widoku się nie powiodło z powodu błędu"
 
-#: src/tau/src/main_win.rs:1003 src/tau/src/main_win.rs:1011
+#: src/tau/src/main_win.rs:1000 src/tau/src/main_win.rs:1008
 msgid ""
 "Couldn’t get Documents directory to autosave unnamed file. Please make sure "
 "“XDG_DATA_DIR” or similiar is set."
@@ -651,32 +660,32 @@ msgstr ""
 "Nie można uzyskać katalogu Dokumenty, aby automatycznie zapisać plik bez "
 "nazwy. Proszę się upewnić, że ustawiono zmienną „XDG_DATA_DIR” lub podobną."
 
-#: src/tau/src/main_win.rs:1148
+#: src/tau/src/main_win.rs:1145
 msgid "Save unsaved changes"
 msgstr "Zapis niezapisanych zmian"
 
-#: src/tau/src/main_win.rs:1151
+#: src/tau/src/main_win.rs:1148
 msgid "Close Without Saving"
 msgstr "Zamknij bez zapisywania"
 
-#: src/tau/src/main_win.rs:1155 src/tau/src/main_win.rs:1429
-#: src/tau/src/main_win.rs:1545
+#: src/tau/src/main_win.rs:1152 src/tau/src/main_win.rs:1426
+#: src/tau/src/main_win.rs:1542
 msgid "Cancel"
 msgstr "Anuluj"
 
-#: src/tau/src/main_win.rs:1425
+#: src/tau/src/main_win.rs:1422
 msgid "Open a file to edit"
 msgstr "Otwarcie pliku do modyfikacji"
 
-#: src/tau/src/main_win.rs:1446
+#: src/tau/src/main_win.rs:1443
 msgid "Couldn’t open file"
 msgstr "Nie można otworzyć pliku"
 
-#: src/tau/src/main_win.rs:1541
+#: src/tau/src/main_win.rs:1538
 msgid "Save file"
 msgstr "Zapis pliku"
 
-#: src/tau/src/main_win.rs:1568
+#: src/tau/src/main_win.rs:1565
 msgid "Couldn’t save file"
 msgstr "Nie można zapisać pliku"
 
