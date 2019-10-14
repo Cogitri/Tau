@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tau\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Tau/issues\n"
-"POT-Creation-Date: 2019-10-10 13:01+0000\n"
-"PO-Revision-Date: 2019-10-10 15:24+0200\n"
+"POT-Creation-Date: 2019-10-13 12:14+0000\n"
+"PO-Revision-Date: 2019-10-14 08:55+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Spanish - Spain <gnome-es-list@gnome.org>\n"
 "Language: es_ES\n"
@@ -283,37 +283,41 @@ msgid "Find"
 msgstr "Buscar"
 
 #: src/editview/src/ui/find_replace.glade:82
+msgid "Find and select all search matches"
+msgstr "Buscar y seleccionar todas las coincidencias"
+
+#: src/editview/src/ui/find_replace.glade:102
 msgid "Switch between Search and Search-and-Replace"
 msgstr "Cambiar entre Buscar y Buscar y reemplazar"
 
-#: src/editview/src/ui/find_replace.glade:103
+#: src/editview/src/ui/find_replace.glade:123
 msgid "Show or hide search options such as case sensitivity"
 msgstr ""
 "Mostrar u ocultar opciones de búsqueda tales como la distinción de "
 "mayúsculas/minúsculas"
 
-#: src/editview/src/ui/find_replace.glade:140
-#: src/editview/src/ui/find_replace.glade:150
+#: src/editview/src/ui/find_replace.glade:160
+#: src/editview/src/ui/find_replace.glade:170
 msgid "Replace"
 msgstr "Reemplazar"
 
-#: src/editview/src/ui/find_replace.glade:162
+#: src/editview/src/ui/find_replace.glade:182
 msgid "Replace All"
 msgstr "Reemplazar todo"
 
-#: src/editview/src/ui/find_replace.glade:191
+#: src/editview/src/ui/find_replace.glade:211
 msgid "Regular expressions"
 msgstr "Expresiones regulares"
 
-#: src/editview/src/ui/find_replace.glade:206
+#: src/editview/src/ui/find_replace.glade:226
 msgid "Case sensitive"
 msgstr "Distinguir mayúsculas y minúsculas"
 
-#: src/editview/src/ui/find_replace.glade:220
+#: src/editview/src/ui/find_replace.glade:240
 msgid "Match whole word only"
 msgstr "Encontrar solo palabras completas"
 
-#: src/editview/src/ui/find_replace.glade:245
+#: src/editview/src/ui/find_replace.glade:265
 msgid "No Results"
 msgstr "No hay resultados"
 
@@ -343,17 +347,22 @@ msgid "Close the document"
 msgstr "Cerrar el documento"
 
 #: src/tau/src/ui/shortcuts_win.glade:43
-#| msgid "action"
+#| msgid "Navigation"
+msgctxt "shortcut window"
 msgid "Navigation"
 msgstr "Navegación"
 
 #: src/tau/src/ui/shortcuts_win.glade:47
+#| msgid "Cycle tab history backward"
+msgctxt "shortcut window"
 msgid "Cycle tab history backward"
-msgstr "Ir hacia atrás en el histórico de pestañas"
+msgstr "Moverse cíclicamente el histórico de pestañas hacia atrás"
 
 #: src/tau/src/ui/shortcuts_win.glade:53
+#| msgid "Cycle tab history forward"
+msgctxt "shortcut window"
 msgid "Cycle tab history forward"
-msgstr "Ir hacia adelante en el histórico de pestañas"
+msgstr "Moverse cíclicamente el histórico de pestañas hacia adelante"
 
 #: src/tau/src/ui/shortcuts_win.glade:60
 msgctxt "shortcut window"
@@ -381,6 +390,13 @@ msgid "Find the previous match"
 msgstr "Buscar la coincidencia anterior"
 
 #: src/tau/src/ui/shortcuts_win.glade:88
+#| msgctxt "shortcut window"
+#| msgid "Find the next match"
+msgctxt "shortcut window"
+msgid "Find all matches"
+msgstr "Buscar todas las coincidencias"
+
+#: src/tau/src/ui/shortcuts_win.glade:94
 msgctxt "shortcut window"
 msgid "Go to line"
 msgstr "Ir a la línea"
@@ -592,18 +608,18 @@ msgstr "Atajos del teclado"
 msgid "About Tau"
 msgstr "Acerca de Tau"
 
-#: src/tau/src/ui/tau.glade:188 src/tau/src/main_win.rs:1428
+#: src/tau/src/ui/tau.glade:188 src/tau/src/main_win.rs:1425
 msgid "Open"
 msgstr "Abrir"
 
-#: src/tau/src/ui/tau.glade:229 src/tau/src/main_win.rs:1159
-#: src/tau/src/main_win.rs:1544
+#: src/tau/src/ui/tau.glade:229 src/tau/src/main_win.rs:1156
+#: src/tau/src/main_win.rs:1541
 msgid "Save"
 msgstr "Guardar"
 
 #: src/editview/src/edit_view.rs:176 src/editview/src/edit_view.rs:178
-#: src/tau/src/main_win.rs:301 src/tau/src/main_win.rs:303
-#: src/tau/src/main_win.rs:596 src/tau/src/main_win.rs:763
+#: src/tau/src/main_win.rs:302 src/tau/src/main_win.rs:304
+#: src/tau/src/main_win.rs:605 src/tau/src/main_win.rs:772
 msgid "Untitled"
 msgstr "Sin título"
 
@@ -616,7 +632,7 @@ msgid "Column"
 msgstr "Columna"
 
 #. We localized it ourselves, so we have to turn it into English again when sending it to Xi
-#: src/editview/src/edit_view.rs:1483 src/editview/src/view_item.rs:217
+#: src/editview/src/edit_view.rs:1511 src/editview/src/view_item.rs:217
 #: src/editview/src/view_item.rs:332
 msgid "Plain Text"
 msgstr "Texto sin formato"
@@ -639,7 +655,7 @@ msgstr "Iniciar una instancia nueva de la aplicación"
 msgid "Failed to open new view due to error"
 msgstr "Falló al abrir la vista nueva debido a un error"
 
-#: src/tau/src/main_win.rs:1003 src/tau/src/main_win.rs:1011
+#: src/tau/src/main_win.rs:1000 src/tau/src/main_win.rs:1008
 msgid ""
 "Couldn’t get Documents directory to autosave unnamed file. Please make sure "
 "“XDG_DATA_DIR” or similiar is set."
@@ -648,32 +664,32 @@ msgstr ""
 "archivo sin nombre. Asegúrese de que se ha configurado «XDG_DATA_DIR» o "
 "similar."
 
-#: src/tau/src/main_win.rs:1148
+#: src/tau/src/main_win.rs:1145
 msgid "Save unsaved changes"
 msgstr "Guardar cambios no guardados"
 
-#: src/tau/src/main_win.rs:1151
+#: src/tau/src/main_win.rs:1148
 msgid "Close Without Saving"
 msgstr "Cerrar sin guardar"
 
-#: src/tau/src/main_win.rs:1155 src/tau/src/main_win.rs:1429
-#: src/tau/src/main_win.rs:1545
+#: src/tau/src/main_win.rs:1152 src/tau/src/main_win.rs:1426
+#: src/tau/src/main_win.rs:1542
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: src/tau/src/main_win.rs:1425
+#: src/tau/src/main_win.rs:1422
 msgid "Open a file to edit"
 msgstr "Abrir un archivo para editarlo"
 
-#: src/tau/src/main_win.rs:1446
+#: src/tau/src/main_win.rs:1443
 msgid "Couldn’t open file"
 msgstr "No se pudo abrir el archivo"
 
-#: src/tau/src/main_win.rs:1541
+#: src/tau/src/main_win.rs:1538
 msgid "Save file"
 msgstr "Guardar archivo"
 
-#: src/tau/src/main_win.rs:1568
+#: src/tau/src/main_win.rs:1565
 msgid "Couldn’t save file"
 msgstr "No se pudo guardar el archivo"
 
