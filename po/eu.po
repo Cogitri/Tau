@@ -1,0 +1,674 @@
+# Basque translation for tau.
+# Copyright (C) 2019 tau's COPYRIGHT HOLDER
+# This file is distributed under the same license as the tau package.
+# Asier Sarasua Garmendia <asier.sarasua@gmail.com>, 2019.
+#
+msgid ""
+msgstr "Project-Id-Version: tau master\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Tau/issues\n"
+"POT-Creation-Date: 2019-10-14 14:15+0000\n"
+"PO-Revision-Date: 2019-10-18 10:00+0100\n"
+"Last-Translator: Asier Sarasua Garmendia <asier.sarasua@gmail.com>\n"
+"Language-Team: Basque <librezale@librezale.eus>\n"
+"Language: eu\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: data/org.gnome.Tau.appdata.xml.in.in:7 data/org.gnome.Tau.desktop.in.in:3
+msgid "Tau"
+msgstr "Tau"
+
+#: data/org.gnome.Tau.appdata.xml.in.in:8
+msgid "GTK frontend for the xi text editor"
+msgstr "GTK interfaze grafikoa xi testu-editorerako"
+
+#: data/org.gnome.Tau.appdata.xml.in.in:13
+msgid ""
+"Tau is a GTK frontend for the xi text editor written in Rust. It’s a very "
+"fast plain text editor."
+msgstr "Tau Rust lengoaian idatzitako interfaze grafiko bat da, xi testu-editorea erabiltzeko. Testu soilen editore azkarra da."
+
+#: data/org.gnome.Tau.appdata.xml.in.in:28
+msgid "Rasmus “Cogitri” Thomsen"
+msgstr "Rasmus “Cogitri” Thomsen"
+
+#: data/org.gnome.Tau.desktop.in.in:5
+msgid "The Tau text editor"
+msgstr "Tau testu-editorea"
+
+#. Translators: Search terms to find this application. Do NOT translate or localize the semicolons! The list MUST also end with a semicolon!
+#: data/org.gnome.Tau.desktop.in.in:15
+msgid "Text;Editor;Plaintext;Write;gxi;"
+msgstr "testua;editorea,testu soila;idatzi;gxi;"
+
+#: data/org.gnome.Tau.desktop.in.in:18
+msgid "Launch a new Tau instance"
+msgstr "Abiarazi Tau instantzia berria"
+
+#: data/org.gnome.Tau.gschema.xml:9
+msgid "Xi-Editor’s theme"
+msgstr "Xi-editorearen gaia"
+
+#: data/org.gnome.Tau.gschema.xml:10
+msgid "Sets the theme used for the editing area"
+msgstr "Edizio-areak izango duen gaia ezartzen du"
+
+#: data/org.gnome.Tau.gschema.xml:17
+msgid "Draw trailing spaces"
+msgstr "Marraztu amaierako zuriuneak"
+
+#: data/org.gnome.Tau.gschema.xml:18
+msgid "Draw spaces which are at the end of a line"
+msgstr "Marraztu lerroaren amaieran dauden zuriuneak"
+
+#: data/org.gnome.Tau.gschema.xml:25
+msgid "Draw leading spaces"
+msgstr "Marraztu hasierako zuriuneak"
+
+#: data/org.gnome.Tau.gschema.xml:26
+msgid "Draw spaces which are at the beginning of a line"
+msgstr "Marraztu lerroaren hasieran dauden zuriuneak"
+
+#: data/org.gnome.Tau.gschema.xml:33
+msgid "Draw selected spaces"
+msgstr "Marraztu zuriune hautatuak"
+
+#: data/org.gnome.Tau.gschema.xml:34
+msgid "Draw spaces whenever they are selected"
+msgstr "Marraztu zuriuneak hautatuta badaude"
+
+#: data/org.gnome.Tau.gschema.xml:41
+msgid "Draw all spaces"
+msgstr "Marraztu zuriune guztiak"
+
+#: data/org.gnome.Tau.gschema.xml:42
+msgid "Draw spaces, no matter the position"
+msgstr "Marraztu zuriuneak haien posizioa kontuan hartu gabe"
+
+#: data/org.gnome.Tau.gschema.xml:49
+msgid "Draw a right hand margin"
+msgstr "Marraztu eskuineko marjina"
+
+#: data/org.gnome.Tau.gschema.xml:50
+msgid "Draw a right hand margin to limit the text width"
+msgstr "Marraztu eskuineko marjina testu-zabalera mugatzeko"
+
+#: data/org.gnome.Tau.gschema.xml:58
+msgid "At what column to display the margin"
+msgstr "Zein zutabetan bistaratuko den marjina"
+
+#: data/org.gnome.Tau.gschema.xml:59
+msgid "Sets the column at which the margin should be drawn"
+msgstr "Marjina zein zutabetan marraztuko den ezartzen du"
+
+#: data/org.gnome.Tau.gschema.xml:66
+msgid "Whether the current line should be highlighted"
+msgstr "Uneko lerroa nabarmenduko den ala ez"
+
+#: data/org.gnome.Tau.gschema.xml:67
+msgid ""
+"Sets if the current line should be highlighted, which eases navigation "
+"through the document"
+msgstr "Uneko lerroa nabarmendu behar den ala ez ezartzen du; horrek dokumentu barneko nabigazioa errazten du"
+
+#: data/org.gnome.Tau.gschema.xml:75
+msgid "Sets the height of the window in the next start-up"
+msgstr "Hurrengo abioan leihoak izango duen altuera ezartzen du"
+
+#: data/org.gnome.Tau.gschema.xml:81
+msgid "Sets the width of the window in the next start-up"
+msgstr "Hurrengo abioan leihoak izango duen zabalera ezartzen du"
+
+#: data/org.gnome.Tau.gschema.xml:86
+msgid "Sets if the window should be maximized during the next start-up"
+msgstr "Hurrengo abioan leihoa maximizatuta agertuko den ala ez ezartzen du"
+
+#: data/org.gnome.Tau.gschema.xml:92 src/editview/src/ui/ev.glade:75
+#: src/tau/src/ui/prefs_win.glade:154 src/tau/src/ui/prefs_win.glade:593
+#: src/tau/src/ui/prefs_win_handy.glade:193
+#: src/tau/src/ui/prefs_win_handy.glade:571
+msgid "Tab size"
+msgstr "Fitxa-tamaina"
+
+#: data/org.gnome.Tau.gschema.xml:93
+msgid "Amount of spaces that a tab is wide"
+msgstr "Tabuladore baten zabalerak dituen zuriune kopurua"
+
+#: data/org.gnome.Tau.gschema.xml:99 src/editview/src/ui/ev.glade:36
+#: src/tau/src/ui/prefs_win.glade:304 src/tau/src/ui/prefs_win.glade:648
+#: src/tau/src/ui/prefs_win_handy.glade:218
+#: src/tau/src/ui/prefs_win_handy.glade:626
+msgid "Insert spaces instead of tabs"
+msgstr "Txertatu zuriuneak tabuladoreen ordez"
+
+#: data/org.gnome.Tau.gschema.xml:100
+msgid "Whether spaces should be inserted instead of tabs"
+msgstr "Tabuladoreen ordez zuriuneak txertatuko diren ala ez"
+
+#: data/org.gnome.Tau.gschema.xml:105
+msgid "Treat indention with spaces like tabs"
+msgstr ""
+
+#: data/org.gnome.Tau.gschema.xml:106
+msgid ""
+"If “translate-tabs-to-spaces” is true, Backspace will delete multiple "
+"spaces, up to the previous tab stop"
+msgstr ""
+
+#: data/org.gnome.Tau.gschema.xml:111
+msgid "Automatically match document’s indention on newlines"
+msgstr ""
+
+#: data/org.gnome.Tau.gschema.xml:116
+msgid "The font used for editing"
+msgstr "Ediziorako erabiliko den letra-tipoa"
+
+#: data/org.gnome.Tau.gschema.xml:121 src/tau/src/ui/prefs_win.glade:189
+#: src/tau/src/ui/prefs_win_handy.glade:118
+msgid "Wrap lines at the end of the document"
+msgstr "Egokitu lerroak dokumentuaren amaieran"
+
+#: data/org.gnome.Tau.gschema.xml:126
+msgid "Draw trailing tabs"
+msgstr "Marraztu amaierako tabuladoreak"
+
+#: data/org.gnome.Tau.gschema.xml:127
+msgid "Draw tabs which are at the end of a line"
+msgstr "Marraztu lerroaren amaieran dauden tabuladoreak"
+
+#: data/org.gnome.Tau.gschema.xml:134
+msgid "Draw leading tabs"
+msgstr "Marraztu hasierako tabuladoreak"
+
+#: data/org.gnome.Tau.gschema.xml:135
+msgid "Draw tabs which are at the beginning of a line"
+msgstr "Marraztu lerroaren hasieran dauden tabuladoreak"
+
+#: data/org.gnome.Tau.gschema.xml:142
+msgid "Draw selected tabs"
+msgstr "Marraztu hautatutako tabuladoreak"
+
+#: data/org.gnome.Tau.gschema.xml:143
+msgid "Draw tabs whenever they are selected"
+msgstr "Marraztu tabuladoreak hautatuta badaude"
+
+#: data/org.gnome.Tau.gschema.xml:150
+msgid "Draw all tabs"
+msgstr "Marraztu tabuladore guztiak"
+
+#: data/org.gnome.Tau.gschema.xml:151
+msgid "Draw all tabs, no matter the position"
+msgstr "Marraztu tabuladore guztiak haien posizioa kontuan hartu gabe"
+
+#: data/org.gnome.Tau.gschema.xml:158
+msgid "Draw the cursor"
+msgstr "Marraztu kurtsorea"
+
+#: data/org.gnome.Tau.gschema.xml:159
+msgid "Whether to draw the cursor"
+msgstr "Kurtsorea marraztuko den ala ez"
+
+#: data/org.gnome.Tau.gschema.xml:166
+msgid "Syntax specific settings"
+msgstr "Sintaxiarenak diren ezarpenak"
+
+#: data/org.gnome.Tau.gschema.xml:167
+msgid ""
+"A JSON string containing syntax specific settings (e.g. tab width of 2 for "
+"YAML)"
+msgstr "Sintaxiarenak diren ezarpenak dituen JSON kate bat (adibidez, 2 unitateko tabulazio-zabalera YAML sintaxirako)"
+
+#: data/org.gnome.Tau.gschema.xml:174
+msgid "Save when Tau moves out of focus"
+msgstr "Gorde Tau fokutik irteten denean"
+
+#: data/org.gnome.Tau.gschema.xml:175
+msgid "Automatically save all open files when Tau moves out of focus"
+msgstr "Automatikoki gorde irekitako fitxategi guztiak Tau fokutik irteten denean"
+
+#: data/org.gnome.Tau.gschema.xml:182
+msgid "Show line count"
+msgstr "Erakutsi lerro-zenbaketa"
+
+#: data/org.gnome.Tau.gschema.xml:183
+msgid "Whether or not to show the line count in the editing pane"
+msgstr "Edizio-panelean lerroen zenbaketa erakutsi den ala ez"
+
+#: src/editview/src/ui/context_menu.glade:6
+msgid "Cut"
+msgstr "Ebaki"
+
+#: src/editview/src/ui/context_menu.glade:10
+msgid "Copy"
+msgstr "Kopiatu"
+
+#: src/editview/src/ui/context_menu.glade:14
+msgid "Paste"
+msgstr "Itsatsi"
+
+#: src/editview/src/ui/context_menu.glade:20
+msgid "Undo"
+msgstr "Desegin"
+
+#: src/editview/src/ui/context_menu.glade:24
+msgid "Redo"
+msgstr "Berregin"
+
+#: src/editview/src/ui/context_menu.glade:30
+msgid "Select All"
+msgstr "Hautatu dena"
+
+#: src/editview/src/ui/ev.glade:21 src/tau/src/ui/prefs_win.glade:266
+#: src/tau/src/ui/prefs_win_handy.glade:257
+msgid "Enable automatic indention"
+msgstr "Gaitu koskatze automatikoa"
+
+#: src/editview/src/ui/find_replace.glade:32
+msgid "Find"
+msgstr "Bilatu"
+
+#: src/editview/src/ui/find_replace.glade:82
+msgid "Find and select all search matches"
+msgstr "Bilatu eta hautatu bat etortze guztiak"
+
+#: src/editview/src/ui/find_replace.glade:102
+msgid "Switch between Search and Search-and-Replace"
+msgstr "Txandakatu bilatzeko modua eta bilatu eta ordezteko modua"
+
+#: src/editview/src/ui/find_replace.glade:123
+msgid "Show or hide search options such as case sensitivity"
+msgstr "Erakutsi edo ezkutatu bilaketa-aukerak, adibidez maiuskulen/minuskulen bereizketa"
+
+#: src/editview/src/ui/find_replace.glade:160
+#: src/editview/src/ui/find_replace.glade:170
+msgid "Replace"
+msgstr "Ordeztu"
+
+#: src/editview/src/ui/find_replace.glade:182
+msgid "Replace All"
+msgstr "Ordeztu denak"
+
+#: src/editview/src/ui/find_replace.glade:211
+msgid "Regular expressions"
+msgstr "Adierazpen erregularrak"
+
+#: src/editview/src/ui/find_replace.glade:226
+msgid "Case sensitive"
+msgstr "Maiuskulak/minuskulak"
+
+#: src/editview/src/ui/find_replace.glade:240
+msgid "Match whole word only"
+msgstr "Bat etorri hitz osoarekin soilik"
+
+#: src/editview/src/ui/find_replace.glade:265
+msgid "No Results"
+msgstr "Ez dago emaitzarik"
+
+#: src/tau/src/ui/shortcuts_win.glade:14
+msgctxt "shortcut window"
+msgid "Documents"
+msgstr "Dokumentuak"
+
+#: src/tau/src/ui/shortcuts_win.glade:18
+msgctxt "shortcut window"
+msgid "Create new document"
+msgstr "Sortu dokumentu berria"
+
+#: src/tau/src/ui/shortcuts_win.glade:24
+msgctxt "shortcut window"
+msgid "Open a document"
+msgstr "Ireki dokumentua"
+
+#: src/tau/src/ui/shortcuts_win.glade:30
+msgctxt "shortcut window"
+msgid "Save the document"
+msgstr "Gorde dokumentua"
+
+#: src/tau/src/ui/shortcuts_win.glade:36
+msgctxt "shortcut window"
+msgid "Close the document"
+msgstr "Itxi dokumentua"
+
+#: src/tau/src/ui/shortcuts_win.glade:43
+msgctxt "shortcut window"
+msgid "Navigation"
+msgstr "Nabigazioa"
+
+#: src/tau/src/ui/shortcuts_win.glade:47
+msgctxt "shortcut window"
+msgid "Cycle tab history backward"
+msgstr "Joan atzerantz tabuladoreen historian"
+
+#: src/tau/src/ui/shortcuts_win.glade:53
+msgctxt "shortcut window"
+msgid "Cycle tab history forward"
+msgstr "Joan aurrerantz tabuladoreen historian"
+
+#: src/tau/src/ui/shortcuts_win.glade:60
+msgctxt "shortcut window"
+msgid "Editing"
+msgstr "Edizioa"
+
+#: src/tau/src/ui/shortcuts_win.glade:64
+msgctxt "shortcut window"
+msgid "Find"
+msgstr "Bilatu"
+
+#: src/tau/src/ui/shortcuts_win.glade:70
+msgctxt "shortcut window"
+msgid "Find and Replace"
+msgstr "Bilatu eta ordeztu"
+
+#: src/tau/src/ui/shortcuts_win.glade:76
+msgctxt "shortcut window"
+msgid "Find the next match"
+msgstr "Bilatu hurrengo parekatzea"
+
+#: src/tau/src/ui/shortcuts_win.glade:82
+msgctxt "shortcut window"
+msgid "Find the previous match"
+msgstr "Bilatu aurreko parekatzea"
+
+#: src/tau/src/ui/shortcuts_win.glade:88
+msgctxt "shortcut window"
+msgid "Find all matches"
+msgstr "Bilatu parekatze guztiak"
+
+#: src/tau/src/ui/shortcuts_win.glade:94
+msgctxt "shortcut window"
+msgid "Go to line"
+msgstr "Joan lerrora"
+
+#: src/tau/src/ui/prefs_win.glade:22 src/tau/src/ui/prefs_win_handy.glade:22
+#: src/tau/src/ui/tau.glade:100
+msgid "Preferences"
+msgstr "Hobespenak"
+
+#: src/tau/src/ui/prefs_win.glade:47 src/tau/src/ui/prefs_win_handy.glade:132
+msgid "Theme"
+msgstr "Gaia"
+
+#: src/tau/src/ui/prefs_win.glade:69 src/tau/src/ui/prefs_win_handy.glade:517
+msgid "Font"
+msgstr "Letra-tipoa"
+
+#: src/tau/src/ui/prefs_win.glade:117
+msgid "Appearance"
+msgstr "Itxura"
+
+#: src/tau/src/ui/prefs_win.glade:174 src/tau/src/ui/prefs_win_handy.glade:292
+msgid "Delete spaces up to the previous tab stop"
+msgstr "Zuriuneak ezabatzen ditu aurreko tabulazio-geldiuneraino"
+
+#: src/tau/src/ui/prefs_win.glade:208 src/tau/src/ui/prefs_win_handy.glade:46
+msgid "Display right margin at the column:"
+msgstr "Bistaratu eskuineko marjina honako zutabean:"
+
+#: src/tau/src/ui/prefs_win.glade:247 src/tau/src/ui/prefs_win_handy.glade:86
+msgid "Highlight the current line"
+msgstr "Nabarmendu uneko lerroa"
+
+#: src/tau/src/ui/prefs_win.glade:337 src/tau/src/ui/prefs_win_handy.glade:308
+msgid "Save files when the Tau goes out of focus"
+msgstr "Gorde fitxategiak Tau fokutik irteten denean"
+
+#: src/tau/src/ui/prefs_win.glade:352 src/tau/src/ui/prefs_win_handy.glade:98
+msgid "Show Line Count"
+msgstr "Erakutsi lerro-zenbaketa"
+
+#: src/tau/src/ui/prefs_win.glade:376
+msgid "Highlight tabs"
+msgstr "Nabarmendu tabuladoreak"
+
+#: src/tau/src/ui/prefs_win.glade:387
+msgid "Highlight spaces"
+msgstr "Nabarmendu zuriuneak"
+
+#: src/tau/src/ui/prefs_win.glade:396 src/tau/src/ui/prefs_win.glade:411
+#: src/tau/src/ui/prefs_win_handy.glade:356
+#: src/tau/src/ui/prefs_win_handy.glade:371
+msgid "All"
+msgstr "Denak"
+
+#: src/tau/src/ui/prefs_win.glade:426 src/tau/src/ui/prefs_win.glade:441
+#: src/tau/src/ui/prefs_win_handy.glade:386
+#: src/tau/src/ui/prefs_win_handy.glade:401
+msgid "Trailing"
+msgstr "Amaierakoa"
+
+#: src/tau/src/ui/prefs_win.glade:456 src/tau/src/ui/prefs_win.glade:471
+#: src/tau/src/ui/prefs_win_handy.glade:416
+#: src/tau/src/ui/prefs_win_handy.glade:431
+msgid "Leading"
+msgstr "Hasierakoa"
+
+#: src/tau/src/ui/prefs_win.glade:486 src/tau/src/ui/prefs_win.glade:501
+#: src/tau/src/ui/prefs_win_handy.glade:446
+#: src/tau/src/ui/prefs_win_handy.glade:461
+msgid "Selected"
+msgstr "Hautatua"
+
+#: src/tau/src/ui/prefs_win.glade:516 src/tau/src/ui/prefs_win.glade:530
+#: src/tau/src/ui/prefs_win_handy.glade:476
+#: src/tau/src/ui/prefs_win_handy.glade:490
+msgid "None"
+msgstr "Bat ere ez"
+
+#: src/tau/src/ui/prefs_win.glade:559
+msgid "Editing"
+msgstr "Edizioa"
+
+#: src/tau/src/ui/prefs_win.glade:575 src/tau/src/ui/prefs_win_handy.glade:559
+msgid "What language to apply these settings for"
+msgstr ""
+
+#: src/tau/src/ui/prefs_win.glade:694 src/tau/src/ui/prefs_win_handy.glade:541
+#: src/tau/src/ui/prefs_win_handy.glade:545
+#: src/tau/src/ui/prefs_win_handy.glade:550
+msgid "Syntax Configuration"
+msgstr "Sintaxiaren konfigurazioa"
+
+#: src/tau/src/ui/prefs_win_handy.glade:33
+msgid "View"
+msgstr "Ikusi"
+
+#: src/tau/src/ui/prefs_win_handy.glade:34
+msgid "Preferences related to the View’s look"
+msgstr ""
+
+#: src/tau/src/ui/prefs_win_handy.glade:38
+msgid "Right-hand Margin"
+msgstr "Eskuineko marjina"
+
+#: src/tau/src/ui/prefs_win_handy.glade:82
+msgid "Line Highlighting"
+msgstr "Lerroen nabarmentzea"
+
+#: src/tau/src/ui/prefs_win_handy.glade:102
+msgid "Show the line count in the editing pane"
+msgstr "Erakutsi lerroen zenbaketa edizio-panelean"
+
+#: src/tau/src/ui/prefs_win_handy.glade:115
+msgid "Line Wrapping"
+msgstr "Lerroen egokitzea"
+
+#: src/tau/src/ui/prefs_win_handy.glade:133
+msgid "What theme to use for the editing pane"
+msgstr "Zein gai erabiliko den edizio-panelean"
+
+#: src/tau/src/ui/prefs_win_handy.glade:137
+msgid "Theme Configuration"
+msgstr "Gaiaren konfigurazioa"
+
+#: src/tau/src/ui/prefs_win_handy.glade:156
+#: src/tau/src/ui/prefs_win_handy.glade:160
+msgid "Editor"
+msgstr "Editorea"
+
+#: src/tau/src/ui/prefs_win_handy.glade:161
+msgid "Preferences related to the Editor’s behavior"
+msgstr "Editorearen portaerari lotutako hobespenak"
+
+#: src/tau/src/ui/prefs_win_handy.glade:165 src/editview/src/view_item.rs:98
+#: src/editview/src/view_item.rs:233
+msgid "Tab Size"
+msgstr "Tabuladorearen tamaina"
+
+#: src/tau/src/ui/prefs_win_handy.glade:210
+msgid "Inserting Spaces Instead of Tabs"
+msgstr "Zuriuneak txertatzen tabuladoreen ordez"
+
+#: src/tau/src/ui/prefs_win_handy.glade:249
+msgid "Automatic Indention"
+msgstr "Koska automatikoak"
+
+#: src/tau/src/ui/prefs_win_handy.glade:288
+msgid "Use Tab Stops for Spaces"
+msgstr "Erabili tabulazio-geldiuneak zuriuneen ordez"
+
+#: src/tau/src/ui/prefs_win_handy.glade:304
+msgid "Automatic Saving"
+msgstr "Gordetze automatikoa"
+
+#: src/tau/src/ui/prefs_win_handy.glade:320
+msgid "Drawing Tabs and Spaces"
+msgstr "Tabuladoreak eta zuriuneak marrazten"
+
+#: src/tau/src/ui/prefs_win_handy.glade:334
+msgid "Tabs"
+msgstr "Fitxak"
+
+#: src/tau/src/ui/prefs_win_handy.glade:346
+msgid "Spaces"
+msgstr "Zuriuneak"
+
+#: src/tau/src/ui/prefs_win_handy.glade:513
+msgid "Fonts"
+msgstr "Letra-tipoak"
+
+#: src/tau/src/ui/prefs_win_handy.glade:518
+msgid "What font to use in the editing pane"
+msgstr "Zein letra-tipo erabiliko den edizio-panelean"
+
+#: src/tau/src/ui/prefs_win_handy.glade:522
+msgid "Font Configuration"
+msgstr "Letra-tipoen konfigurazioa"
+
+#: src/tau/src/ui/prefs_win_handy.glade:546
+msgid "Specify syntax specific configuration"
+msgstr "Zehaztu sintaxiaren konfigurazioa"
+
+#: src/tau/src/ui/tau.glade:22
+msgid "Save As…"
+msgstr "Gorde honela…"
+
+#: src/tau/src/ui/tau.glade:36
+msgid "Save All"
+msgstr "Gorde dena"
+
+#: src/tau/src/ui/tau.glade:61
+msgid "Find…"
+msgstr "Bilatu…"
+
+#: src/tau/src/ui/tau.glade:75
+msgid "Replace…"
+msgstr "Ordeztu…"
+
+#: src/tau/src/ui/tau.glade:125
+msgid "Help"
+msgstr "Laguntza"
+
+#: src/tau/src/ui/tau.glade:139
+msgid "Keyboard Shortcuts"
+msgstr "Laster-teklak"
+
+#: src/tau/src/ui/tau.glade:153
+msgid "About Tau"
+msgstr "Tau aplikazioari buruz"
+
+#: src/tau/src/ui/tau.glade:188 src/tau/src/main_win.rs:1425
+msgid "Open"
+msgstr "Ireki"
+
+#: src/tau/src/ui/tau.glade:229 src/tau/src/main_win.rs:1156
+#: src/tau/src/main_win.rs:1541
+msgid "Save"
+msgstr "Gorde"
+
+#: src/editview/src/edit_view.rs:176 src/editview/src/edit_view.rs:178
+#: src/tau/src/main_win.rs:302 src/tau/src/main_win.rs:304
+#: src/tau/src/main_win.rs:605 src/tau/src/main_win.rs:772
+msgid "Untitled"
+msgstr "Izengabea"
+
+#: src/editview/src/edit_view.rs:871 src/editview/src/edit_view.rs:881
+msgid "Line"
+msgstr "Lerroa"
+
+#: src/editview/src/edit_view.rs:886
+msgid "Column"
+msgstr "Zutabea"
+
+#. We localized it ourselves, so we have to turn it into English again when sending it to Xi
+#: src/editview/src/edit_view.rs:1511 src/editview/src/view_item.rs:217
+#: src/editview/src/view_item.rs:332
+msgid "Plain Text"
+msgstr "Testu soila"
+
+#: src/tau/src/about_win.rs:17
+msgid "GTK frontend for the xi text editor, written in Rust"
+msgstr ""
+
+#: src/tau/src/about_win.rs:25
+msgid "translator-credits"
+msgstr "Asier Sarasua Garmendia <asier.sarasua@gmail.com>"
+
+#: src/tau/src/main.rs:118
+msgid "Start a new instance of the application"
+msgstr "Abiarazi aplikazioaren beste instantzia bat"
+
+#: src/tau/src/main.rs:250 src/tau/src/main.rs:275
+msgid "Failed to open new view due to error"
+msgstr "Ezin izan da bista berria ireki errore baten ondorioz"
+
+#: src/tau/src/main_win.rs:1000 src/tau/src/main_win.rs:1008
+msgid ""
+"Couldn’t get Documents directory to autosave unnamed file. Please make sure "
+"“XDG_DATA_DIR” or similiar is set."
+msgstr ""
+
+#: src/tau/src/main_win.rs:1145
+msgid "Save unsaved changes"
+msgstr "Gorde aldaketak"
+
+#: src/tau/src/main_win.rs:1148
+msgid "Close Without Saving"
+msgstr "Itxi gorde gabe"
+
+#: src/tau/src/main_win.rs:1152 src/tau/src/main_win.rs:1426
+#: src/tau/src/main_win.rs:1542
+msgid "Cancel"
+msgstr "Utzi"
+
+#: src/tau/src/main_win.rs:1422
+msgid "Open a file to edit"
+msgstr "Ireki fitxategi bat hura editatzeko"
+
+#: src/tau/src/main_win.rs:1443
+msgid "Couldn’t open file"
+msgstr "Ezin da fitxategia ireki"
+
+#: src/tau/src/main_win.rs:1538
+msgid "Save file"
+msgstr "Gorde fitxategia"
+
+#: src/tau/src/main_win.rs:1565
+msgid "Couldn’t save file"
+msgstr "Ezin da fitxategia gorde"
+
+#: src/tau/src/prefs_win.rs:137
+msgid ""
+"Couldn’t find the xi-syntect-plugin. As such these settings won’t work in "
+"the current session."
+msgstr ""
