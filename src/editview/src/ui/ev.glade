@@ -177,7 +177,7 @@
         <property name="hscrollbar_policy">always</property>
         <property name="vscrollbar_policy">always</property>
         <child>
-          <object class="GtkLayout" id="edit_area">
+          <object class="GtkDrawingArea" id="edit_area">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="hexpand">True</property>
@@ -349,7 +349,7 @@
       </packing>
     </child>
     <child>
-      <object class="GtkLayout" id="line_count">
+      <object class="GtkDrawingArea" id="line_count">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
       </object>

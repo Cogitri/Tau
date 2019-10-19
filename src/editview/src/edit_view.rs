@@ -264,7 +264,7 @@ impl EditView {
 
         self.view_item
             .edit_area
-            .set_size(text_width as u32, text_height as u32);
+            .set_size_request(text_width as i32, text_height as i32);
 
         self.update_visible_scroll_region();
         self.view_item.edit_area.queue_draw();

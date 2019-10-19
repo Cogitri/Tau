@@ -7,7 +7,7 @@ use gschema_config_storage::pref_storage::GSchemaExt;
 use gtk::prelude::*;
 use gtk::{
     Adjustment, Box, Builder, Button, CheckButton, EventBox, GestureDrag, GestureZoom, Grid,
-    Inhibit, Label, Layout, ListStore, Menu, MenuButton, Popover, PositionType, Revealer,
+    Inhibit, Label, DrawingArea, ListStore, Menu, MenuButton, Popover, PositionType, Revealer,
     ScrolledWindow, SearchBar, SearchEntry, SpinButton, Statusbar, ToggleButton, TreeView, Widget,
 };
 use log::{debug, error, trace};
@@ -50,8 +50,8 @@ struct DragData {
 pub struct ViewItem {
     pub root_box: Grid,
     pub ev_scrolled_window: ScrolledWindow,
-    pub edit_area: Layout,
-    pub linecount: Layout,
+    pub edit_area: DrawingArea,
+    pub linecount: DrawingArea,
     pub hadj: Adjustment,
     pub vadj: Adjustment,
     pub statusbar: EvBar,
@@ -70,8 +70,8 @@ impl ViewItem {
 
         let hadj = builder.get_object("hadj").unwrap();
         let vadj = builder.get_object("vadj").unwrap();
-        let edit_area: gtk::Layout = builder.get_object("edit_area").unwrap();
-        let linecount: gtk::Layout = builder.get_object("line_count").unwrap();
+        let edit_area: gtk::DrawingArea = builder.get_object("edit_area").unwrap();
+        let linecount: gtk::DrawingArea = builder.get_object("line_count").unwrap();
         let statusbar = EvBar {
             statusbar: builder.get_object("statusbar").unwrap(),
             syntax_treeview: builder.get_object("syntax_treeview").unwrap(),
