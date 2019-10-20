@@ -94,7 +94,7 @@
               </object>
             </child>
             <child>
-              <object>
+              <object class="HdyPreferencesRow">
                 <property name="title" translatable="yes">Show Line Count</property>
                 <property name="visible">True</property>
                 <child>
