@@ -1,6 +1,9 @@
 <a href="https://gitlab.gnome.org/World/tau">
     <img src="./data/icons//hicolor/scalable/apps/org.gnome.Tau.svg" alt="Tau logo" title="Tau" align="right" height="100" />
 </a>
+<a href="https://repology.org/metapackage/tau-editor">
+    <img src="https://repology.org/badge/vertical-allrepos/tau-editor.svg" alt="Packaging status" align="right">
+</a>
 
 # Tau
 [![Gitlab CI status](https://gitlab.gnome.org/World/Tau/badges/master/pipeline.svg)](https://gitlab.gnome.org/World/Tau/commits/master)
