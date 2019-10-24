@@ -47,9 +47,11 @@ xbps-install -Syu tau
 apk add tau
 ```
 
-## Contributing
+### Flatpak
 
-### Getting started
+See the instructions on https://flathub.org/apps/details/org.gnome.Tau
+
+## Contributing
 
 Clone the repo and its submodules:
 
@@ -64,7 +66,7 @@ You need the following dependencies installed:
 	* GLib-2.0 >= 2.36
 	* GTK+3 >= 3.20
 	* Pango >= 1.38
-	* Rust >= 1.35 # required for one of our deps
+	* Rust >= 1.36 # required for one of our deps
 
 You can enable optional functionality with the `libhandy` meson switch,
 like a more compact settings menu. You need the following dependencies
@@ -73,54 +75,38 @@ installed for that:
 	* libhandy >= 0.10
 	* GTK+3 >= 3.24.1
 
-You have two ways of installing Tau:
-
-
-#### Installation with cargo (e.g. for developing)
-
-```sh
-# install the syntect plugin, which adds a lot of funtionality to Tau,
-# but isn't strictly required.
-export XI_CONFIG_DIR="${PWD}"
-make -C vendor/xi-editor/rust/syntect-plugin install
-
-# Set accordingly if you want to use a custom xi-core binary. This will use
-# whatever xi-core is in PATH and is the default if you don't set this env var.
-# Please make sure that you have xi-core installed, e.g. with `cargo install --path vendor/xi-editor/rust xi-core`.
-# Meson will do this for you.
-export TAU_XI_BINARY_PATH="xi-core"
-
-glib-compile-schemas data
-env GSETTINGS_SCHEMA_DIR=data TAU_PLUGIN_DIR="${XI_CONFIG_DIR}/plugins" cargo run
-```
-
-This will launch Tau without you having to alter your system.
-
-#### Permanent(-ish) installs (e.g. for distro packaging/day-to-day usage)
+Now installing Tau should be as easy as doing:
 
 
 ```sh
-meson --prefix=/usr/local build
+meson --prefix=/usr/local -Dprofile=development build
 ninja -C build
-sudo -E ninja -C build install
+sudo ninja -C build install
 ```
 
-This will install Tau and its components to `/usr/local`. If you wish to install to a different prefix change the `--prefix`
-argument you pass to meson. Do note that `sudo -E` isn't strictly necessary, but can avoid problems if you're using rustup.
+During development you can quickly test Tau with the following command:
+
+```sh
+ninja -C build run
+```
+
+You can run tests with:
+
+```sh
+ninja -C build test
+```
+
+But be mindful that those currently require the source-code-pro font to be installed.
 
 ### Docs
 
-Please see the docs on https://gxi.cogitri.dev/docs to learn more about Tau's inner workings.
+Please see the documentation in Tau's source files for further information as to
+how Tau works.
 [gtk-rs' site](https://gtk-rs.org/) offers documentation and examples about how gtk-rs works.
 
 ### Translating
 
 Visit [GNOME's Damned Lies Platform](https://l10n.gnome.org/module/tau/) to translate Tau.
-
-
-### Flatpak
-
-You can install the Tau Flatpak as described on [Flathub](https://flathub.org/apps/details/org.gnome.Tau)
 
 
 ### Installation on Windows
