@@ -139,29 +139,6 @@ else
   xi_binary_path = xi_core.path()
 endif
 
-custom_target('cargo-build-tau',
-                        input: sources,
-                        output: ['tau'],
-                        install: true,
-                        install_dir: tau_bindir,
-                        console: true,
-                        command: [cargo_script,
-                                  meson.current_source_dir(),
-                                  join_paths(meson.build_root(),'@OUTDIR@'),
-                                  '@OUTPUT@',
-                                  meson.current_build_dir(),
-                                  'tau',
-                                  gtk3_22,
-                                  libhandy_opt,
-                                  tau_plugin_dir,
-                                  tau_localedir,
-                                  version,
-                                  xi_binary_path,
-                                  gresource.path(),
-                                  application_id,
-                                  name,
-                                 ])
-
 git = find_program('git', native: true, required: false)
 
 subdir_xi_check = run_command('sh', '-c', 'ls -d $MESON_SOURCE_ROOT/vendor/xi-editor')
@@ -184,7 +161,7 @@ xi_vendor_target_dir = join_paths(meson.current_build_dir(), 'vendor', 'xi-edito
 
 if xi_opt == 'builtin'
   xi_build_path = join_paths(meson.current_source_dir(), 'vendor', 'xi-editor', 'rust')
-  custom_target('cargo-build-xi-core',
+  xi_core_dep = custom_target('cargo-build-xi-core',
                           output: ['xi-core'],
                           install: true,
                           install_dir: tau_libexecdir,
@@ -214,7 +191,7 @@ syntect_plugin_files = files(
   'vendor/xi-editor/rust/Cargo.lock',
 )
 
-custom_target('cargo-build-syntect',
+xi_syntect_plugin_dep = custom_target('cargo-build-syntect',
                         input: syntect_plugin_files,
                         output: ['xi-syntect-plugin'],
                         install: true,
@@ -242,11 +219,47 @@ foreach a: synctect_assets
     )
 endforeach
 
+if xi_opt == 'builtin'
+  tau_depends = [xi_syntect_plugin_dep, xi_core_dep]
+else
+  tau_depends = [xi_syntect_plugin_dep]
+endif
+
+tau = custom_target('cargo-build-tau',
+                        input: sources,
+                        output: ['tau'],
+                        install: true,
+                        install_dir: tau_bindir,
+                        console: true,
+                        depends: tau_depends,
+                        command: [cargo_script,
+                                  meson.current_source_dir(),
+                                  join_paths(meson.build_root(),'@OUTDIR@'),
+                                  '@OUTPUT@',
+                                  meson.current_build_dir(),
+                                  'tau',
+                                  gtk3_22,
+                                  libhandy_opt,
+                                  tau_plugin_dir,
+                                  tau_localedir,
+                                  version,
+                                  xi_binary_path,
+                                  gresource.path(),
+                                  application_id,
+                                  name,
+                                 ])
+
 meson.add_install_script('meson_post_install.sh')
 
 run_target(
   'release',
   command: ['scripts/release.sh', meson.project_name(), meson.project_version()]
+)
+
+run_target(
+  'run',
+  command: 'scripts/run.sh',
+  depends: tau,
 )
 
 subdir('data')
