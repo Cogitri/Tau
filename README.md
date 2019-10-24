@@ -1,21 +1,51 @@
 <a href="https://gitlab.gnome.org/World/tau">
     <img src="./data/icons//hicolor/scalable/apps/org.gnome.Tau.svg" alt="Tau logo" title="Tau" align="right" height="100" />
 </a>
-<a href="https://repology.org/metapackage/tau-editor">
-    <img src="https://repology.org/badge/vertical-allrepos/tau-editor.svg" alt="Packaging status" align="right">
-</a>
 
 # Tau
 [![Gitlab CI status](https://gitlab.gnome.org/World/Tau/badges/master/pipeline.svg)](https://gitlab.gnome.org/World/Tau/commits/master)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/2711/badge)](https://bestpractices.coreinfrastructure.org/projects/2711)
 <a href="https://flathub.org/apps/details/org.gnome.Tau">
-<img src="https://flathub.org/assets/badges/flathub-badge-i-en.png" width="190px" />
+    <img src="https://flathub.org/assets/badges/flathub-badge-i-en.png" width="85px" />
 </a>
+<a href="https://repology.org/metapackage/tau-editor">
+    <img src="https://repology.org/badge/vertical-allrepos/tau-editor.svg" alt="Tau Packaging Status" align="right">
+</a>
+
 
 GTK frontend, written in Rust, for the [xi editor](https://github.com/xi-editor/xi-editor).
 Previously called gxi, development now continues under the name "Tau".
 
 ![screenshot](/data/screenshot.png?raw=true)
+
+## Installation
+
+### Ubuntu >= 19.10, Debian >= Unstable, Fedora >= 31 and OpenSUSE Tumbleweed
+
+See https://software.opensuse.org/package/tau for binary packages of Tau. See https://build.opensuse.org/package/show/home:Cogitri/Tau for the source files of the packages. 
+
+### Arch Linux
+
+You can install binary releases of tau by adding this to your `/etc/pacman.conf`:
+
+```sh
+[Cogitri_Tau]
+SigLevel = Never
+Server = https://download.opensuse.org/repositories/home:/Cogitri/Arch_Community_standard/$arch
+```
+
+Afterwards run `pacman -Syu tau`. Alternatively you can install `tau` as `tau-editor-git` from the AUR [as per standard procedure](https://wiki.archlinux.org/index.php/Arch_User_Repository).
+
+### Void Linux
+
+```sh
+xbps-install -Syu tau
+```
+
+### Alpine Linux
+```
+apk add tau
+```
 
 ## Contributing
 
@@ -87,41 +117,6 @@ Please see the docs on https://gxi.cogitri.dev/docs to learn more about Tau's in
 
 Visit [GNOME's Damned Lies Platform](https://l10n.gnome.org/module/tau/) to translate Tau.
 
-## Install on different platforms
-
-### Installation on Arch/Manjaro
-
-There's currently one package for Tau in Arch Linux's
-[AUR](https://aur.archlinux.org/), [tau-editor-git](https://aur.archlinux.org/packages/tau-editor-git/).  Building and installing (including dependencies) the first package
-can be accomplished with:
-
-```sh
-yay -S tau-editor-git
-```
-
-Alternatively use `makepkg`:
-
-```sh
-curl -L -O https://aur.archlinux.org/cgit/aur.git/snapshot/tau-editor-git.tar.gz
-tar xvf tau-editor-git.tar.gz
-cd gxi
-makepkg -Csri
-```
-
-Please consult the [Arch Wiki](https://wiki.archlinux.org/index.php/Arch_User_Repository#Installing_packages)
-for more information regarding installing packages from the AUR.
-
-### Installation on Alpine Linux
-
-```sh
-apk add tau
-```
-
-### Installation on Void Linux
-
-```sh
-xbps-install -S tau
-```
 
 ### Flatpak
 
