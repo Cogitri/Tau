@@ -8,7 +8,7 @@ use crate::syntax_config::SyntaxParams;
 use crate::view_history::{ViewHistory, ViewHistoryExt};
 use chrono::{DateTime, Utc};
 use editview::{theme::u32_from_color, EditView, MainState};
-use gdk::{enums::key, ModifierType};
+use gdk::{enums::key, ModifierType, WindowState};
 use gdk_pixbuf::Pixbuf;
 use gettextrs::gettext;
 use gio::{ActionMapExt, ApplicationExt, Resource, SettingsExt, SimpleAction};
@@ -16,12 +16,13 @@ use glib::{Bytes, GString, MainContext, Receiver, Sender};
 use gschema_config_storage::{GSchema, GSchemaExt};
 use gtk::prelude::*;
 use gtk::{
-    Application, ApplicationWindow, Builder, ButtonsType, DialogFlags, FileChooserAction,
-    FileChooserNative, HeaderBar, MessageDialog, MessageType, Notebook, ResponseType, Widget,
+    Application, ApplicationWindow, Builder, ButtonsType, DialogFlags, EventBox, FileChooserAction,
+    FileChooserNative, HeaderBar, MenuButton, MessageDialog, MessageType, Notebook, ResponseType,
+    Revealer, Widget,
 };
 use log::{debug, error, info, trace, warn};
 use serde_json::{self, json};
-use std::cell::RefCell;
+use std::cell::{Cell, RefCell};
 use std::collections::{BTreeMap, HashMap};
 use std::convert::TryFrom;
 use std::rc::Rc;
@@ -138,10 +139,18 @@ pub struct MainWin {
     started_plugins: RefCell<StartedPlugins>,
     /// The `GtkHeaderbar` of Tau, to set different titles
     header_bar: HeaderBar,
+    /// Top bar when in fullscreen mode
+    fullscreen_bar: HeaderBar,
+    /// Revealer for fullscreen Topbar
+    fullscreen_revealer: Revealer,
+    /// Hamburger menu button of fullscreen headerbar
+    fullscreen_hamburger_button: MenuButton,
     /// Whether or not the `MainWin` is saving right now
     saving: RefCell<bool>,
     /// Tab history
     view_history: Rc<RefCell<ViewHistory>>,
+    /// If the window is in fullscreen mode
+    fullscreen: Cell<bool>,
 }
 
 impl MainWin {
@@ -186,6 +195,10 @@ impl MainWin {
             window.get_style_context().add_class("devel");
         }
         let header_bar = builder.get_object("header_bar").unwrap();
+        let fullscreen_bar = builder.get_object("fullscreen_bar").unwrap();
+        let fullscreen_revealer = builder.get_object("fullscreen_revealer").unwrap();
+        let fullscreen_hamburger_button =
+            builder.get_object("fullscreen_hamburger_button").unwrap();
 
         let icon = Pixbuf::new_from_resource("/org/gnome/Tau/org.gnome.Tau.svg");
         window.set_icon(icon.ok().as_ref());
@@ -239,6 +252,9 @@ impl MainWin {
             properties,
             request_tx,
             header_bar,
+            fullscreen_bar,
+            fullscreen_revealer,
+            fullscreen_hamburger_button,
             view_history,
             views: Default::default(),
             w_to_ev: Default::default(),
@@ -247,6 +263,7 @@ impl MainWin {
             syntax_config: RefCell::new(syntax_config),
             started_plugins: RefCell::new(Default::default()),
             saving: RefCell::new(false),
+            fullscreen: Cell::new(false),
         });
 
         main_win.connect_settings_change();
@@ -293,28 +310,29 @@ impl MainWin {
                     if let Some(ref path_string) = &*ev.file_name.borrow() {
                         if let Some(name) = std::path::Path::new(path_string).file_name() {
                             if !*ev.pristine.borrow() {
-                                main_win.header_bar.set_title(Some(&format!("*{}", &name.to_string_lossy())));
+                                main_win.set_title(&format!("*{}", &name.to_string_lossy()));
                             } else {
-                                main_win.header_bar.set_title(Some(&name.to_string_lossy()));
+                                main_win.set_title(&name.to_string_lossy());
                             }
                         }
                     } else if !*ev.pristine.borrow() {
-                        main_win.header_bar.set_title(Some(&format!("*{}", gettext("Untitled"))));
+                        main_win.set_title(&format!("*{}", gettext("Untitled")));
                     } else {
-                        main_win.header_bar.set_title(Some(&gettext("Untitled")));
+                        main_win.set_title(&gettext("Untitled"));
                     }
                 }
 
                 // stop all searches and close dialogs
                 main_win.views.borrow().values().for_each(|view| view.stop_search());
             }));
+
         main_win
             .notebook
             .connect_page_removed(enclose!((main_win) move |notebook, _, _| {
                 // Set a sensible title if no tab is open (and we can't display a
                 // document's name)
                 if notebook.get_n_pages() == 0 {
-                    main_win.header_bar.set_title(Some(glib::get_application_name().unwrap().as_str()));
+                    main_win.set_title(glib::get_application_name().unwrap().as_str());
                 }
             }));
 
@@ -338,6 +356,35 @@ impl MainWin {
 
                 Inhibit(false)
             }));
+
+        main_win
+            .window
+            .connect_window_state_event(enclose!((main_win) move |_, event| {
+                let fullscreen_mode = event.get_new_window_state().contains(WindowState::FULLSCREEN);
+
+                if main_win.fullscreen.get() ^ fullscreen_mode {
+                    main_win.fullscreen.set(fullscreen_mode);
+                }
+
+                Inhibit(false)
+            }));
+
+        let fullscreen_eventbox: EventBox =
+            main_win.builder.get_object("fullscreen_eventbox").unwrap();
+
+        fullscreen_eventbox.connect_enter_notify_event(enclose!((main_win) move |_, _| {
+            if main_win.fullscreen.get() {
+                main_win.fullscreen_revealer.set_reveal_child(true);
+            }
+            Inhibit(false)
+        }));
+
+        fullscreen_eventbox.connect_leave_notify_event(enclose!((main_win) move |_, _| {
+            if !main_win.fullscreen_hamburger_button.get_active() {
+                main_win.fullscreen_revealer.set_reveal_child(false);
+            }
+            Inhibit(false)
+        }));
 
         // Below here we connect all actions, meaning that these closures will be run when the respective
         // action is triggered (e.g. by a button press)
@@ -542,6 +589,14 @@ impl MainWin {
             }));
             application.add_action(&cycle_forward_action);
         }
+        {
+            let fullscreen_action = SimpleAction::new("toggle_fullscreen", None);
+            fullscreen_action.connect_activate(enclose!((main_win) move |_,_| {
+                trace!("Handling action: 'toggle_fullscreen'");
+                main_win.toggle_fullscreen();
+            }));
+            application.add_action(&fullscreen_action);
+        }
 
         // Put keyboard shortcuts here
         application.set_accels_for_action("app.find", &["<Primary>f"]);
@@ -561,6 +616,7 @@ impl MainWin {
         );
         application.set_accels_for_action("app.cycle_backward", &["<Primary>Tab"]);
         application.set_accels_for_action("app.cycle_forward", &["<Primary><Shift>Tab"]);
+        application.set_accels_for_action("app.toggle_fullscreen", &["F11"]);
 
         main_win
             .window
@@ -599,10 +655,10 @@ impl MainWin {
                     Ok((view_id, path)) => {
                         if let Some(ref path_string) = path {
                             if let Some(name) = std::path::Path::new(path_string).file_name() {
-                                main_win.header_bar.set_title(Some(&name.to_string_lossy()));
+                                main_win.set_title(&name.to_string_lossy());
                             }
                         } else {
-                            main_win.header_bar.set_title(Some(&gettext("Untitled")));
+                            main_win.set_title(&gettext("Untitled"));
                         }
 
                         main_win.new_view_response(path, view_id);
@@ -778,7 +834,7 @@ impl MainWin {
                                 full_title.push('*');
                             }
                             full_title.push_str(&name.to_string_lossy());
-                            self.header_bar.set_title(Some(&full_title));
+                            self.set_title(&full_title);
                         }
                     }
                 }
@@ -1030,6 +1086,12 @@ impl MainWin {
             Ok(name)
         }
     }
+
+    /// Set title of the main window
+    fn set_title(&self, title: &str) {
+        self.header_bar.set_title(Some(title));
+        self.fullscreen_bar.set_title(Some(title));
+    }
 }
 
 /// An Extension trait for `MainWin`. This is implemented for `Rc<MainWin>`, allowing for a nicer
@@ -1054,6 +1116,8 @@ pub trait MainWinExt {
     fn save_all(&self);
 
     fn save_as(&self, edit_view: &Rc<EditView>);
+
+    fn toggle_fullscreen(&self);
 }
 
 impl MainWinExt for Rc<MainWin> {
@@ -1585,5 +1649,15 @@ impl MainWinExt for Rc<MainWin> {
         self.saving.replace(true);
         fcn.run();
         self.saving.replace(false);
+    }
+
+    /// Toggles fullscreen mode
+    fn toggle_fullscreen(&self) {
+        if self.fullscreen.get() {
+            self.window.unfullscreen();
+            self.fullscreen_revealer.set_reveal_child(false);
+        } else {
+            self.window.fullscreen();
+        }
     }
 }

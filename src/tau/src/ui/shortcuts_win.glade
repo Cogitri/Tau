@@ -53,6 +53,12 @@
                                 <property name="title" translatable="yes" context="shortcut window">Cycle tab history forward</property>
                             </object>
                         </child>
+                        <child>
+                            <object class="GtkShortcutsShortcut">
+                                <property name="accelerator">F11</property>
+                                <property name="title" translatable="yes" context="shortcut window">Toggle fullscreen</property>
+                            </object>
+                        </child>
                     </object>
                 </child>
                 <child>
