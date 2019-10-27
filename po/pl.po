@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tau\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Tau/issues\n"
-"POT-Creation-Date: 2019-10-13 12:14+0000\n"
-"PO-Revision-Date: 2019-10-14 16:10+0200\n"
+"POT-Creation-Date: 2019-10-24 18:33+0000\n"
+"PO-Revision-Date: 2019-10-27 15:55+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -363,43 +363,48 @@ msgctxt "shortcut window"
 msgid "Cycle tab history forward"
 msgstr "Przejście do przodu w historii tabulacji"
 
-#: src/tau/src/ui/shortcuts_win.glade:60
+#: src/tau/src/ui/shortcuts_win.glade:59
+msgctxt "shortcut window"
+msgid "Toggle fullscreen"
+msgstr "Przełączenie pełnego ekranu"
+
+#: src/tau/src/ui/shortcuts_win.glade:66
 msgctxt "shortcut window"
 msgid "Editing"
 msgstr "Redakcja"
 
-#: src/tau/src/ui/shortcuts_win.glade:64
+#: src/tau/src/ui/shortcuts_win.glade:70
 msgctxt "shortcut window"
 msgid "Find"
 msgstr "Wyszukiwanie"
 
-#: src/tau/src/ui/shortcuts_win.glade:70
+#: src/tau/src/ui/shortcuts_win.glade:76
 msgctxt "shortcut window"
 msgid "Find and Replace"
 msgstr "Wyszukiwanie i zastępowanie"
 
-#: src/tau/src/ui/shortcuts_win.glade:76
+#: src/tau/src/ui/shortcuts_win.glade:82
 msgctxt "shortcut window"
 msgid "Find the next match"
 msgstr "Wyszukanie następnego wyniku"
 
-#: src/tau/src/ui/shortcuts_win.glade:82
+#: src/tau/src/ui/shortcuts_win.glade:88
 msgctxt "shortcut window"
 msgid "Find the previous match"
 msgstr "Wyszukanie poprzedniego wyniku"
 
-#: src/tau/src/ui/shortcuts_win.glade:88
+#: src/tau/src/ui/shortcuts_win.glade:94
 msgctxt "shortcut window"
 msgid "Find all matches"
 msgstr "Wyszukanie wszystkich wyników"
 
-#: src/tau/src/ui/shortcuts_win.glade:94
+#: src/tau/src/ui/shortcuts_win.glade:100
 msgctxt "shortcut window"
 msgid "Go to line"
 msgstr "Przejście do wiersza"
 
 #: src/tau/src/ui/prefs_win.glade:22 src/tau/src/ui/prefs_win_handy.glade:22
-#: src/tau/src/ui/tau.glade:100
+#: src/tau/src/ui/tau.glade:125 src/tau/src/ui/tau.glade:313
 msgid "Preferences"
 msgstr "Preferencje"
 
@@ -577,46 +582,51 @@ msgstr "Konfiguracja czcionki"
 msgid "Specify syntax specific configuration"
 msgstr "Konfiguracja konkretnej składni"
 
-#: src/tau/src/ui/tau.glade:22
+#: src/tau/src/ui/tau.glade:22 src/tau/src/ui/tau.glade:210
 msgid "Save As…"
 msgstr "Zapisz jako…"
 
-#: src/tau/src/ui/tau.glade:36
+#: src/tau/src/ui/tau.glade:36 src/tau/src/ui/tau.glade:224
 msgid "Save All"
 msgstr "Zapisz wszystko"
 
-#: src/tau/src/ui/tau.glade:61
+#: src/tau/src/ui/tau.glade:61 src/tau/src/ui/tau.glade:249
 msgid "Find…"
 msgstr "Znajdź…"
 
-#: src/tau/src/ui/tau.glade:75
+#: src/tau/src/ui/tau.glade:75 src/tau/src/ui/tau.glade:263
 msgid "Replace…"
 msgstr "Zastąp…"
 
-#: src/tau/src/ui/tau.glade:125
+#: src/tau/src/ui/tau.glade:100 src/tau/src/ui/tau.glade:288
+msgid "Toggle Fullscreen"
+msgstr "Przełącz pełny ekran"
+
+#: src/tau/src/ui/tau.glade:150 src/tau/src/ui/tau.glade:338
 msgid "Help"
 msgstr "Pomoc"
 
-#: src/tau/src/ui/tau.glade:139
+#: src/tau/src/ui/tau.glade:164 src/tau/src/ui/tau.glade:352
 msgid "Keyboard Shortcuts"
 msgstr "Skróty klawiszowe"
 
-#: src/tau/src/ui/tau.glade:153
+#: src/tau/src/ui/tau.glade:178 src/tau/src/ui/tau.glade:366
 msgid "About Tau"
 msgstr "O programie"
 
-#: src/tau/src/ui/tau.glade:188 src/tau/src/main_win.rs:1425
+#: src/tau/src/ui/tau.glade:406 src/tau/src/ui/tau.glade:516
+#: src/tau/src/main_win.rs:1489
 msgid "Open"
 msgstr "Otwórz"
 
-#: src/tau/src/ui/tau.glade:229 src/tau/src/main_win.rs:1156
-#: src/tau/src/main_win.rs:1541
+#: src/tau/src/ui/tau.glade:447 src/tau/src/ui/tau.glade:557
+#: src/tau/src/main_win.rs:1220 src/tau/src/main_win.rs:1605
 msgid "Save"
 msgstr "Zapisz"
 
 #: src/editview/src/edit_view.rs:176 src/editview/src/edit_view.rs:178
-#: src/tau/src/main_win.rs:302 src/tau/src/main_win.rs:304
-#: src/tau/src/main_win.rs:605 src/tau/src/main_win.rs:772
+#: src/tau/src/main_win.rs:319 src/tau/src/main_win.rs:321
+#: src/tau/src/main_win.rs:661 src/tau/src/main_win.rs:828
 msgid "Untitled"
 msgstr "Bez tytułu"
 
@@ -652,7 +662,7 @@ msgstr "Uruchamia nowe wystąpienie programu"
 msgid "Failed to open new view due to error"
 msgstr "Otwarcie nowego widoku się nie powiodło z powodu błędu"
 
-#: src/tau/src/main_win.rs:1000 src/tau/src/main_win.rs:1008
+#: src/tau/src/main_win.rs:1056 src/tau/src/main_win.rs:1064
 msgid ""
 "Couldn’t get Documents directory to autosave unnamed file. Please make sure "
 "“XDG_DATA_DIR” or similiar is set."
@@ -660,32 +670,32 @@ msgstr ""
 "Nie można uzyskać katalogu Dokumenty, aby automatycznie zapisać plik bez "
 "nazwy. Proszę się upewnić, że ustawiono zmienną „XDG_DATA_DIR” lub podobną."
 
-#: src/tau/src/main_win.rs:1145
+#: src/tau/src/main_win.rs:1209
 msgid "Save unsaved changes"
 msgstr "Zapis niezapisanych zmian"
 
-#: src/tau/src/main_win.rs:1148
+#: src/tau/src/main_win.rs:1212
 msgid "Close Without Saving"
 msgstr "Zamknij bez zapisywania"
 
-#: src/tau/src/main_win.rs:1152 src/tau/src/main_win.rs:1426
-#: src/tau/src/main_win.rs:1542
+#: src/tau/src/main_win.rs:1216 src/tau/src/main_win.rs:1490
+#: src/tau/src/main_win.rs:1606
 msgid "Cancel"
 msgstr "Anuluj"
 
-#: src/tau/src/main_win.rs:1422
+#: src/tau/src/main_win.rs:1486
 msgid "Open a file to edit"
 msgstr "Otwarcie pliku do modyfikacji"
 
-#: src/tau/src/main_win.rs:1443
+#: src/tau/src/main_win.rs:1507
 msgid "Couldn’t open file"
 msgstr "Nie można otworzyć pliku"
 
-#: src/tau/src/main_win.rs:1538
+#: src/tau/src/main_win.rs:1602
 msgid "Save file"
 msgstr "Zapis pliku"
 
-#: src/tau/src/main_win.rs:1565
+#: src/tau/src/main_win.rs:1629
 msgid "Couldn’t save file"
 msgstr "Nie można zapisać pliku"
 
