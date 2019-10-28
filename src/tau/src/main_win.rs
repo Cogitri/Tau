@@ -15,7 +15,7 @@ use gdk_pixbuf::Pixbuf;
 use gettextrs::gettext;
 use gio::prelude::*;
 use gio::{ActionMapExt, ApplicationExt, Resource, Settings, SettingsExt, SimpleAction};
-use glib::{Bytes, GString, MainContext, Receiver, SyncSender};
+use glib::{Bytes, GString, MainContext, Receiver, SpawnFlags, SyncSender};
 use gtk::prelude::*;
 use gtk::{
     Application, ApplicationWindow, Builder, Button, ButtonsType, DialogFlags, EventBox,
@@ -1094,12 +1094,7 @@ impl MainWinExt for Rc<MainWin> {
     /// `GtkNotebook` holding the terminals.
     fn add_terminal(&self, always_create_new: bool) {
         let term = Terminal::new();
-        let shell: String = self
-            .state
-            .borrow()
-            .settings
-            .gschema
-            .get_key("terminal-path");
+        let shell: String = self.state.borrow().settings.gschema.get("terminal-path");
         term.spawn_sync(
             vte::PtyFlags::DEFAULT,
             None,
