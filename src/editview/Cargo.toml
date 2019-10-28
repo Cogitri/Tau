@@ -32,10 +32,10 @@ log = "0.4"
 pango = { version="", features = ["v1_38"] }
 pangocairo = ""
 parking_lot = "0.9"
-serde = { version="1", features = ["derive"] }
-serde_json = "1"
-syntect = "3"
+serde = { version="", features = ["derive"] }
+serde_json = ""
+syntect = ""
 tau-linecache = { path="../tau-linecache" }
-tokio = "0.1"
+tokio = ""
 unicode-segmentation = "1"
 xrl = "0.0.8"
