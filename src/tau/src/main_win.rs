@@ -1094,11 +1094,16 @@ impl MainWinExt for Rc<MainWin> {
     /// `GtkNotebook` holding the terminals.
     fn add_terminal(&self, always_create_new: bool) {
         let term = Terminal::new();
-        let shell = std::path::Path::new("/bin/bash");
+        let shell: String = self
+            .state
+            .borrow()
+            .settings
+            .gschema
+            .get_key("terminal-path");
         term.spawn_sync(
             vte::PtyFlags::DEFAULT,
             None,
-            &[&shell],
+            &[&std::path::Path::new(&shell)],
             &[],
             SpawnFlags::DEFAULT,
             Some(&mut enclose!((self => main_win, term) move || { main_win.vte_callback(&term)})),

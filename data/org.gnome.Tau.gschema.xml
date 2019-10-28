@@ -216,6 +216,14 @@
                 Whether or not to show an integrated terminal in Tau's editing pane
             </description>
         </key>
+
+        <key name="terminal-path" type="s">
+            <default>"/bin/bash"</default>
+            <summary>Path to the shell executable</summary>
+            <description>
+                The path to the shell you want to use.
+            </description>
+        </key>
     </schema>
 
 </schemalist>
