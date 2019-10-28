@@ -2,9 +2,9 @@ use crate::main_win::StartedPlugins;
 use crate::syntax_config::{Changes, Domain, SyntaxParams};
 use editview::MainState;
 use gettextrs::gettext;
-use gio::{SettingsBindFlags, SettingsExt};
+use gio::prelude::*;
+use gio::{Settings, SettingsBindFlags};
 use glib::GString;
-use gschema_config_storage::{GSchema, GSchemaExt};
 use gtk::prelude::*;
 use gtk::{
     ApplicationWindow, Builder, Button, CheckButton, ComboBoxText, FontChooserWidget, Image, Label,
@@ -42,7 +42,7 @@ impl PrefsWin {
         parent: &ApplicationWindow,
         main_state: &Rc<RefCell<MainState>>,
         core: &Client,
-        gschema: &GSchema,
+        gschema: &Settings,
         current_syntax: Option<&str>,
         started_plugins: &StartedPlugins,
     ) -> Self {
@@ -122,7 +122,7 @@ impl PrefsWin {
         let syntax_config_tab_size_label: Label =
             builder.get_object("syntax_config_tab_size_label").unwrap();
 
-        let syntax_changes = gschema.settings.get_strv("syntax-config");
+        let syntax_changes = gschema.get_strv("syntax-config");
         let syntax_config: HashMap<String, SyntaxParams> = syntax_changes
             .iter()
             .map(GString::as_str)
@@ -144,7 +144,7 @@ impl PrefsWin {
             syntect_warn_automatic_indention_image.set_tooltip_text(Some(&gettext_msg));
         }
 
-        let font_desc: &String = &gschema.get_key("font");
+        let font_desc: &String = &gschema.get("font");
         font_chooser_widget.set_font_desc(&FontDescription::from_string(font_desc));
         font_chooser_widget.connect_property_font_desc_notify(
             enclose!((font_chooser_widget) move |_| {
@@ -212,7 +212,7 @@ impl PrefsWin {
                 debug!("Theme changed to '{}'", &theme_name);
                 let _ =  core.set_theme(&theme_name);
 
-                gschema.set_key("theme-name", theme_name.clone()).unwrap();
+                gschema.set("theme-name", &theme_name).unwrap();
 
                 let mut main_state = main_state.borrow_mut();
                 main_state.theme_name = theme_name;
@@ -224,142 +224,142 @@ impl PrefsWin {
             margin_spinbutton.set_sensitive(value);
         }));
 
-        margin_spinbutton.set_sensitive(gschema.get_key("draw-right-margin"));
+        margin_spinbutton.set_sensitive(gschema.get("draw-right-margin"));
 
-        gschema.settings.bind(
+        gschema.bind(
             "font",
             &font_chooser_widget,
             "font",
             SettingsBindFlags::DEFAULT,
         );
 
-        gschema.settings.bind(
+        gschema.bind(
             "word-wrap",
             &word_wrap_checkbutton,
             "active",
             SettingsBindFlags::DEFAULT,
         );
 
-        gschema.settings.bind(
+        gschema.bind(
             "use-tab-stops",
             &tab_stops_checkbutton,
             "active",
             SettingsBindFlags::DEFAULT,
         );
 
-        gschema.settings.bind(
+        gschema.bind(
             "draw-trailing-spaces",
             &draw_trailing_spaces_radio,
             "active",
             SettingsBindFlags::DEFAULT,
         );
 
-        gschema.settings.bind(
+        gschema.bind(
             "draw-leading-spaces",
             &draw_leading_spaces_radio,
             "active",
             SettingsBindFlags::DEFAULT,
         );
 
-        gschema.settings.bind(
+        gschema.bind(
             "draw-selection-spaces",
             &draw_selection_spaces_radio,
             "active",
             SettingsBindFlags::DEFAULT,
         );
 
-        gschema.settings.bind(
+        gschema.bind(
             "draw-all-spaces",
             &draw_all_spaces_radio,
             "active",
             SettingsBindFlags::DEFAULT,
         );
 
-        gschema.settings.bind(
+        gschema.bind(
             "draw-right-margin",
             &margin_checkbutton,
             "active",
             SettingsBindFlags::DEFAULT,
         );
 
-        gschema.settings.bind(
+        gschema.bind(
             "highlight-line",
             &highlight_line_checkbutton,
             "active",
             SettingsBindFlags::DEFAULT,
         );
 
-        gschema.settings.bind(
+        gschema.bind(
             "column-right-margin",
             &margin_spinbutton,
             "value",
             SettingsBindFlags::DEFAULT,
         );
 
-        gschema.settings.bind(
+        gschema.bind(
             "tab-size",
             &tab_size_spinbutton,
             "value",
             SettingsBindFlags::DEFAULT,
         );
 
-        gschema.settings.bind(
+        gschema.bind(
             "draw-trailing-tabs",
             &draw_trailing_tabs_radio,
             "active",
             SettingsBindFlags::DEFAULT,
         );
 
-        gschema.settings.bind(
+        gschema.bind(
             "draw-leading-tabs",
             &draw_leading_tabs_radio,
             "active",
             SettingsBindFlags::DEFAULT,
         );
 
-        gschema.settings.bind(
+        gschema.bind(
             "draw-selection-tabs",
             &draw_selection_tabs_radio,
             "active",
             SettingsBindFlags::DEFAULT,
         );
 
-        gschema.settings.bind(
+        gschema.bind(
             "draw-all-tabs",
             &draw_all_tabs_radio,
             "active",
             SettingsBindFlags::DEFAULT,
         );
 
-        gschema.settings.bind(
+        gschema.bind(
             "auto-indent",
             &auto_indention_checkbutton,
             "active",
             SettingsBindFlags::DEFAULT,
         );
 
-        gschema.settings.bind(
+        gschema.bind(
             "translate-tabs-to-spaces",
             &insert_spaces_checkbutton,
             "active",
             SettingsBindFlags::DEFAULT,
         );
 
-        gschema.settings.bind(
+        gschema.bind(
             "save-when-out-of-focus",
             &save_when_out_of_focus_checkbutton,
             "active",
             SettingsBindFlags::DEFAULT,
         );
 
-        gschema.settings.bind(
+        gschema.bind(
             "show-linecount",
             &show_lintcount_checkbutton,
             "active",
             SettingsBindFlags::DEFAULT,
         );
 
-        gschema.settings.bind(
+        gschema.bind(
             "restore-session",
             &restore_session_checkbutton,
             "active",
@@ -425,7 +425,7 @@ impl PrefsWin {
 
                         let json_setting: Vec<String> = syntax_config.iter().map(|(_, sc)| serde_json::to_string(sc).unwrap()).collect();
                         let json_setting: Vec<_> = json_setting.iter().map(AsRef::as_ref).collect();
-                        gschema.settings.set_strv("syntax-config", &json_setting);
+                        gschema.set_strv("syntax-config", &json_setting).unwrap();
                     }
                 }
             )

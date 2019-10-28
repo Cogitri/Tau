@@ -1,9 +1,9 @@
 use crate::edit_view::EditView;
 use gdk::{Cursor, CursorType, DisplayManager, WindowExt};
 use gettextrs::gettext;
+use gio::prelude::*;
 use gio::Resource;
 use glib::Bytes;
-use gschema_config_storage::pref_storage::GSchemaExt;
 use gtk::prelude::*;
 use gtk::{
     Adjustment, Box, Builder, Button, CheckButton, EventBox, GestureDrag, GestureZoom, Grid,
@@ -310,8 +310,7 @@ impl ViewItem {
                     font_desc.get_family().map(|s| s.as_str().to_string()).unwrap(),
                     font_size,
                 );
-                gschema.set_key("font", font_string).map_err(|e| error!("Failed to increase font size due to error: '{}'", e)).unwrap()
-                ;
+                gschema.set("font", &font_string).map_err(|e| error!("Failed to increase font size due to error: '{}'", e)).unwrap();
             }));
     }
 

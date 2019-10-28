@@ -89,9 +89,9 @@ use crossbeam_channel::unbounded;
 use futures::stream::Stream;
 use futures::{future, future::Future};
 use gettextrs::{gettext, TextDomain, TextDomainError};
-use gio::{ApplicationExt, ApplicationExtManual, ApplicationFlags, FileExt};
+use gio::prelude::*;
+use gio::ApplicationFlags;
 use glib::{Char, MainContext};
-use gschema_config_storage::{GSchema, GSchemaExt};
 use gtk::Application;
 use log::{debug, error, info, max_level as log_level, warn, LevelFilter};
 use parking_lot::Mutex;
@@ -242,9 +242,9 @@ fn main() {
         // It's fine to unwrap here - we already made sure this is Some in connect_startup.
         let core = core_opt.lock().clone().unwrap().unwrap();
 
-        let schema = GSchema::new("org.gnome.Tau");
+        let schema = gio::Settings::new("org.gnome.Tau");
         if schema
-            .get_key("restore-session") {
+            .get("restore-session") {
                 let paths = schema.get_session();
                 for file in paths {
                     if Path::new(&file).exists() {
@@ -257,7 +257,7 @@ fn main() {
                                         match res {
                                             Ok(view_id) => new_view_tx.send(XiEvent::NewView(Ok((view_id, Some(file))))).unwrap(),
                                             Err(_) => {
-                                                GSchema::new("org.gnome.Tau").session_remove(&file);
+                                                gio::Settings::new("org.gnome.Tau").session_remove(&file);
                                                 error!("Failed to restore file `{}`", file);
                                             },
                                         }
@@ -267,7 +267,7 @@ fn main() {
                             }))
                         );
                     } else {
-                        GSchema::new("org.gnome.Tau").session_remove(&file);
+                        schema.session_remove(&file);
                         error!("Failed to restore file `{}`", file);
                     }
                 }
@@ -302,9 +302,9 @@ fn main() {
             // See above for why it's fine to unwrap here.
             let core = core_opt.lock().clone().unwrap().unwrap();
 
-            let schema = GSchema::new("org.gnome.Tau");
+            let schema = gio::Settings::new("org.gnome.Tau");
             if schema
-                .get_key("restore-session") {
+                .get("restore-session") {
                     let paths = schema.get_session();
                     for file in paths {
                         if Path::new(&file).exists() {
@@ -317,7 +317,7 @@ fn main() {
                                             match res {
                                                 Ok(view_id) => new_view_tx.send(XiEvent::NewView(Ok((view_id, Some(file))))).unwrap(),
                                                 Err(_) => {
-                                                    GSchema::new("org.gnome.Tau").session_remove(&file);
+                                                    gio::Settings::new("org.gnome.Tau").session_remove(&file);
                                                     error!("Failed to restore file `{}`", file);
                                                 },
                                             }
@@ -327,7 +327,7 @@ fn main() {
                                 }))
                             );
                         } else {
-                            GSchema::new("org.gnome.Tau").session_remove(&file);
+                            schema.session_remove(&file);
                             error!("Failed to restore file `{}`", file);
                         }
                     }

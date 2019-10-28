@@ -10,9 +10,8 @@ use gdk::{
     SELECTION_PRIMARY,
 };
 use gettextrs::gettext;
-use gio::SettingsExt;
+use gio::prelude::*;
 use glib::{source::Continue, MainContext, PRIORITY_HIGH};
-use gschema_config_storage::GSchemaExt;
 use gtk::prelude::*;
 use gtk::{ApplicationWindow, Clipboard, CssProvider, Grid, IMContextSimple, MenuButton, TreePath};
 use log::{debug, error, trace, warn};
@@ -76,7 +75,7 @@ impl EditView {
     ) -> Rc<Self> {
         trace!("Creating new EditView '{}'", view_id);
         let gschema = main_state.borrow().settings.gschema.clone();
-        let default_tab_size: u32 = gschema.get_key("tab-size");
+        let default_tab_size = gschema.get::<u32>("tab-size");
         let view_item = ViewItem::new(default_tab_size);
         let find_replace = FindReplace::new(&hamburger_button);
         let pango_ctx = view_item.get_pango_ctx();
@@ -136,15 +135,13 @@ impl EditView {
             error!("Xi-Update sender disconnected");
         }));
 
-        gschema
-            .settings
-            .connect_changed(enclose!((gschema, edit_view) move |_, key| {
-            trace!("Key '{}' has changed!", key);
-            if key == "tab-size" {
-                    let val = gschema.get_key("tab-size");
-                    edit_view.set_default_tab_size(val);
-                }
-            }));
+        gschema.connect_changed(enclose!((gschema, edit_view) move |_, key| {
+        trace!("Key '{}' has changed!", key);
+        if key == "tab-size" {
+                let val = gschema.get("tab-size");
+                edit_view.set_default_tab_size(val);
+            }
+        }));
 
         edit_view
             .view_item

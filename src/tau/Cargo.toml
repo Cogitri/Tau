@@ -26,13 +26,12 @@ dirs = "2"
 editview = { path="../editview" }
 enclose = "1"
 env_logger = "0.7"
-futures = ""
+futures = "0.1"
 gdk = { git="https://github.com/gtk-rs/gdk" }
 gdk-pixbuf = { git="https://github.com/gtk-rs/gdk-pixbuf" }
 gettext-rs = { version="0.4", features=["gettext-system"] }
 gio = { git="https://github.com/gtk-rs/gio" }
 glib = { git="https://github.com/gtk-rs/glib" }
-gschema-config-storage = { path="../gschema-config-storage" }
 gtk = { git="https://github.com/gtk-rs/gtk", features = ["v3_20"] }
 human-panic = "1"
 log = "0.4"

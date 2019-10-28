@@ -1,7 +1,6 @@
 use editview::main_state::ShowInvisibles;
 use editview::Settings;
 use gio::prelude::*;
-use gschema_config_storage::{GSchema, GSchemaExt};
 use log::error;
 use serde_json::json;
 use std::cmp::max;
@@ -17,8 +16,8 @@ pub fn get_font_properties(font: &str) -> Option<(String, f32)> {
 }
 
 /// Generate a new `Settings` object, which we pass to the `EditView` to set its behaviour.
-pub fn new_settings() -> Settings {
-    let gschema = GSchema::new("org.gnome.Tau");
+pub fn new_settings() -> editview::Settings {
+    let gschema = gio::Settings::new("org.gnome.Tau");
     let interface_font = {
         use gtk::SettingsExt;
         let gtk_settings = gtk::Settings::get_default().unwrap();
@@ -30,38 +29,38 @@ pub fn new_settings() -> Settings {
 
     Settings {
         draw_spaces: {
-            if gschema.get_key("draw-trailing-spaces") {
+            if gschema.get("draw-trailing-spaces") {
                 ShowInvisibles::Trailing
-            } else if gschema.get_key("draw-leading-spaces") {
+            } else if gschema.get("draw-leading-spaces") {
                 ShowInvisibles::Leading
-            } else if gschema.get_key("draw-all-spaces") {
+            } else if gschema.get("draw-all-spaces") {
                 ShowInvisibles::All
-            } else if gschema.get_key("draw-selection-spaces") {
+            } else if gschema.get("draw-selection-spaces") {
                 ShowInvisibles::Selected
             } else {
                 ShowInvisibles::None
             }
         },
         draw_tabs: {
-            if gschema.get_key("draw-trailing-tabs") {
+            if gschema.get("draw-trailing-tabs") {
                 ShowInvisibles::Trailing
-            } else if gschema.get_key("draw-leading-tabs") {
+            } else if gschema.get("draw-leading-tabs") {
                 ShowInvisibles::Leading
-            } else if gschema.get_key("draw-all-tabs") {
+            } else if gschema.get("draw-all-tabs") {
                 ShowInvisibles::All
-            } else if gschema.get_key("draw-selection-tabs") {
+            } else if gschema.get("draw-selection-tabs") {
                 ShowInvisibles::Selected
             } else {
                 ShowInvisibles::None
             }
         },
-        highlight_line: gschema.get_key("highlight-line"),
-        right_margin: gschema.get_key("draw-right-margin"),
-        column_right_margin: gschema.get_key("column-right-margin"),
-        edit_font: gschema.get_key("font"),
-        draw_cursor: gschema.get_key("draw-cursor"),
-        show_linecount: gschema.get_key("show-linecount"),
-        restore_session: gschema.get_key("restore-session"),
+        highlight_line: gschema.get("highlight-line"),
+        right_margin: gschema.get("draw-right-margin"),
+        column_right_margin: gschema.get("column-right-margin"),
+        edit_font: gschema.get("font"),
+        draw_cursor: gschema.get("draw-cursor"),
+        show_linecount: gschema.get("show-linecount"),
+        restore_session: gschema.get("restore-session"),
         interface_font,
         gschema,
     }
@@ -74,21 +73,21 @@ pub fn setup_config(core: &Client) {
     #[cfg(not(windows))]
     const LINE_ENDING: &str = "\n";
 
-    let gschema = GSchema::new("org.gnome.Tau");
+    let gschema = gio::Settings::new("org.gnome.Tau");
 
-    let tab_size: u32 = gschema.get_key("tab-size");
-    let autodetect_whitespace: bool = gschema.get_key("auto-indent");
-    let translate_tabs_to_spaces: bool = gschema.get_key("translate-tabs-to-spaces");
-    let use_tab_stops: bool = gschema.get_key("use-tab-stops");
-    let word_wrap: bool = gschema.get_key("word-wrap");
+    let tab_size = gschema.get::<u32>("tab-size");
+    let autodetect_whitespace = gschema.get::<bool>("auto-indent");
+    let translate_tabs_to_spaces = gschema.get::<bool>("translate-tabs-to-spaces");
+    let use_tab_stops = gschema.get::<bool>("use-tab-stops");
+    let word_wrap = gschema.get::<bool>("word-wrap");
 
-    let font: String = gschema.get_key("font");
+    let font = gschema.get::<String>("font");
     let font_vec = font.split_whitespace().collect::<Vec<_>>();
     let (font_size, font_name) = if let Some((size, splitted_name)) = font_vec.split_last() {
         (size.parse::<f32>().unwrap_or(14.0), splitted_name.join(" "))
     } else {
         error!("Failed to get font configuration. Resetting...");
-        gschema.settings.reset("font");
+        gschema.reset("font");
         (14.0, "Monospace".to_string())
     };
 
@@ -113,7 +112,7 @@ pub fn setup_config(core: &Client) {
     ))
     .unwrap();
 
-    let val = gschema.settings.get_strv("syntax-config");
+    let val = gschema.get_strv("syntax-config");
 
     for x in val {
         if let Ok(val) = serde_json::from_str(x.as_str()) {
@@ -121,7 +120,7 @@ pub fn setup_config(core: &Client) {
                 .unwrap();
         } else {
             error!("Failed to deserialize syntax config. Resetting...");
-            gschema.settings.reset("syntax-config");
+            gschema.reset("syntax-config");
         }
     }
 }

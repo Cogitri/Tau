@@ -13,9 +13,9 @@ use futures::{future, Future};
 use gdk::{enums::key, ModifierType, WindowState};
 use gdk_pixbuf::Pixbuf;
 use gettextrs::gettext;
-use gio::{ActionMapExt, ApplicationExt, Resource, SettingsExt, SimpleAction};
+use gio::prelude::*;
+use gio::{ActionMapExt, ApplicationExt, Resource, Settings, SettingsExt, SimpleAction};
 use glib::{Bytes, GString, MainContext, Receiver, SyncSender};
-use gschema_config_storage::{GSchema, GSchemaExt};
 use gtk::prelude::*;
 use gtk::{
     Application, ApplicationWindow, Builder, ButtonsType, DialogFlags, EventBox, FileChooserAction,
@@ -72,32 +72,32 @@ struct WinProp {
     width: i32,
     /// Whether or not the MainWin is maximized
     is_maximized: bool,
-    /// The GSchema we save the fields of the WinProp to
-    gschema: GSchema,
+    /// The `gio::Settings` we save the fields of the WinProp to
+    gschema: Settings,
 }
 
 impl WinProp {
-    /// Create a new WinProp. Gets the GSchema of the name of the `Application`'s id
+    /// Create a new WinProp. Gets the `gio::Settings` of the name of the `Application`'s id
     ///
     /// # Panics
     ///
-    /// This will panic if there's no GSchema of the name of the `Application`s id.
+    /// This will panic if there's no `gio::Settings` of the name of the `Application`s id.
     pub fn new() -> Self {
-        let gschema = GSchema::new("org.gnome.Tau");
+        let gschema = Settings::new(crate::globals::APP_ID.unwrap_or("org.gnome.TauDevel"));
         Self {
-            height: gschema.get_key("window-height"),
-            width: gschema.get_key("window-width"),
-            is_maximized: gschema.get_key("window-maximized"),
+            height: gschema.get("window-height"),
+            width: gschema.get("window-width"),
+            is_maximized: gschema.get("window-maximized"),
             gschema,
         }
     }
 
     /// Save the WinProp to the `WinProp.gschema`
     pub fn save(&self) {
-        self.gschema.set_key("window-height", self.height).unwrap();
-        self.gschema.set_key("window-width", self.width).unwrap();
+        self.gschema.set("window-height", &self.height).unwrap();
+        self.gschema.set("window-width", &self.width).unwrap();
         self.gschema
-            .set_key("window-maximized", self.is_maximized)
+            .set("window-maximized", &self.is_maximized)
             .unwrap();
     }
 }
@@ -214,7 +214,7 @@ impl MainWin {
 
         let notebook: Notebook = builder.get_object("notebook").unwrap();
 
-        let theme_name = properties.borrow().gschema.get_key("theme-name");
+        let theme_name = properties.borrow().gschema.get("theme-name");
         debug!("Theme name: '{}'", &theme_name);
 
         let settings = functions::new_settings();
@@ -232,7 +232,7 @@ impl MainWin {
             selected_language: Default::default(),
         }));
 
-        let syntax_changes = gschema.settings.get_strv("syntax-config");
+        let syntax_changes = gschema.get_strv("syntax-config");
         let syntax_config: HashMap<String, SyntaxParams> = syntax_changes
             .iter()
             .map(GString::as_str)
@@ -345,7 +345,7 @@ impl MainWin {
             .connect_focus_out_event(enclose!((main_win, gschema) move |_, _| {
                 // main_win.saving is true if we're currently saving via a save dialog, so don't try
                 // to save again here
-                if gschema.settings.get_boolean("save-when-out-of-focus") && !*main_win.saving.borrow() {
+                if gschema.get("save-when-out-of-focus") && !*main_win.saving.borrow() {
                     for ev in main_win.views.borrow().values() {
                         let old_name = ev.file_name.borrow().clone();
                         match main_win.autosave_view(old_name, ev.view_id) {
@@ -543,11 +543,11 @@ impl MainWin {
         {
             let increase_font_size_action = SimpleAction::new("increase_font_size", None);
             increase_font_size_action.connect_activate(enclose!((gschema) move |_,_| {
-                let font: String = gschema.get_key("font");
+                let font: String = gschema.get("font");
                 if let Some((name, mut size)) = functions::get_font_properties(&font) {
                     size += 1.0;
                     if size <= 72.0 {
-                        gschema.set_key("font", format!("{} {}", name, size)).map_err(|e| error!("Failed to increase font size due to error: '{}'", e)).unwrap();
+                        gschema.set("font", &format!("{} {}", name, size)).map_err(|e| error!("Failed to increase font size due to error: '{}'", e)).unwrap();
                     }
                 }
             }));
@@ -556,11 +556,11 @@ impl MainWin {
         {
             let decrease_font_size_action = SimpleAction::new("decrease_font_size", None);
             decrease_font_size_action.connect_activate(enclose!((gschema) move |_,_| {
-                let font: String = gschema.get_key("font");
+                let font: String = gschema.get("font");
                 if let Some((name, mut size)) = functions::get_font_properties(&font) {
                     size -= 1.0;
                     if size >= 6.0 {
-                        gschema.set_key("font", format!("{} {}", name, size)).map_err(|e| error!("Failed to increase font size due to error: '{}'", e)).unwrap();
+                        gschema.set("font", &format!("{} {}", name, size)).map_err(|e| error!("Failed to increase font size due to error: '{}'", e)).unwrap();
                     }
                 }
             }));
@@ -697,7 +697,7 @@ impl MainWin {
                 state
                     .settings
                     .gschema
-                    .set_key("theme-name", theme_name.clone())
+                    .set("theme-name", &theme_name)
                     .unwrap_or_else(|e| {
                         error!("Failed to set theme name in GSettings due to error: {}", e)
                     });
@@ -1215,19 +1215,18 @@ impl MainWinExt for Rc<MainWin> {
         let gschema = self.state.borrow_mut().settings.gschema.clone();
         let core = &self.core;
         gschema
-            .settings
             .connect_changed(enclose!((gschema, self => main_win, core) move |_, key| {
             trace!("Key '{}' has changed!", key);
             match key {
                 "draw-trailing-spaces" | "draw-leading-spaces" | "draw-selection-spaces" | "draw-all-spaces" => {
                     main_win.state.borrow_mut().settings.draw_spaces = {
-                        if gschema.get_key("draw-trailing-spaces") {
+                        if gschema.get("draw-trailing-spaces") {
                             ShowInvisibles::Trailing
-                        } else if gschema.get_key("draw-leading-spaces") {
+                        } else if gschema.get("draw-leading-spaces") {
                             ShowInvisibles::Leading
-                        } else if gschema.get_key("draw-all-spaces") {
+                        } else if gschema.get("draw-all-spaces") {
                             ShowInvisibles::All
-                        } else if gschema.get_key("draw-selection-spaces") {
+                        } else if gschema.get("draw-selection-spaces") {
                             ShowInvisibles::Selected
                         } else {
                             ShowInvisibles::None
@@ -1240,13 +1239,13 @@ impl MainWinExt for Rc<MainWin> {
                 }
                 "draw-trailing-tabs" | "draw-leading-tabs" | "draw-selection-tabs" | "draw-all-tabs" => {
                     main_win.state.borrow_mut().settings.draw_tabs = {
-                        if gschema.get_key("draw-trailing-tabs") {
+                        if gschema.get("draw-trailing-tabs") {
                             ShowInvisibles::Trailing
-                        } else if gschema.get_key("draw-leading-tabs") {
+                        } else if gschema.get("draw-leading-tabs") {
                             ShowInvisibles::Leading
-                        } else if gschema.get_key("draw-all-tabs") {
+                        } else if gschema.get("draw-all-tabs") {
                             ShowInvisibles::All
-                        } else if gschema.get_key("draw-selection-tabs") {
+                        } else if gschema.get("draw-selection-tabs") {
                             ShowInvisibles::Selected
                         } else {
                             ShowInvisibles::None
@@ -1258,21 +1257,21 @@ impl MainWinExt for Rc<MainWin> {
                     }
                 }
                 "highlight-line" => {
-                    let val = gschema.get_key("highlight-line");
+                    let val = gschema.get("highlight-line");
                     main_win.state.borrow_mut().settings.highlight_line = val;
                     if let Some(ev) = main_win.get_current_edit_view() {
                         ev.view_item.edit_area.queue_draw();
                     }
                 }
                 "draw-right-margin" => {
-                    let val = gschema.get_key("draw-right-margin");
+                    let val = gschema.get("draw-right-margin");
                     main_win.state.borrow_mut().settings.right_margin = val;
                     if let Some(ev) = main_win.get_current_edit_view() {
                         ev.view_item.edit_area.queue_draw();
                     }
                 }
                 "column-right-margin" => {
-                    let val = gschema.get_key("column-right-margin");
+                    let val = gschema.get("column-right-margin");
                     if val >= 1 && val <= 1000 {
                         main_win.state.borrow_mut().settings.column_right_margin = val;
                     }
@@ -1281,28 +1280,28 @@ impl MainWinExt for Rc<MainWin> {
                     }
                 }
                 "draw-cursor" => {
-                    let val = gschema.get_key("draw-cursor");
+                    let val = gschema.get("draw-cursor");
                     main_win.state.borrow_mut().settings.draw_cursor = val;
                     if let Some(ev) = main_win.get_current_edit_view() {
                         ev.view_item.edit_area.queue_draw();
                     }
                 }
                 "translate-tabs-to-spaces" => {
-                    let val: bool = gschema.get_key("translate-tabs-to-spaces");
-                    let _ = core.modify_user_config(
+                    let val: bool = gschema.get("translate-tabs-to-spaces");
+                    core.modify_user_config(
                         "general",
                         json!({ "translate_tabs_to_spaces": val })
                     );
                 }
                 "auto-indent" => {
-                    let val: bool = gschema.get_key("auto-indent");
-                    let _ = core.modify_user_config(
+                    let val: bool = gschema.get("auto-indent");
+                    core.modify_user_config(
                         "general",
                         json!({ "autodetect_whitespace": val })
                     );
                 }
                 "tab-size" => {
-                    let val: u32 = gschema.get_key("tab-size");
+                    let val: u32 = gschema.get("tab-size");
                     if val >= 1 && val <= 100 {
                         let _ = core.modify_user_config(
                             "general",
@@ -1311,7 +1310,7 @@ impl MainWinExt for Rc<MainWin> {
                     }
                 }
                 "font" => {
-                    let val: String = gschema.get_key("font");
+                    let val: String = gschema.get("font");
                     if let Some((font_name, font_size)) = functions::get_font_properties(&val) {
                         if font_size >= 6.0 && font_size <= 72.0 {
                             let _ = core.modify_user_config(
@@ -1325,25 +1324,25 @@ impl MainWinExt for Rc<MainWin> {
                         }
                     } else {
                         error!("Failed to get font configuration. Resetting...");
-                        gschema.settings.reset("font");
+                        gschema.reset("font");
                     }
                 }
                 "use-tab-stops" => {
-                    let val: bool = gschema.get_key("use-tab-stops");
+                    let val: bool = gschema.get("use-tab-stops");
                     let _ = core.modify_user_config(
                         "general",
                         json!({ "use_tab_stops": val })
                     );
                 }
                 "word-wrap" => {
-                    let val: bool = gschema.get_key("word-wrap");
-                    let _ = core.modify_user_config(
+                    let val: bool = gschema.get("word-wrap");
+                    core.modify_user_config(
                         "general",
                         json!({ "word_wrap": val })
                     );
                 }
                 "syntax-config" => {
-                    let val = gschema.settings.get_strv("syntax-config");
+                    let val = gschema.get_strv("syntax-config");
 
                     for x in &val {
                         if let Ok(val) = serde_json::from_str(x.as_str()) {
@@ -1353,7 +1352,7 @@ impl MainWinExt for Rc<MainWin> {
                             );
                         } else {
                             error!("Failed to deserialize syntax config. Resetting...");
-                            gschema.settings.reset("syntax-config");
+                            gschema.reset("syntax-config");
                         }
                     }
 
@@ -1376,7 +1375,7 @@ impl MainWinExt for Rc<MainWin> {
                     }
                 },
                 "show-linecount" => {
-                    let val: bool = gschema.get_key("show-linecount");
+                    let val = gschema.get("show-linecount");
                     main_win.state.borrow_mut().settings.show_linecount = val;
 
                     for ev in main_win.w_to_ev.borrow().values() {
@@ -1392,7 +1391,7 @@ impl MainWinExt for Rc<MainWin> {
                     }
                 }
                 "restore-session" => {
-                    main_win.state.borrow_mut().settings.restore_session = gschema.get_key("restore-session");
+                    main_win.state.borrow_mut().settings.restore_session = gschema.get("restore-session");
                 }
                 // Valid keys, but no immediate action to be taken
                 "window-height" | "window-width" | "window-maximized" | "save-when-out-of-focus" | "session" => {}

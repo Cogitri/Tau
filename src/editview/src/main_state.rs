@@ -1,4 +1,3 @@
-use gschema_config_storage::GSchema;
 use std::collections::HashMap;
 use syntect::highlighting::ThemeSettings;
 
@@ -13,7 +12,7 @@ pub enum ShowInvisibles {
 
 /// A Struct containing setting switches for the `EditView`
 pub struct Settings {
-    pub gschema: GSchema,
+    pub gschema: gio::Settings,
     pub draw_spaces: ShowInvisibles,
     pub draw_tabs: ShowInvisibles,
     pub highlight_line: bool,

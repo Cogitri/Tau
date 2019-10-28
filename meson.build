@@ -96,10 +96,6 @@ if gtk3_22 == 'false' and opt_gtk3_22_dep.found()
 endif
 
 sources = files(
-  'src/gschema-config-storage/src/lib.rs',
-  'src/gschema-config-storage/src/pref_storage.rs',
-  'src/gschema-config-storage/src/errors.rs',
-  'src/gschema-config-storage/src/macros.rs',
   'src/editview/src/main_state.rs',
   'src/editview/src/edit_view.rs',
   'src/editview/src/lib.rs',
