@@ -18,19 +18,19 @@ default = []
 gtk_v3_22 = ["gtk/v3_22"]
 
 [dependencies]
-cairo-rs = "0.7"
+cairo-rs = ""
 crossbeam-channel = "0.3"
 enclose = "1"
 futures = "0.1"
-gdk = "0.11"
+gdk = ""
 gettext-rs = { version="0.4", features=["gettext-system"] }
-gio = "0.7"
-glib = "0.8"
+gio = ""
+glib = ""
 gschema-config-storage = { path="../gschema-config-storage" }
 gtk = { version="0.7", features = ["v3_20"] }
 log = "0.4"
-pango = { version="0.7", features = ["v1_38"] }
-pangocairo = "0.8"
+pango = { version="", features = ["v1_38"] }
+pangocairo = ""
 parking_lot = "0.9"
 serde = { version="1", features = ["derive"] }
 serde_json = "1"
