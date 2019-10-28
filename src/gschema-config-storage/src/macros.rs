@@ -8,7 +8,7 @@ macro_rules! impl_typed_getset {
             fn set_key(&self, key_name: &str, val: $ty) -> Result<(), Error> {
                 let res = self.settings.$setter(key_name, val);
 
-                if res {
+                if res.is_ok() {
                     Ok(())
                 } else {
                     Err(Error::ReadOnly(key_name.to_string()))
@@ -31,7 +31,7 @@ macro_rules! impl_typed_getset {
                     if schema_source.has_key(key_name) {
                         let res = self.settings.$setter(key_name, val);
 
-                        if res {
+                        if res.is_ok() {
                             Ok(())
                         } else {
                             Err(Error::ReadOnly(key_name.to_string()))

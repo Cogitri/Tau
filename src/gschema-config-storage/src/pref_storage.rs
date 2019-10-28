@@ -67,7 +67,7 @@ impl GSchemaExt<String> for GSchema {
     fn set_key(&self, key_name: &str, val: String) -> Result<(), Error> {
         let res = self.settings.set_string(key_name, &val);
 
-        if res {
+        if res.is_ok() {
             Ok(())
         } else {
             Err(Error::ReadOnly(key_name.to_string()))
@@ -95,7 +95,7 @@ impl GSchemaExt<String> for GSchema {
             if schema_source.has_key(key_name) {
                 let res = self.settings.set_string(key_name, &val);
 
-                if res {
+                if res.is_ok() {
                     Ok(())
                 } else {
                     Err(Error::ReadOnly(key_name.to_string()))
@@ -111,13 +111,13 @@ impl GSchemaExt<String> for GSchema {
 
 impl GSchemaExt<Variant> for GSchema {
     fn get_key(&self, key_name: &str) -> Variant {
-        self.settings.get_value(key_name).unwrap()
+        self.settings.get_value(key_name)
     }
 
     fn set_key(&self, key_name: &str, val: Variant) -> Result<(), Error> {
         let res = self.settings.set_value(key_name, &val);
 
-        if res {
+        if res.is_ok() {
             Ok(())
         } else {
             Err(Error::ReadOnly(key_name.to_string()))
@@ -127,13 +127,9 @@ impl GSchemaExt<Variant> for GSchema {
     fn try_get_key(&self, key_name: &str) -> Result<Variant, Error> {
         if let Some(schema_source) = self.settings.get_property_settings_schema() {
             if schema_source.has_key(key_name) {
-                if let Some(val) = self.settings.get_value(key_name) {
-                    Ok(val)
-                } else {
-                    Err(Error::NoValue(key_name.to_string()))
-                }
+                Ok(self.settings.get_value(key_name))
             } else {
-                Err(Error::GetNonExistent(key_name.to_string()))
+                Err(Error::NoValue(key_name.to_string()))
             }
         } else {
             Err(Error::NoSchemaSource)
@@ -145,7 +141,7 @@ impl GSchemaExt<Variant> for GSchema {
             if schema_source.has_key(key_name) {
                 let res = self.settings.set_value(key_name, &val);
 
-                if res {
+                if res.is_ok() {
                     Ok(())
                 } else {
                     Err(Error::ReadOnly(key_name.to_string()))
