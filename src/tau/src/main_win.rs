@@ -18,9 +18,9 @@ use gio::{ActionMapExt, ApplicationExt, Resource, Settings, SettingsExt, SimpleA
 use glib::{Bytes, GString, MainContext, Receiver, SyncSender};
 use gtk::prelude::*;
 use gtk::{
-    Application, ApplicationWindow, Builder, ButtonsType, DialogFlags, EventBox, FileChooserAction,
-    FileChooserNative, HeaderBar, MenuButton, MessageDialog, MessageType, Notebook, ResponseType,
-    Revealer, Widget,
+    Application, ApplicationWindow, Builder, Button, ButtonsType, DialogFlags, EventBox,
+    FileChooserAction, FileChooserNative, HeaderBar, IconSize, MenuButton, MessageDialog,
+    MessageType, Notebook, Orientation, Paned, PositionType, ResponseType, Revealer, Widget,
 };
 use log::{debug, error, info, trace, warn};
 use serde_json::{self, json};
@@ -28,6 +28,7 @@ use std::cell::{Cell, RefCell};
 use std::collections::{BTreeMap, HashMap};
 use std::convert::TryFrom;
 use std::rc::Rc;
+use vte::{Terminal, TerminalExt};
 use xrl::{Client, Style, ViewId, XiNotification};
 
 pub const RESOURCE: &[u8] = include_bytes!("ui/resources.gresource");
@@ -155,6 +156,10 @@ pub struct MainWin {
     fullscreen: Cell<bool>,
     /// The tokio Runtime to queue futures on. Might be None if Tau has already shut down (so should never happen in practice)
     runtime_opt: Rc<RefCell<Option<tokio::runtime::Runtime>>>,
+    /// The `GtkPaned` which holds the `vte::Terminal` and `GtkNoteBook`
+    paned: Paned,
+    /// Notebook holding the Terminals
+    term_notebook: Notebook,
 }
 
 impl MainWin {
@@ -202,6 +207,7 @@ impl MainWin {
         let fullscreen_revealer = builder.get_object("fullscreen_revealer").unwrap();
         let fullscreen_hamburger_button =
             builder.get_object("fullscreen_hamburger_button").unwrap();
+        let paned: Paned = builder.get_object("paned").unwrap();
 
         let icon = Pixbuf::new_from_resource("/org/gnome/Tau/org.gnome.Tau.svg");
         window.set_icon(icon.ok().as_ref());
@@ -268,7 +274,11 @@ impl MainWin {
             saving: RefCell::new(false),
             fullscreen: Cell::new(false),
             runtime_opt,
+            paned,
+            term_notebook: Notebook::new(),
         });
+
+        main_win.term_notebook.set_tab_pos(PositionType::Bottom);
 
         main_win.connect_settings_change();
 
@@ -589,6 +599,13 @@ impl MainWin {
                 main_win.toggle_fullscreen();
             }));
             application.add_action(&fullscreen_action);
+        }
+        {
+            let show_terminal_action = SimpleAction::new("show_terminal", None);
+            show_terminal_action.connect_activate(enclose!((main_win) move |_,_| {
+                main_win.add_terminal(true);
+            }));
+            application.add_action(&show_terminal_action);
         }
 
         // Put keyboard shortcuts here
@@ -1022,11 +1039,24 @@ impl MainWin {
             self.set_title(glib::get_application_name().unwrap().as_str());
         }
     }
+
+    fn close_terminal(&self, term_num: u32) {
+        self.term_notebook.remove_page(Some(term_num));
+        if self.term_notebook.get_n_pages() < 2 {
+            self.term_notebook.set_show_tabs(false);
+        }
+    }
+
+    fn remove_terminal_area(&self) {
+        self.paned.remove(&self.paned.get_child2().unwrap());
+    }
 }
 
 /// An Extension trait for `MainWin`. This is implemented for `Rc<MainWin>`, allowing for a nicer
 /// API (where we can do stuff like `self.close()` instead of `Self::close(main_win)`).
 pub trait MainWinExt {
+    fn add_terminal(&self, always_create_new: bool);
+
     fn close(&self) -> SaveAction;
 
     fn close_all(&self) -> SaveAction;
@@ -1054,9 +1084,117 @@ pub trait MainWinExt {
     fn save_as(&self, edit_view: &Rc<EditView>);
 
     fn toggle_fullscreen(&self);
+
+    fn vte_callback(&self, term: &Terminal);
 }
 
 impl MainWinExt for Rc<MainWin> {
+    /// Add a Terminal to the bottom of the `MainWin`. If `always_create_new` is true, this will only
+    /// create a new terminal area if it doesn't exist yet. If it's false it adds a new terminal to the
+    /// `GtkNotebook` holding the terminals.
+    fn add_terminal(&self, always_create_new: bool) {
+        let term = Terminal::new();
+        let shell = std::path::Path::new("/bin/bash");
+        term.spawn_sync(
+            vte::PtyFlags::DEFAULT,
+            None,
+            &[&shell],
+            &[],
+            SpawnFlags::DEFAULT,
+            Some(&mut enclose!((self => main_win, term) move || { main_win.vte_callback(&term)})),
+            None::<&gio::Cancellable>,
+        )
+        .unwrap();
+
+        let top_bar = editview::TopBar::new();
+
+        let term_box = self.paned.get_child2().map(|w| w.downcast::<gtk::Box>());
+        if term_box.as_ref().map(|x| x.as_ref().ok()).is_some() && always_create_new {
+            return;
+        }
+
+        if let Some(Ok(_)) = term_box {
+            let num = self.term_notebook.get_n_pages();
+
+            top_bar
+                .label
+                .set_text(&format!("{} {}", gettext("Terminal"), num + 1));
+            let page_num = self
+                .term_notebook
+                .insert_page(&term, Some(&top_bar.event_box), None);
+            self.term_notebook.set_tab_reorderable(&term, true);
+
+            top_bar
+                .close_button
+                .connect_clicked(enclose!((self => main_win, page_num) move |_| {
+                    main_win.close_terminal(page_num);
+                }));
+
+            top_bar.event_box.connect_button_press_event(
+                enclose!((self => main_win) move |_, eb| {
+                    // 2 == middle click
+                    if eb.get_button() == 2 {
+                        main_win.close_terminal(page_num);
+                    }
+                    Inhibit(false)
+                }),
+            );
+        } else {
+            let termbox = gtk::Box::new(Orientation::Horizontal, 0);
+            termbox.pack_start(&self.term_notebook, true, true, 0);
+            self.paned.add2(&termbox);
+
+            let buttonbox = gtk::Box::new(Orientation::Vertical, 0);
+            let close_button =
+                Button::new_from_icon_name(Some("window-close-symbolic"), IconSize::SmallToolbar);
+            let add_button =
+                Button::new_from_icon_name(Some("window-new-symbolic"), IconSize::SmallToolbar);
+            buttonbox.pack_start(&add_button, false, false, 0);
+            buttonbox.pack_start(&close_button, false, false, 0);
+            termbox.pack_start(&buttonbox, false, false, 0);
+
+            top_bar
+                .label
+                .set_text(&format!("{} {}", gettext("Terminal"), 1));
+            let page_num = self
+                .term_notebook
+                .insert_page(&term, Some(&top_bar.event_box), None);
+
+            close_button.connect_clicked(enclose!((self => main_win) move |_| {
+                main_win.remove_terminal_area();
+            }));
+
+            add_button.connect_clicked(enclose!((self => main_win) move |_| {
+                main_win.add_terminal(false);
+            }));
+
+            top_bar
+                .close_button
+                .connect_clicked(enclose!((self => main_win, page_num) move |_| {
+                    main_win.close_terminal(page_num);
+                }));
+
+            top_bar.event_box.connect_button_press_event(
+                enclose!((self => main_win) move |_, eb| {
+                    // 2 == middle click
+                    if eb.get_button() == 2 {
+                        main_win.close_terminal(page_num);
+                    }
+                    Inhibit(false)
+                }),
+            );
+
+            self.paned.show_all();
+        }
+        term.show();
+
+        if self.term_notebook.get_n_pages() < 2 {
+            self.term_notebook.set_show_tabs(false);
+        } else {
+            self.term_notebook.set_show_tabs(true);
+        }
+    }
+
     /// Close the current `EditView`
     ///
     /// # Returns
@@ -1400,6 +1538,13 @@ impl MainWinExt for Rc<MainWin> {
                     main_win.state.borrow_mut().settings.full_title = gschema.get("full-title");
                     main_win.update_titlebar(main_win.get_current_edit_view().as_ref());
                 }
+                "show-terminal" => {
+                    if gschema.get("show-terminal") {
+                        main_win.add_terminal(true);
+                    } else {
+                        main_win.remove_terminal_area();
+                    }
+                }
                 // Valid keys, but no immediate action to be taken
                 "window-height" | "window-width" | "window-maximized" | "save-when-out-of-focus" | "session" => {}
                 key => {
@@ -1518,6 +1663,12 @@ impl MainWinExt for Rc<MainWin> {
             view_id,
             &self.window,
         );
+
+        if self.notebook.get_n_pages() == 0
+            && self.state.borrow().settings.gschema.get("show-terminal")
+        {
+            self.add_terminal(true);
+        }
         {
             let page_num = self.notebook.insert_page(
                 &edit_view.root_widget,
@@ -1719,5 +1870,10 @@ impl MainWinExt for Rc<MainWin> {
                 });
             }
         }
+    }
+
+    /// Callback for when the terminal has finished initializing
+    fn vte_callback(&self, term: &Terminal) {
+        self.paned.add2(term);
     }
 }

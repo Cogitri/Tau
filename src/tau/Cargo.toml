@@ -42,7 +42,7 @@ serde = { version="1", features = ["derive"] }
 serde_json = "1"
 syntect = "3"
 tokio = "0.1"
-
+vte-rs = { git="https://github.com/Cogitri/vte-rs" branch="regen" }
 xrl = "0.0.8"
 
 # Optional deps

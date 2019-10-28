@@ -208,6 +208,14 @@
                 Weather or not to display full path instead of file name in Tau's title bar.
             </description>
         </key>
+
+        <key name="show-terminal" type="b">
+            <default>false</default>
+            <summary>Show terminal</summary>
+            <description>
+                Whether or not to show an integrated terminal in Tau's editing pane
+            </description>
+        </key>
     </schema>
 
 </schemalist>
