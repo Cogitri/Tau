@@ -8,6 +8,7 @@ use crate::syntax_config::SyntaxParams;
 use crate::view_history::{ViewHistory, ViewHistoryExt};
 use chrono::{DateTime, Utc};
 use editview::{theme::u32_from_color, EditView, MainState};
+use futures::{future, Future};
 use gdk::{enums::key, ModifierType, WindowState};
 use gdk_pixbuf::Pixbuf;
 use gettextrs::gettext;
@@ -151,6 +152,8 @@ pub struct MainWin {
     view_history: Rc<RefCell<ViewHistory>>,
     /// If the window is in fullscreen mode
     fullscreen: Cell<bool>,
+    /// The tokio Runtime to queue futures on. Might be None if Tau has already shut down (so should never happen in practice)
+    runtime_opt: Rc<RefCell<Option<tokio::runtime::Runtime>>>,
 }
 
 impl MainWin {
@@ -166,6 +169,8 @@ impl MainWin {
         event_tx: SyncSender<XiEvent>,
         // The `Receiver` on which we receive requests from `xi-core`
         request_tx: crossbeam_channel::Sender<XiRequest>,
+        // The tokio Runtime xrl uses, we can queue `Future`s on this
+        runtime_opt: Rc<RefCell<Option<tokio::runtime::Runtime>>>,
     ) -> Rc<Self> {
         let gbytes = Bytes::from_static(RESOURCE);
         let resource = Resource::new_from_data(&gbytes).unwrap();
@@ -261,6 +266,7 @@ impl MainWin {
             started_plugins: RefCell::new(Default::default()),
             saving: RefCell::new(false),
             fullscreen: Cell::new(false),
+            runtime_opt,
         });
 
         main_win.connect_settings_change();
@@ -963,26 +969,26 @@ impl MainWin {
     fn req_new_view(&self, file_name: Option<String>) {
         trace!("Requesting new view");
 
-        std::thread::spawn(
-            enclose!((self.event_tx => new_view_tx, self.core => core) move || {
-                match tokio::runtime::current_thread::block_on_all(
-                    core.new_view(file_name.as_ref().map(ToString::to_string)),
-                ) {
-                    Ok(view_id) => new_view_tx.send(XiEvent::NewView(Ok((view_id, file_name)))).unwrap(),
-                    Err(e) => {
-                        if let xrl::ClientError::ErrorReturned(value) = e {
-                            let err: XiClientError = serde_json::from_value(value).unwrap();
-                            new_view_tx
-                                .send(XiEvent::NewView(Err(format!(
-                                    "Failed to open new view due to error '{}'",
-                                    err.message
-                                ))))
-                                .unwrap()
-                        }
-                    }
-                };
-            }),
-        );
+        self.runtime_opt.borrow_mut().as_mut().unwrap().spawn(
+                    future::lazy(enclose!((self.core => core, self.event_tx => new_view_tx) move || {
+                        core
+                        .new_view(file_name.clone())
+                        .then(|res|
+                            future::lazy(move || {
+                                match res {
+                                    Ok(view_id) => new_view_tx.send(XiEvent::NewView(Ok((view_id, file_name)))).unwrap(),
+                                    Err(e) => {
+                                        if let xrl::ClientError::ErrorReturned(value) = e {
+                                            let err: XiClientError = serde_json::from_value(value).unwrap();
+                                            new_view_tx.send(XiEvent::NewView(Err(format!("{}: '{}'", gettext("Failed to open new view due to error"), err.message)))).unwrap()
+                                        }
+                                    },
+                                }
+                                Ok(())
+                            })
+                        )
+                    }))
+                );
     }
 
     fn autosave_view(&self, file_name: Option<String>, view_id: ViewId) -> Result<String, String> {

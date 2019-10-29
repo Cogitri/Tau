@@ -227,55 +227,74 @@ fn main() {
                 event_rx_opt.borrow_mut().take().unwrap(),
                 event_tx.clone(),
                 request_tx,
+                runtime_opt.clone(),
             );
         }),
     );
 
-    application.connect_activate(enclose!((core_opt, event_tx => new_view_tx) move |_| {
+    application.connect_activate(enclose!((core_opt, event_tx => new_view_tx, runtime_opt) move |_| {
         debug!("Activating new view");
 
         // It's fine to unwrap here - we already made sure this is Some in connect_startup.
         let core = core_opt.lock().clone().unwrap().unwrap();
 
-        match tokio::runtime::current_thread::block_on_all(core.new_view(None)) {
-            Ok(view_id) => new_view_tx.send(XiEvent::NewView(Ok((view_id, None)))).unwrap(),
-            Err(e) => {
-                if let xrl::ClientError::ErrorReturned(value) = e {
-                    let err: XiClientError = serde_json::from_value(value).unwrap();
-                    new_view_tx.send(XiEvent::NewView(Err(format!("{}: '{}'", gettext("Failed to open new view due to error"), err.message)))).unwrap()
-                }
-            },
-        }
+        runtime_opt.borrow_mut().as_mut().unwrap().spawn(
+            future::lazy(enclose!((new_view_tx) move || {
+                core
+                .new_view(None)
+                .then(|res|
+                    future::lazy(move || {
+                        match res {
+                            Ok(view_id) => new_view_tx.send(XiEvent::NewView(Ok((view_id, None)))).unwrap(),
+                            Err(e) => {
+                                if let xrl::ClientError::ErrorReturned(value) = e {
+                                    let err: XiClientError = serde_json::from_value(value).unwrap();
+                                    new_view_tx.send(XiEvent::NewView(Err(format!("{}: '{}'", gettext("Failed to open new view due to error"), err.message)))).unwrap()
+                                }
+                            },
+                        }
+                        Ok(())
+                    })
+                )
+            }))
+        );
     }));
 
     application.connect_open(
-        enclose!((core_opt, event_tx => new_view_tx) move |_,files,_| {
-                debug!("Opening new file");
+        enclose!((core_opt, event_tx => new_view_tx, runtime_opt) move |_,files,_| {
+            debug!("Opening new file");
 
-                // See above for why it's fine to unwrap here.
-                let core = core_opt.lock().clone().unwrap().unwrap();
-                let paths: Vec<String> = files.iter()
-                    .filter_map(gio::File::get_path)
-                    .map(std::path::PathBuf::into_os_string)
-                    .filter_map(|s| s.into_string().ok())
-                    .collect();
+            // See above for why it's fine to unwrap here.
+            let core = core_opt.lock().clone().unwrap().unwrap();
+            let paths: Vec<String> = files.iter()
+                .filter_map(gio::File::get_path)
+                .map(std::path::PathBuf::into_os_string)
+                .filter_map(|s| s.into_string().ok())
+                .collect();
 
-                std::thread::spawn(enclose!((core, new_view_tx) move || {
-                        for file in paths {
-                            match tokio::runtime::current_thread::block_on_all(core.new_view(Some(file.clone()))) {
-                                Ok(view_id) => new_view_tx.send(XiEvent::NewView(Ok((view_id, Some(file))))).unwrap(),
-                                Err(e) => {
-                                    if let xrl::ClientError::ErrorReturned(value) = e {
-                                        let err: XiClientError = serde_json::from_value(value).unwrap();
-                                        new_view_tx.send(XiEvent::NewView(Err(format!("{}: '{}'", gettext("Failed to open new view due to error"), err.message)))).unwrap()
-                                    }
-                                },
-                            }
-                        }
-                }));
+            for file in paths {
+                runtime_opt.borrow_mut().as_mut().unwrap().spawn(
+                    future::lazy(enclose!((core, new_view_tx) move || {
+                        core
+                        .new_view(Some(file.clone()))
+                        .then(|res|
+                            future::lazy(move || {
+                                match res {
+                                    Ok(view_id) => new_view_tx.send(XiEvent::NewView(Ok((view_id, Some(file))))).unwrap(),
+                                    Err(e) => {
+                                        if let xrl::ClientError::ErrorReturned(value) = e {
+                                            let err: XiClientError = serde_json::from_value(value).unwrap();
+                                            new_view_tx.send(XiEvent::NewView(Err(format!("{}: '{}'", gettext("Failed to open new view due to error"), err.message)))).unwrap()
+                                        }
+                                    },
+                                }
+                                Ok(())
+                            })
+                        )
+                    }))
+                );
             }
-        ),
-    );
+        }));
 
     application.connect_shutdown(enclose!((runtime_opt)move |_| {
         debug!("Shutting down…");
