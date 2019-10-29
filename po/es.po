@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tau\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Tau/issues\n"
-"POT-Creation-Date: 2019-10-24 18:33+0000\n"
-"PO-Revision-Date: 2019-10-25 09:14+0200\n"
+"POT-Creation-Date: 2019-10-27 14:55+0000\n"
+"PO-Revision-Date: 2019-10-29 18:30+0100\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Spanish - Spain <gnome-es-list@gnome.org>\n"
 "Language: es_ES\n"
@@ -25,14 +25,14 @@ msgstr "Tau"
 
 #: data/org.gnome.Tau.appdata.xml.in.in:8
 msgid "GTK frontend for the xi text editor"
-msgstr "«Frontend» en GTK para el editor de textos xi"
+msgstr "Interfaz en GTK para el editor de textos xi"
 
 #: data/org.gnome.Tau.appdata.xml.in.in:13
 msgid ""
 "Tau is a GTK frontend for the xi text editor written in Rust. It’s a very "
 "fast plain text editor."
 msgstr ""
-"Tau es un «frontend» en GTK para el editor de textos xi, escrito en Rust. Es "
+"Tau es una interfaz en GTK para el editor de textos xi, escrito en Rust. Es "
 "un editor de texto sin formato muy veloz."
 
 #: data/org.gnome.Tau.appdata.xml.in.in:28
@@ -644,7 +644,7 @@ msgstr "Texto sin formato"
 
 #: src/tau/src/about_win.rs:17
 msgid "GTK frontend for the xi text editor, written in Rust"
-msgstr "«Frontend» en GTK para el editor de textos xi, escrito en Rust"
+msgstr "Interfaz en GTK para el editor de textos xi, escrito en Rust"
 
 #: src/tau/src/about_win.rs:25
 msgid "translator-credits"
