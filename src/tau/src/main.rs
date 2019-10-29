@@ -97,7 +97,7 @@ use std::env::args;
 use std::rc::Rc;
 use std::sync::Arc;
 use tokio::runtime::Runtime;
-use xrl::{spawn as spawn_xi, ViewId};
+use xrl::spawn as spawn_xi;
 
 fn main() {
     //PanicHandler::new();
@@ -119,9 +119,9 @@ fn main() {
         None,
     );
 
-    // The channel to signal MainWin to create a new tab with an EditView
-    let (new_view_tx, new_view_rx) =
-        MainContext::channel::<Result<(ViewId, Option<String>), String>>(glib::PRIORITY_HIGH);
+    // The channel through which all events from Xi are sent from `crate::frontend::TauFrontend` to
+    // the MainWin
+    let (event_tx, event_rx) = MainContext::sync_channel::<XiEvent>(glib::PRIORITY_HIGH, 5);
     // Set this to none here so we can move it into the closures without actually starting Xi every time.
     // This significantly improves startup time when Tau is already opened and you open a new file via
     // the CLI.
@@ -129,17 +129,13 @@ fn main() {
 
     //FIXME: This is a hack to satisfy the borrowchecker. `connect_startup` is a FnMut even though
     // it's only called once, so it's fine to move new_view_rx and event_rx into connect_startup
-    let new_view_rx_opt = Rc::new(RefCell::new(Some(new_view_rx)));
+    let event_rx_opt = Rc::new(RefCell::new(Some(event_rx)));
 
     let runtime_opt = Rc::new(RefCell::new(None));
 
     application.connect_startup(
-        enclose!((core_opt, application, new_view_rx_opt, new_view_tx, runtime_opt) move |_| {
-                debug!("Starting Tau");
-
-            // The channel through which all events from Xi are sent from `crate::frontend::TauFrontend` to
-            // the MainWin
-            let (event_tx, event_rx) = MainContext::sync_channel::<XiEvent>(glib::PRIORITY_HIGH, 5);
+        enclose!((core_opt, application, event_rx_opt, event_tx, runtime_opt) move |_| {
+            debug!("Starting Tau");
 
             // The channel to send the result of a request back to Xi
             let (request_tx, request_rx) = unbounded::<XiRequest>();
@@ -148,7 +144,7 @@ fn main() {
 
             let mut runtime = Runtime::new().unwrap();
 
-            let core_res = runtime.block_on(future::lazy(enclose!((request_tx, core_opt) move || {
+            let core_res = runtime.block_on(future::lazy(enclose!((request_tx, core_opt, event_tx) move || {
                 let res = spawn_xi(
                     crate::globals::XI_PATH.unwrap_or("xi-core"),
                     TauFrontendBuilder {
@@ -228,33 +224,32 @@ fn main() {
             MainWin::new(
                 &application,
                 core,
-                new_view_rx_opt.borrow_mut().take().unwrap(),
-                new_view_tx.clone(),
-                event_rx,
+                event_rx_opt.borrow_mut().take().unwrap(),
+                event_tx.clone(),
                 request_tx,
             );
         }),
     );
 
-    application.connect_activate(enclose!((core_opt, new_view_tx) move |_| {
+    application.connect_activate(enclose!((core_opt, event_tx => new_view_tx) move |_| {
         debug!("Activating new view");
 
         // It's fine to unwrap here - we already made sure this is Some in connect_startup.
         let core = core_opt.lock().clone().unwrap().unwrap();
 
         match tokio::runtime::current_thread::block_on_all(core.new_view(None)) {
-            Ok(view_id) => new_view_tx.send(Ok((view_id, None))).unwrap(),
+            Ok(view_id) => new_view_tx.send(XiEvent::NewView(Ok((view_id, None)))).unwrap(),
             Err(e) => {
                 if let xrl::ClientError::ErrorReturned(value) = e {
                     let err: XiClientError = serde_json::from_value(value).unwrap();
-                    new_view_tx.send(Err(format!("{}: '{}'", gettext("Failed to open new view due to error"), err.message))).unwrap()
+                    new_view_tx.send(XiEvent::NewView(Err(format!("{}: '{}'", gettext("Failed to open new view due to error"), err.message)))).unwrap()
                 }
             },
         }
     }));
 
     application.connect_open(
-        enclose!((core_opt, new_view_tx) move |_,files,_| {
+        enclose!((core_opt, event_tx => new_view_tx) move |_,files,_| {
                 debug!("Opening new file");
 
                 // See above for why it's fine to unwrap here.
@@ -268,11 +263,11 @@ fn main() {
                 std::thread::spawn(enclose!((core, new_view_tx) move || {
                         for file in paths {
                             match tokio::runtime::current_thread::block_on_all(core.new_view(Some(file.clone()))) {
-                                Ok(view_id) => new_view_tx.send(Ok((view_id, Some(file)))).unwrap(),
+                                Ok(view_id) => new_view_tx.send(XiEvent::NewView(Ok((view_id, Some(file))))).unwrap(),
                                 Err(e) => {
                                     if let xrl::ClientError::ErrorReturned(value) = e {
                                         let err: XiClientError = serde_json::from_value(value).unwrap();
-                                        new_view_tx.send(Err(format!("{}: '{}'", gettext("Failed to open new view due to error"), err.message))).unwrap()
+                                        new_view_tx.send(XiEvent::NewView(Err(format!("{}: '{}'", gettext("Failed to open new view due to error"), err.message)))).unwrap()
                                     }
                                 },
                             }

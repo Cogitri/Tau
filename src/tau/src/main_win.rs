@@ -12,7 +12,7 @@ use gdk::{enums::key, ModifierType, WindowState};
 use gdk_pixbuf::Pixbuf;
 use gettextrs::gettext;
 use gio::{ActionMapExt, ApplicationExt, Resource, SettingsExt, SimpleAction};
-use glib::{Bytes, GString, MainContext, Receiver, Sender};
+use glib::{Bytes, GString, MainContext, Receiver, SyncSender};
 use gschema_config_storage::{GSchema, GSchemaExt};
 use gtk::prelude::*;
 use gtk::{
@@ -129,8 +129,8 @@ pub struct MainWin {
     state: Rc<RefCell<MainState>>,
     /// The `WinProp` Struct, used for saving the window state during shutdown
     properties: RefCell<WinProp>,
-    /// A glib `Sender` from whom we receive something when we should create new `EditView`s.
-    new_view_tx: Sender<Result<(ViewId, Option<String>), String>>,
+    /// A glib `Sender` used to queue up to be created `EditView`s
+    event_tx: SyncSender<XiEvent>,
     /// A crossbeam_channel `Sender` from whom we receive something when Xi requests something.
     request_tx: crossbeam_channel::Sender<XiRequest>,
     /// A `HashMap` containing the different configs for each syntax
@@ -161,12 +161,9 @@ impl MainWin {
         application: &Application,
         // The `xi-core` we can send commands to
         core: Client,
-        // The `Receiver` we get requests to open new views from
-        new_view_rx: Receiver<Result<(ViewId, Option<String>), String>>,
-        // The `Sender` to open new views
-        new_view_tx: Sender<Result<(ViewId, Option<String>), String>>,
         // The `Receiver` on which we receive messages from `xi-core`
         event_rx: Receiver<XiEvent>,
+        event_tx: SyncSender<XiEvent>,
         // The `Receiver` on which we receive requests from `xi-core`
         request_tx: crossbeam_channel::Sender<XiRequest>,
     ) -> Rc<Self> {
@@ -248,7 +245,7 @@ impl MainWin {
             window,
             notebook,
             builder,
-            new_view_tx,
+            event_tx,
             properties,
             request_tx,
             header_bar,
@@ -646,40 +643,6 @@ impl MainWin {
 
         let main_context = MainContext::default();
 
-        // Open new `EditView`s when we receives something here. This is a channel because we can
-        // also receive this from `connect_open`/`connect_activate` in main.rs
-        new_view_rx.attach(
-            Some(&main_context),
-            enclose!((main_win) move |res| {
-                match res {
-                    Ok((view_id, path)) => {
-                        if let Some(ref path_string) = path {
-                            if let Some(name) = std::path::Path::new(path_string).file_name() {
-                                main_win.set_title(&name.to_string_lossy());
-                            }
-                        } else {
-                            main_win.set_title(&gettext("Untitled"));
-                        }
-
-                        main_win.new_view_response(path, view_id);
-
-                        if main_win.notebook.get_n_pages() > 1 {
-                            main_win.notebook.set_show_tabs(true);
-                        }
-                    },
-                    Err(e) => {
-                        ErrorDialog::new(
-                            ErrorMsg {
-                                msg: e,
-                                fatal: false
-                            }
-                        );
-                    },
-                }
-                Continue(true)
-            }),
-        );
-
         event_rx.attach(
             Some(&main_context),
             enclose!((main_win) move |ev| {
@@ -696,29 +659,6 @@ impl MainWin {
 }
 
 impl MainWin {
-    fn handle_event(&self, ev: XiEvent) {
-        trace!("Handling msg: {:?}", ev);
-        match ev {
-            XiEvent::Notification(notification) => match notification {
-                XiNotification::Alert(alert) => self.alert(alert),
-                XiNotification::AvailableThemes(themes) => self.available_themes(themes),
-                XiNotification::ConfigChanged(config) => self.config_changed(&config),
-                XiNotification::DefStyle(style) => self.def_style(style),
-                XiNotification::FindStatus(status) => self.find_status(&status),
-                XiNotification::ReplaceStatus(status) => self.replace_status(&status),
-                XiNotification::Update(update) => self.update(update),
-                XiNotification::ScrollTo(scroll) => self.scroll_to(&scroll),
-                XiNotification::ThemeChanged(theme) => self.theme_changed(theme),
-                XiNotification::AvailableLanguages(langs) => self.available_languages(langs),
-                XiNotification::LanguageChanged(lang) => self.language_changed(&lang),
-                XiNotification::PluginStarted(plugin) => self.plugin_started(&plugin),
-                XiNotification::PluginStoped(plugin) => self.plugin_stopped(&plugin),
-                _ => {}
-            },
-            XiEvent::MeasureWidth(measure_width) => self.measure_width(measure_width),
-        }
-    }
-
     /// Open an `ErrorDialog` when with the `Alert`'s msg
     pub fn alert(&self, params: xrl::Alert) {
         ErrorDialog::new(ErrorMsg {
@@ -1024,19 +964,19 @@ impl MainWin {
         trace!("Requesting new view");
 
         std::thread::spawn(
-            enclose!((self.new_view_tx => new_view_tx, self.core => core) move || {
+            enclose!((self.event_tx => new_view_tx, self.core => core) move || {
                 match tokio::runtime::current_thread::block_on_all(
                     core.new_view(file_name.as_ref().map(ToString::to_string)),
                 ) {
-                    Ok(view_id) => new_view_tx.send(Ok((view_id, file_name))).unwrap(),
+                    Ok(view_id) => new_view_tx.send(XiEvent::NewView(Ok((view_id, file_name)))).unwrap(),
                     Err(e) => {
                         if let xrl::ClientError::ErrorReturned(value) = e {
                             let err: XiClientError = serde_json::from_value(value).unwrap();
                             new_view_tx
-                                .send(Err(format!(
+                                .send(XiEvent::NewView(Err(format!(
                                     "Failed to open new view due to error '{}'",
                                     err.message
-                                )))
+                                ))))
                                 .unwrap()
                         }
                     }
@@ -1107,9 +1047,13 @@ pub trait MainWinExt {
 
     fn current_save_as(&self);
 
+    fn handle_event(&self, ev: XiEvent);
+
     fn handle_open_button(&self);
 
     fn handle_save_button(&self);
+
+    fn new_view(&self, res: Result<(ViewId, Option<String>), String>);
 
     fn new_view_response(&self, file_name: Option<String>, view_id: ViewId);
 
@@ -1658,6 +1602,56 @@ impl MainWinExt for Rc<MainWin> {
             self.fullscreen_revealer.set_reveal_child(false);
         } else {
             self.window.fullscreen();
+        }
+    }
+
+    fn handle_event(&self, ev: XiEvent) {
+        trace!("Handling msg: {:?}", ev);
+        match ev {
+            XiEvent::Notification(notification) => match notification {
+                XiNotification::Alert(alert) => self.alert(alert),
+                XiNotification::AvailableThemes(themes) => self.available_themes(themes),
+                XiNotification::ConfigChanged(config) => self.config_changed(&config),
+                XiNotification::DefStyle(style) => self.def_style(style),
+                XiNotification::FindStatus(status) => self.find_status(&status),
+                XiNotification::ReplaceStatus(status) => self.replace_status(&status),
+                XiNotification::Update(update) => self.update(update),
+                XiNotification::ScrollTo(scroll) => self.scroll_to(&scroll),
+                XiNotification::ThemeChanged(theme) => self.theme_changed(theme),
+                XiNotification::AvailableLanguages(langs) => self.available_languages(langs),
+                XiNotification::LanguageChanged(lang) => self.language_changed(&lang),
+                XiNotification::PluginStarted(plugin) => self.plugin_started(&plugin),
+                XiNotification::PluginStoped(plugin) => self.plugin_stopped(&plugin),
+                _ => {}
+            },
+            XiEvent::MeasureWidth(measure_width) => self.measure_width(measure_width),
+            XiEvent::NewView(new_view) => self.new_view(new_view),
+        }
+    }
+
+    fn new_view(&self, res: Result<(ViewId, Option<String>), String>) {
+        match res {
+            Ok((view_id, path)) => {
+                if let Some(ref path_string) = path {
+                    if let Some(name) = std::path::Path::new(path_string).file_name() {
+                        self.set_title(&name.to_string_lossy());
+                    }
+                } else {
+                    self.set_title(&gettext("Untitled"));
+                }
+
+                self.new_view_response(path, view_id);
+
+                if self.notebook.get_n_pages() > 1 {
+                    self.notebook.set_show_tabs(true);
+                }
+            }
+            Err(e) => {
+                ErrorDialog::new(ErrorMsg {
+                    msg: e,
+                    fatal: false,
+                });
+            }
         }
     }
 }

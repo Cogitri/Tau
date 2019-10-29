@@ -1,11 +1,12 @@
 use glib::SyncSender;
-use xrl::{Client, Frontend, FrontendBuilder, MeasureWidth, XiNotification};
+use xrl::{Client, Frontend, FrontendBuilder, MeasureWidth, ViewId, XiNotification};
 
 /// Wrapper enum to use one rx/tx pair for all `XiNotifications` and requests
 #[derive(Debug)]
 pub enum XiEvent {
     Notification(XiNotification),
     MeasureWidth(MeasureWidth),
+    NewView(Result<(ViewId, Option<String>), String>),
 }
 
 /// Wrapper enum to use one rx/tx pair for all `XiRequest` results we send back to Xi.
