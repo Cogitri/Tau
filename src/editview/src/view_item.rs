@@ -35,7 +35,7 @@ pub struct EvBar {
 }
 
 #[derive(Clone)]
-pub struct Gestures {
+pub(crate) struct Gestures {
     pub drag: GestureDrag,
     drag_data: Rc<RefCell<DragData>>,
     pub zoom: GestureZoom,
@@ -45,18 +45,19 @@ struct DragData {
     start_x: f64,
     start_y: f64,
 }
+
 /// The `ViewItem` contains the various GTK parts related to the `edit_area` of the `EditView`
 #[derive(Clone)]
 pub struct ViewItem {
     pub root_box: Grid,
-    pub ev_scrolled_window: ScrolledWindow,
+    pub(crate) ev_scrolled_window: ScrolledWindow,
     pub edit_area: Layout,
     pub linecount: Layout,
     pub hadj: Adjustment,
     pub vadj: Adjustment,
     pub statusbar: EvBar,
-    pub context_menu: Menu,
-    pub gestures: Gestures,
+    pub(crate) context_menu: Menu,
+    pub(crate) gestures: Gestures,
 }
 
 impl ViewItem {
@@ -389,7 +390,7 @@ impl Default for TopBar {
 
 /// Contains the Find & Replace elements
 #[derive(Clone)]
-pub struct FindReplace {
+pub(crate) struct FindReplace {
     pub search_bar: SearchBar,
     pub replace_revealer: Revealer,
     pub replace_entry: SearchEntry,

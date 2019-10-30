@@ -1,5 +1,6 @@
 use editview::main_state::ShowInvisibles;
 use editview::Settings;
+use gettextrs::gettext;
 use gio::prelude::*;
 use log::error;
 use serde_json::json;
@@ -124,4 +125,9 @@ pub fn setup_config(core: &Client) {
             gschema.reset("syntax-config");
         }
     }
+}
+
+/// Run in terminal once it has finished initializing
+pub fn vte_callback() {
+    println!("{}", gettext("Welcome to Tau's terminal."));
 }

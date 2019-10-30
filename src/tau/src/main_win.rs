@@ -1084,8 +1084,6 @@ pub trait MainWinExt {
     fn save_as(&self, edit_view: &Rc<EditView>);
 
     fn toggle_fullscreen(&self);
-
-    fn vte_callback(&self, term: &Terminal);
 }
 
 impl MainWinExt for Rc<MainWin> {
@@ -1101,7 +1099,7 @@ impl MainWinExt for Rc<MainWin> {
             &[&std::path::Path::new(&shell)],
             &[],
             SpawnFlags::DEFAULT,
-            Some(&mut enclose!((self => main_win, term) move || { main_win.vte_callback(&term)})),
+            Some(&mut || functions::vte_callback()),
             None::<&gio::Cancellable>,
         )
         .unwrap();
@@ -1870,10 +1868,5 @@ impl MainWinExt for Rc<MainWin> {
                 });
             }
         }
-    }
-
-    /// Callback for when the terminal has finished initializing
-    fn vte_callback(&self, term: &Terminal) {
-        self.paned.add2(term);
     }
 }
