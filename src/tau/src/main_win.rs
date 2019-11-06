@@ -999,7 +999,7 @@ impl MainWin {
             let mut doc_dir = match dirs::data_dir() {
                 Some(dir) => dir,
                 None => {
-                    return Err(gettext("Couldn’t get Documents directory to autosave unnamed file. Please make sure “XDG_DATA_DIR” or similiar is set."));
+                    return Err(gettext("Couldn’t get Documents directory to autosave unnamed file. Please make sure “XDG_DATA_DIR” or similar is set."));
                 }
             };
 
@@ -1007,7 +1007,7 @@ impl MainWin {
             doc_dir.push("autosave");
 
             if let Err(e) = std::fs::create_dir_all(&doc_dir) {
-                return Err(format!("{}: {}", gettext("Couldn’t get Documents directory to autosave unnamed file. Please make sure “XDG_DATA_DIR” or similiar is set."), e));
+                return Err(format!("{}: {}", gettext("Couldn’t get Documents directory to autosave unnamed file. Please make sure “XDG_DATA_DIR” or similar is set."), e));
             }
 
             let now: DateTime<Utc> = Utc::now();

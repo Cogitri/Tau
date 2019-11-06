@@ -497,7 +497,7 @@ impl EditView {
                 pangocairofuncs::show_layout(cr, &layout);
 
                 // We (mis)use the caret theme color for both tab/spaces drawing and the cursor color.
-                // It'd be nicer if we could use `theme.accent` or similiar here, but sadly that's not
+                // It'd be nicer if we could use `theme.accent` or similar here, but sadly that's not
                 // a thing in xi's themes.
                 set_source_color(cr, theme.caret);
 
