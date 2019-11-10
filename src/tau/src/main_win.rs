@@ -474,7 +474,7 @@ impl MainWin {
             undo_action.connect_activate(enclose!((main_win) move |_,_| {
                 trace!("Handling action: 'undo'");
                 if let Some(ev) = main_win.get_current_edit_view() {
-                    main_win.core.undo(ev.view_id);
+                    let _ = main_win.core.undo(ev.view_id);
                 }
             }));
             application.add_action(&undo_action);
@@ -484,7 +484,7 @@ impl MainWin {
             redo_action.connect_activate(enclose!((main_win) move |_,_| {
                 trace!("Handling action: 'redo'");
                 if let Some(ev) = main_win.get_current_edit_view() {
-                    main_win.core.redo(ev.view_id);
+                    let _ = main_win.core.redo(ev.view_id);
                 }
             }));
             application.add_action(&redo_action);
@@ -494,7 +494,7 @@ impl MainWin {
             select_all_action.connect_activate(enclose!((main_win) move |_,_| {
                 trace!("Handling action: 'select_all'");
                 if let Some(ev) = main_win.get_current_edit_view() {
-                    main_win.core.select_all(ev.view_id);
+                    let _ = main_win.core.select_all(ev.view_id);
                 }
             }));
             application.add_action(&select_all_action);
@@ -701,7 +701,7 @@ impl MainWin {
             }
         }
 
-        self.core.set_theme(&state.theme_name);
+        let _ = self.core.set_theme(&state.theme_name);
     }
 
     /// Change the theme in our `MainState`
@@ -709,15 +709,16 @@ impl MainWin {
         // FIXME: Use annotations instead of constructing the selection style here
         let selection_style = Style {
             id: 0,
-            fg_color: params
-                .theme
-                .selection_foreground
-                .and_then(|s| Some(u32_from_color(s))),
-            bg_color: params.theme.selection.and_then(|s| Some(u32_from_color(s))),
+            fg_color: params.theme.selection_foreground.map(u32_from_color),
+            bg_color: params.theme.selection.map(u32_from_color),
             weight: None,
             italic: None,
             underline: None,
         };
+
+        for view in self.views.borrow().values() {
+            view.theme_changed(&params);
+        }
 
         let mut state = self.state.borrow_mut();
         state.theme = params.theme;
@@ -993,7 +994,7 @@ impl MainWin {
 
     fn autosave_view(&self, file_name: Option<String>, view_id: ViewId) -> Result<String, String> {
         if let Some(name) = file_name {
-            self.core.save(view_id, &name);
+            let _ = self.core.save(view_id, &name);
             Ok(name)
         } else {
             let mut doc_dir = match dirs::data_dir() {
@@ -1028,7 +1029,7 @@ impl MainWin {
             }
 
             let name = doc_dir.to_string_lossy().into_owned();
-            self.core.save(view_id, &name);
+            let _ = self.core.save(view_id, &name);
             Ok(name)
         }
     }
@@ -1204,7 +1205,7 @@ impl MainWinExt for Rc<MainWin> {
             }
             self.view_id_to_w.borrow_mut().remove(&edit_view.view_id);
             self.views.borrow_mut().remove(&edit_view.view_id);
-            self.core.close_view(edit_view.view_id);
+            let _ = self.core.close_view(edit_view.view_id);
 
             // If we only have 0 or 1 EditViews left (and as such 0/1 tabs, which
             // means the user can't switch tabs anyway) don't display tabs
@@ -1312,21 +1313,21 @@ impl MainWinExt for Rc<MainWin> {
                 }
                 "translate-tabs-to-spaces" => {
                     let val: bool = gschema.get_key("translate-tabs-to-spaces");
-                    core.modify_user_config(
+                    let _ = core.modify_user_config(
                         "general",
                         json!({ "translate_tabs_to_spaces": val })
                     );
                 }
                 "auto-indent" => {
                     let val: bool = gschema.get_key("auto-indent");
-                    core.modify_user_config(
+                    let _ = core.modify_user_config(
                         "general",
                         json!({ "autodetect_whitespace": val })
                     );
                 }
                 "tab-size" => {
                     let val: u32 = gschema.get_key("tab-size");
-                    core.modify_user_config(
+                    let _ = core.modify_user_config(
                         "general",
                         json!({ "tab_size": val })
                     );
@@ -1334,7 +1335,7 @@ impl MainWinExt for Rc<MainWin> {
                 "font" => {
                     let val: String = gschema.get_key("font");
                     if let Some((font_name, font_size)) = functions::get_font_properties(&val) {
-                        core.modify_user_config(
+                        let _ = core.modify_user_config(
                             "general",
                             json!({ "font_face": font_name, "font_size": font_size })
                         );
@@ -1349,14 +1350,14 @@ impl MainWinExt for Rc<MainWin> {
                 }
                 "use-tab-stops" => {
                     let val: bool = gschema.get_key("use-tab-stops");
-                    core.modify_user_config(
+                    let _ = core.modify_user_config(
                         "general",
                         json!({ "use_tab_stops": val })
                     );
                 }
                 "word-wrap" => {
                     let val: bool = gschema.get_key("word-wrap");
-                    core.modify_user_config(
+                    let _ = core.modify_user_config(
                         "general",
                         json!({ "word_wrap": val })
                     );
@@ -1366,7 +1367,7 @@ impl MainWinExt for Rc<MainWin> {
 
                     for x in &val {
                         if let Ok(val) = serde_json::from_str(x.as_str()) {
-                            core.notify(
+                            let _ = core.notify(
                                 "modify_user_config",
                                 val,
                             );
@@ -1473,7 +1474,7 @@ impl MainWinExt for Rc<MainWin> {
         if let Some(edit_view) = self.get_current_edit_view() {
             let name = { edit_view.file_name.borrow().clone() };
             if let Some(ref file_name) = name {
-                self.core.save(edit_view.view_id, file_name);
+                let _ = self.core.save(edit_view.view_id, file_name);
             } else {
                 self.save_as(&edit_view);
             }
@@ -1536,7 +1537,7 @@ impl MainWinExt for Rc<MainWin> {
         for edit_view in self.views.borrow().values() {
             let name = { edit_view.file_name.borrow().clone() };
             if let Some(ref file_name) = name {
-                self.core.save(edit_view.view_id, file_name);
+                let _ = self.core.save(edit_view.view_id, file_name);
             } else {
                 self.save_as(&edit_view);
             }
@@ -1572,7 +1573,7 @@ impl MainWinExt for Rc<MainWin> {
                             Ok(_) => {
                                 debug!("Saving file '{:?}'", &file);
                                 let file = file.to_string_lossy();
-                                main_win.core.save(edit_view.view_id, &file);
+                                let _ = main_win.core.save(edit_view.view_id, &file);
                                 edit_view.set_file(&file);
                             }
                         Err(e) => {

@@ -188,7 +188,7 @@ impl PrefsWin {
             if let Some(theme_name) = cb.get_active_text() {
                 let theme_name = theme_name.to_string();
                 debug!("Theme changed to '{}'", &theme_name);
-                core.set_theme(&theme_name);
+                let _ =  core.set_theme(&theme_name);
 
                 gschema.set_key("theme-name", theme_name.clone()).unwrap();
 

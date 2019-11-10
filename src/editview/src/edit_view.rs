@@ -14,7 +14,7 @@ use gio::SettingsExt;
 use glib::{source::Continue, MainContext, PRIORITY_HIGH};
 use gschema_config_storage::GSchemaExt;
 use gtk::prelude::*;
-use gtk::{ApplicationWindow, Clipboard, Grid, IMContextSimple, MenuButton, TreePath};
+use gtk::{ApplicationWindow, Clipboard, CssProvider, Grid, IMContextSimple, MenuButton, TreePath};
 use log::{debug, error, trace, warn};
 use pango::{Attribute, Direction, FontDescription, TabAlign, TabArray};
 use pangocairo::functions as pangocairofuncs;
@@ -26,7 +26,7 @@ use std::sync::Arc;
 use std::u32;
 use tau_linecache::{Line, LineCache};
 use unicode_segmentation::UnicodeSegmentation;
-use xrl::{Client, ConfigChanges, Query, Status, Update, ViewId};
+use xrl::{Client, ConfigChanges, Query, Status, ThemeChanged, Update, ViewId};
 
 /// Returned by `EditView::get_text_size()` and used to adjust the scrollbars.
 pub struct TextSize {
@@ -59,6 +59,7 @@ pub struct EditView {
     update_sender: Sender<Update>,
     pub(crate) default_tab_size: RefCell<u32>,
     pub(crate) tab_size: RefCell<Option<u32>>,
+    style_provider: CssProvider,
 }
 
 impl EditView {
@@ -112,7 +113,13 @@ impl EditView {
             update_sender,
             default_tab_size: RefCell::new(default_tab_size),
             tab_size: RefCell::new(None),
+            style_provider: CssProvider::new(),
         });
+
+        view_item
+            .edit_area
+            .get_style_context()
+            .add_provider(&edit_view.style_provider, 800);
 
         edit_view.update_title();
 
@@ -150,7 +157,7 @@ impl EditView {
 
     fn connect_im_events(edit_view: &Rc<EditView>, im_context: &IMContextSimple) {
         im_context.connect_commit(enclose!((edit_view) move |_, text| {
-            edit_view.core.insert(edit_view.view_id, text);
+            let _ = edit_view.core.insert(edit_view.view_id, text);
         }));
     }
 }
@@ -201,6 +208,28 @@ impl EditView {
             full_title
         );
         self.top_bar.label.set_text(&full_title);
+    }
+
+    /// If xi-editor sends us a [theme_changed](https://xi-editor.io/docs/frontend-protocol.html#theme_changed)
+    pub fn theme_changed(&self, changed: &ThemeChanged) {
+        trace!(
+            "Handling msg: 'theme_changed' for EditView '{}': {:?}",
+            self.view_id,
+            changed
+        );
+
+        if let Some(color) = changed.theme.caret {
+            let _ = self.style_provider.load_from_data(
+                format!(
+                    "* {{ caret-color: rgba({}, {}, {}, {});}}",
+                    color.r,
+                    color.g,
+                    color.b,
+                    f64::from(color.a) / 255.0
+                )
+                .as_bytes(),
+            );
+        }
     }
 
     /// If xi-editor sends us a [config_changed](https://xi-editor.io/docs/frontend-protocol.html#config_changed)
@@ -345,7 +374,7 @@ impl EditView {
             first_line, last_line
         );
 
-        self.core.scroll(self.view_id, first_line, last_line);
+        let _ = self.core.scroll(self.view_id, first_line, last_line);
         self.view_item.linecount.queue_draw();
     }
 
@@ -482,8 +511,9 @@ impl EditView {
                         self.edit_font.borrow().font_height,
                     );
                     cr.fill();
-                    set_source_color(cr, theme.foreground);
                 }
+
+                set_source_color(cr, theme.foreground);
 
                 cr.move_to(
                     -hadj.get_value(),
@@ -496,10 +526,16 @@ impl EditView {
                 pangocairofuncs::update_layout(cr, &layout);
                 pangocairofuncs::show_layout(cr, &layout);
 
-                // We (mis)use the caret theme color for both tab/spaces drawing and the cursor color.
-                // It'd be nicer if we could use `theme.accent` or similar here, but sadly that's not
-                // a thing in xi's themes.
-                set_source_color(cr, theme.caret);
+                // make invisibles more transparent and less distractive
+                match theme.foreground {
+                    Some(mut color) => {
+                        color.a /= 3u8;
+                        set_source_color(cr, Some(color));
+                    }
+                    None => {
+                        set_source_color(cr, theme.caret);
+                    }
+                }
 
                 if self.main_state.borrow().settings.trailing_tabs {
                     let pos = draw_invisible::Rectangle::from_layout_index(
@@ -613,9 +649,10 @@ impl EditView {
                 }
 
                 if self.main_state.borrow().settings.draw_cursor {
+                    let style_context = self.view_item.edit_area.get_style_context();
                     for c in &line.cursor {
                         gtk::render_insertion_cursor(
-                            &self.view_item.edit_area.get_style_context(),
+                            &style_context,
                             cr,
                             1.0,
                             self.edit_font.borrow().font_height * i as f64 - vadj.get_value(),
@@ -989,18 +1026,18 @@ impl EditView {
         match eb.get_button() {
             1 => {
                 if eb.get_state().contains(ModifierType::SHIFT_MASK) {
-                    self.core.click_range_select(self.view_id, line, col);
+                    let _ = self.core.click_range_select(self.view_id, line, col);
                     self.do_copy_primary();
                 } else if eb.get_state().contains(ModifierType::CONTROL_MASK) {
-                    self.core.click_toggle_sel(self.view_id, line, col);
+                    let _ = self.core.click_toggle_sel(self.view_id, line, col);
                 } else if eb.get_event_type() == EventType::DoubleButtonPress {
-                    self.core.click_word_select(self.view_id, line, col);
+                    let _ = self.core.click_word_select(self.view_id, line, col);
                     self.do_copy_primary();
                 } else if eb.get_event_type() == EventType::TripleButtonPress {
-                    self.core.click_line_select(self.view_id, line, col);
+                    let _ = self.core.click_line_select(self.view_id, line, col);
                     self.do_copy_primary();
                 } else {
-                    self.core.click_point_select(self.view_id, line, col);
+                    let _ = self.core.click_point_select(self.view_id, line, col);
                 }
             }
             2 => {
@@ -1021,7 +1058,7 @@ impl EditView {
     /// button clicked.
     pub fn handle_drag(&self, x: f64, y: f64) {
         let (col, line) = self.da_px_to_cell(x, y);
-        self.core.drag(self.view_id, line, col);
+        let _ = self.core.drag(self.view_id, line, col);
     }
 
     /// Handles all (special) key press events, e.g. copy, pasting, PgUp/Down etc.
@@ -1052,7 +1089,7 @@ impl EditView {
 
         match ek.get_keyval() {
             key::Delete if !shift => {
-                self.core.delete(view_id);
+                let _ = self.core.delete(view_id);
             }
             key::KP_Delete | key::Delete if norm && shift => {
                 self.do_cut();
@@ -1064,105 +1101,105 @@ impl EditView {
                 self.do_paste();
             }
             key::BackSpace if norm => {
-                self.core.del(view_id);
+                let _ = self.core.del(view_id);
             }
 
             key::BackSpace if ctrl => {
-                self.core.delete_word_backward(view_id);
+                let _ = self.core.delete_word_backward(view_id);
             }
             key::Return | key::KP_Enter => {
-                self.core.insert_newline(view_id);
+                let _ = self.core.insert_newline(view_id);
             }
             key::Tab if norm && !shift => {
-                self.core.insert_tab(view_id);
+                let _ = self.core.insert_tab(view_id);
             }
             key::Tab | key::ISO_Left_Tab if norm && shift => {
-                self.core.outdent(view_id);
+                let _ = self.core.outdent(view_id);
             }
             key::Up | key::KP_Up if norm && !shift => {
-                self.core.up(view_id);
+                let _ = self.core.up(view_id);
             }
             key::Down | key::KP_Down if norm && !shift => {
-                self.core.down(view_id);
+                let _ = self.core.down(view_id);
             }
             key::Left | key::KP_Left if norm && !shift => {
-                self.core.left(view_id);
+                let _ = self.core.left(view_id);
             }
             key::Right | key::KP_Right if norm && !shift => {
-                self.core.right(view_id);
+                let _ = self.core.right(view_id);
             }
             key::Up | key::KP_Up if norm && shift => {
-                self.core.up_sel(view_id);
+                let _ = self.core.up_sel(view_id);
                 self.do_copy_primary();
             }
             key::Down | key::KP_Down if norm && shift => {
-                self.core.down_sel(view_id);
+                let _ = self.core.down_sel(view_id);
                 self.do_copy_primary();
             }
 
             key::Left | key::KP_Left if norm && shift => {
-                self.core.left_sel(view_id);
+                let _ = self.core.left_sel(view_id);
                 self.do_copy_primary();
             }
 
             key::Right | key::KP_Right if norm && shift => {
-                self.core.right_sel(view_id);
+                let _ = self.core.right_sel(view_id);
                 self.do_copy_primary();
             }
             key::Left | key::KP_Left if ctrl && !shift => {
-                self.core.move_word_left(view_id);
+                let _ = self.core.move_word_left(view_id);
             }
             key::Right | key::KP_Right if ctrl && !shift => {
-                self.core.move_word_right(view_id);
+                let _ = self.core.move_word_right(view_id);
             }
             key::Left | key::KP_Left if ctrl && shift => {
-                self.core.move_word_left_sel(view_id);
+                let _ = self.core.move_word_left_sel(view_id);
                 self.do_copy_primary();
             }
             key::Right | key::KP_Right if ctrl && shift => {
-                self.core.move_word_right_sel(view_id);
+                let _ = self.core.move_word_right_sel(view_id);
                 self.do_copy_primary();
             }
             key::Home | key::KP_Home if norm && !shift => {
-                self.core.line_start(view_id);
+                let _ = self.core.line_start(view_id);
             }
             key::End | key::KP_End if norm && !shift => {
-                self.core.line_end(view_id);
+                let _ = self.core.line_end(view_id);
             }
             key::Home | key::KP_Home if norm && shift => {
-                self.core.line_start_sel(view_id);
+                let _ = self.core.line_start_sel(view_id);
                 self.do_copy_primary();
             }
             key::End | key::KP_End if norm && shift => {
-                self.core.line_end_sel(view_id);
+                let _ = self.core.line_end_sel(view_id);
                 self.do_copy_primary();
             }
             key::Home | key::KP_Home if ctrl && !shift => {
-                self.core.document_begin(view_id);
+                let _ = self.core.document_begin(view_id);
             }
             key::End | key::KP_End if ctrl && !shift => {
-                self.core.document_end(view_id);
+                let _ = self.core.document_end(view_id);
             }
             key::Home | key::KP_Home if ctrl && shift => {
-                self.core.document_begin_sel(view_id);
+                let _ = self.core.document_begin_sel(view_id);
                 self.do_copy_primary();
             }
             key::End | key::KP_End if ctrl && shift => {
-                self.core.document_end_sel(view_id);
+                let _ = self.core.document_end_sel(view_id);
                 self.do_copy_primary();
             }
             key::Page_Up | key::KP_Page_Up if norm && !shift => {
-                self.core.page_up(view_id);
+                let _ = self.core.page_up(view_id);
             }
             key::Page_Down | key::KP_Page_Down if norm && !shift => {
-                self.core.page_down(view_id);
+                let _ = self.core.page_down(view_id);
             }
             key::Page_Up | key::KP_Page_Up if norm && shift => {
-                self.core.page_up_sel(view_id);
+                let _ = self.core.page_up_sel(view_id);
                 self.do_copy_primary();
             }
             key::Page_Down | key::KP_Page_Down if norm && shift => {
-                self.core.page_down_sel(view_id);
+                let _ = self.core.page_down_sel(view_id);
                 self.do_copy_primary();
             }
             key::Escape => {
@@ -1174,7 +1211,7 @@ impl EditView {
                 main_state.settings.draw_cursor = !draw_cursor;
             }
             key::a | key::backslash | key::slash if ctrl => {
-                self.core.select_all(view_id);
+                let _ = self.core.select_all(view_id);
                 self.do_copy_primary();
             }
             key::c if ctrl => {
@@ -1187,10 +1224,10 @@ impl EditView {
                 self.do_cut();
             }
             key::z if ctrl => {
-                self.core.undo(view_id);
+                let _ = self.core.undo(view_id);
             }
             key::z if ctrl && shift => {
-                self.core.redo(view_id);
+                let _ = self.core.redo(view_id);
             }
             _ => {
                 debug!("Inserting non char key");
@@ -1286,7 +1323,7 @@ impl EditView {
         Clipboard::get(&SELECTION_CLIPBOARD).request_text(
             enclose!((self.core => core, self.view_id => view_id) move |_, text| {
                 if let Some(clip_content) = text {
-                    core.insert(view_id, clip_content);
+                    let _ = core.insert(view_id, clip_content);
                 }
             }),
         );
@@ -1297,9 +1334,9 @@ impl EditView {
 
         Clipboard::get(&SELECTION_PRIMARY).request_text(
             enclose!((self.core => core, self.view_id => view_id) move |_, text| {
-                core.click_point_select(view_id, line, col);
+                let _ = core.click_point_select(view_id, line, col);
                 if let Some(clip_content) = text {
-                    core.insert(view_id, clip_content);
+                    let _ = core.insert(view_id, clip_content);
                 }
             }),
         );
@@ -1309,7 +1346,7 @@ impl EditView {
     pub fn do_resize(&self, width: i32, height: i32) {
         trace!("Resizing EditView '{}'", self.view_id);
 
-        self.core.resize(self.view_id, width, height);
+        let _ = self.core.resize(self.view_id, width, height);
     }
 
     /// Opens the find dialog (Ctrl+F)
@@ -1339,7 +1376,7 @@ impl EditView {
                 // No need to pass the actual values of case_sensitive etc. to Xi here, we as soon
                 // as we start typing something into the search box/flick one of the switches we call
                 // EditView::search_changed() anyway, which does that for us.
-                self.core.find(self.view_id, &needle, false, false, false);
+                let _ = self.core.find(self.view_id, &needle, false, false, false);
             }
         }
     }
@@ -1427,7 +1464,8 @@ impl EditView {
     /// Returns `true` if search mode is activated, `false` otherwise
     pub fn find_next(&self) -> bool {
         if self.find_replace.search_bar.get_search_mode() {
-            self.core
+            let _ = self
+                .core
                 .find_next(self.view_id, true, true, xrl::ModifySelection::Set);
             self.do_copy_primary();
             true
@@ -1443,7 +1481,8 @@ impl EditView {
     /// Returns `true` if search mode is activated, `false` otherwise
     pub fn find_prev(&self) -> bool {
         if self.find_replace.search_bar.get_search_mode() {
-            self.core
+            let _ = self
+                .core
                 .find_prev(self.view_id, true, true, xrl::ModifySelection::Set);
             self.do_copy_primary();
             true
@@ -1459,7 +1498,7 @@ impl EditView {
     /// Returns `true` if search mode is activated, `false` otherwise
     pub fn find_all(&self) -> bool {
         if self.find_replace.search_bar.get_search_mode() {
-            self.core.find_all(self.view_id);
+            let _ = self.core.find_all(self.view_id);
             self.do_copy_primary();
             return true;
         }
@@ -1472,25 +1511,28 @@ impl EditView {
         let regex = self.find_replace.use_regex_button.get_active();
         let whole_worlds = self.find_replace.whole_word_button.get_active();
         let case_sensitive = self.find_replace.case_sensitive_button.get_active();
-        self.core
+        let _ = self
+            .core
             .find(self.view_id, &needle, case_sensitive, regex, whole_worlds);
     }
 
     /// Replace _one_ match with the replacement string
     pub fn replace(&self) {
         if let Some(replace_chars) = self.find_replace.replace_entry.get_text() {
-            self.core
+            let _ = self
+                .core
                 .replace(self.view_id, replace_chars.as_str(), false);
-            self.core.replace_next(self.view_id);
+            let _ = self.core.replace_next(self.view_id);
         }
     }
 
     /// Replace _all_ matches with the replacement string
     pub fn replace_all(&self) {
         if let Some(replace_chars) = self.find_replace.replace_entry.get_text() {
-            self.core
+            let _ = self
+                .core
                 .replace(self.view_id, replace_chars.as_str(), false);
-            self.core.replace_all(self.view_id);
+            let _ = self.core.replace_all(self.view_id);
         }
     }
 
@@ -1501,7 +1543,7 @@ impl EditView {
 
     pub fn set_language(&self, lang: &str) {
         debug!("Changing language to '{:?}'", lang);
-        self.core.set_language(self.view_id, lang);
+        let _ = self.core.set_language(self.view_id, lang);
     }
 
     pub fn language_changed(&self, syntax: &str) {

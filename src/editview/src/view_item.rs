@@ -240,7 +240,7 @@ impl ViewItem {
                     edit_view.tab_size.replace(Some(val));
                 }
 
-                edit_view.core.notify(
+                let _ = edit_view.core.notify(
                     "modify_user_config",
                     json!({
                         "domain": { "user_override": edit_view.view_id },
@@ -254,7 +254,7 @@ impl ViewItem {
             .connect_toggled(enclose!(
                 (edit_view) move | tb | {
                     let val = tb.get_active();
-                    edit_view.core.notify(
+                    let _ = edit_view.core.notify(
                         "modify_user_config",
                         json!({
                             "domain": { "user_override": edit_view.view_id },
@@ -269,7 +269,7 @@ impl ViewItem {
             .connect_toggled(enclose!(
                 (edit_view) move | tb | {
                     let val = tb.get_active();
-                    edit_view.core.notify(
+                    let _ = edit_view.core.notify(
                         "modify_user_config",
                         json!({
                             "domain": { "user_override": edit_view.view_id },
