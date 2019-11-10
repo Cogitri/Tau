@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tau\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Tau/issues\n"
-"POT-Creation-Date: 2019-10-24 18:33+0000\n"
-"PO-Revision-Date: 2019-10-27 15:55+0200\n"
+"POT-Creation-Date: 2019-11-06 12:40+0000\n"
+"PO-Revision-Date: 2019-11-10 13:20+0100\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -615,18 +615,18 @@ msgid "About Tau"
 msgstr "O programie"
 
 #: src/tau/src/ui/tau.glade:406 src/tau/src/ui/tau.glade:516
-#: src/tau/src/main_win.rs:1489
+#: src/tau/src/main_win.rs:1439
 msgid "Open"
 msgstr "Otwórz"
 
 #: src/tau/src/ui/tau.glade:447 src/tau/src/ui/tau.glade:557
-#: src/tau/src/main_win.rs:1220 src/tau/src/main_win.rs:1605
+#: src/tau/src/main_win.rs:1170 src/tau/src/main_win.rs:1555
 msgid "Save"
 msgstr "Zapisz"
 
 #: src/editview/src/edit_view.rs:176 src/editview/src/edit_view.rs:178
-#: src/tau/src/main_win.rs:319 src/tau/src/main_win.rs:321
-#: src/tau/src/main_win.rs:661 src/tau/src/main_win.rs:828
+#: src/tau/src/main_win.rs:322 src/tau/src/main_win.rs:324
+#: src/tau/src/main_win.rs:774 src/tau/src/main_win.rs:1646
 msgid "Untitled"
 msgstr "Bez tytułu"
 
@@ -658,44 +658,44 @@ msgstr ""
 msgid "Start a new instance of the application"
 msgstr "Uruchamia nowe wystąpienie programu"
 
-#: src/tau/src/main.rs:250 src/tau/src/main.rs:275
+#: src/tau/src/main.rs:252 src/tau/src/main.rs:287 src/tau/src/main_win.rs:983
 msgid "Failed to open new view due to error"
 msgstr "Otwarcie nowego widoku się nie powiodło z powodu błędu"
 
-#: src/tau/src/main_win.rs:1056 src/tau/src/main_win.rs:1064
+#: src/tau/src/main_win.rs:1002 src/tau/src/main_win.rs:1010
 msgid ""
 "Couldn’t get Documents directory to autosave unnamed file. Please make sure "
-"“XDG_DATA_DIR” or similiar is set."
+"“XDG_DATA_DIR” or similar is set."
 msgstr ""
 "Nie można uzyskać katalogu Dokumenty, aby automatycznie zapisać plik bez "
 "nazwy. Proszę się upewnić, że ustawiono zmienną „XDG_DATA_DIR” lub podobną."
 
-#: src/tau/src/main_win.rs:1209
+#: src/tau/src/main_win.rs:1159
 msgid "Save unsaved changes"
 msgstr "Zapis niezapisanych zmian"
 
-#: src/tau/src/main_win.rs:1212
+#: src/tau/src/main_win.rs:1162
 msgid "Close Without Saving"
 msgstr "Zamknij bez zapisywania"
 
-#: src/tau/src/main_win.rs:1216 src/tau/src/main_win.rs:1490
-#: src/tau/src/main_win.rs:1606
+#: src/tau/src/main_win.rs:1166 src/tau/src/main_win.rs:1440
+#: src/tau/src/main_win.rs:1556
 msgid "Cancel"
 msgstr "Anuluj"
 
-#: src/tau/src/main_win.rs:1486
+#: src/tau/src/main_win.rs:1436
 msgid "Open a file to edit"
 msgstr "Otwarcie pliku do modyfikacji"
 
-#: src/tau/src/main_win.rs:1507
+#: src/tau/src/main_win.rs:1457
 msgid "Couldn’t open file"
 msgstr "Nie można otworzyć pliku"
 
-#: src/tau/src/main_win.rs:1602
+#: src/tau/src/main_win.rs:1552
 msgid "Save file"
 msgstr "Zapis pliku"
 
-#: src/tau/src/main_win.rs:1629
+#: src/tau/src/main_win.rs:1579
 msgid "Couldn’t save file"
 msgstr "Nie można zapisać pliku"
 
