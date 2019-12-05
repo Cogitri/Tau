@@ -144,6 +144,26 @@ impl PrefsWin {
 
         let font_desc: &String = &gschema.get_key("font");
         font_chooser_widget.set_font_desc(&FontDescription::from_string(font_desc));
+        font_chooser_widget.connect_property_font_desc_notify(
+            enclose!((font_chooser_widget) move |_| {
+                    match font_chooser_widget.get_font_size() / pango::SCALE {
+                        size if size < 6 => {
+                            if let Some(mut desc) = font_chooser_widget.get_font_desc() {
+                                desc.set_size(6 * pango::SCALE);
+                                font_chooser_widget.set_font_desc(&desc);
+                            }
+                        },
+                        size if size > 72 => {
+                            if let Some(mut desc) = font_chooser_widget.get_font_desc() {
+                                desc.set_size(72 * pango::SCALE);
+                                font_chooser_widget.set_font_desc(&desc);
+                            }
+                        },
+                        _ => (),
+                    }
+                }
+            ),
+        );
 
         {
             let main_state = main_state.borrow();

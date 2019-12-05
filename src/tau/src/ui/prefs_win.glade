@@ -4,16 +4,22 @@
   <requires lib="gtk+" version="3.16"/>
   <object class="GtkAdjustment" id="margin_spinbutton_adj">
     <property name="upper">1000</property>
+    <property name="lower">1</property>
+    <property name="value">80</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="syntax_tab_size_spinbutton_adj">
     <property name="upper">100</property>
+    <property name="lower">1</property>
+    <property name="value">4</property>
     <property name="step_increment">1</property>
     <property name="page_increment">4</property>
   </object>
   <object class="GtkAdjustment" id="tab_size_spinbutton_adj">
     <property name="upper">100</property>
+    <property name="lower">1</property>
+    <property name="value">4</property>
     <property name="step_increment">1</property>
     <property name="page_increment">4</property>
   </object>

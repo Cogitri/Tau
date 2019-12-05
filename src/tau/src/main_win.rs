@@ -7,7 +7,7 @@ use crate::shortcuts_win::ShortcutsWin;
 use crate::syntax_config::SyntaxParams;
 use crate::view_history::{ViewHistory, ViewHistoryExt};
 use chrono::{DateTime, Utc};
-use editview::{theme::u32_from_color, EditView, MainState};
+use editview::{main_state::ShowInvisibles, theme::u32_from_color, EditView, MainState};
 use futures::{future, Future};
 use gdk::{enums::key, ModifierType, WindowState};
 use gdk_pixbuf::Pixbuf;
@@ -545,7 +545,9 @@ impl MainWin {
                 let font: String = gschema.get_key("font");
                 if let Some((name, mut size)) = functions::get_font_properties(&font) {
                     size += 1.0;
-                    gschema.set_key("font", format!("{} {}", name, size)).map_err(|e| error!("Failed to increase font size due to error: '{}'", e)).unwrap();
+                    if size <= 72.0 {
+                        gschema.set_key("font", format!("{} {}", name, size)).map_err(|e| error!("Failed to increase font size due to error: '{}'", e)).unwrap();
+                    }
                 }
             }));
             application.add_action(&increase_font_size_action);
@@ -556,7 +558,9 @@ impl MainWin {
                 let font: String = gschema.get_key("font");
                 if let Some((name, mut size)) = functions::get_font_properties(&font) {
                     size -= 1.0;
-                    gschema.set_key("font", format!("{} {}", name, size)).map_err(|e| error!("Failed to increase font size due to error: '{}'", e)).unwrap();
+                    if size >= 6.0 {
+                        gschema.set_key("font", format!("{} {}", name, size)).map_err(|e| error!("Failed to increase font size due to error: '{}'", e)).unwrap();
+                    }
                 }
             }));
             application.add_action(&decrease_font_size_action);
@@ -1227,58 +1231,40 @@ impl MainWinExt for Rc<MainWin> {
             .connect_changed(enclose!((gschema, self => main_win, core) move |_, key| {
             trace!("Key '{}' has changed!", key);
             match key {
-                "draw-trailing-spaces" => {
-                    let val = gschema.get_key("draw-trailing-spaces");
-                    main_win.state.borrow_mut().settings.trailing_spaces = val;
+                "draw-trailing-spaces" | "draw-leading-spaces" | "draw-selection-spaces" | "draw-all-spaces" => {
+                    main_win.state.borrow_mut().settings.draw_spaces = {
+                        if gschema.get_key("draw-trailing-spaces") {
+                            ShowInvisibles::Trailing
+                        } else if gschema.get_key("draw-leading-spaces") {
+                            ShowInvisibles::Leading
+                        } else if gschema.get_key("draw-all-spaces") {
+                            ShowInvisibles::All
+                        } else if gschema.get_key("draw-selection-spaces") {
+                            ShowInvisibles::Selected
+                        } else {
+                            ShowInvisibles::None
+                        }
+                    };
+
                     if let Some(ev) = main_win.get_current_edit_view() {
                         ev.view_item.edit_area.queue_draw();
                     }
                 }
-                "draw-leading-spaces" => {
-                    let val = gschema.get_key("draw-leading-spaces");
-                    main_win.state.borrow_mut().settings.leading_spaces = val;
-                    if let Some(ev) = main_win.get_current_edit_view() {
-                        ev.view_item.edit_area.queue_draw();
-                    }
-                }
-                "draw-selection-spaces" => {
-                    let val = gschema.get_key("draw-selection-spaces");
-                    main_win.state.borrow_mut().settings.selection_spaces = val;
-                    if let Some(ev) = main_win.get_current_edit_view() {
-                        ev.view_item.edit_area.queue_draw();
-                    }
-                }
-                "draw-all-spaces" => {
-                    let val = gschema.get_key("draw-all-spaces");
-                    main_win.state.borrow_mut().settings.all_spaces = val;
-                    if let Some(ev) = main_win.get_current_edit_view() {
-                        ev.view_item.edit_area.queue_draw();
-                    }
-                }
-                "draw-trailing-tabs" => {
-                    let val = gschema.get_key("draw-trailing-tabs");
-                    main_win.state.borrow_mut().settings.trailing_tabs = val;
-                    if let Some(ev) = main_win.get_current_edit_view() {
-                        ev.view_item.edit_area.queue_draw();
-                    }
-                }
-                "draw-leading-tabs" => {
-                    let val = gschema.get_key("draw-leading-tabs");
-                    main_win.state.borrow_mut().settings.leading_tabs = val;
-                    if let Some(ev) = main_win.get_current_edit_view() {
-                        ev.view_item.edit_area.queue_draw();
-                    }
-                }
-                "draw-selection-tabs" => {
-                    let val = gschema.get_key("draw-selection-tabs");
-                    main_win.state.borrow_mut().settings.selection_tabs = val;
-                    if let Some(ev) = main_win.get_current_edit_view() {
-                        ev.view_item.edit_area.queue_draw();
-                    }
-                }
-                "draw-all-tabs" => {
-                    let val = gschema.get_key("draw-all-tabs");
-                    main_win.state.borrow_mut().settings.all_tabs = val;
+                "draw-trailing-tabs" | "draw-leading-tabs" | "draw-selection-tabs" | "draw-all-tabs" => {
+                    main_win.state.borrow_mut().settings.draw_tabs = {
+                        if gschema.get_key("draw-trailing-tabs") {
+                            ShowInvisibles::Trailing
+                        } else if gschema.get_key("draw-leading-tabs") {
+                            ShowInvisibles::Leading
+                        } else if gschema.get_key("draw-all-tabs") {
+                            ShowInvisibles::All
+                        } else if gschema.get_key("draw-selection-tabs") {
+                            ShowInvisibles::Selected
+                        } else {
+                            ShowInvisibles::None
+                        }
+                    };
+
                     if let Some(ev) = main_win.get_current_edit_view() {
                         ev.view_item.edit_area.queue_draw();
                     }
@@ -1299,7 +1285,9 @@ impl MainWinExt for Rc<MainWin> {
                 }
                 "column-right-margin" => {
                     let val = gschema.get_key("column-right-margin");
-                    main_win.state.borrow_mut().settings.column_right_margin = val;
+                    if val >= 1 && val <= 1000 {
+                        main_win.state.borrow_mut().settings.column_right_margin = val;
+                    }
                     if let Some(ev) = main_win.get_current_edit_view() {
                         ev.view_item.edit_area.queue_draw();
                     }
@@ -1327,19 +1315,23 @@ impl MainWinExt for Rc<MainWin> {
                 }
                 "tab-size" => {
                     let val: u32 = gschema.get_key("tab-size");
-                    let _ = core.modify_user_config(
-                        "general",
-                        json!({ "tab_size": val })
-                    );
+                    if val >= 1 && val <= 100 {
+                        let _ = core.modify_user_config(
+                            "general",
+                            json!({ "tab_size": val })
+                        );
+                    }
                 }
                 "font" => {
                     let val: String = gschema.get_key("font");
                     if let Some((font_name, font_size)) = functions::get_font_properties(&val) {
-                        let _ = core.modify_user_config(
-                            "general",
-                            json!({ "font_face": font_name, "font_size": font_size })
-                        );
-                        main_win.state.borrow_mut().settings.edit_font = val;
+                        if font_size >= 6.0 && font_size <= 72.0 {
+                            let _ = core.modify_user_config(
+                                "general",
+                                json!({ "font_face": font_name, "font_size": font_size })
+                            );
+                            main_win.state.borrow_mut().settings.edit_font = val;
+                        }
                         if let Some(ev) = main_win.get_current_edit_view() {
                             ev.view_item.edit_area.queue_draw();
                         }
@@ -1396,7 +1388,7 @@ impl MainWinExt for Rc<MainWin> {
                     }
                 },
                 "show-linecount" => {
-                    let val = gschema.get_key("show-linecount");
+                    let val: bool = gschema.get_key("show-linecount");
                     main_win.state.borrow_mut().settings.show_linecount = val;
 
                     for ev in main_win.w_to_ev.borrow().values() {

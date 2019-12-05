@@ -1,6 +1,6 @@
 use crate::draw_invisible;
 use crate::fonts::Font;
-use crate::main_state::MainState;
+use crate::main_state::{MainState, ShowInvisibles};
 use crate::theme::{color_from_u32, set_margin_source_color, set_source_color, PangoColor};
 use crate::view_item::{FindReplace, TopBar, ViewItem};
 use cairo::Context;
@@ -537,115 +537,115 @@ impl EditView {
                     }
                 }
 
-                if self.main_state.borrow().settings.trailing_tabs {
-                    let pos = draw_invisible::Rectangle::from_layout_index(
-                        draw_invisible::tabs::trailing(
-                            line.text.replace("\n", "").replace("\r\n", "").as_str(),
-                        ),
-                        &layout,
-                    );
-                    pos.filter(|r| r.width != 0.0).for_each(|mut r| {
+                let draw_tab = |rect: &mut dyn Iterator<Item = draw_invisible::Rectangle>| {
+                    rect.filter(|r| r.width != 0.0).for_each(|mut r| {
                         r.y = self.edit_font.borrow().font_height * i as f64 - vadj.get_value();
                         r.draw_tab(cr);
-                    });
-                } else if self.main_state.borrow().settings.leading_tabs {
-                    let pos = draw_invisible::Rectangle::from_layout_index(
-                        draw_invisible::tabs::leading(line.text.as_str()),
-                        &layout,
-                    );
-                    pos.filter(|r| r.width != 0.0).for_each(|mut r| {
-                        r.y = self.edit_font.borrow().font_height * i as f64 - vadj.get_value();
-                        r.draw_tab(cr);
-                    });
-                } else if self.main_state.borrow().settings.all_tabs {
-                    let pos = draw_invisible::Rectangle::from_layout_index(
-                        draw_invisible::tabs::all(line.text.as_str()),
-                        &layout,
-                    );
-                    pos.filter(|r| r.width != 0.0).for_each(|mut r| {
-                        r.y = self.edit_font.borrow().font_height * i as f64 - vadj.get_value();
-                        r.draw_tab(cr);
-                    });
-                } else if self.main_state.borrow().settings.selection_tabs {
-                    let mut style_index = 0u64;
-                    for style in line.styles.iter() {
-                        style_index += style.offset as u64;
-                        if style.style_id == 0 {
-                            let pos = draw_invisible::Rectangle::from_layout_index(
-                                draw_invisible::tabs::all_from(
-                                    line.text.as_str(),
-                                    style_index,
-                                    style.length,
-                                ),
-                                &layout,
-                            );
-                            pos.filter(|r| r.width != 0.0).for_each(|mut r| {
-                                r.y = self.edit_font.borrow().font_height * i as f64
-                                    - vadj.get_value();
-                                r.draw_tab(cr);
-                            });
-                        }
-                        style_index += style.length;
+                    })
+                };
+
+                match self.main_state.borrow().settings.draw_tabs {
+                    ShowInvisibles::Trailing => {
+                        draw_tab(&mut draw_invisible::Rectangle::from_layout_index(
+                            draw_invisible::tabs::trailing(
+                                line.text.replace("\n", "").replace("\r\n", "").as_str(),
+                            ),
+                            &layout,
+                        ));
                     }
+
+                    ShowInvisibles::Leading => {
+                        draw_tab(&mut draw_invisible::Rectangle::from_layout_index(
+                            draw_invisible::tabs::leading(line.text.as_str()),
+                            &layout,
+                        ));
+                    }
+
+                    ShowInvisibles::All => {
+                        draw_tab(&mut draw_invisible::Rectangle::from_layout_index(
+                            draw_invisible::tabs::all(line.text.as_str()),
+                            &layout,
+                        ));
+                    }
+
+                    ShowInvisibles::Selected => {
+                        let mut style_index = 0u64;
+                        for style in line.styles.iter() {
+                            style_index += style.offset as u64;
+                            if style.style_id == 0 {
+                                draw_tab(&mut draw_invisible::Rectangle::from_layout_index(
+                                    draw_invisible::tabs::all_from(
+                                        line.text.as_str(),
+                                        style_index,
+                                        style.length,
+                                    ),
+                                    &layout,
+                                ));
+                            }
+                            style_index += style.length;
+                        }
+                    }
+
+                    _ => (),
                 }
 
-                // If the next line is a soft broken line we don't want to display trailing spaces since they're actually
-                // not trailing: they're required for the linebreak to occur.
-                if self.main_state.borrow().settings.trailing_spaces
-                    && line_cache
-                        .get_line(i + 1)
-                        .map(|line| line.line_num.is_some())
-                        .unwrap_or(true)
-                {
-                    let pos = draw_invisible::Rectangle::from_layout_index(
-                        draw_invisible::spaces::trailing(
-                            line.text.replace("\n", "").replace("\r\n", "").as_str(),
-                        ),
-                        &layout,
-                    );
-                    pos.filter(|r| r.width != 0.0).for_each(|mut r| {
+                let draw_space = |rect: &mut dyn Iterator<Item = draw_invisible::Rectangle>| {
+                    rect.filter(|r| r.width != 0.0).for_each(|mut r| {
                         r.y = self.edit_font.borrow().font_height * i as f64 - vadj.get_value();
                         r.draw_space(cr);
-                    });
-                } else if self.main_state.borrow().settings.leading_spaces {
-                    let pos = draw_invisible::Rectangle::from_layout_index(
-                        draw_invisible::spaces::leading(line.text.as_str()),
-                        &layout,
-                    );
-                    pos.filter(|r| r.width != 0.0).for_each(|mut r| {
-                        r.y = self.edit_font.borrow().font_height * i as f64 - vadj.get_value();
-                        r.draw_space(cr);
-                    });
-                } else if self.main_state.borrow().settings.all_spaces {
-                    let pos = draw_invisible::Rectangle::from_layout_index(
-                        draw_invisible::spaces::all(line.text.as_str()),
-                        &layout,
-                    );
-                    pos.filter(|r| r.width != 0.0).for_each(|mut r| {
-                        r.y = self.edit_font.borrow().font_height * i as f64 - vadj.get_value();
-                        r.draw_space(cr);
-                    });
-                } else if self.main_state.borrow().settings.selection_spaces {
-                    let mut style_index = 0u64;
-                    for style in line.styles.iter() {
-                        style_index += style.offset as u64;
-                        if style.style_id == 0 {
-                            let pos = draw_invisible::Rectangle::from_layout_index(
-                                draw_invisible::spaces::all_from(
-                                    line.text.as_str(),
-                                    style_index,
-                                    style.length,
-                                ),
-                                &layout,
-                            );
-                            pos.filter(|r| r.width != 0.0).for_each(|mut r| {
-                                r.y = self.edit_font.borrow().font_height * i as f64
-                                    - vadj.get_value();
-                                r.draw_space(cr);
-                            });
-                        }
-                        style_index += style.length;
+                    })
+                };
+
+                match self.main_state.borrow().settings.draw_spaces {
+                    // If the next line is a soft broken line we don't want to display trailing spaces since they're actually
+                    // not trailing: they're required for the linebreak to occur.
+                    ShowInvisibles::Trailing
+                        if line_cache
+                            .get_line(i + 1)
+                            .map(|line| line.line_num.is_some())
+                            .unwrap_or(true) =>
+                    {
+                        draw_space(&mut draw_invisible::Rectangle::from_layout_index(
+                            draw_invisible::spaces::trailing(
+                                line.text.replace("\n", "").replace("\r\n", "").as_str(),
+                            ),
+                            &layout,
+                        ));
                     }
+
+                    ShowInvisibles::Leading => {
+                        draw_space(&mut draw_invisible::Rectangle::from_layout_index(
+                            draw_invisible::spaces::leading(line.text.as_str()),
+                            &layout,
+                        ));
+                    }
+
+                    ShowInvisibles::All => {
+                        draw_space(&mut draw_invisible::Rectangle::from_layout_index(
+                            draw_invisible::spaces::all(line.text.as_str()),
+                            &layout,
+                        ));
+                    }
+
+                    ShowInvisibles::Selected => {
+                        let mut style_index = 0u64;
+                        for style in line.styles.iter() {
+                            style_index += style.offset as u64;
+                            if style.style_id == 0 {
+                                draw_space(&mut draw_invisible::Rectangle::from_layout_index(
+                                    draw_invisible::spaces::all_from(
+                                        line.text.as_str(),
+                                        style_index,
+                                        style.length,
+                                    ),
+                                    &layout,
+                                ));
+                            }
+                            style_index += style.length;
+                        }
+                    }
+
+                    _ => (),
                 }
 
                 if self.main_state.borrow().settings.draw_cursor {

@@ -1,8 +1,10 @@
+use editview::main_state::ShowInvisibles;
 use editview::Settings;
 use gio::prelude::*;
 use gschema_config_storage::{GSchema, GSchemaExt};
 use log::error;
 use serde_json::json;
+use std::cmp::max;
 use xrl::Client;
 
 pub fn get_font_properties(font: &str) -> Option<(String, f32)> {
@@ -27,18 +29,36 @@ pub fn new_settings() -> Settings {
     };
 
     Settings {
-        trailing_spaces: gschema.get_key("draw-trailing-spaces"),
-        all_spaces: gschema.get_key("draw-all-spaces"),
-        leading_spaces: gschema.get_key("draw-leading-spaces"),
-        selection_spaces: gschema.get_key("draw-selection-spaces"),
+        draw_spaces: {
+            if gschema.get_key("draw-trailing-spaces") {
+                ShowInvisibles::Trailing
+            } else if gschema.get_key("draw-leading-spaces") {
+                ShowInvisibles::Leading
+            } else if gschema.get_key("draw-all-spaces") {
+                ShowInvisibles::All
+            } else if gschema.get_key("draw-selection-spaces") {
+                ShowInvisibles::Selected
+            } else {
+                ShowInvisibles::None
+            }
+        },
+        draw_tabs: {
+            if gschema.get_key("draw-trailing-tabs") {
+                ShowInvisibles::Trailing
+            } else if gschema.get_key("draw-leading-tabs") {
+                ShowInvisibles::Leading
+            } else if gschema.get_key("draw-all-tabs") {
+                ShowInvisibles::All
+            } else if gschema.get_key("draw-selection-tabs") {
+                ShowInvisibles::Selected
+            } else {
+                ShowInvisibles::None
+            }
+        },
         highlight_line: gschema.get_key("highlight-line"),
         right_margin: gschema.get_key("draw-right-margin"),
         column_right_margin: gschema.get_key("column-right-margin"),
         edit_font: gschema.get_key("font"),
-        trailing_tabs: gschema.get_key("draw-trailing-tabs"),
-        all_tabs: gschema.get_key("draw-all-tabs"),
-        leading_tabs: gschema.get_key("draw-leading-tabs"),
-        selection_tabs: gschema.get_key("draw-selection-tabs"),
         draw_cursor: gschema.get_key("draw-cursor"),
         show_linecount: gschema.get_key("show-linecount"),
         interface_font,
@@ -74,11 +94,17 @@ pub fn setup_config(core: &Client) {
     tokio::executor::current_thread::block_on_all(core.modify_user_config(
         "general",
         json!({
-            "tab_size": tab_size,
+            "tab_size": max(1, tab_size),
             "autodetect_whitespace": autodetect_whitespace,
             "translate_tabs_to_spaces": translate_tabs_to_spaces,
             "font_face": font_name,
-            "font_size": font_size,
+            "font_size": if font_size.is_nan() {
+                14.0
+            } else if font_size < 6.0 {
+                6.0
+            } else if font_size > 72.0 {
+                72.0
+            } else { font_size },
             "use_tab_stops": use_tab_stops,
             "word_wrap": word_wrap,
             "line_ending": LINE_ENDING,
