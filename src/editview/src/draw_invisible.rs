@@ -23,7 +23,7 @@ impl Rectangle {
 
         cr.save();
         cr.move_to(x + width * 0.5, y);
-        cr.arc(x + width * 0.5, y, width / 6.0, 0.0, 2.0 * PI);
+        cr.arc(x + width * 0.5, y, self.height / 10., 0.0, 2.0 * PI);
         cr.fill();
         cr.restore();
     }

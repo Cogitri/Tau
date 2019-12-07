@@ -540,6 +540,7 @@ impl EditView {
                 let draw_tab = |rect: &mut dyn Iterator<Item = draw_invisible::Rectangle>| {
                     rect.filter(|r| r.width != 0.0).for_each(|mut r| {
                         r.y = self.edit_font.borrow().font_height * i as f64 - vadj.get_value();
+                        r.x -= self.view_item.hadj.get_value();
                         r.draw_tab(cr);
                     })
                 };
@@ -592,6 +593,7 @@ impl EditView {
                 let draw_space = |rect: &mut dyn Iterator<Item = draw_invisible::Rectangle>| {
                     rect.filter(|r| r.width != 0.0).for_each(|mut r| {
                         r.y = self.edit_font.borrow().font_height * i as f64 - vadj.get_value();
+                        r.x -= self.view_item.hadj.get_value();
                         r.draw_space(cr);
                     })
                 };
@@ -654,7 +656,7 @@ impl EditView {
                         gtk::render_insertion_cursor(
                             &style_context,
                             cr,
-                            1.0,
+                            1.0 - self.view_item.hadj.get_value(),
                             self.edit_font.borrow().font_height * i as f64 - vadj.get_value(),
                             &layout,
                             *c as i32,
