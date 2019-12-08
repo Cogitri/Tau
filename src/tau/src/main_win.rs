@@ -1435,6 +1435,14 @@ impl MainWinExt for Rc<MainWin> {
         fcn.set_transient_for(Some(&self.window.clone()));
         fcn.set_select_multiple(true);
 
+        if let Some(edit_view) = self.get_current_edit_view() {
+            if let Some(ref file_name) = edit_view.file_name.borrow().clone() {
+                if let Some(path) = std::path::Path::new(file_name).parent() {
+                    fcn.set_current_folder(path);
+                }
+            }
+        }
+
         fcn.connect_response(enclose!((self => main_win) move |fcd, res| {
             debug!(
                 "FileChooserNative open response: '{:#?}'",
