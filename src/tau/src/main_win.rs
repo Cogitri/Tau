@@ -608,6 +608,7 @@ impl MainWin {
         // Put keyboard shortcuts here
         application.set_accels_for_action("app.find", &["<Primary>f"]);
         application.set_accels_for_action("app.save", &["<Primary>s"]);
+        application.set_accels_for_action("app.save_as", &["<Primary><Shift>s"]);
         application.set_accels_for_action("app.new", &["<Primary>n"]);
         application.set_accels_for_action("app.open", &["<Primary>o"]);
         application.set_accels_for_action("app.quit", &["<Primary>q"]);
