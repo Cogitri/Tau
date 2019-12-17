@@ -29,12 +29,12 @@ See https://software.opensuse.org/package/tau for binary packages of Tau. See ht
 You can install binary releases of tau by adding this to your `/etc/pacman.conf`:
 
 ```sh
-[Cogitri_Tau]
+[home_Cogitri_Arch_Community_standard]
 SigLevel = Never
 Server = https://download.opensuse.org/repositories/home:/Cogitri/Arch_Community_standard/$arch
 ```
 
-Afterwards run `pacman -Syu tau`. Alternatively you can install `tau` as `tau-editor-git` from the AUR [as per standard procedure](https://wiki.archlinux.org/index.php/Arch_User_Repository).
+Afterwards run `pacman -Syu tau-editor`. Alternatively you can install Tau as `tau-editor-git` from the AUR [as per standard procedure](https://wiki.archlinux.org/index.php/Arch_User_Repository).
 
 ### Void Linux
 
