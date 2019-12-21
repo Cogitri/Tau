@@ -1,3 +1,33 @@
+## Changes in v0.10.0
+
+### Feature changes
+
+ - (tau): Option to restore session. Keep track of open files. Add option to restore session on startup instead of opening empty file. Remove error message when changing autosave option. fixes #59
+ - (tau): Add `save as` accelerator Show `save as` window on `Ctrl+Shift+S`
+ - (tau): Add fullscreen mode
+ - (tau): Add find-all option
+ - (tau): Add tab history and shortcuts to cycle through it
+
+### Bugfixes
+
+ - (tau): default to current EditView's parent path when opening files fixes #380
+ - (editview): Fix invisibles position and thickness Make space radius relative to line height, to keep them visible for narrow spaces. Drawing of cursor and invisibles adjusts with horizontal scroll
+ - (tau): better handle bad GSettings configuration
+ - (editview): make invisibles more transparent, let spaces scale with line height
+ - (tau): instead of blocking on the ViewId in 'new_view' spawn a future
+ - (tau): use same channel for all XiEvents (including new_view events)
+ - (tau): add missing `class` attribute to prefs_win_handy, fixing crash when opening it
+ - (tau): add `context` attributes to translatable strings in the shortcut window
+ - (editview): fix AtkObject::accessible-role enum names
+ - (tau): Close all search dialogs when switching tabs
+ - (editview): do not misplace invisibles drawn on selection
+ - (i18n): assorted translatable string improvements
+ - (i18n): update lang (Portuguese (Portugal))
+ - (i18n): don't translate strings which aren't user facing
+ - (i18n): add translator comments to the .desktop file
+ - (i18n): update POTFILES.in
+ - (i18n): conform .po file names to glibc locales
+
 ## Changes in v0.9.3
 
 ### Feature changes

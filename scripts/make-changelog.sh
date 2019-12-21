@@ -42,24 +42,43 @@ while read -r c; do
 	fi
 done <<< "$commits"
 
-printf "%s\\n\\n" "### Feature changes"
 
-if [ ${#feats[@]} -eq 0 ]; then
-	echo " - No new features"
+# Output in XML mode
+if [ "$4" == "appdata" ]; then
+	if ! [ ${#feats[@]} -eq 0 ]; then
+		echo "<ul>"
+		for c in "${feats[@]}"; do
+			printf "%s\\n" "<li>$c</li>"
+		done
+		echo "</ul>"
+	fi
+	if ! [ ${#fixes[@]} -eq 0 ]; then
+		echo "<ul>"
+		for c in "${fixes[@]}"; do
+			printf "%s\\n" "<li>$c</li>"
+		done
+		echo "</ul>"
+	fi
 else
-	for c in "${feats[@]}"; do
-		printf "%s\\n" " - $c"
-	done
-fi
+	printf "%s\\n\\n" "### Feature changes"
 
-echo ""
+	if [ ${#feats[@]} -eq 0 ]; then
+		echo " - No new features"
+	else
+		for c in "${feats[@]}"; do
+			printf "%s\\n" " - $c"
+		done
+	fi
 
-printf "%s\\n\\n" "### Bugfixes"
+	echo ""
 
-if [ ${#fixes[@]} -eq 0 ]; then
-	echo " - No bugfixes"
-else
-	for c in "${fixes[@]}"; do
-		printf "%s\\n" " - $c"
-	done
+	printf "%s\\n\\n" "### Bugfixes"
+
+	if [ ${#fixes[@]} -eq 0 ]; then
+		echo " - No bugfixes"
+	else
+		for c in "${fixes[@]}"; do
+			printf "%s\\n" " - $c"
+		done
+	fi
 fi

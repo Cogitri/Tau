@@ -33,6 +33,52 @@
 	</provides>
 
 	<releases>
+		<release version="0.10.0" date="2019-12-21">
+			<p>
+				This is the 0.10 feature release. It contains the following feature changes:
+			</p>
+
+			<ul>
+				<li>(tau): Add option to restore session.</li>
+				<li>(tau): Add `save as` accelerator Show `save as` window on `Ctrl+Shift+S`.</li>
+				<li>(tau): Add fullscreen mode.</li>
+				<li>(tau): Add find-all option.</li>
+				<li>(tau): Add tab history and shortcuts to cycle through it.</li>
+			</ul>
+
+			<p>
+				And the following bugfixes:
+			</p>
+
+			<ul>
+				<li>(tau): default to current EditView's parent path when opening files.</li>
+				<li>(editview): Fix invisibles position and thickness.</li>
+				<li>(tau): better handle bad GSettings configuration.</li>
+				<li>(editview): make invisibles more transparent, let spaces scale with line height.</li>
+				<li>(tau): instead of blocking on the ViewId in 'new_view' spawn a future.</li>
+				<li>(tau): use same channel for all XiEvents (including new_view events).</li>
+				<li>(tau): add missing `class` attribute to prefs_win_handy, fixing crash when opening it.</li>
+				<li>(tau): add `context` attributes to translatable strings in the shortcut window.</li>
+				<li>(editview): fix AtkObject::accessible-role enum names.</li>
+				<li>(tau): Close all search dialogs when switching tabs.</li>
+				<li>(editview): do not misplace invisibles drawn on selection.</li>
+				<li>(i18n): assorted translatable string improvements.</li>
+				<li>(i18n): don't translate strings which aren't user facing.</li>
+				<li>(i18n): add translator comments to the .desktop file.</li>
+				<li>(i18n): update POTFILES.in.</li>
+				<li>(i18n): conform .po file names to glibc locales.</li>
+			</ul>
+
+			<p>
+				Additionally, the following languages have been added:
+			</p>
+
+			<ul>
+				<li>Turkish</li>
+				<li>Polish</li>
+				<li>Basque</li>
+			</ul>
+		</release>
 		<release version="0.9.3" date="2019-10-04">
 			<p>
 				This is the third patch release of Tau's 0.9 series. It contains the following feature changes:
