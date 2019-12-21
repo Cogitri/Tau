@@ -76,6 +76,7 @@ mod functions;
 mod globals;
 mod main_win;
 mod prefs_win;
+mod session;
 mod shortcuts_win;
 mod syntax_config;
 mod view_history;
@@ -83,17 +84,20 @@ mod view_history;
 use crate::errors::XiClientError;
 use crate::frontend::{TauFrontendBuilder, XiEvent, XiRequest};
 use crate::main_win::MainWin;
+use crate::session::SessionHandler;
 use crossbeam_channel::unbounded;
 use futures::stream::Stream;
 use futures::{future, future::Future};
 use gettextrs::{gettext, TextDomain, TextDomainError};
 use gio::{ApplicationExt, ApplicationExtManual, ApplicationFlags, FileExt};
 use glib::{Char, MainContext};
+use gschema_config_storage::{GSchema, GSchemaExt};
 use gtk::Application;
 use log::{debug, error, info, max_level as log_level, warn, LevelFilter};
 use parking_lot::Mutex;
 use std::cell::RefCell;
 use std::env::args;
+use std::path::Path;
 use std::rc::Rc;
 use std::sync::Arc;
 use tokio::runtime::Runtime;
@@ -238,26 +242,57 @@ fn main() {
         // It's fine to unwrap here - we already made sure this is Some in connect_startup.
         let core = core_opt.lock().clone().unwrap().unwrap();
 
-        runtime_opt.borrow_mut().as_mut().unwrap().spawn(
-            future::lazy(enclose!((new_view_tx) move || {
-                core
-                .new_view(None)
-                .then(|res|
-                    future::lazy(move || {
-                        match res {
-                            Ok(view_id) => new_view_tx.send(XiEvent::NewView(Ok((view_id, None)))).unwrap(),
-                            Err(e) => {
-                                if let xrl::ClientError::ErrorReturned(value) = e {
-                                    let err: XiClientError = serde_json::from_value(value).unwrap();
-                                    new_view_tx.send(XiEvent::NewView(Err(format!("{}: '{}'", gettext("Failed to open new view due to error"), err.message)))).unwrap()
-                                }
-                            },
-                        }
-                        Ok(())
-                    })
-                )
-            }))
-        );
+        let schema = GSchema::new("org.gnome.Tau");
+        if schema
+            .get_key("restore-session") {
+                let paths = schema.get_session();
+                for file in paths {
+                    if Path::new(&file).exists() {
+                        runtime_opt.borrow_mut().as_mut().unwrap().spawn(
+                            future::lazy(enclose!((core, new_view_tx) move || {
+                                core
+                                .new_view(Some(file.clone()))
+                                .then(|res|
+                                    future::lazy(move || {
+                                        match res {
+                                            Ok(view_id) => new_view_tx.send(XiEvent::NewView(Ok((view_id, Some(file))))).unwrap(),
+                                            Err(_) => {
+                                                GSchema::new("org.gnome.Tau").session_remove(&file);
+                                                error!("Failed to restore file `{}`", file);
+                                            },
+                                        }
+                                        Ok(())
+                                    })
+                                )
+                            }))
+                        );
+                    } else {
+                        GSchema::new("org.gnome.Tau").session_remove(&file);
+                        error!("Failed to restore file `{}`", file);
+                    }
+                }
+        } else {
+            runtime_opt.borrow_mut().as_mut().unwrap().spawn(
+                future::lazy(enclose!((core, new_view_tx) move || {
+                    core
+                    .new_view(None)
+                    .then(|res|
+                        future::lazy(move || {
+                            match res {
+                                Ok(view_id) => new_view_tx.send(XiEvent::NewView(Ok((view_id, None)))).unwrap(),
+                                Err(e) => {
+                                    if let xrl::ClientError::ErrorReturned(value) = e {
+                                        let err: XiClientError = serde_json::from_value(value).unwrap();
+                                        new_view_tx.send(XiEvent::NewView(Err(format!("{}: '{}'", gettext("Failed open new view due to error"), err.message)))).unwrap()
+                                    }
+                                },
+                            }
+                            Ok(())
+                        })
+                        )
+                }))
+            );
+        };
     }));
 
     application.connect_open(
@@ -266,6 +301,38 @@ fn main() {
 
             // See above for why it's fine to unwrap here.
             let core = core_opt.lock().clone().unwrap().unwrap();
+
+            let schema = GSchema::new("org.gnome.Tau");
+            if schema
+                .get_key("restore-session") {
+                    let paths = schema.get_session();
+                    for file in paths {
+                        if Path::new(&file).exists() {
+                            runtime_opt.borrow_mut().as_mut().unwrap().spawn(
+                                future::lazy(enclose!((core, new_view_tx) move || {
+                                    core
+                                    .new_view(Some(file.clone()))
+                                    .then(|res|
+                                        future::lazy(move || {
+                                            match res {
+                                                Ok(view_id) => new_view_tx.send(XiEvent::NewView(Ok((view_id, Some(file))))).unwrap(),
+                                                Err(_) => {
+                                                    GSchema::new("org.gnome.Tau").session_remove(&file);
+                                                    error!("Failed to restore file `{}`", file);
+                                                },
+                                            }
+                                            Ok(())
+                                        })
+                                    )
+                                }))
+                            );
+                        } else {
+                            GSchema::new("org.gnome.Tau").session_remove(&file);
+                            error!("Failed to restore file `{}`", file);
+                        }
+                    }
+            }
+
             let paths: Vec<String> = files.iter()
                 .filter_map(gio::File::get_path)
                 .map(std::path::PathBuf::into_os_string)

@@ -3,6 +3,7 @@ use crate::errors::{ErrorDialog, ErrorMsg, XiClientError};
 use crate::frontend::{XiEvent, XiRequest};
 use crate::functions;
 use crate::prefs_win::PrefsWin;
+use crate::session::SessionHandler;
 use crate::shortcuts_win::ShortcutsWin;
 use crate::syntax_config::SyntaxParams;
 use crate::view_history::{ViewHistory, ViewHistoryExt};
@@ -971,32 +972,6 @@ impl MainWin {
         None
     }
 
-    /// Request a new view from `xi-core` and send
-    fn req_new_view(&self, file_name: Option<String>) {
-        trace!("Requesting new view");
-
-        self.runtime_opt.borrow_mut().as_mut().unwrap().spawn(
-                    future::lazy(enclose!((self.core => core, self.event_tx => new_view_tx) move || {
-                        core
-                        .new_view(file_name.clone())
-                        .then(|res|
-                            future::lazy(move || {
-                                match res {
-                                    Ok(view_id) => new_view_tx.send(XiEvent::NewView(Ok((view_id, file_name)))).unwrap(),
-                                    Err(e) => {
-                                        if let xrl::ClientError::ErrorReturned(value) = e {
-                                            let err: XiClientError = serde_json::from_value(value).unwrap();
-                                            new_view_tx.send(XiEvent::NewView(Err(format!("{}: '{}'", gettext("Failed to open new view due to error"), err.message)))).unwrap()
-                                        }
-                                    },
-                                }
-                                Ok(())
-                            })
-                        )
-                    }))
-                );
-    }
-
     fn autosave_view(&self, file_name: Option<String>, view_id: ViewId) -> Result<String, String> {
         if let Some(name) = file_name {
             let _ = self.core.save(view_id, &name);
@@ -1065,6 +1040,8 @@ pub trait MainWinExt {
 
     fn handle_save_button(&self);
 
+    fn req_new_view(&self, file_name: Option<String>);
+
     fn new_view(&self, res: Result<(ViewId, Option<String>), String>);
 
     fn new_view_response(&self, file_name: Option<String>, view_id: ViewId);
@@ -1085,7 +1062,17 @@ impl MainWinExt for Rc<MainWin> {
     fn close(&self) -> SaveAction {
         trace!("Closing current Editview");
         if let Some(edit_view) = self.get_current_edit_view() {
-            self.close_view(&edit_view)
+            let result = self.close_view(&edit_view);
+            if result != SaveAction::Cancel {
+                if let Some(path) = edit_view.file_name.borrow().as_ref() {
+                    self.state
+                        .borrow_mut()
+                        .settings
+                        .gschema
+                        .session_remove(path);
+                }
+            }
+            result
         } else {
             SaveAction::Cancel
         }
@@ -1225,7 +1212,7 @@ impl MainWinExt for Rc<MainWin> {
     /// been modified we make sure to set this in the `MainState` (so that the `EditView`s actually notice
     /// the change) and redraw the current one so that the user sees what has changed.
     fn connect_settings_change(&self) {
-        let gschema = self.state.borrow().settings.gschema.clone();
+        let gschema = self.state.borrow_mut().settings.gschema.clone();
         let core = &self.core;
         gschema
             .settings
@@ -1404,8 +1391,11 @@ impl MainWinExt for Rc<MainWin> {
                         ev.view_item.edit_area.queue_draw();
                     }
                 }
-                // We load these during startup
-                "window-height" | "window-width" | "window-maximized" => {}
+                "restore-session" => {
+                    main_win.state.borrow_mut().settings.restore_session = gschema.get_key("restore-session");
+                }
+                // Valid keys, but no immediate action to be taken
+                "window-height" | "window-width" | "window-maximized" | "save-when-out-of-focus" | "session" => {}
                 key => {
                     error!("Unknown GSettings key change event '{}'. Please make sure your GSchema is up-to-date.", key);
                 }
@@ -1482,11 +1472,34 @@ impl MainWinExt for Rc<MainWin> {
         }
     }
 
-    /// When `xi-core` tells us to create a new view, we have to do multiple things:
-    ///
-    /// 1) Check if the current `EditView` is empty (doesn't contain ANY text). If so, replace that `EditView`
-    ///    with the new `EditView`. That way we don't stack empty, useless views.
-    /// 2) Connect the ways to close the `EditView`, either via a middle click or by clicking the X of the tab
+    /// Request a new view from `xi-core` and send
+    fn req_new_view(&self, file_name: Option<String>) {
+        trace!("Requesting new view");
+
+        self.runtime_opt.borrow_mut().as_mut().unwrap().spawn(
+            future::lazy(enclose!((self.core => core, self.event_tx => new_view_tx) move || {
+                core
+                .new_view(file_name.clone())
+                .then(|res|
+                    future::lazy(move || {
+                        match res {
+                            Ok(view_id) => new_view_tx.send(XiEvent::NewView(Ok((view_id, file_name)))).unwrap(),
+                            Err(e) => {
+                                if let xrl::ClientError::ErrorReturned(value) = e {
+                                    let err: XiClientError = serde_json::from_value(value).unwrap();
+                                    new_view_tx.send(XiEvent::NewView(Err(format!("{}: '{}'", gettext("Failed to open new view due to error"), err.message)))).unwrap()
+                                }
+                            },
+                        }
+                        Ok(())
+                    })
+                )
+            }))
+        );
+    }
+
+    /// When `xi-core` tells us to create a new view, we have to connect the ways to close the `EditView`,
+    /// either via a middle click or by clicking the X of the tab
     fn new_view_response(&self, file_name: Option<String>, view_id: ViewId) {
         trace!("Creating new EditView");
 
@@ -1516,21 +1529,45 @@ impl MainWinExt for Rc<MainWin> {
 
             edit_view.top_bar.close_button.connect_clicked(
                 enclose!((self => main_win, edit_view) move |_| {
-                    main_win.close_view(&edit_view);
+                    if main_win.close_view(&edit_view) != SaveAction::Cancel {
+                        if let Some(path) = edit_view.file_name.borrow().as_ref() {
+                            main_win
+                                .state
+                                .borrow_mut()
+                                .settings
+                                .gschema
+                                .session_remove(path);
+                        }
+                    }
                 }),
             );
 
+            #[allow(clippy::collapsible_if)]
             edit_view.top_bar.event_box.connect_button_press_event(
                 enclose!((self => main_win, edit_view) move |_, eb| {
                     // 2 == middle click
                     if eb.get_button() == 2 {
-                        main_win.close_view(&edit_view);
+                        if main_win.close_view(&edit_view) != SaveAction::Cancel {
+                            if let Some(path) = edit_view.file_name.borrow().as_ref() {
+                                main_win
+                                    .state
+                                    .borrow_mut()
+                                    .settings.gschema
+                                    .session_remove(path);
+                            }
+                        }
                     }
                     Inhibit(false)
                 }),
             );
         }
-
+        if let Some(path) = edit_view.file_name.borrow().as_ref() {
+            self.state
+                .borrow_mut()
+                .settings
+                .gschema
+                .session_add(path.clone());
+        }
         self.views.borrow_mut().insert(view_id, edit_view);
     }
 
@@ -1575,7 +1612,17 @@ impl MainWinExt for Rc<MainWin> {
                                 debug!("Saving file '{:?}'", &file);
                                 let file = file.to_string_lossy();
                                 let _ = main_win.core.save(edit_view.view_id, &file);
+                                if let Some(old_file_name) = edit_view.file_name.borrow().as_ref() {
+                                    main_win
+                                    .state
+                                    .borrow_mut()
+                                    .settings
+                                    .gschema
+                                    .session_remove(old_file_name);
+                                }
+
                                 edit_view.set_file(&file);
+                                main_win.state.borrow_mut().settings.gschema.session_add(file.to_string());
                             }
                         Err(e) => {
                             let err_msg = format!("{} '{}': {}", &gettext("Couldn’t save file"), &file_str, &e.to_string());

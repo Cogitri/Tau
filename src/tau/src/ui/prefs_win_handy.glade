@@ -117,6 +117,22 @@
             </child>
             <child>
               <object class="HdyPreferencesRow">
+                <property name="title" translatable="yes">Restore session</property>
+                <property name="visible">True</property>
+                <child>
+                  <object class="GtkCheckButton" id="restore_session_checkbutton">
+                    <property name="label" translatable="yes">Restore last opened files on start-up</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">False</property>
+                    <property name="draw_indicator">True</property>
+                    <property name="margin">6</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="HdyPreferencesRow">
                 <property name="visible">True</property>
                 <property name="title" translatable="yes">Line Wrapping</property>
                 <child>
@@ -232,7 +248,7 @@
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">True</property>
-                        <property name="position">0</property>
+                        <property name="positionShow">0</property>
                       </packing>
                     </child>
                     <child>

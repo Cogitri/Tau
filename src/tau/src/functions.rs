@@ -61,6 +61,7 @@ pub fn new_settings() -> Settings {
         edit_font: gschema.get_key("font"),
         draw_cursor: gschema.get_key("draw-cursor"),
         show_linecount: gschema.get_key("show-linecount"),
+        restore_session: gschema.get_key("restore-session"),
         interface_font,
         gschema,
     }

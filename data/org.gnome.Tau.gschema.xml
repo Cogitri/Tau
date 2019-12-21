@@ -184,6 +184,22 @@
                 Whether or not to show the line count in the editing pane
             </description>
         </key>
+
+        <key name="session" type="as">
+            <default>[]</default>
+            <summary>Open files</summary>
+            <description>
+                List of file paths open in the current or most recent session
+            </description>
+        </key>
+
+        <key name="restore-session" type="b">
+            <default>true</default>
+            <summary>Restore session</summary>
+            <description>
+                Whether or not to restore last session on start-up
+            </description>
+        </key>
     </schema>
 
 </schemalist>

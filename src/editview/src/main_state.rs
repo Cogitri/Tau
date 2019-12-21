@@ -23,6 +23,7 @@ pub struct Settings {
     pub edit_font: String,
     pub draw_cursor: bool,
     pub show_linecount: bool,
+    pub restore_session: bool,
 }
 
 pub struct MainState {
