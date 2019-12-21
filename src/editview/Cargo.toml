@@ -18,18 +18,18 @@ default = []
 gtk_v3_22 = ["gtk/v3_22"]
 
 [dependencies]
-cairo-rs = { git="https://github.com/gtk-rs/cairo" }
+cairo-rs = ""
 crossbeam-channel = "0.3"
 enclose = "1"
 futures = "0.1"
-gdk = { git="https://github.com/gtk-rs/gdk" }
+gdk = ""
 gettext-rs = { version="0.4", features=["gettext-system"] }
-gio = { git="https://github.com/gtk-rs/gio" }
-glib = { git="https://github.com/gtk-rs/glib" }
-gtk = { git="https://github.com/gtk-rs/gtk", features = ["v3_20"] }
+gio = ""
+glib = ""
+gtk = { version="0.8", features = ["v3_20"] }
 log = "0.4"
-pango = { git="https://github.com/gtk-rs/pango", features = ["v1_38"] }
-pangocairo = { git="https://github.com/gtk-rs/pangocairo" }
+pango = { version="0.8", features = ["v1_38"] }
+pangocairo = ""
 parking_lot = "0.9"
 serde = { version="", features = ["derive"] }
 serde_json = ""

@@ -19,7 +19,7 @@ gtk_v3_22 = ["gtk/v3_22", "editview/gtk_v3_22"]
 handy = ["libhandy", "gtk_v3_22"]
 
 [dependencies]
-cairo-rs = { git="https://github.com/gtk-rs/cairo" }
+cairo-rs = ""
 chrono = "0.4"
 crossbeam-channel = "0.3"
 dirs = "2"
@@ -27,24 +27,23 @@ editview = { path="../editview" }
 enclose = "1"
 env_logger = "0.7"
 futures = "0.1"
-gdk = { git="https://github.com/gtk-rs/gdk" }
-gdk-pixbuf = { git="https://github.com/gtk-rs/gdk-pixbuf" }
+gdk = ""
+gdk-pixbuf = ""
 gettext-rs = { version="0.4", features=["gettext-system"] }
-gio = { git="https://github.com/gtk-rs/gio" }
-glib = { git="https://github.com/gtk-rs/glib" }
-gtk = { git="https://github.com/gtk-rs/gtk", features = ["v3_20"] }
+gio = ""
+glib = ""
+gtk = { version="0.8", features=["v3_20"] }
 human-panic = "1"
 log = "0.4"
-pango = { git="https://github.com/gtk-rs/pango" }
-pangocairo = { git="https://github.com/gtk-rs/pangocairo" }
+pango = ""
+pangocairo = ""
 parking_lot = "0.9"
 serde = { version="1", features = ["derive"] }
 serde_json = "1"
 syntect = "3"
 tokio = "0.1"
-vte-rs = { git = "https://github.com/antoyo/vte-rs" }
 
 xrl = "0.0.8"
 
 # Optional deps
-libhandy = { git = "https://gitlab.gnome.org/Cogitri/libhandy-rs", branch = "regen", version = "0.4", optional = true }
+libhandy = { git="https://gitlab.gnome.org/World/Rust/libhandy-rs.git", version = "0.4", optional = true }
