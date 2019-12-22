@@ -1,3 +1,13 @@
+## Changes in v0.10.1
+
+### Feature changes
+
+ - No new features
+
+### Bugfixes
+
+ - (tau): remove typo in libhandy ui and must_use warnings
+
 ## Changes in v0.10.0
 
 ### Feature changes

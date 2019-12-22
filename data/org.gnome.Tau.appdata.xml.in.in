@@ -33,6 +33,13 @@
 	</provides>
 
 	<releases>
+		<release version="0.10.1" date="2019-12-22">
+			<p>
+				This is the first patch release of Tau's 0.10 series. It fixes a
+				few compiler warnings during build and a warning when opening
+				the preferences window.
+			</p>
+		</release>
 		<release version="0.10.0" date="2019-12-21">
 			<p>
 				This is the 0.10 feature release. It contains the following feature changes:
