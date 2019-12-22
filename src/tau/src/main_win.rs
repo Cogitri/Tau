@@ -1288,14 +1288,14 @@ impl MainWinExt for Rc<MainWin> {
                 }
                 "translate-tabs-to-spaces" => {
                     let val: bool = gschema.get("translate-tabs-to-spaces");
-                    core.modify_user_config(
+                    let _ = core.modify_user_config(
                         "general",
                         json!({ "translate_tabs_to_spaces": val })
                     );
                 }
                 "auto-indent" => {
                     let val: bool = gschema.get("auto-indent");
-                    core.modify_user_config(
+                    let _ = core.modify_user_config(
                         "general",
                         json!({ "autodetect_whitespace": val })
                     );
@@ -1336,7 +1336,7 @@ impl MainWinExt for Rc<MainWin> {
                 }
                 "word-wrap" => {
                     let val: bool = gschema.get("word-wrap");
-                    core.modify_user_config(
+                    let _ = core.modify_user_config(
                         "general",
                         json!({ "word_wrap": val })
                     );
