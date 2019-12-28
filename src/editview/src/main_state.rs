@@ -23,6 +23,7 @@ pub struct Settings {
     pub draw_cursor: bool,
     pub show_linecount: bool,
     pub restore_session: bool,
+    pub full_title: bool,
 }
 
 pub struct MainState {

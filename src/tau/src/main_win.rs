@@ -307,24 +307,9 @@ impl MainWin {
 
         main_win
             .notebook
-            .connect_switch_page(enclose!((main_win) move |_,ev_widget,_| {
+            .connect_switch_page(enclose!((main_win) move |_, _, _| {
                 // adjust headerbar title
-                if let Some(ev) = main_win.w_to_ev.borrow().get(&ev_widget) {
-                    // Update window title
-                    if let Some(ref path_string) = &*ev.file_name.borrow() {
-                        if let Some(name) = std::path::Path::new(path_string).file_name() {
-                            if !*ev.pristine.borrow() {
-                                main_win.set_title(&format!("*{}", &name.to_string_lossy()));
-                            } else {
-                                main_win.set_title(&name.to_string_lossy());
-                            }
-                        }
-                    } else if !*ev.pristine.borrow() {
-                        main_win.set_title(&format!("*{}", gettext("Untitled")));
-                    } else {
-                        main_win.set_title(&gettext("Untitled"));
-                    }
-                }
+                main_win.update_titlebar();
 
                 // stop all searches and close dialogs
                 main_win.views.borrow().values().for_each(|view| view.stop_search());
@@ -767,28 +752,13 @@ impl MainWin {
         let views = self.views.borrow();
         if let Some(ev) = views.get(&params.view_id) {
             let view_id = params.view_id;
-            let pristine = params.pristine;
 
             ev.update(params);
 
             if let Some(w) = self.view_id_to_w.borrow().get(&view_id).map(Clone::clone) {
                 if let Some(page_num) = self.notebook.page_num(&w) {
                     if Some(page_num) == self.notebook.get_current_page() {
-                        if let Some(name) = std::path::Path::new(
-                            &ev.file_name
-                                .borrow()
-                                .clone()
-                                .unwrap_or_else(|| gettext("Untitled")),
-                        )
-                        .file_name()
-                        {
-                            let mut full_title = String::new();
-                            if !pristine {
-                                full_title.push('*');
-                            }
-                            full_title.push_str(&name.to_string_lossy());
-                            self.set_title(&full_title);
-                        }
+                        self.update_titlebar()
                     }
                 }
             }
@@ -1018,6 +988,39 @@ impl MainWin {
     fn set_title(&self, title: &str) {
         self.header_bar.set_title(Some(title));
         self.fullscreen_bar.set_title(Some(title));
+    }
+
+    /// Updates the title bar
+    fn update_titlebar(&self) {
+        if let Some(ev) = self.get_current_edit_view() {
+            // Update window title
+            let mut title = String::new();
+
+            if !*ev.pristine.borrow() {
+                title.push('*');
+            }
+
+            if let Some(ref path_string) = &*ev.file_name.borrow() {
+                let path = std::path::Path::new(path_string);
+                if let Some(file_name) = path.file_name().and_then(|f| f.to_str()) {
+                    title.push_str(file_name);
+                    if self.state.borrow().settings.full_title {
+                        if let Some(parent_directory) = path.parent().and_then(|p| p.to_str()) {
+                            title.push_str(&" — ");
+                            title.push_str(parent_directory);
+                        }
+                    }
+                } else {
+                    title.push_str(&gettext("Untitled"));
+                }
+            } else {
+                title.push_str(&gettext("Untitled"));
+            }
+
+            self.set_title(&title);
+        } else {
+            self.set_title(glib::get_application_name().unwrap().as_str());
+        }
     }
 }
 
@@ -1392,6 +1395,10 @@ impl MainWinExt for Rc<MainWin> {
                 }
                 "restore-session" => {
                     main_win.state.borrow_mut().settings.restore_session = gschema.get("restore-session");
+                }
+                "full-title" => {
+                    main_win.state.borrow_mut().settings.full_title = gschema.get("full-title");
+                    main_win.update_titlebar();
                 }
                 // Valid keys, but no immediate action to be taken
                 "window-height" | "window-width" | "window-maximized" | "save-when-out-of-focus" | "session" => {}

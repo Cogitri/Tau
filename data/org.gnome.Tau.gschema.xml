@@ -200,6 +200,14 @@
                 Whether or not to restore last session on start-up
             </description>
         </key>
+
+        <key name="full-title" type="b">
+            <default>false</default>
+            <summary>Full path in title bar</summary>
+            <description>
+                Weather or not to display full path instead of file name in Tau's title bar.
+            </description>
+        </key>
     </schema>
 
 </schemalist>

@@ -77,6 +77,8 @@ impl PrefsWin {
             .unwrap();
         let show_lintcount_checkbutton: ToggleButton =
             builder.get_object("show_linecount_checkbutton").unwrap();
+        let full_title_checkbutton: ToggleButton =
+            builder.get_object("full_title_checkbutton").unwrap();
         let restore_session_checkbutton: ToggleButton =
             builder.get_object("restore_session_checkbutton").unwrap();
 
@@ -362,6 +364,13 @@ impl PrefsWin {
         gschema.bind(
             "restore-session",
             &restore_session_checkbutton,
+            "active",
+            SettingsBindFlags::DEFAULT,
+        );
+
+        gschema.bind(
+            "full-title",
+            &full_title_checkbutton,
             "active",
             SettingsBindFlags::DEFAULT,
         );

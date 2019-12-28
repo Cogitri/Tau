@@ -205,6 +205,9 @@ impl EditView {
             full_title
         );
         self.top_bar.label.set_text(&full_title);
+        self.top_bar
+            .tab_widget
+            .set_tooltip_text(self.file_name.borrow().as_ref().map(|x| x.as_ref()));
     }
 
     /// If xi-editor sends us a [theme_changed](https://xi-editor.io/docs/frontend-protocol.html#theme_changed)
