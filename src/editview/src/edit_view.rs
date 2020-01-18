@@ -469,7 +469,7 @@ impl EditView {
         let pango_ctx = self.view_item.get_pango_ctx();
         pango_ctx.set_font_description(&self.edit_font.borrow().font_desc);
 
-        // Draw a line at x chars
+        // Draw in darker colour at column X to symbol the user that the's writing further than the margin
         if self.main_state.borrow().settings.right_margin {
             let until_margin_width = self.edit_font.borrow().font_width
                 * f64::from(self.main_state.borrow().settings.column_right_margin);
@@ -479,10 +479,18 @@ impl EditView {
             cr.fill();
 
             set_margin_source_color(cr, theme.background);
+            // Don't go negative here
+            let normal_background_start =
+                if until_margin_width - self.view_item.hadj.get_value() < 0.0 {
+                    0.0
+                } else {
+                    until_margin_width - self.view_item.hadj.get_value()
+                };
+
             cr.rectangle(
-                until_margin_width - self.view_item.hadj.get_value(),
+                normal_background_start,
                 0.0,
-                f64::from(da_width) + self.view_item.vadj.get_value(),
+                f64::from(da_width),
                 f64::from(da_height),
             );
             cr.fill();
