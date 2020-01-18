@@ -1601,8 +1601,12 @@ impl MainWinExt for Rc<MainWin> {
             Some(gettext("Cancel").as_str()),
         );
         fcn.set_transient_for(Some(&self.window.clone()));
-        fcn.set_current_name("");
         fcn.set_do_overwrite_confirmation(true);
+        if let Some(ref file_name) = *edit_view.file_name.borrow() {
+            fcn.set_filename(file_name);
+        } else {
+            fcn.set_current_name("Untitled.txt");
+        }
 
         fcn.connect_response(enclose!((edit_view, self => main_win) move |fcd, res| {
             debug!(
