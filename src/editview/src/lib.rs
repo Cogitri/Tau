@@ -11,6 +11,6 @@ pub mod main_state;
 pub mod theme;
 mod view_item;
 
-pub use crate::edit_view::EditView;
+pub use crate::edit_view::{EditView, EditViewExt};
 pub use crate::main_state::{MainState, Settings};
 pub use crate::view_item::TopBar;

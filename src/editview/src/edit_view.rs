@@ -23,7 +23,7 @@ use log::{debug, info, trace, warn};
 use pango::{Attribute, Direction, FontDescription, TabAlign, TabArray};
 use pangocairo::functions as pangocairofuncs;
 use parking_lot::Mutex;
-use std::cell::RefCell;
+use std::cell::{Cell, RefCell};
 use std::cmp::{max, min};
 use std::rc::Rc;
 use std::sync::Arc;
@@ -64,6 +64,7 @@ pub struct EditView {
     pub(crate) default_tab_size: RefCell<u32>,
     pub(crate) tab_size: RefCell<Option<u32>>,
     style_provider: CssProvider,
+    in_multicursor_edit: Cell<bool>,
 }
 
 impl EditView {
@@ -118,6 +119,7 @@ impl EditView {
             default_tab_size: RefCell::new(default_tab_size),
             tab_size: RefCell::new(None),
             style_provider: CssProvider::new(),
+            in_multicursor_edit: Cell::new(false),
         });
 
         view_item
@@ -911,6 +913,13 @@ impl EditView {
             col
         );
 
+        // If we do multicursor select we don't have to change the view
+        if self.in_multicursor_edit.get() {
+            trace!("Aborting scrolling since we're in multicursor select mode");
+            self.in_multicursor_edit.set(false);
+            return;
+        }
+
         // xi initially sends a 'scroll_to' with line == 0 when the linecache doesn't have lines in
         // it yet, so the below function would keep going forever. Make sure line isn't 0 so it's actually
         // a valid line with a line_number
@@ -1607,5 +1616,42 @@ impl EditView {
 
     pub fn go_to_line(&self, line: u64) {
         self.core.goto_line(self.view_id, line - 1);
+    }
+}
+
+// An extension trait for `EditViewExt, used when we need a Rc<EditView> for things like callbacks
+pub trait EditViewExt {
+    fn multicursor_select_all(&self);
+}
+
+impl EditViewExt for Rc<EditView> {
+    /// Select all occurences of what's currently selected
+    fn multicursor_select_all(&self) {
+        let (clipboard_tx, clipboard_rx) =
+            MainContext::sync_channel::<serde_json::value::Value>(PRIORITY_HIGH, 1);
+
+        clipboard_rx.attach(
+            None,
+            clone!(@weak self as edit_view => @default-panic, move |val| {
+                edit_view.in_multicursor_edit.set(true);
+                edit_view.core.find(
+                    edit_view.view_id,
+                    &val.as_str().unwrap_or_default(),
+                    false,
+                    false,
+                    false,
+                );
+                edit_view.core.find_all(edit_view.view_id);
+                edit_view.do_copy_primary();
+
+                Continue(false)
+            }),
+        );
+
+        self.core.copy(self.view_id, move |res| {
+            if let Ok(val) = res {
+                clipboard_tx.send(val).unwrap();
+            }
+        });
     }
 }

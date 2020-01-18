@@ -12,7 +12,9 @@ use crate::shortcuts_win::ShortcutsWin;
 use crate::syntax_config::SyntaxParams;
 use crate::view_history::{ViewHistory, ViewHistoryExt};
 use chrono::{DateTime, Utc};
-use editview::{main_state::ShowInvisibles, theme::u32_from_color, EditView, MainState};
+use editview::{
+    main_state::ShowInvisibles, theme::u32_from_color, EditView, EditViewExt, MainState,
+};
 use gdk::{enums::key, ModifierType, WindowState};
 use gdk_pixbuf::Pixbuf;
 use gettextrs::gettext;
@@ -413,6 +415,16 @@ impl MainWin {
             application.add_action(&about_action);
         }
         {
+            let multicursor_select_all_action = SimpleAction::new("multicursor_select_all", None);
+            multicursor_select_all_action.connect_activate(
+                clone!(@weak main_win => @default-panic, move |_,_| {
+                    trace!("Handling action: 'multicursor_select_all'");
+                    main_win.multicursor_select_all();
+                }),
+            );
+            application.add_action(&multicursor_select_all_action);
+        }
+        {
             let find_action = SimpleAction::new("find", None);
             find_action.connect_activate(clone!(@weak main_win => @default-panic, move |_,_| {
                 trace!("Handling action: 'find'");
@@ -644,6 +656,7 @@ impl MainWin {
         application.set_accels_for_action("app.cycle_forward", &["<Primary><Shift>Tab"]);
         application.set_accels_for_action("app.toggle_fullscreen", &["F11"]);
         application.set_accels_for_action("app.go_to_line", &["<Primary>i"]);
+        application.set_accels_for_action("app.multicursor_select_all", &["<Primary>l"]);
 
         main_win.window.connect_key_press_event(
             clone!(@strong main_win => @default-panic, move |_, ek| {
@@ -951,6 +964,12 @@ impl MainWin {
     fn go_to_line(&self) {
         if let Some(edit_view) = self.get_current_edit_view() {
             edit_view.start_go_to_line();
+        }
+    }
+
+    fn multicursor_select_all(&self) {
+        if let Some(edit_view) = self.get_current_edit_view() {
+            edit_view.multicursor_select_all();
         }
     }
 

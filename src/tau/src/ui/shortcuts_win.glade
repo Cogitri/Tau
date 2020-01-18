@@ -244,6 +244,12 @@
                         </child>
                         <child>
                             <object class="GtkShortcutsShortcut">
+                                <property name="accelerator">&lt;ctrl&gt;L</property>
+                                <property name="title" translatable="yes" context="shortcut window">Select all occurences of the current selection</property>
+                            </object>
+                        </child>
+                        <child>
+                            <object class="GtkShortcutsShortcut">
                                 <property name="accelerator">&lt;Shift&gt;Up</property>
                                 <property name="title" translatable="yes" context="shortcut window">Move up and select everything from current cursor position</property>
                             </object>
