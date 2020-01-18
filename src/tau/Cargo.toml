@@ -21,7 +21,7 @@ handy = ["libhandy", "gtk_v3_22"]
 [dependencies]
 cairo-rs = ""
 chrono = "0.4"
-crossbeam-channel = "0.3"
+crossbeam-channel = "0.4"
 dirs = "2"
 editview = { path="../editview" }
 enclose = "1"
@@ -37,7 +37,7 @@ human-panic = "1"
 log = "0.4"
 pango = ""
 pangocairo = ""
-parking_lot = "0.9"
+parking_lot = "0.10"
 serde = { version="1", features = ["derive"] }
 serde_json = "1"
 syntect = "3"
@@ -46,4 +46,4 @@ tokio = "0.1"
 xrl = "0.0.8"
 
 # Optional deps
-libhandy = { git="https://gitlab.gnome.org/World/Rust/libhandy-rs.git", version = "0.4", optional = true }
+libhandy = { git="https://gitlab.gnome.org/World/Rust/libhandy-rs.git", version = "0.5", optional = true }

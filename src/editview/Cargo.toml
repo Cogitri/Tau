@@ -19,7 +19,7 @@ gtk_v3_22 = ["gtk/v3_22"]
 
 [dependencies]
 cairo-rs = ""
-crossbeam-channel = "0.3"
+crossbeam-channel = "0.4"
 enclose = "1"
 futures = "0.1"
 gdk = ""
@@ -30,7 +30,7 @@ gtk = { version="0.8", features = ["v3_20"] }
 log = "0.4"
 pango = { version="0.8", features = ["v1_38"] }
 pangocairo = ""
-parking_lot = "0.9"
+parking_lot = "0.10"
 serde = { version="", features = ["derive"] }
 serde_json = ""
 syntect = ""
