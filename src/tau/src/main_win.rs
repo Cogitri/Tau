@@ -1602,6 +1602,7 @@ impl MainWinExt for Rc<MainWin> {
         );
         fcn.set_transient_for(Some(&self.window.clone()));
         fcn.set_current_name("");
+        fcn.set_do_overwrite_confirmation(true);
 
         fcn.connect_response(enclose!((edit_view, self => main_win) move |fcd, res| {
             debug!(
