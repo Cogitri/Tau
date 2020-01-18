@@ -83,7 +83,7 @@ impl WinProp {
     ///
     /// This will panic if there's no `gio::Settings` of the name of the `Application`s id.
     pub fn new() -> Self {
-        let gschema = Settings::new(crate::globals::APP_ID.unwrap_or("org.gnome.TauDevel"));
+        let gschema = Settings::new("org.gnome.Tau");
         Self {
             height: gschema.get("window-height"),
             width: gschema.get("window-width"),
