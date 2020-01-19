@@ -1096,7 +1096,6 @@ impl EditView {
         let meta = ek.get_state().contains(ModifierType::META_MASK);
         let shift = ek.get_state().contains(ModifierType::SHIFT_MASK);
         let norm = !alt && !ctrl && !meta;
-
         match ek.get_keyval() {
             key::Delete if !shift => {
                 let _ = self.core.delete(view_id);
@@ -1113,7 +1112,6 @@ impl EditView {
             key::BackSpace if norm => {
                 let _ = self.core.del(view_id);
             }
-
             key::BackSpace if ctrl => {
                 let _ = self.core.delete_word_backward(view_id);
             }
@@ -1146,12 +1144,10 @@ impl EditView {
                 let _ = self.core.down_sel(view_id);
                 self.do_copy_primary();
             }
-
             key::Left | key::KP_Left if norm && shift => {
                 let _ = self.core.left_sel(view_id);
                 self.do_copy_primary();
             }
-
             key::Right | key::KP_Right if norm && shift => {
                 let _ = self.core.right_sel(view_id);
                 self.do_copy_primary();
@@ -1236,7 +1232,7 @@ impl EditView {
             key::z if ctrl => {
                 let _ = self.core.undo(view_id);
             }
-            key::z if ctrl && shift => {
+            key::Z if ctrl => {
                 let _ = self.core.redo(view_id);
             }
             _ => {
