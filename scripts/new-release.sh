@@ -27,9 +27,9 @@ ${EDITOR:=nano} data/org.gnome.Tau.appdata.xml.in.in
 
 printf "%s\\n\\n%s" "$(./scripts/make-changelog.sh v${next} v${current})" "$(cat Changelog.md)" > Changelog.md
 
-ninja -C build test
+ninja -C _build test
 
 git commit -av
-git tag -s v$next
+git tag v$next
 
-ninja -C build release
+ninja -C _build release

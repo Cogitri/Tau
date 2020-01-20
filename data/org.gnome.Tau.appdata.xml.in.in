@@ -33,6 +33,29 @@
 	</provides>
 
 	<releases>
+		<release version="0.10.2" date="2020-01-20">
+			<p>
+				This is the second patch relase of Tau's 0.10 series.
+				It contains the following feature changes:
+			</p>
+
+			<ul>
+				<li>(tau): add missing keybinds to GtkShortcutWindow</li>
+				<li>(edit_view): Full title as tooltip and in titlebar</li>
+			</ul>
+
+			<p>
+				And the following bugfixes
+			</p>
+
+			<ul>
+				<li>(editview): fix redo keybind</li>
+				<li>(tau): don't start drawing the background at negative X's</li>
+				<li>(tau): don't use the now removed org.gnome.TauDevel gschema</li>
+				<li>(tau): if we already have a filename, set this as default for save_as</li>
+				<li>(tau): ask for confirmation if user attempts to overwrite existing file in save_as</li>
+			</ul>
+		</release>
 		<release version="0.10.1" date="2019-12-22">
 			<p>
 				This is the first patch release of Tau's 0.10 series. It fixes a

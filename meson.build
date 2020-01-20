@@ -1,6 +1,6 @@
 project(
   'tau', 'rust',
-  version: '0.10.1',
+  version: '0.10.2',
   license: 'MIT',
 )
 

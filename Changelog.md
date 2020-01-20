@@ -1,3 +1,18 @@
+## Changes in v0.10.2
+
+### Feature changes
+
+ - (tau): add missing keybinds to GtkShortcutWindow
+ - (edit_view): Full title as tooltip and in titlebar
+
+### Bugfixes
+
+ - (editview): fix redo keybind
+ - (tau): don't start drawing the background at negative X's
+ - (tau): don't use the now removed org.gnome.TauDevel gschema
+ - (tau): if we already have a filename, set this as default for save_as
+ - (tau): ask for confirmation if user attempts to overwrite existing file in save_as
+
 ## Changes in v0.10.1
 
 ### Feature changes
