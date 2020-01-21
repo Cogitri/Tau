@@ -2,14 +2,14 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the tau package.
 # Adolfo Jayme Barrientos <fitojb@ubuntu.com>, 2019.
-# Daniel Mustieles <daniel.mustieles@gmail.com>, 2019.
+# Daniel Mustieles <daniel.mustieles@gmail.com>, 2019-2020.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: tau\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Tau/issues\n"
-"POT-Creation-Date: 2019-12-28 18:09+0000\n"
-"PO-Revision-Date: 2019-12-30 12:44+0100\n"
+"POT-Creation-Date: 2020-01-20 16:53+0000\n"
+"PO-Revision-Date: 2020-01-21 12:24+0100\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Spanish - Spain <gnome-es-list@gnome.org>\n"
 "Language: es_ES\n"
@@ -250,7 +250,6 @@ msgstr ""
 "Indica si se deben mostrar o no los números de línea en el panel de edición"
 
 #: data/org.gnome.Tau.gschema.xml:190
-#| msgid "Opening new file"
 msgid "Open files"
 msgstr "Abrir archivos"
 
@@ -372,8 +371,6 @@ msgid "Save the document"
 msgstr "Guardar el documento"
 
 #: src/tau/src/ui/shortcuts_win.glade:36
-#| msgctxt "shortcut window"
-#| msgid "Save the document"
 msgctxt "shortcut window"
 msgid "Save the document as…"
 msgstr "Guardar el documento como…"
@@ -403,30 +400,27 @@ msgctxt "shortcut window"
 msgid "Toggle fullscreen"
 msgstr "Alternar la vista de pantalla completa"
 
-#: src/tau/src/ui/shortcuts_win.glade:72
-msgctxt "shortcut window"
-msgid "Editing"
-msgstr "Edición"
-
-#: src/tau/src/ui/shortcuts_win.glade:76
+#: src/tau/src/ui/shortcuts_win.glade:72 src/tau/src/ui/shortcuts_win.glade:76
 msgctxt "shortcut window"
 msgid "Find"
 msgstr "Buscar"
 
 #: src/tau/src/ui/shortcuts_win.glade:82
 msgctxt "shortcut window"
-msgid "Find and Replace"
-msgstr "Buscar y reemplazar"
-
-#: src/tau/src/ui/shortcuts_win.glade:88
-msgctxt "shortcut window"
 msgid "Find the next match"
 msgstr "Buscar la siguiente coincidencia"
 
-#: src/tau/src/ui/shortcuts_win.glade:94
+#: src/tau/src/ui/shortcuts_win.glade:88
 msgctxt "shortcut window"
 msgid "Find the previous match"
 msgstr "Buscar la coincidencia anterior"
+
+#: src/tau/src/ui/shortcuts_win.glade:94
+#| msgctxt "shortcut window"
+#| msgid "Find and Replace"
+msgctxt "shortcut window"
+msgid "Find and replace"
+msgstr "Buscar y reemplazar"
 
 #: src/tau/src/ui/shortcuts_win.glade:100
 msgctxt "shortcut window"
@@ -434,9 +428,195 @@ msgid "Find all matches"
 msgstr "Buscar todas las coincidencias"
 
 #: src/tau/src/ui/shortcuts_win.glade:106
+#| msgctxt "shortcut window"
+#| msgid "Close the document"
 msgctxt "shortcut window"
-msgid "Go to line"
-msgstr "Ir a la línea"
+msgid "Close the find window"
+msgstr "Cerrar la ventana de búsqueda"
+
+#: src/tau/src/ui/shortcuts_win.glade:114
+msgctxt "shortcut window"
+msgid "Editing"
+msgstr "Edición"
+
+#: src/tau/src/ui/shortcuts_win.glade:118
+#| msgid "Highlight the current line"
+msgctxt "shortcut window"
+msgid "Hightlight the next occurence of the current selection"
+msgstr "Resaltar la siguiente ocurrencia de la selección actual"
+
+#: src/tau/src/ui/shortcuts_win.glade:124
+#| msgid "Highlight the current line"
+msgctxt "shortcut window"
+msgid "Delete the current selection"
+msgstr "Eliminar la selección actual"
+
+#: src/tau/src/ui/shortcuts_win.glade:130
+msgctxt "shortcut window"
+msgid "Delete an entire word"
+msgstr "Eliminar una palabra completa"
+
+#: src/tau/src/ui/shortcuts_win.glade:136
+#| msgid "Highlight the current line"
+msgctxt "shortcut window"
+msgid "Outdent the current selection"
+msgstr "Resaltar la selección actual"
+
+#: src/tau/src/ui/shortcuts_win.glade:142
+msgctxt "shortcut window"
+msgid "Move to start of the line"
+msgstr "Mover al principio de la línea"
+
+#: src/tau/src/ui/shortcuts_win.glade:148
+#| msgctxt "shortcut window"
+#| msgid "Save the document"
+msgctxt "shortcut window"
+msgid "Move to start of the document"
+msgstr "Mover al principio del documento"
+
+#: src/tau/src/ui/shortcuts_win.glade:155
+msgctxt "shortcut window"
+msgid "Move to end of the line"
+msgstr "Mover al final de la línea"
+
+#: src/tau/src/ui/shortcuts_win.glade:161
+#| msgid "Wrap lines at the end of the document"
+msgctxt "shortcut window"
+msgid "Move to end of the document"
+msgstr "Mover al final del documento"
+
+#: src/tau/src/ui/shortcuts_win.glade:167
+msgctxt "shortcut window"
+msgid "Move up for the height of the view"
+msgstr "Subir a la altura de la vista"
+
+#: src/tau/src/ui/shortcuts_win.glade:173
+msgctxt "shortcut window"
+msgid "Move down for the height of the view"
+msgstr "Bajar a la altura del a vista"
+
+#: src/tau/src/ui/shortcuts_win.glade:179
+#| msgid "Draw the cursor"
+msgctxt "shortcut window"
+msgid "Enable/Disable the cursor"
+msgstr "Activar/desactivar el cursor"
+
+#: src/tau/src/ui/shortcuts_win.glade:186
+msgctxt "shortcut window"
+msgid "Copy and Paste"
+msgstr "Copiar y pegar"
+
+#: src/tau/src/ui/shortcuts_win.glade:190
+#| msgid "Highlight the current line"
+msgctxt "shortcut window"
+msgid "Copy the current selection"
+msgstr "Copiar la selección actual"
+
+#: src/tau/src/ui/shortcuts_win.glade:196
+msgctxt "shortcut window"
+msgid "Paste what's currently in the clipboard"
+msgstr "Pegar el contenido actual del portapapeles"
+
+#: src/tau/src/ui/shortcuts_win.glade:202
+#: src/tau/src/ui/shortcuts_win.glade:208
+#| msgid "Highlight the current line"
+msgctxt "shortcut window"
+msgid "Cut the current selection"
+msgstr "Cortar la selección actual"
+
+#: src/tau/src/ui/shortcuts_win.glade:215
+#| msgctxt "shortcut window"
+#| msgid "Find and Replace"
+msgctxt "shortcut window"
+msgid "Undo and Redo"
+msgstr "Deshacer y rehacer"
+
+#: src/tau/src/ui/shortcuts_win.glade:219
+#| msgid "Undo"
+msgctxt "shortcut window"
+msgid "Undo"
+msgstr "Deshacer"
+
+#: src/tau/src/ui/shortcuts_win.glade:225
+#| msgid "Redo"
+msgctxt "shortcut window"
+msgid "Redo"
+msgstr "Rehacer"
+
+#: src/tau/src/ui/shortcuts_win.glade:232
+#| msgid "Selected"
+msgctxt "shortcut window"
+msgid "Selections"
+msgstr "Selecciones"
+
+#: src/tau/src/ui/shortcuts_win.glade:236
+#| msgid "Select All"
+msgctxt "shortcut window"
+msgid "Select all"
+msgstr "Seleccionar todo"
+
+#: src/tau/src/ui/shortcuts_win.glade:242
+msgctxt "shortcut window"
+msgid "Move up and select everything from current cursor position"
+msgstr "Mover arriba y seleccionar todo desde la posición actual del cursor"
+
+#: src/tau/src/ui/shortcuts_win.glade:248
+msgctxt "shortcut window"
+msgid "Move down and select everything from current cursor position"
+msgstr "Mover abajo y seleccionar todo desde la posición actual del cursor"
+
+#: src/tau/src/ui/shortcuts_win.glade:254
+msgctxt "shortcut window"
+msgid "Move left and select everything from current cursor position"
+msgstr ""
+"Mover a la izquierda y seleccionar todo desde la posición actual del cursor"
+
+#: src/tau/src/ui/shortcuts_win.glade:260
+msgctxt "shortcut window"
+msgid "Move left and select the next word"
+msgstr "Mover a la izquierda y seleccionar la siguiente palabra"
+
+#: src/tau/src/ui/shortcuts_win.glade:266
+msgctxt "shortcut window"
+msgid "Move right and select everything from current cursor position"
+msgstr ""
+"Mover a la derecha y seleccionar todo desde la posición actual del cursor"
+
+#: src/tau/src/ui/shortcuts_win.glade:272
+msgctxt "shortcut window"
+msgid "Move right and select the next word"
+msgstr "Mover a la derecha y seleccionar la siguiente palabra"
+
+#: src/tau/src/ui/shortcuts_win.glade:278
+msgctxt "shortcut window"
+msgid "Move to start of the line and select"
+msgstr "Mover al principio de la línea y seleccionar"
+
+#: src/tau/src/ui/shortcuts_win.glade:284
+msgctxt "shortcut window"
+msgid "Move to start of the document and select"
+msgstr "Mover al principio del documento y seleccionar"
+
+#: src/tau/src/ui/shortcuts_win.glade:290
+msgctxt "shortcut window"
+msgid "Move to end of the line and select"
+msgstr "Mover al final de la línea y seleccionar"
+
+#: src/tau/src/ui/shortcuts_win.glade:296
+#| msgid "Wrap lines at the end of the document"
+msgctxt "shortcut window"
+msgid "Move to end of the document and select"
+msgstr "Mover al final del documento y seleccionar"
+
+#: src/tau/src/ui/shortcuts_win.glade:302
+msgctxt "shortcut window"
+msgid "Move up for the height of the view and select"
+msgstr "Subir a la altura de la vista y seleccionar"
+
+#: src/tau/src/ui/shortcuts_win.glade:308
+msgctxt "shortcut window"
+msgid "Move down for the height of the view and select"
+msgstr "Bajar a la altura de la vista y seleccionar"
 
 #: src/tau/src/ui/prefs_win.glade:28 src/tau/src/ui/prefs_win_handy.glade:28
 #: src/tau/src/ui/tau.glade:125 src/tau/src/ui/tau.glade:313
@@ -670,20 +850,20 @@ msgstr "Guardar"
 
 #: src/editview/src/edit_view.rs:180 src/editview/src/edit_view.rs:182
 #: src/tau/src/main_win.rs:1014 src/tau/src/main_win.rs:1017
-#: src/tau/src/main_win.rs:1701
+#: src/tau/src/main_win.rs:1706
 msgid "Untitled"
 msgstr "Sin título"
 
-#: src/editview/src/edit_view.rs:910 src/editview/src/edit_view.rs:920
+#: src/editview/src/edit_view.rs:918 src/editview/src/edit_view.rs:928
 msgid "Line"
 msgstr "Línea"
 
-#: src/editview/src/edit_view.rs:925
+#: src/editview/src/edit_view.rs:933
 msgid "Column"
 msgstr "Columna"
 
 #. We localized it ourselves, so we have to turn it into English again when sending it to Xi
-#: src/editview/src/edit_view.rs:1555 src/editview/src/view_item.rs:217
+#: src/editview/src/edit_view.rs:1559 src/editview/src/view_item.rs:217
 #: src/editview/src/view_item.rs:331
 msgid "Plain Text"
 msgstr "Texto sin formato"
@@ -703,7 +883,6 @@ msgid "Start a new instance of the application"
 msgstr "Iniciar una instancia nueva de la aplicación"
 
 #: src/tau/src/main.rs:286
-#| msgid "Failed to open new view due to error"
 msgid "Failed open new view due to error"
 msgstr "Falló al abrir la vista nueva debido a un error"
 
@@ -745,7 +924,7 @@ msgstr "No se pudo abrir el archivo"
 msgid "Save file"
 msgstr "Guardar archivo"
 
-#: src/tau/src/main_win.rs:1634
+#: src/tau/src/main_win.rs:1639
 msgid "Couldn’t save file"
 msgstr "No se pudo guardar el archivo"
 
@@ -756,6 +935,10 @@ msgid ""
 msgstr ""
 "No se pudo encontrar el complemento xi-syntect-plugin. Por lo tanto, esta "
 "configuración no funcionará en la sesión actual."
+
+#~ msgctxt "shortcut window"
+#~ msgid "Go to line"
+#~ msgstr "Ir a la línea"
 
 #~| msgid "document-text"
 #~ msgid "Document text"
