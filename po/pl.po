@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tau\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Tau/issues\n"
-"POT-Creation-Date: 2019-12-28 18:09+0000\n"
-"PO-Revision-Date: 2020-01-05 18:18+0100\n"
+"POT-Creation-Date: 2020-01-20 16:53+0000\n"
+"PO-Revision-Date: 2020-01-26 15:05+0100\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -400,30 +400,25 @@ msgctxt "shortcut window"
 msgid "Toggle fullscreen"
 msgstr "Przełączenie pełnego ekranu"
 
-#: src/tau/src/ui/shortcuts_win.glade:72
-msgctxt "shortcut window"
-msgid "Editing"
-msgstr "Redakcja"
-
-#: src/tau/src/ui/shortcuts_win.glade:76
+#: src/tau/src/ui/shortcuts_win.glade:72 src/tau/src/ui/shortcuts_win.glade:76
 msgctxt "shortcut window"
 msgid "Find"
 msgstr "Wyszukiwanie"
 
 #: src/tau/src/ui/shortcuts_win.glade:82
 msgctxt "shortcut window"
-msgid "Find and Replace"
-msgstr "Wyszukiwanie i zastępowanie"
-
-#: src/tau/src/ui/shortcuts_win.glade:88
-msgctxt "shortcut window"
 msgid "Find the next match"
 msgstr "Wyszukanie następnego wyniku"
 
-#: src/tau/src/ui/shortcuts_win.glade:94
+#: src/tau/src/ui/shortcuts_win.glade:88
 msgctxt "shortcut window"
 msgid "Find the previous match"
 msgstr "Wyszukanie poprzedniego wyniku"
+
+#: src/tau/src/ui/shortcuts_win.glade:94
+msgctxt "shortcut window"
+msgid "Find and replace"
+msgstr "Wyszukiwanie i zastępowanie"
 
 #: src/tau/src/ui/shortcuts_win.glade:100
 msgctxt "shortcut window"
@@ -432,8 +427,176 @@ msgstr "Wyszukanie wszystkich wyników"
 
 #: src/tau/src/ui/shortcuts_win.glade:106
 msgctxt "shortcut window"
-msgid "Go to line"
-msgstr "Przejście do wiersza"
+msgid "Close the find window"
+msgstr "Zamknięcie okna wyszukiwania"
+
+#: src/tau/src/ui/shortcuts_win.glade:114
+msgctxt "shortcut window"
+msgid "Editing"
+msgstr "Redakcja"
+
+#: src/tau/src/ui/shortcuts_win.glade:118
+msgctxt "shortcut window"
+msgid "Hightlight the next occurence of the current selection"
+msgstr "Wyróżnienie następnego wystąpienia bieżącego zaznaczenia"
+
+#: src/tau/src/ui/shortcuts_win.glade:124
+msgctxt "shortcut window"
+msgid "Delete the current selection"
+msgstr "Usunięcie bieżącego zaznaczenia"
+
+#: src/tau/src/ui/shortcuts_win.glade:130
+msgctxt "shortcut window"
+msgid "Delete an entire word"
+msgstr "Usunięcie całego wyrazu"
+
+#: src/tau/src/ui/shortcuts_win.glade:136
+msgctxt "shortcut window"
+msgid "Outdent the current selection"
+msgstr "Usunięcie wcięcia bieżącego zaznaczenia"
+
+#: src/tau/src/ui/shortcuts_win.glade:142
+msgctxt "shortcut window"
+msgid "Move to start of the line"
+msgstr "Przejście na początek wiersza"
+
+#: src/tau/src/ui/shortcuts_win.glade:148
+msgctxt "shortcut window"
+msgid "Move to start of the document"
+msgstr "Przejście na początek dokumentu"
+
+#: src/tau/src/ui/shortcuts_win.glade:155
+msgctxt "shortcut window"
+msgid "Move to end of the line"
+msgstr "Przejście na koniec wiersza"
+
+#: src/tau/src/ui/shortcuts_win.glade:161
+msgctxt "shortcut window"
+msgid "Move to end of the document"
+msgstr "Przejście na koniec dokumentu"
+
+#: src/tau/src/ui/shortcuts_win.glade:167
+msgctxt "shortcut window"
+msgid "Move up for the height of the view"
+msgstr "Przejście na górę widocznego tekstu"
+
+#: src/tau/src/ui/shortcuts_win.glade:173
+msgctxt "shortcut window"
+msgid "Move down for the height of the view"
+msgstr "Przejście na dół widocznego tekstu"
+
+#: src/tau/src/ui/shortcuts_win.glade:179
+msgctxt "shortcut window"
+msgid "Enable/Disable the cursor"
+msgstr "Włączenie/wyłączenie kursora"
+
+#: src/tau/src/ui/shortcuts_win.glade:186
+msgctxt "shortcut window"
+msgid "Copy and Paste"
+msgstr "Kopiowanie i wklejanie"
+
+#: src/tau/src/ui/shortcuts_win.glade:190
+msgctxt "shortcut window"
+msgid "Copy the current selection"
+msgstr "Skopiowanie bieżącego zaznaczenia"
+
+#: src/tau/src/ui/shortcuts_win.glade:196
+msgctxt "shortcut window"
+msgid "Paste what's currently in the clipboard"
+msgstr "Wklejenie obecnej zawartości schowka"
+
+#: src/tau/src/ui/shortcuts_win.glade:202
+#: src/tau/src/ui/shortcuts_win.glade:208
+msgctxt "shortcut window"
+msgid "Cut the current selection"
+msgstr "Wycięcie bieżącego zaznaczenia"
+
+#: src/tau/src/ui/shortcuts_win.glade:215
+msgctxt "shortcut window"
+msgid "Undo and Redo"
+msgstr "Cofanie i ponawianie"
+
+#: src/tau/src/ui/shortcuts_win.glade:219
+msgctxt "shortcut window"
+msgid "Undo"
+msgstr "Cofnięcie"
+
+#: src/tau/src/ui/shortcuts_win.glade:225
+msgctxt "shortcut window"
+msgid "Redo"
+msgstr "Ponowienie"
+
+#: src/tau/src/ui/shortcuts_win.glade:232
+msgctxt "shortcut window"
+msgid "Selections"
+msgstr "Zaznaczenia"
+
+#: src/tau/src/ui/shortcuts_win.glade:236
+msgctxt "shortcut window"
+msgid "Select all"
+msgstr "Zaznaczenie wszystkiego"
+
+#: src/tau/src/ui/shortcuts_win.glade:242
+msgctxt "shortcut window"
+msgid "Move up and select everything from current cursor position"
+msgstr ""
+"Przejście do góry i zaznaczenie wszystkiego od bieżącej pozycji kursora"
+
+#: src/tau/src/ui/shortcuts_win.glade:248
+msgctxt "shortcut window"
+msgid "Move down and select everything from current cursor position"
+msgstr "Przejście w dół i zaznaczenie wszystkiego od bieżącej pozycji kursora"
+
+#: src/tau/src/ui/shortcuts_win.glade:254
+msgctxt "shortcut window"
+msgid "Move left and select everything from current cursor position"
+msgstr "Przejście w lewo i zaznaczenie wszystkiego od bieżącej pozycji kursora"
+
+#: src/tau/src/ui/shortcuts_win.glade:260
+msgctxt "shortcut window"
+msgid "Move left and select the next word"
+msgstr "Przejście w lewo i zaznaczenie następnego wyrazu"
+
+#: src/tau/src/ui/shortcuts_win.glade:266
+msgctxt "shortcut window"
+msgid "Move right and select everything from current cursor position"
+msgstr ""
+"Przejście w prawo i zaznaczenie wszystkiego od bieżącej pozycji kursora"
+
+#: src/tau/src/ui/shortcuts_win.glade:272
+msgctxt "shortcut window"
+msgid "Move right and select the next word"
+msgstr "Przejście w prawo i zaznaczenie następnego wyrazu"
+
+#: src/tau/src/ui/shortcuts_win.glade:278
+msgctxt "shortcut window"
+msgid "Move to start of the line and select"
+msgstr "Przejście na początek wiersza i zaznaczenie"
+
+#: src/tau/src/ui/shortcuts_win.glade:284
+msgctxt "shortcut window"
+msgid "Move to start of the document and select"
+msgstr "Przejście na początek dokumentu i zaznaczenie"
+
+#: src/tau/src/ui/shortcuts_win.glade:290
+msgctxt "shortcut window"
+msgid "Move to end of the line and select"
+msgstr "Przejście na koniec wiersza i zaznaczenie"
+
+#: src/tau/src/ui/shortcuts_win.glade:296
+msgctxt "shortcut window"
+msgid "Move to end of the document and select"
+msgstr "Przejście na koniec dokumentu i zaznaczenie"
+
+#: src/tau/src/ui/shortcuts_win.glade:302
+msgctxt "shortcut window"
+msgid "Move up for the height of the view and select"
+msgstr "Przejście na górę widocznego tekstu i zaznaczenie"
+
+#: src/tau/src/ui/shortcuts_win.glade:308
+msgctxt "shortcut window"
+msgid "Move down for the height of the view and select"
+msgstr "Przejście na dół widocznego tekstu i zaznaczenie"
 
 #: src/tau/src/ui/prefs_win.glade:28 src/tau/src/ui/prefs_win_handy.glade:28
 #: src/tau/src/ui/tau.glade:125 src/tau/src/ui/tau.glade:313
@@ -667,20 +830,20 @@ msgstr "Zapisz"
 
 #: src/editview/src/edit_view.rs:180 src/editview/src/edit_view.rs:182
 #: src/tau/src/main_win.rs:1014 src/tau/src/main_win.rs:1017
-#: src/tau/src/main_win.rs:1701
+#: src/tau/src/main_win.rs:1706
 msgid "Untitled"
 msgstr "Bez tytułu"
 
-#: src/editview/src/edit_view.rs:910 src/editview/src/edit_view.rs:920
+#: src/editview/src/edit_view.rs:918 src/editview/src/edit_view.rs:928
 msgid "Line"
 msgstr "Wiersz"
 
-#: src/editview/src/edit_view.rs:925
+#: src/editview/src/edit_view.rs:933
 msgid "Column"
 msgstr "Kolumna"
 
 #. We localized it ourselves, so we have to turn it into English again when sending it to Xi
-#: src/editview/src/edit_view.rs:1555 src/editview/src/view_item.rs:217
+#: src/editview/src/edit_view.rs:1559 src/editview/src/view_item.rs:217
 #: src/editview/src/view_item.rs:331
 msgid "Plain Text"
 msgstr "Zwykły tekst"
@@ -740,7 +903,7 @@ msgstr "Nie można otworzyć pliku"
 msgid "Save file"
 msgstr "Zapis pliku"
 
-#: src/tau/src/main_win.rs:1634
+#: src/tau/src/main_win.rs:1639
 msgid "Couldn’t save file"
 msgstr "Nie można zapisać pliku"
 
