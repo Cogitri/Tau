@@ -307,9 +307,9 @@ impl MainWin {
 
         main_win
             .notebook
-            .connect_switch_page(enclose!((main_win) move |_, _, _| {
+            .connect_switch_page(enclose!((main_win) move |_, w, _| {
                 // adjust headerbar title
-                main_win.update_titlebar();
+                main_win.update_titlebar(main_win.w_to_ev.borrow().get(w));
 
                 // stop all searches and close dialogs
                 main_win.views.borrow().values().for_each(|view| view.stop_search());
@@ -758,7 +758,7 @@ impl MainWin {
             if let Some(w) = self.view_id_to_w.borrow().get(&view_id).map(Clone::clone) {
                 if let Some(page_num) = self.notebook.page_num(&w) {
                     if Some(page_num) == self.notebook.get_current_page() {
-                        self.update_titlebar()
+                        self.update_titlebar(self.views.borrow().get(&view_id));
                     }
                 }
             }
@@ -991,8 +991,8 @@ impl MainWin {
     }
 
     /// Updates the title bar
-    fn update_titlebar(&self) {
-        if let Some(ev) = self.get_current_edit_view() {
+    fn update_titlebar(&self, view: Option<&Rc<EditView>>) {
+        if let Some(ev) = view {
             // Update window title
             let mut title = String::new();
 
@@ -1398,7 +1398,7 @@ impl MainWinExt for Rc<MainWin> {
                 }
                 "full-title" => {
                     main_win.state.borrow_mut().settings.full_title = gschema.get("full-title");
-                    main_win.update_titlebar();
+                    main_win.update_titlebar(main_win.get_current_edit_view().as_ref());
                 }
                 // Valid keys, but no immediate action to be taken
                 "window-height" | "window-width" | "window-maximized" | "save-when-out-of-focus" | "session" => {}
