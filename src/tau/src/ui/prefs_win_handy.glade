@@ -186,6 +186,119 @@
             </child>
           </object>
         </child>
+        <child>
+          <object class="HdyPreferencesGroup">
+            <property name="title" translatable="yes">Syntax Configuration</property>
+            <property name="description" translatable="yes">Specify syntax specific configuration</property>
+            <property name="visible">True</property>
+            <child>
+              <object class="HdyPreferencesRow">
+                <property name="title" translatable="yes">Syntax Configuration</property>
+                <property name="visible">True</property>
+                <child>
+                  <object class="GtkGrid">
+                    <property name="visible">True</property>
+                    <property name="halign">center</property>
+                    <child>
+                      <object class="GtkComboBoxText" id="syntax_config_combo_box">
+                        <property name="visible">True</property>
+                        <property name="tooltip_text" translatable="yes">What language to apply these settings for</property>
+                      </object>
+                      <packing>
+                        <property name="left_attach">0</property>
+                        <property name="top_attach">0</property>
+                        <property name="width">3</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="syntax_config_tab_size_label">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Tab size</property>
+                        <property name="justify">center</property>
+                      </object>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="top_attach">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkSpinButton" id="syntax_config_tab_size_spinbutton">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="max_length">4</property>
+                        <property name="width_chars">4</property>
+                        <property name="text">1</property>
+                        <property name="input_purpose">digits</property>
+                        <property name="adjustment">syntax_tab_size_spinbutton_adj</property>
+                        <property name="climb_rate">2</property>
+                        <property name="snap_to_ticks">True</property>
+                        <property name="numeric">True</property>
+                        <property name="value">1</property>
+                      </object>
+                      <packing>
+                        <property name="left_attach">2</property>
+                        <property name="top_attach">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkSwitch" id="syntax_config_tab_size_switch">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="margin_top">3</property>
+                        <property name="margin_bottom">3</property>
+                        <property name="active">True</property>
+                      </object>
+                      <packing>
+                        <property name="left_attach">0</property>
+                        <property name="top_attach">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkSwitch" id="syntax_config_insert_spaces_switch">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="margin_top">3</property>
+                        <property name="margin_bottom">3</property>
+                        <property name="active">True</property>
+                      </object>
+                      <packing>
+                        <property name="left_attach">0</property>
+                        <property name="top_attach">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkCheckButton" id="syntax_config_insert_spaces_checkbutton">
+                        <property name="label" translatable="yes">Insert spaces instead of tabs</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">False</property>
+                        <property name="draw_indicator">True</property>
+                      </object>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="top_attach">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="syntax_config_apply_button">
+                        <property name="label">gtk-apply</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="use_stock">True</property>
+                      </object>
+                      <packing>
+                        <property name="left_attach">0</property>
+                        <property name="top_attach">3</property>
+                        <property name="width">3</property>
+                      </packing>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
       </object>
     </child>
     <child>
@@ -543,155 +656,28 @@
             </child>
           </object>
         </child>
+        <child>
+          <object class="HdyPreferencesGroup">
+            <property name="title" translatable="yes">Font</property>
+            <property name="description" translatable="yes">What font to use in the editing pane</property>
+            <property name="visible">True</property>
+            <child>
+              <object class="HdyPreferencesRow">
+                <property name="title" translatable="yes">Font Configuration</property>
+                <property name="visible">True</property>
+                <child>
+                  <object class="GtkFontChooserWidget" id="font_chooser_widget">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="font"/>
+                    <property name="margin">6</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
       </object>
     </child>
-  <child>
-    <object class="HdyPreferencesPage">
-      <property name="icon_name">format-text-italic-symbolic</property>
-      <property name="title" translatable="yes">Fonts</property>
-      <property name="visible">True</property>
-      <child>
-        <object class="HdyPreferencesGroup">
-          <property name="title" translatable="yes">Font</property>
-          <property name="description" translatable="yes">What font to use in the editing pane</property>
-          <property name="visible">True</property>
-          <child>
-            <object class="HdyPreferencesRow">
-              <property name="title" translatable="yes">Font Configuration</property>
-              <property name="visible">True</property>
-              <child>
-                <object class="GtkFontChooserWidget" id="font_chooser_widget">
-                  <property name="visible">True</property>
-                  <property name="can_focus">False</property>
-                  <property name="font"/>
-                  <property name="margin">6</property>
-                </object>
-              </child>
-            </object>
-          </child>
-        </object>
-      </child>
-    </object>
-  </child>
-  <child>
-    <object class="HdyPreferencesPage">
-      <property name="icon_name">non-starred-symbolic</property>
-      <property name="title" translatable="yes">Syntax Configuration</property>
-      <property name="visible">True</property>
-      <child>
-        <object class="HdyPreferencesGroup">
-          <property name="title" translatable="yes">Syntax Configuration</property>
-          <property name="description" translatable="yes">Specify syntax specific configuration</property>
-          <property name="visible">True</property>
-          <child>
-            <object class="HdyPreferencesRow">
-              <property name="title" translatable="yes">Syntax Configuration</property>
-              <property name="visible">True</property>
-              <child>
-                <object class="GtkGrid">
-                  <property name="visible">True</property>
-                  <property name="halign">center</property>
-                  <child>
-                    <object class="GtkComboBoxText" id="syntax_config_combo_box">
-                      <property name="visible">True</property>
-                      <property name="tooltip_text" translatable="yes">What language to apply these settings for</property>
-                    </object>
-                    <packing>
-                      <property name="left_attach">0</property>
-                      <property name="top_attach">0</property>
-                      <property name="width">3</property>
-                    </packing>
-                  </child>
-                  <child>
-                    <object class="GtkLabel" id="syntax_config_tab_size_label">
-                      <property name="visible">True</property>
-                      <property name="can_focus">False</property>
-                      <property name="label" translatable="yes">Tab size</property>
-                      <property name="justify">center</property>
-                    </object>
-                    <packing>
-                      <property name="left_attach">1</property>
-                      <property name="top_attach">1</property>
-                    </packing>
-                  </child>
-                  <child>
-                    <object class="GtkSpinButton" id="syntax_config_tab_size_spinbutton">
-                      <property name="visible">True</property>
-                      <property name="can_focus">True</property>
-                      <property name="max_length">4</property>
-                      <property name="width_chars">4</property>
-                      <property name="text">1</property>
-                      <property name="input_purpose">digits</property>
-                      <property name="adjustment">syntax_tab_size_spinbutton_adj</property>
-                      <property name="climb_rate">2</property>
-                      <property name="snap_to_ticks">True</property>
-                      <property name="numeric">True</property>
-                      <property name="value">1</property>
-                    </object>
-                    <packing>
-                      <property name="left_attach">2</property>
-                      <property name="top_attach">1</property>
-                    </packing>
-                  </child>
-                  <child>
-                    <object class="GtkSwitch" id="syntax_config_tab_size_switch">
-                      <property name="visible">True</property>
-                      <property name="can_focus">True</property>
-                      <property name="margin_top">3</property>
-                      <property name="margin_bottom">3</property>
-                      <property name="active">True</property>
-                    </object>
-                    <packing>
-                      <property name="left_attach">0</property>
-                      <property name="top_attach">1</property>
-                    </packing>
-                  </child>
-                  <child>
-                    <object class="GtkSwitch" id="syntax_config_insert_spaces_switch">
-                      <property name="visible">True</property>
-                      <property name="can_focus">True</property>
-                      <property name="margin_top">3</property>
-                      <property name="margin_bottom">3</property>
-                      <property name="active">True</property>
-                    </object>
-                    <packing>
-                      <property name="left_attach">0</property>
-                      <property name="top_attach">2</property>
-                    </packing>
-                  </child>
-                  <child>
-                    <object class="GtkCheckButton" id="syntax_config_insert_spaces_checkbutton">
-                      <property name="label" translatable="yes">Insert spaces instead of tabs</property>
-                      <property name="visible">True</property>
-                      <property name="can_focus">True</property>
-                      <property name="receives_default">False</property>
-                      <property name="draw_indicator">True</property>
-                    </object>
-                    <packing>
-                      <property name="left_attach">1</property>
-                      <property name="top_attach">2</property>
-                    </packing>
-                  </child>
-                  <child>
-                    <object class="GtkButton" id="syntax_config_apply_button">
-                      <property name="label">gtk-apply</property>
-                      <property name="visible">True</property>
-                      <property name="can_focus">True</property>
-                      <property name="use_stock">True</property>
-                    </object>
-                    <packing>
-                      <property name="left_attach">0</property>
-                      <property name="top_attach">3</property>
-                      <property name="width">3</property>
-                    </packing>
-                  </child>
-                </object>
-              </child>
-            </object>
-          </child>
-        </object>
-      </child>
-    </object>
-  </child>
   </object>
 </interface>
