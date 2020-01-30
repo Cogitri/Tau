@@ -7,8 +7,8 @@ use gio::{Settings, SettingsBindFlags};
 use glib::GString;
 use gtk::prelude::*;
 use gtk::{
-    ApplicationWindow, Builder, Button, CheckButton, ComboBoxText, FontChooserWidget, Image, Label,
-    RadioButton, SpinButton, Switch, ToggleButton,
+    ApplicationWindow, Builder, Button, ComboBoxText, FontChooserWidget, Image, Label, RadioButton,
+    SpinButton, Switch, ToggleButton,
 };
 use log::{debug, error, trace};
 use pango::FontDescription;
@@ -59,28 +59,19 @@ impl PrefsWin {
         let font_chooser_widget: FontChooserWidget =
             builder.get_object("font_chooser_widget").unwrap();
         let theme_combo_box: ComboBoxText = builder.get_object("theme_combo_box").unwrap();
-        let tab_stops_checkbutton: ToggleButton =
-            builder.get_object("tab_stops_checkbutton").unwrap();
-        let word_wrap_checkbutton: ToggleButton =
-            builder.get_object("word_wrap_checkbutton").unwrap();
-        let margin_checkbutton: ToggleButton = builder.get_object("margin_checkbutton").unwrap();
+        let tab_stops_switch: Switch = builder.get_object("tab_stops_switch").unwrap();
+        let word_wrap_switch: Switch = builder.get_object("word_wrap_switch").unwrap();
+        let margin_switch: Switch = builder.get_object("margin_switch").unwrap();
         let margin_spinbutton: SpinButton = builder.get_object("margin_spinbutton").unwrap();
-        let highlight_line_checkbutton: ToggleButton =
-            builder.get_object("highlight_line_checkbutton").unwrap();
+        let highlight_line_switch: Switch = builder.get_object("highlight_line_switch").unwrap();
         let tab_size_spinbutton: SpinButton = builder.get_object("tab_size_spinbutton").unwrap();
-        let auto_indention_checkbutton: ToggleButton =
-            builder.get_object("auto_indention_checkbutton").unwrap();
-        let insert_spaces_checkbutton: ToggleButton =
-            builder.get_object("insert_spaces_checkbutton").unwrap();
-        let save_when_out_of_focus_checkbutton: ToggleButton = builder
-            .get_object("save_when_out_of_focus_checkbutton")
-            .unwrap();
-        let show_lintcount_checkbutton: ToggleButton =
-            builder.get_object("show_linecount_checkbutton").unwrap();
-        let full_title_checkbutton: ToggleButton =
-            builder.get_object("full_title_checkbutton").unwrap();
-        let restore_session_checkbutton: ToggleButton =
-            builder.get_object("restore_session_checkbutton").unwrap();
+        let auto_indention_switch: Switch = builder.get_object("auto_indention_switch").unwrap();
+        let insert_spaces_switch: Switch = builder.get_object("insert_spaces_switch").unwrap();
+        let save_when_out_of_focus_switch: Switch =
+            builder.get_object("save_when_out_of_focus_switch").unwrap();
+        let show_lintcount_switch: Switch = builder.get_object("show_linecount_switch").unwrap();
+        let full_title_switch: Switch = builder.get_object("full_title_switch").unwrap();
+        let restore_session_switch: Switch = builder.get_object("restore_session_switch").unwrap();
 
         let draw_trailing_tabs_radio: RadioButton =
             builder.get_object("tabs_trailing_radio_button").unwrap();
@@ -108,11 +99,8 @@ impl PrefsWin {
 
         let syntax_config_combo_box: ComboBoxText =
             builder.get_object("syntax_config_combo_box").unwrap();
-        let syntax_config_insert_spaces_checkbutton: CheckButton = builder
+        let syntax_config_insert_spaces_checkbutton: ToggleButton = builder
             .get_object("syntax_config_insert_spaces_checkbutton")
-            .unwrap();
-        let syntax_config_insert_spaces_switch: Switch = builder
-            .get_object("syntax_config_insert_spaces_switch")
             .unwrap();
         let syntax_config_tab_size_switch: Switch =
             builder.get_object("syntax_config_tab_size_switch").unwrap();
@@ -183,7 +171,7 @@ impl PrefsWin {
             if main_state.avail_languages.is_empty() {
                 syntax_config_tab_size_spinbutton.set_sensitive(false);
                 syntax_config_insert_spaces_checkbutton.set_sensitive(false);
-                syntax_config_insert_spaces_switch.set_sensitive(false);
+                syntax_config_insert_spaces_checkbutton.set_sensitive(false);
                 syntax_config_tab_size_switch.set_sensitive(false);
                 syntax_config_apply_button.set_sensitive(false);
                 syntax_config_tab_size_label.set_sensitive(false);
@@ -221,7 +209,7 @@ impl PrefsWin {
             }
         }));
 
-        margin_checkbutton.connect_toggled(enclose!((margin_spinbutton) move |toggle_btn| {
+        margin_switch.connect_activate(enclose!((margin_spinbutton) move |toggle_btn| {
             let value = toggle_btn.get_active();
             margin_spinbutton.set_sensitive(value);
         }));
@@ -237,14 +225,14 @@ impl PrefsWin {
 
         gschema.bind(
             "word-wrap",
-            &word_wrap_checkbutton,
+            &word_wrap_switch,
             "active",
             SettingsBindFlags::DEFAULT,
         );
 
         gschema.bind(
             "use-tab-stops",
-            &tab_stops_checkbutton,
+            &tab_stops_switch,
             "active",
             SettingsBindFlags::DEFAULT,
         );
@@ -279,14 +267,14 @@ impl PrefsWin {
 
         gschema.bind(
             "draw-right-margin",
-            &margin_checkbutton,
+            &margin_switch,
             "active",
             SettingsBindFlags::DEFAULT,
         );
 
         gschema.bind(
             "highlight-line",
-            &highlight_line_checkbutton,
+            &highlight_line_switch,
             "active",
             SettingsBindFlags::DEFAULT,
         );
@@ -335,42 +323,42 @@ impl PrefsWin {
 
         gschema.bind(
             "auto-indent",
-            &auto_indention_checkbutton,
+            &auto_indention_switch,
             "active",
             SettingsBindFlags::DEFAULT,
         );
 
         gschema.bind(
             "translate-tabs-to-spaces",
-            &insert_spaces_checkbutton,
+            &insert_spaces_switch,
             "active",
             SettingsBindFlags::DEFAULT,
         );
 
         gschema.bind(
             "save-when-out-of-focus",
-            &save_when_out_of_focus_checkbutton,
+            &save_when_out_of_focus_switch,
             "active",
             SettingsBindFlags::DEFAULT,
         );
 
         gschema.bind(
             "show-linecount",
-            &show_lintcount_checkbutton,
+            &show_lintcount_switch,
             "active",
             SettingsBindFlags::DEFAULT,
         );
 
         gschema.bind(
             "restore-session",
-            &restore_session_checkbutton,
+            &restore_session_switch,
             "active",
             SettingsBindFlags::DEFAULT,
         );
 
         gschema.bind(
             "full-title",
-            &full_title_checkbutton,
+            &full_title_switch,
             "active",
             SettingsBindFlags::DEFAULT,
         );
@@ -395,7 +383,7 @@ impl PrefsWin {
             enclose!((
                 syntax_config_combo_box,
                 syntax_config_insert_spaces_checkbutton,
-                syntax_config_insert_spaces_switch,
+                syntax_config_insert_spaces_checkbutton,
                 syntax_config_tab_size_switch,
                 syntax_config_tab_size_spinbutton,
                 syntax_config,
@@ -407,7 +395,7 @@ impl PrefsWin {
                         } else {
                             None
                         };
-                        let insert_spaces = if syntax_config_insert_spaces_switch.get_active() {
+                        let insert_spaces = if syntax_config_insert_spaces_checkbutton.get_active() {
                             Some(syntax_config_insert_spaces_checkbutton.get_active())
                         } else {
                             None
@@ -440,7 +428,7 @@ impl PrefsWin {
             )
         );
 
-        syntax_config_insert_spaces_switch.connect_property_active_notify(enclose!(
+        syntax_config_insert_spaces_checkbutton.connect_property_active_notify(enclose!(
             (syntax_config_insert_spaces_checkbutton) move | sw | {
                 syntax_config_insert_spaces_checkbutton.set_sensitive(sw.get_active());
             }
@@ -470,7 +458,7 @@ impl PrefsWin {
 fn syntax_config_set_buttons(
     lang: &str,
     syntax_config: &HashMap<String, SyntaxParams>,
-    insert_spaces_checkbutton: &CheckButton,
+    insert_spaces_switch: &ToggleButton,
     tab_size_spinbutton: &SpinButton,
 ) {
     if let Some(config) = syntax_config.get(lang) {
@@ -480,7 +468,7 @@ fn syntax_config_set_buttons(
         } else {
             INSERT_SPACES_DEFAULT
         };
-        insert_spaces_checkbutton.set_active(insert_spaces);
+        insert_spaces_switch.set_active(insert_spaces);
 
         let tab_size = if let Some(setting) = config.changes.tab_size {
             f64::from(setting)

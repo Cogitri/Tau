@@ -41,19 +41,17 @@
             <property name="visible">True</property>
             <child>
               <object class="HdyPreferencesRow">
-                <property name="title" translatable="yes">Right-hand Margin</property>
+                <property name="title" translatable="yes">Display right hand margin</property>
                 <property name="visible">True</property>
                 <child>
                   <object class="GtkGrid">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
-                      <object class="GtkCheckButton" id="margin_checkbutton">
-                        <property name="label" translatable="yes">Display right margin at the column:</property>
+                      <object class="GtkSwitch" id="margin_switch">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
-                        <property name="draw_indicator">True</property>
                         <property name="margin">6</property>
                       </object>
                       <packing>
@@ -85,15 +83,13 @@
             </child>
             <child>
               <object class="HdyPreferencesRow">
-                <property name="title" translatable="yes">Line Highlighting</property>
+                <property name="title" translatable="yes">Hightlight the current line</property>
                 <property name="visible">True</property>
                 <child>
-                  <object class="GtkCheckButton" id="highlight_line_checkbutton">
-                    <property name="label" translatable="yes">Highlight the current line</property>
+                  <object class="GtkSwitch" id="highlight_line_switch">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
-                    <property name="draw_indicator">True</property>
                     <property name="margin">6</property>
                   </object>
                 </child>
@@ -104,12 +100,10 @@
                 <property name="title" translatable="yes">Show Line Count</property>
                 <property name="visible">True</property>
                 <child>
-                  <object class="GtkCheckButton" id="show_linecount_checkbutton">
-                    <property name="label" translatable="yes">Show the line count in the editing pane</property>
+                  <object class="GtkSwitch" id="show_linecount_switch">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
-                    <property name="draw_indicator">True</property>
                     <property name="margin">6</property>
                   </object>
                 </child>
@@ -120,12 +114,10 @@
                 <property name="title" translatable="yes">Show full path in title bar</property>
                 <property name="visible">True</property>
                 <child>
-                  <object class="GtkCheckButton" id="full_title_checkbutton">
-                    <property name="label" translatable="yes">Show full path in title bar</property>
+                  <object class="GtkSwitch" id="full_title_switch">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
-                    <property name="draw_indicator">True</property>
                     <property name="margin">6</property>
                   </object>
                 </child>
@@ -133,15 +125,13 @@
             </child>
             <child>
               <object class="HdyPreferencesRow">
-                <property name="title" translatable="yes">Restore session</property>
+                <property name="title" translatable="yes">Restore last opened files on start-up</property>
                 <property name="visible">True</property>
                 <child>
-                  <object class="GtkCheckButton" id="restore_session_checkbutton">
-                    <property name="label" translatable="yes">Restore last opened files on start-up</property>
+                  <object class="GtkSwitch" id="restore_session_switch">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
-                    <property name="draw_indicator">True</property>
                     <property name="margin">6</property>
                   </object>
                 </child>
@@ -150,26 +140,16 @@
             <child>
               <object class="HdyPreferencesRow">
                 <property name="visible">True</property>
-                <property name="title" translatable="yes">Line Wrapping</property>
+                <property name="title" translatable="yes">Wrap lines at the end of the view</property>
                 <child>
-                  <object class="GtkCheckButton" id="word_wrap_checkbutton">
-                    <property name="label" translatable="yes">Wrap lines at the end of the document</property>
-                    <property name="visible">True</property>
+                  <object class="GtkSwitch" id="word_wrap_switch">                    <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
-                    <property name="draw_indicator">True</property>
                     <property name="margin">6</property>
                   </object>
                 </child>
               </object>
             </child>
-          </object>
-        </child>
-        <child>
-          <object class="HdyPreferencesGroup">
-            <property name="title" translatable="yes">Theme</property>
-            <property name="description" translatable="yes">What theme to use for the editing pane</property>
-            <property name="visible">True</property>
             <child>
               <object class="HdyPreferencesRow">
                 <property name="title" translatable="yes">Theme Configuration</property>
@@ -183,14 +163,7 @@
                   </object>
                 </child>
               </object>
-            </child>
-          </object>
-        </child>
-        <child>
-          <object class="HdyPreferencesGroup">
-            <property name="title" translatable="yes">Syntax Configuration</property>
-            <property name="description" translatable="yes">Specify syntax specific configuration</property>
-            <property name="visible">True</property>
+           </child>
             <child>
               <object class="HdyPreferencesRow">
                 <property name="title" translatable="yes">Syntax Configuration</property>
@@ -316,42 +289,17 @@
                 <property name="title" translatable="yes">Tab Size</property>
                 <property name="visible">True</property>
                 <child>
-                  <object class="GtkGrid">
+                  <object class="GtkSpinButton" id="tab_size_spinbutton">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <child>
-                      <object class="GtkSpinButton" id="tab_size_spinbutton">
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="max_length">4</property>
-                        <property name="width_chars">4</property>
-                        <property name="text">0</property>
-                        <property name="input_purpose">digits</property>
-                        <property name="adjustment">tab_size_spinbutton_adj</property>
-                        <property name="climb_rate">2</property>
-                        <property name="snap_to_ticks">True</property>
-                        <property name="numeric">True</property>
-                      </object>
-                      <packing>
-                        <property name="left_attach">2</property>
-                        <property name="top_attach">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkLabel">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">Tab size</property>
-                        <property name="justify">center</property>
-                        <property name="width_chars">14</property>
-                        <property name="margin">6</property>
-                      </object>
-                      <packing>
-                        <property name="left_attach">0</property>
-                        <property name="top_attach">0</property>
-                        <property name="width">2</property>
-                      </packing>
-                    </child>
+                    <property name="can_focus">True</property>
+                    <property name="max_length">4</property>
+                    <property name="width_chars">4</property>
+                    <property name="text">0</property>
+                    <property name="input_purpose">digits</property>
+                    <property name="adjustment">tab_size_spinbutton_adj</property>
+                    <property name="climb_rate">2</property>
+                    <property name="snap_to_ticks">True</property>
+                    <property name="numeric">True</property>
                   </object>
                 </child>
               </object>
@@ -365,13 +313,11 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
-                      <object class="GtkCheckButton" id="insert_spaces_checkbutton">
-                        <property name="label" translatable="yes">Insert spaces instead of tabs</property>
-                        <property name="name">insert_spaces_checkbutton</property>
+                      <object class="GtkSwitch" id="insert_spaces_switch">
+                        <property name="name">insert_spaces_switch</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
-                        <property name="draw_indicator">True</property>
                         <property name="margin">6</property>
                       </object>
                       <packing>
@@ -404,13 +350,11 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
-                      <object class="GtkCheckButton" id="auto_indention_checkbutton">
-                        <property name="label" translatable="yes">Enable automatic indention</property>
-                        <property name="name">auto_indention_checkbutton</property>
+                      <object class="GtkSwitch" id="auto_indention_switch">
+                        <property name="name">auto_indention_switch</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
-                        <property name="draw_indicator">True</property>
                         <property name="margin">6</property>
                       </object>
                       <packing>
@@ -436,15 +380,13 @@
             </child>
             <child>
               <object class="HdyPreferencesRow">
-                <property name="title" translatable="yes">Use Tab Stops for Spaces</property>
+                <property name="title" translatable="yes">Delete spaces up to the previous tab stop</property>
                 <property name="visible">True</property>
                   <child>
-                    <object class="GtkCheckButton" id="tab_stops_checkbutton">
-                      <property name="label" translatable="yes">Delete spaces up to the previous tab stop</property>
+                    <object class="GtkSwitch" id="tab_stops_switch">
                       <property name="visible">True</property>
                       <property name="can_focus">True</property>
                       <property name="receives_default">False</property>
-                      <property name="draw_indicator">True</property>
                       <property name="margin">6</property>
                     </object>
                   </child>
@@ -452,15 +394,13 @@
             </child>
             <child>
               <object class="HdyPreferencesRow">
-                <property name="title" translatable="yes">Automatic Saving</property>
+                <property name="title" translatable="yes">Save files when the Tau goes out of focus</property>
                 <property name="visible">True</property>
                 <child>
-                  <object class="GtkCheckButton" id="save_when_out_of_focus_checkbutton">
-                    <property name="label" translatable="yes">Save files when the Tau goes out of focus</property>
+                  <object class="GtkSwitch" id="save_when_out_of_focus_switch">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
-                    <property name="draw_indicator">True</property>
                     <property name="margin">6</property>
                   </object>
                 </child>
@@ -654,13 +594,6 @@
                 </child>
               </object>
             </child>
-          </object>
-        </child>
-        <child>
-          <object class="HdyPreferencesGroup">
-            <property name="title" translatable="yes">Font</property>
-            <property name="description" translatable="yes">What font to use in the editing pane</property>
-            <property name="visible">True</property>
             <child>
               <object class="HdyPreferencesRow">
                 <property name="title" translatable="yes">Font Configuration</property>
