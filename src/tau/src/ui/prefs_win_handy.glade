@@ -28,7 +28,7 @@
     <property name="title" translatable="yes">Preferences</property>
     <property name="icon_name">org.gnome.Tau</property>
     <property name="default_height">600</property>
-    <property name="default_width">350</property>>
+    <property name="default_width">350</property>
     <child>
       <object class="HdyPreferencesPage">
         <property name="icon_name">folder-documents-symbolic</property>
@@ -158,7 +158,7 @@
                   </object>
                 </child>
               </object>
-           </child>
+            </child>
             <child>
               <object class="HdyPreferencesRow">
                 <property name="title" translatable="yes">Syntax Configuration</property>
@@ -276,8 +276,7 @@
         <property name="visible">True</property>
         <child>
           <object class="HdyPreferencesGroup">
-            <property name="title" translatable="yes">Editor</property>
-            <property name="description" translatable="yes">Preferences related to the Editor’s behavior</property>
+            <property name="title" translatable="yes">Indention</property>
             <property name="visible">True</property>
             <child>
               <object class="HdyActionRow">
@@ -386,6 +385,12 @@
                 </child>
               </object>
             </child>
+          </object>
+        </child>
+        <child>
+          <object class="HdyPreferencesGroup">
+            <property name="title" translatable="yes">File Saving</property>
+            <property name="visible">True</property>
             <child>
               <object class="HdyActionRow">
                 <property name="title" translatable="yes">Save files when the Tau goes out of focus</property>
@@ -399,194 +404,194 @@
                 </child>
               </object>
             </child>
+          </object>
+        </child>
+        <child>
+          <object class="HdyPreferencesGroup">
+            <property name="title" translatable="yes">Highlighting Spaces</property>
+            <property name="visible">True</property>
             <child>
-              <object class="HdyPreferencesRow">
-                <property name="title" translatable="yes">Drawing Tabs and Spaces</property>
+              <object class="HdyActionRow">
+                <property name="title" translatable="yes">Draw all Spaces</property>
                 <property name="visible">True</property>
-                <child>
-                  <object class="GtkGrid" id="tabs_spaces_gtk_grid">
+                <property name="activatable_widget">spaces_all_radio_button</property>
+                <child type="action">
+                  <object class="GtkRadioButton" id="spaces_all_radio_button">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="row_spacing">2</property>
-                    <property name="row_homogeneous">True</property>
-                    <property name="column_homogeneous">True</property>
-                    <property name="baseline_row">1</property>
-                    <child>
-                      <object class="GtkLabel">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">Tabs</property>
-                        <property name="margin">6</property>
-                      </object>
-                      <packing>
-                        <property name="left_attach">0</property>
-                        <property name="top_attach">1</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkLabel">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">Spaces</property>
-                        <property name="margin">6</property>
-                      </object>
-                      <packing>
-                        <property name="left_attach">0</property>
-                        <property name="top_attach">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkRadioButton" id="tabs_all_radio_button">
-                        <property name="label" translatable="yes">All</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">False</property>
-                        <property name="active">True</property>
-                        <property name="draw_indicator">True</property>
-                        <property name="group">tabs_none_radio_button</property>
-                      </object>
-                      <packing>
-                        <property name="left_attach">5</property>
-                        <property name="top_attach">1</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkRadioButton" id="spaces_all_radio_button">
-                        <property name="label" translatable="yes">All</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">False</property>
-                        <property name="active">True</property>
-                        <property name="draw_indicator">True</property>
-                        <property name="group">spaces_none_radio_button</property>
-                      </object>
-                      <packing>
-                        <property name="left_attach">5</property>
-                        <property name="top_attach">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkRadioButton" id="spaces_trailing_radio_button">
-                        <property name="label" translatable="yes">Trailing</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">False</property>
-                        <property name="active">True</property>
-                        <property name="draw_indicator">True</property>
-                        <property name="group">spaces_none_radio_button</property>
-                      </object>
-                      <packing>
-                        <property name="left_attach">4</property>
-                        <property name="top_attach">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkRadioButton" id="tabs_trailing_radio_button">
-                        <property name="label" translatable="yes">Trailing</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">False</property>
-                        <property name="active">True</property>
-                        <property name="draw_indicator">True</property>
-                        <property name="group">tabs_none_radio_button</property>
-                      </object>
-                      <packing>
-                        <property name="left_attach">4</property>
-                        <property name="top_attach">1</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkRadioButton" id="spaces_leading_radio_button">
-                        <property name="label" translatable="yes">Leading</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">False</property>
-                        <property name="active">True</property>
-                        <property name="draw_indicator">True</property>
-                        <property name="group">spaces_none_radio_button</property>
-                      </object>
-                      <packing>
-                        <property name="left_attach">3</property>
-                        <property name="top_attach">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkRadioButton" id="tabs_leading_radio_button">
-                        <property name="label" translatable="yes">Leading</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">False</property>
-                        <property name="active">True</property>
-                        <property name="draw_indicator">True</property>
-                        <property name="group">tabs_none_radio_button</property>
-                      </object>
-                      <packing>
-                        <property name="left_attach">3</property>
-                        <property name="top_attach">1</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkRadioButton" id="spaces_selection_radio_button">
-                        <property name="label" translatable="yes">Selected</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">False</property>
-                        <property name="active">True</property>
-                        <property name="draw_indicator">True</property>
-                        <property name="group">spaces_none_radio_button</property>
-                      </object>
-                      <packing>
-                        <property name="left_attach">2</property>
-                        <property name="top_attach">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkRadioButton" id="tabs_selection_radio_button">
-                        <property name="label" translatable="yes">Selected</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">False</property>
-                        <property name="active">True</property>
-                        <property name="draw_indicator">True</property>
-                        <property name="group">tabs_none_radio_button</property>
-                      </object>
-                      <packing>
-                        <property name="left_attach">2</property>
-                        <property name="top_attach">1</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkRadioButton" id="spaces_none_radio_button">
-                        <property name="label" translatable="yes">None</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">False</property>
-                        <property name="active">True</property>
-                        <property name="draw_indicator">True</property>
-                      </object>
-                      <packing>
-                        <property name="left_attach">1</property>
-                        <property name="top_attach">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkRadioButton" id="tabs_none_radio_button">
-                        <property name="label" translatable="yes">None</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">False</property>
-                        <property name="active">True</property>
-                        <property name="draw_indicator">True</property>
-                      </object>
-                      <packing>
-                        <property name="left_attach">1</property>
-                        <property name="top_attach">1</property>
-                      </packing>
-                    </child>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">False</property>
+                    <property name="active">True</property>
+                    <property name="draw_indicator">True</property>
+                    <property name="group">spaces_none_radio_button</property>
                   </object>
                 </child>
               </object>
             </child>
+            <child>
+              <object class="HdyActionRow">
+                <property name="title" translatable="yes">Draw trailing Spaces</property>
+                <property name="visible">True</property>
+                <property name="activatable_widget">spaces_trailing_radio_button</property>
+                <child type="action">
+                  <object class="GtkRadioButton" id="spaces_trailing_radio_button">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">False</property>
+                    <property name="active">True</property>
+                    <property name="draw_indicator">True</property>
+                    <property name="group">spaces_none_radio_button</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="HdyActionRow">
+                <property name="title" translatable="yes">Draw leading Spaces</property>
+                <property name="visible">True</property>
+                <property name="activatable_widget">spaces_leading_radio_button</property>
+                <child type="action">
+                  <object class="GtkRadioButton" id="spaces_leading_radio_button">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">False</property>
+                    <property name="active">True</property>
+                    <property name="draw_indicator">True</property>
+                    <property name="group">spaces_none_radio_button</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="HdyActionRow">
+                <property name="title" translatable="yes">Draw selected Spaces</property>
+                <property name="visible">True</property>
+                <property name="activatable_widget">spaces_selection_radio_button</property>
+                <child type="action">
+                  <object class="GtkRadioButton" id="spaces_selection_radio_button">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">False</property>
+                    <property name="active">True</property>
+                    <property name="draw_indicator">True</property>
+                    <property name="group">spaces_none_radio_button</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="HdyActionRow">
+                <property name="title" translatable="yes">Don't Draw Spaces</property>
+                <property name="visible">True</property>
+                <property name="activatable_widget">spaces_none_radio_button</property>
+                <child type="action">
+                  <object class="GtkRadioButton" id="spaces_none_radio_button">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">False</property>
+                    <property name="active">True</property>
+                    <property name="draw_indicator">True</property>
+                    <property name="group">spaces_none_radio_button</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="HdyPreferencesGroup">
+            <property name="title" translatable="yes">Highlighting Tabs</property>
+            <property name="visible">True</property>
+            <child>
+              <object class="HdyActionRow">
+                <property name="title" translatable="yes">Draw all Tabs</property>
+                <property name="visible">True</property>
+                <property name="activatable_widget">tabs_all_radio_button</property>
+                <child type="action">
+                  <object class="GtkRadioButton" id="tabs_all_radio_button">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">False</property>
+                    <property name="active">True</property>
+                    <property name="draw_indicator">True</property>
+                    <property name="group">tabs_none_radio_button</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="HdyActionRow">
+                <property name="title" translatable="yes">Draw trailing Tabs</property>
+                <property name="visible">True</property>
+                <property name="activatable_widget">tabs_trailing_radio_button</property>
+                <child type="action">
+                  <object class="GtkRadioButton" id="tabs_trailing_radio_button">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">False</property>
+                    <property name="active">True</property>
+                    <property name="draw_indicator">True</property>
+                    <property name="group">tabs_none_radio_button</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="HdyActionRow">
+                <property name="title" translatable="yes">Draw leading Tabs</property>
+                <property name="visible">True</property>
+                <property name="activatable_widget">tabs_leading_radio_button</property>
+                <child type="action">
+                  <object class="GtkRadioButton" id="tabs_leading_radio_button">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">False</property>
+                    <property name="active">True</property>
+                    <property name="draw_indicator">True</property>
+                    <property name="group">tabs_none_radio_button</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="HdyActionRow">
+                <property name="title" translatable="yes">Draw selected Tabs</property>
+                <property name="visible">True</property>
+                <property name="activatable_widget">tabs_selection_radio_button</property>
+                <child type="action">
+                  <object class="GtkRadioButton" id="tabs_selection_radio_button">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">False</property>
+                    <property name="active">True</property>
+                    <property name="draw_indicator">True</property>
+                    <property name="group">tabs_none_radio_button</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="HdyActionRow">
+                <property name="title" translatable="yes">Don't Draw Tabs</property>
+                <property name="visible">True</property>
+                <property name="activatable_widget">tabs_none_radio_button</property>
+                <child type="action">
+                  <object class="GtkRadioButton" id="tabs_none_radio_button">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">False</property>
+                    <property name="active">True</property>
+                    <property name="draw_indicator">True</property>
+                    <property name="group">tabs_none_radio_button</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="HdyPreferencesGroup">
+            <property name="title" translatable="yes">Font Configuration</property>
+            <property name="visible">True</property>
             <child>
               <object class="HdyPreferencesRow">
                 <property name="title" translatable="yes">Font Configuration</property>
