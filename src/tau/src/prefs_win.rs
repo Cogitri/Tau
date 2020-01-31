@@ -7,8 +7,8 @@ use gio::{Settings, SettingsBindFlags};
 use glib::GString;
 use gtk::prelude::*;
 use gtk::{
-    ApplicationWindow, Builder, Button, ComboBoxText, FontChooserWidget, Image, Label, RadioButton,
-    SpinButton, Switch, ToggleButton,
+    ApplicationWindow, Builder, Button, ComboBoxText, FontChooserWidget, Image, RadioButton,
+    SpinButton, Switch,
 };
 use log::{debug, error, trace};
 use pango::FontDescription;
@@ -99,8 +99,8 @@ impl PrefsWin {
 
         let syntax_config_combo_box: ComboBoxText =
             builder.get_object("syntax_config_combo_box").unwrap();
-        let syntax_config_insert_spaces_checkbutton: ToggleButton = builder
-            .get_object("syntax_config_insert_spaces_checkbutton")
+        let syntax_config_insert_spaces_switch: Switch = builder
+            .get_object("syntax_config_insert_spaces_switch")
             .unwrap();
         let syntax_config_tab_size_switch: Switch =
             builder.get_object("syntax_config_tab_size_switch").unwrap();
@@ -109,8 +109,6 @@ impl PrefsWin {
             .unwrap();
         let syntax_config_apply_button: Button =
             builder.get_object("syntax_config_apply_button").unwrap();
-        let syntax_config_tab_size_label: Label =
-            builder.get_object("syntax_config_tab_size_label").unwrap();
 
         let syntax_changes = gschema.get_strv("syntax-config");
         let syntax_config: HashMap<String, SyntaxParams> = syntax_changes
@@ -173,11 +171,9 @@ impl PrefsWin {
             // We can't select any syntaxes if there are none
             if main_state.avail_languages.is_empty() {
                 syntax_config_tab_size_spinbutton.set_sensitive(false);
-                syntax_config_insert_spaces_checkbutton.set_sensitive(false);
-                syntax_config_insert_spaces_checkbutton.set_sensitive(false);
+                syntax_config_insert_spaces_switch.set_sensitive(false);
                 syntax_config_tab_size_switch.set_sensitive(false);
                 syntax_config_apply_button.set_sensitive(false);
-                syntax_config_tab_size_label.set_sensitive(false);
             } else {
                 for (i, lang) in main_state.avail_languages.iter().enumerate() {
                     syntax_config_combo_box.append_text(lang);
@@ -191,7 +187,7 @@ impl PrefsWin {
                         syntax_config_set_buttons(
                             lang,
                             &syntax_config.borrow(),
-                            &syntax_config_insert_spaces_checkbutton,
+                            &syntax_config_insert_spaces_switch,
                             &syntax_config_tab_size_spinbutton,
                         );
                     }
@@ -367,7 +363,7 @@ impl PrefsWin {
         );
 
         syntax_config_combo_box.connect_changed(enclose!((
-            syntax_config_insert_spaces_checkbutton,
+            syntax_config_insert_spaces_switch,
             syntax_config_tab_size_spinbutton,
             syntax_config,
             ) move |cb| {
@@ -375,7 +371,7 @@ impl PrefsWin {
                     syntax_config_set_buttons(
                         lang.as_str(),
                         &syntax_config.borrow(),
-                        &syntax_config_insert_spaces_checkbutton,
+                        &syntax_config_insert_spaces_switch,
                         &syntax_config_tab_size_spinbutton,
                     );
                 }
@@ -385,8 +381,7 @@ impl PrefsWin {
         syntax_config_apply_button.connect_clicked(
             enclose!((
                 syntax_config_combo_box,
-                syntax_config_insert_spaces_checkbutton,
-                syntax_config_insert_spaces_checkbutton,
+                syntax_config_insert_spaces_switch,
                 syntax_config_tab_size_switch,
                 syntax_config_tab_size_spinbutton,
                 syntax_config,
@@ -398,8 +393,8 @@ impl PrefsWin {
                         } else {
                             None
                         };
-                        let insert_spaces = if syntax_config_insert_spaces_checkbutton.get_active() {
-                            Some(syntax_config_insert_spaces_checkbutton.get_active())
+                        let insert_spaces = if syntax_config_insert_spaces_switch.get_active() {
+                            Some(syntax_config_insert_spaces_switch.get_active())
                         } else {
                             None
                         };
@@ -431,19 +426,17 @@ impl PrefsWin {
             )
         );
 
-        syntax_config_insert_spaces_checkbutton.connect_property_active_notify(enclose!(
-            (syntax_config_insert_spaces_checkbutton) move | sw | {
-                syntax_config_insert_spaces_checkbutton.set_sensitive(sw.get_active());
+        syntax_config_insert_spaces_switch.connect_property_active_notify(enclose!(
+            (syntax_config_insert_spaces_switch) move | sw | {
+                syntax_config_insert_spaces_switch.set_sensitive(sw.get_active());
             }
         ));
 
         syntax_config_tab_size_switch.connect_property_active_notify(enclose!(
             (
-                syntax_config_tab_size_label,
                 syntax_config_tab_size_spinbutton
             ) move | sw | {
                     let active = sw.get_active();
-                    syntax_config_tab_size_label.set_sensitive(active);
                     syntax_config_tab_size_spinbutton.set_sensitive(active);
                 }
         ));
@@ -461,7 +454,7 @@ impl PrefsWin {
 fn syntax_config_set_buttons(
     lang: &str,
     syntax_config: &HashMap<String, SyntaxParams>,
-    insert_spaces_switch: &ToggleButton,
+    insert_spaces_switch: &Switch,
     tab_size_spinbutton: &SpinButton,
 ) {
     if let Some(config) = syntax_config.get(lang) {
