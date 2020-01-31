@@ -43,7 +43,7 @@
               <object class="HdyActionRow">
                 <property name="title" translatable="yes">Display right hand margin</property>
                 <property name="visible">True</property>
-                <property name="activatable_widget">margin_gtk_grid</property>
+                <property name="activatable_widget">margin_switch</property>
                 <child type="action">
                   <object class="GtkGrid" id="margin_gtk_grid">
                     <property name="visible">True</property>
@@ -180,7 +180,7 @@
                   <object class="HdyActionRow">
                     <property name="title" translatable="yes">Syntax-specific tab size</property>
                     <property name="visible">True</property>
-                    <property name="activatable_widget">syntax_gtk_grid</property>
+                    <property name="activatable_widget">syntax_config_tab_size_switch</property>
                     <child type="action">
                       <object class="GtkGrid" id="syntax_gtk_grid">
                         <property name="visible">True</property>
@@ -220,7 +220,7 @@
                       <object class="HdyActionRow">
                         <property name="title" translatable="yes">Insert spaces instead of tabs</property>
                         <property name="visible">True</property>
-                        <property name="activatable_widget">syntax_gtk_grid</property>
+                        <property name="activatable_widget">syntax_config_insert_spaces_switch</property>
                         <child type="action">
                           <object class="GtkSwitch" id="syntax_config_insert_spaces_switch">
                             <property name="visible">True</property>
@@ -233,7 +233,7 @@
                       <object class="HdyActionRow">
                         <property name="title" translatable="yes">Apply syntax configuration settings</property>
                         <property name="visible">True</property>
-                        <property name="activatable_widget">syntax_gtk_grid</property>
+                        <property name="activatable_widget">syntax_config_apply_button</property>
                         <child type="action">
                           <object class="GtkButton" id="syntax_config_apply_button">
                             <property name="label">gtk-apply</property>
@@ -285,7 +285,7 @@
               <object class="HdyActionRow">
                 <property name="title" translatable="yes">Inserting Spaces Instead of Tabs</property>
                 <property name="visible">True</property>
-                <property name="activatable_widget">insert_spaces_gtk_gox</property>
+                <property name="activatable_widget">insert_spaces_switch</property>
                 <child type="action">
                   <object class="GtkBox" id="insert_spaces_gtk_gox">
                     <property name="visible">True</property>
@@ -321,7 +321,7 @@
               <object class="HdyActionRow">
                 <property name="title" translatable="yes">Automatic Indention</property>
                 <property name="visible">True</property>
-                <property name="activatable_widget">auto_indention_gtk_box</property>
+                <property name="activatable_widget">auto_indention_switch</property>
                 <child type="action">
                   <object class="GtkBox" id="auto_indention_gtk_box">
                     <property name="visible">True</property>
