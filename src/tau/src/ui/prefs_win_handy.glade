@@ -96,7 +96,7 @@
             </child>
             <child>
               <object class="HdyActionRow">
-                <property name="title" translatable="yes">Show Line Count</property>
+                <property name="title" translatable="yes">Show line count</property>
                 <property name="visible">True</property>
                 <property name="activatable_widget">show_linecount_switch</property>
                 <child type="action">
@@ -148,7 +148,7 @@
             </child>
             <child>
               <object class="HdyActionRow">
-                <property name="title" translatable="yes">Theme Configuration</property>
+                <property name="title" translatable="yes">Theme configuration</property>
                 <property name="visible">True</property>
                 <property name="activatable_widget">theme_combo_box</property>
                 <child type="action">
@@ -163,11 +163,11 @@
         </child>
         <child>
           <object class="HdyPreferencesGroup">
-            <property name="title" translatable="yes">Syntax Configuration</property>
+            <property name="title" translatable="yes">Syntax configuration</property>
             <property name="visible">True</property>
             <child>
               <object class="HdyActionRow">
-                <property name="title" translatable="yes">Syntax Configuration</property>
+                <property name="title" translatable="yes">Syntax selection</property>
                 <property name="visible">True</property>
                 <property name="activatable_widget">syntax_config_combo_box</property>
                 <child>
@@ -262,7 +262,7 @@
             <property name="visible">True</property>
             <child>
               <object class="HdyActionRow">
-                <property name="title" translatable="yes">Tab Size</property>
+                <property name="title" translatable="yes">Tab size</property>
                 <property name="visible">True</property>
                 <property name="activatable_widget">tab_size_spinbutton</property>
                 <child type="action">
@@ -283,7 +283,7 @@
             </child>
             <child>
               <object class="HdyActionRow">
-                <property name="title" translatable="yes">Inserting Spaces Instead of Tabs</property>
+                <property name="title" translatable="yes">Insert spaces instead of tabs</property>
                 <property name="visible">True</property>
                 <property name="activatable_widget">insert_spaces_switch</property>
                 <child type="action">
@@ -319,7 +319,7 @@
             </child>
             <child>
               <object class="HdyActionRow">
-                <property name="title" translatable="yes">Automatic Indention</property>
+                <property name="title" translatable="yes">Automatic indention</property>
                 <property name="visible">True</property>
                 <property name="activatable_widget">auto_indention_switch</property>
                 <child type="action">
@@ -371,7 +371,7 @@
         </child>
         <child>
           <object class="HdyPreferencesGroup">
-            <property name="title" translatable="yes">File Saving</property>
+            <property name="title" translatable="yes">File saving</property>
             <property name="visible">True</property>
             <child>
               <object class="HdyActionRow">
@@ -390,11 +390,11 @@
         </child>
         <child>
           <object class="HdyPreferencesGroup">
-            <property name="title" translatable="yes">Highlighting Spaces</property>
+            <property name="title" translatable="yes">Highlighting spaces</property>
             <property name="visible">True</property>
             <child>
               <object class="HdyActionRow">
-                <property name="title" translatable="yes">Draw all Spaces</property>
+                <property name="title" translatable="yes">Draw all spaces</property>
                 <property name="visible">True</property>
                 <property name="activatable_widget">spaces_all_radio_button</property>
                 <child type="action">
@@ -411,7 +411,7 @@
             </child>
             <child>
               <object class="HdyActionRow">
-                <property name="title" translatable="yes">Draw trailing Spaces</property>
+                <property name="title" translatable="yes">Draw trailing spaces</property>
                 <property name="visible">True</property>
                 <property name="activatable_widget">spaces_trailing_radio_button</property>
                 <child type="action">
@@ -428,7 +428,7 @@
             </child>
             <child>
               <object class="HdyActionRow">
-                <property name="title" translatable="yes">Draw leading Spaces</property>
+                <property name="title" translatable="yes">Draw leading spaces</property>
                 <property name="visible">True</property>
                 <property name="activatable_widget">spaces_leading_radio_button</property>
                 <child type="action">
@@ -445,7 +445,7 @@
             </child>
             <child>
               <object class="HdyActionRow">
-                <property name="title" translatable="yes">Draw selected Spaces</property>
+                <property name="title" translatable="yes">Draw selected spaces</property>
                 <property name="visible">True</property>
                 <property name="activatable_widget">spaces_selection_radio_button</property>
                 <child type="action">
@@ -462,7 +462,7 @@
             </child>
             <child>
               <object class="HdyActionRow">
-                <property name="title" translatable="yes">Don't Draw Spaces</property>
+                <property name="title" translatable="yes">Don't draw spaces</property>
                 <property name="visible">True</property>
                 <property name="activatable_widget">spaces_none_radio_button</property>
                 <child type="action">
@@ -481,11 +481,11 @@
         </child>
         <child>
           <object class="HdyPreferencesGroup">
-            <property name="title" translatable="yes">Highlighting Tabs</property>
+            <property name="title" translatable="yes">Highlighting tabs</property>
             <property name="visible">True</property>
             <child>
               <object class="HdyActionRow">
-                <property name="title" translatable="yes">Draw all Tabs</property>
+                <property name="title" translatable="yes">Draw all tabs</property>
                 <property name="visible">True</property>
                 <property name="activatable_widget">tabs_all_radio_button</property>
                 <child type="action">
@@ -502,7 +502,7 @@
             </child>
             <child>
               <object class="HdyActionRow">
-                <property name="title" translatable="yes">Draw trailing Tabs</property>
+                <property name="title" translatable="yes">Draw trailing tabs</property>
                 <property name="visible">True</property>
                 <property name="activatable_widget">tabs_trailing_radio_button</property>
                 <child type="action">
@@ -519,7 +519,7 @@
             </child>
             <child>
               <object class="HdyActionRow">
-                <property name="title" translatable="yes">Draw leading Tabs</property>
+                <property name="title" translatable="yes">Draw leading tabs</property>
                 <property name="visible">True</property>
                 <property name="activatable_widget">tabs_leading_radio_button</property>
                 <child type="action">
@@ -536,7 +536,7 @@
             </child>
             <child>
               <object class="HdyActionRow">
-                <property name="title" translatable="yes">Draw selected Tabs</property>
+                <property name="title" translatable="yes">Draw selected tabs</property>
                 <property name="visible">True</property>
                 <property name="activatable_widget">tabs_selection_radio_button</property>
                 <child type="action">
@@ -553,7 +553,7 @@
             </child>
             <child>
               <object class="HdyActionRow">
-                <property name="title" translatable="yes">Don't Draw Tabs</property>
+                <property name="title" translatable="yes">Don't draw tabs</property>
                 <property name="visible">True</property>
                 <property name="activatable_widget">tabs_none_radio_button</property>
                 <child type="action">
@@ -572,11 +572,11 @@
         </child>
         <child>
           <object class="HdyPreferencesGroup">
-            <property name="title" translatable="yes">Font Configuration</property>
+            <property name="title" translatable="yes">Font configuration</property>
             <property name="visible">True</property>
             <child>
               <object class="HdyPreferencesRow">
-                <property name="title" translatable="yes">Font Configuration</property>
+                <property name="title" translatable="yes">Font configuration</property>
                 <property name="visible">True</property>
                 <child>
                   <object class="GtkFontChooserWidget" id="font_chooser_widget">
