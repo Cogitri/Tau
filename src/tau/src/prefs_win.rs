@@ -132,6 +132,9 @@ impl PrefsWin {
 
             syntect_warn_automatic_indention_image.set_visible(true);
             syntect_warn_automatic_indention_image.set_tooltip_text(Some(&gettext_msg));
+        } else {
+            syntect_warn_insert_spaces_image.set_visible(false);
+            syntect_warn_automatic_indention_image.set_visible(false);
         }
 
         let font_desc: &String = &gschema.get("font");
