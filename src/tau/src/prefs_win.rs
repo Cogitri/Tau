@@ -208,12 +208,10 @@ impl PrefsWin {
             }
         }));
 
-        margin_switch.connect_activate(enclose!((margin_spinbutton) move |toggle_btn| {
-            let value = toggle_btn.get_active();
-            margin_spinbutton.set_sensitive(value);
+        margin_switch.connect_state_set(enclose!((margin_spinbutton) move |_, state| {
+            margin_spinbutton.set_sensitive(state);
+            Inhibit(false)
         }));
-
-        margin_spinbutton.set_sensitive(gschema.get("draw-right-margin"));
 
         gschema.bind(
             "font",
@@ -443,6 +441,8 @@ impl PrefsWin {
 
         window.set_transient_for(Some(parent));
         window.show_all();
+
+        margin_spinbutton.set_sensitive(false);
 
         Self {
             core: core.clone(),
