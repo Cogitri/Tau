@@ -170,79 +170,80 @@
                 <property name="title" translatable="yes">Syntax selection</property>
                 <property name="visible">True</property>
                 <property name="activatable_widget">syntax_config_combo_box</property>
-                <child>
+                <child type="action">
                   <object class="GtkComboBoxText" id="syntax_config_combo_box">
                     <property name="visible">True</property>
-                    <property name="tooltip_text" translatable="yes">What language to apply these settings for</property>
+                    <property name="valign">center</property>
                   </object>
                 </child>
-                <child>
-                  <object class="HdyActionRow">
-                    <property name="title" translatable="yes">Syntax-specific tab size</property>
+              </object>
+            </child>
+            <child>
+              <object class="HdyActionRow">
+                <property name="title" translatable="yes">Syntax-specific tab size</property>
+                <property name="visible">True</property>
+                <property name="activatable_widget">syntax_config_tab_size_switch</property>
+                <child type="action">
+                  <object class="GtkGrid" id="syntax_gtk_grid">
                     <property name="visible">True</property>
-                    <property name="activatable_widget">syntax_config_tab_size_switch</property>
-                    <child type="action">
-                      <object class="GtkGrid" id="syntax_gtk_grid">
+                    <property name="can_focus">False</property>
+                    <property name="valign">center</property>
+                    <child>
+                      <object class="GtkSwitch" id="syntax_config_tab_size_switch">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
                         <property name="valign">center</property>
-                        <child>
-                          <object class="GtkSwitch" id="syntax_config_tab_size_switch">
-                            <property name="visible">True</property>
-                            <property name="valign">center</property>
-                          </object>
-                          <packing>
-                            <property name="left_attach">0</property>
-                            <property name="top_attach">0</property>
-                            <property name="width">2</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkSpinButton" id="syntax_config_tab_size_spinbutton">
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="max_length">4</property>
-                            <property name="width_chars">4</property>
-                            <property name="input_purpose">digits</property>
-                            <property name="adjustment">syntax_tab_size_spinbutton_adj</property>
-                            <property name="climb_rate">2</property>
-                            <property name="snap_to_ticks">True</property>
-                            <property name="numeric">True</property>
-                          </object>
-                          <packing>
-                            <property name="left_attach">2</property>
-                            <property name="top_attach">0</property>
-                          </packing>
-                        </child>
                       </object>
+                      <packing>
+                        <property name="left_attach">0</property>
+                        <property name="top_attach">0</property>
+                        <property name="width">2</property>
+                      </packing>
                     </child>
                     <child>
-                      <object class="HdyActionRow">
-                        <property name="title" translatable="yes">Insert spaces instead of tabs</property>
+                      <object class="GtkSpinButton" id="syntax_config_tab_size_spinbutton">
                         <property name="visible">True</property>
-                        <property name="activatable_widget">syntax_config_insert_spaces_switch</property>
-                        <child type="action">
-                          <object class="GtkSwitch" id="syntax_config_insert_spaces_switch">
-                            <property name="visible">True</property>
-                            <property name="valign">center</property>
-                          </object>
-                        </child>
+                        <property name="can_focus">True</property>
+                        <property name="max_length">4</property>
+                        <property name="width_chars">4</property>
+                        <property name="input_purpose">digits</property>
+                        <property name="adjustment">syntax_tab_size_spinbutton_adj</property>
+                        <property name="climb_rate">2</property>
+                        <property name="snap_to_ticks">True</property>
+                        <property name="numeric">True</property>
                       </object>
+                      <packing>
+                        <property name="left_attach">2</property>
+                        <property name="top_attach">0</property>
+                      </packing>
                     </child>
-                    <child>
-                      <object class="HdyActionRow">
-                        <property name="title" translatable="yes">Apply syntax configuration settings</property>
-                        <property name="visible">True</property>
-                        <property name="activatable_widget">syntax_config_apply_button</property>
-                        <child type="action">
-                          <object class="GtkButton" id="syntax_config_apply_button">
-                            <property name="label">gtk-apply</property>
-                            <property name="visible">True</property>
-                            <property name="use_stock">True</property>
-                          </object>
-                        </child>
-                      </object>
-                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="HdyActionRow">
+                <property name="title" translatable="yes">Insert spaces instead of tabs</property>
+                <property name="visible">True</property>
+                <property name="activatable_widget">syntax_config_insert_spaces_switch</property>
+                <child type="action">
+                  <object class="GtkSwitch" id="syntax_config_insert_spaces_switch">
+                    <property name="visible">True</property>
+                    <property name="valign">center</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="HdyActionRow">
+                <property name="title" translatable="yes">Apply syntax configuration settings</property>
+                <property name="visible">True</property>
+                <property name="activatable_widget">syntax_config_apply_button</property>
+                <child type="action">
+                  <object class="GtkButton" id="syntax_config_apply_button">
+                    <property name="label">gtk-apply</property>
+                    <property name="visible">True</property>
+                    <property name="use_stock">True</property>
+                    <property name="valign">center</property>
                   </object>
                 </child>
               </object>
