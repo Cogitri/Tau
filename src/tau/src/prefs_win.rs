@@ -123,18 +123,6 @@ impl PrefsWin {
             .collect();
         let syntax_config = Rc::new(RefCell::new(syntax_config));
 
-        if !started_plugins.syntect {
-            let gettext_msg = gettext("Couldn’t find the xi-syntect-plugin. As such these settings won’t work in the current session.");
-            syntect_warn_insert_spaces_image.set_visible(true);
-            syntect_warn_insert_spaces_image.set_tooltip_text(Some(&gettext_msg));
-
-            syntect_warn_automatic_indention_image.set_visible(true);
-            syntect_warn_automatic_indention_image.set_tooltip_text(Some(&gettext_msg));
-        } else {
-            syntect_warn_insert_spaces_image.set_visible(false);
-            syntect_warn_automatic_indention_image.set_visible(false);
-        }
-
         let font_desc: &String = &gschema.get("font");
         font_chooser_widget.set_font_desc(&FontDescription::from_string(font_desc));
         font_chooser_widget.connect_property_font_desc_notify(
@@ -443,6 +431,18 @@ impl PrefsWin {
         window.show_all();
 
         margin_spinbutton.set_sensitive(false);
+
+        if !started_plugins.syntect {
+            let gettext_msg = gettext("Couldn’t find the xi-syntect-plugin. As such these settings won’t work in the current session.");
+            syntect_warn_insert_spaces_image.set_visible(true);
+            syntect_warn_insert_spaces_image.set_tooltip_text(Some(&gettext_msg));
+
+            syntect_warn_automatic_indention_image.set_visible(true);
+            syntect_warn_automatic_indention_image.set_tooltip_text(Some(&gettext_msg));
+        } else {
+            syntect_warn_insert_spaces_image.set_visible(false);
+            syntect_warn_automatic_indention_image.set_visible(false);
+        }
 
         Self {
             core: core.clone(),
