@@ -219,6 +219,8 @@ impl ViewItem {
                         } else {
                              edit_view.set_language(lang);
                         }
+
+                        edit_view.view_item.edit_area.queue_draw();
                     }
                 }
             }));
@@ -247,6 +249,8 @@ impl ViewItem {
                         "changes": { "tab_size": val },
                     }),
                 );
+
+                edit_view.view_item.edit_area.queue_draw();
             }));
 
         self.statusbar
