@@ -30,6 +30,7 @@ NO_COLOR='\033[0m'
 
 echo -e \
 "
+\tBuild Mode:\t\t${GREEN}${15}${NO_COLOR}
 \tTau Plugindir:\t\t${GREEN}${TAU_PLUGIN_DIR}${NO_COLOR}
 \tTau Localedir:\t\t${GREEN}${TAU_LOCALEDIR}${NO_COLOR}
 \tTau Version:\t\t${GREEN}${TAU_VERSION}${NO_COLOR}
@@ -50,16 +51,30 @@ elif [ "$6" = "true" ]; then
     features="--features gtk_v3_22"
 fi
 
-cargo build --target-dir "${4}" ${manifest_path} --release ${features}
-
-# Cargo can place this here if we're crosscompiling
-if [ -f "${4}/${RUST_TARGET}/release/${5}" ]; then
-    path="${4}/${RUST_TARGET}/release/${5}"
-elif [ -f "${4}/release/${5}" ]; then
-    path="${4}/release/${5}"
+if [ "${15}" = "development" ]; then
+    cargo build --target-dir "${4}" ${manifest_path} ${features}
+    
+    # Cargo can place this here if we're crosscompiling
+    if [ -f "${4}/${RUST_TARGET}/debug/${5}" ]; then
+        path="${4}/${RUST_TARGET}/debug/${5}"
+    elif [ -f "${4}/debug/${5}" ]; then
+        path="${4}/debug/${5}"
+    else
+        echo "${RED}Can't determine what dir cargo places compiled binaries in!${NO_COLOR}"
+        exit 1
+    fi
 else
-    echo "${RED}Can't determine what dir cargo places compiled binaries in!${NO_COLOR}"
-    exit 1
+    cargo build --target-dir "${4}" ${manifest_path} --release ${features}
+    
+    # Cargo can place this here if we're crosscompiling
+    if [ -f "${4}/${RUST_TARGET}/release/${5}" ]; then
+        path="${4}/${RUST_TARGET}/release/${5}"
+    elif [ -f "${4}/release/${5}" ]; then
+        path="${4}/release/${5}"
+    else
+        echo "${RED}Can't determine what dir cargo places compiled binaries in!${NO_COLOR}"
+        exit 1
+    fi
 fi
 
 cp "${path}" "${2}/${3}"

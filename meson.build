@@ -174,6 +174,11 @@ if xi_opt == 'builtin'
                                     tau_plugin_dir,
                                     tau_localedir,
                                     meson.project_version(),
+                                    '',
+                                    '',
+                                    '',
+                                    '',
+                                    get_option('profile'),
                                    ])
 endif
 
@@ -205,6 +210,11 @@ xi_syntect_plugin_dep = custom_target('cargo-build-syntect',
                                   tau_plugin_dir,
                                   tau_localedir,
                                   meson.project_version(),
+                                  '',
+                                  '',
+                                  '',
+                                  '',
+                                  get_option('profile'),
                                  ])
 
 synctect_assets = ['assets/Makefile.toml', 'assets/YAML.toml', 'manifest.toml']
@@ -246,6 +256,7 @@ tau = custom_target('cargo-build-tau',
                                   gresource.path(),
                                   application_id,
                                   name,
+                                  get_option('profile'),
                                  ])
 
 meson.add_install_script('meson_post_install.sh')
