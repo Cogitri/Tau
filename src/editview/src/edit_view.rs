@@ -76,7 +76,7 @@ impl EditView {
         trace!("Creating new EditView '{}'", view_id);
         let gschema = main_state.borrow().settings.gschema.clone();
         let default_tab_size = gschema.get::<u32>("tab-size");
-        let view_item = ViewItem::new(default_tab_size);
+        let view_item = ViewItem::new(default_tab_size, hamburger_button);
         let find_replace = FindReplace::new(&hamburger_button);
         let pango_ctx = view_item.get_pango_ctx();
         let im_context = IMContextSimple::new();
@@ -937,7 +937,6 @@ impl EditView {
             .statusbar
             .column_label
             .set_text(&format!("{}: {}", gettext("Column"), col));
-
         {
             // The new height is the current last line + 1
             let new_height = self.edit_font.borrow().font_height * line as f64;
@@ -1590,5 +1589,25 @@ impl EditView {
         if self.tab_size.borrow().is_none() {
             self.view_item.edit_area.queue_draw();
         }
+    }
+
+    pub fn start_go_to_line(&self) {
+        if self.view_item.go_to_line.search_bar.get_search_mode() {
+            self.stop_go_to_line();
+        } else {
+            self.view_item.go_to_line.search_bar.set_search_mode(true);
+            self.view_item.go_to_line.popover.popup();
+            self.view_item.go_to_line.search_entry.grab_focus();
+        }
+    }
+
+    pub fn stop_go_to_line(&self) {
+        self.view_item.go_to_line.popover.popdown();
+        self.view_item.go_to_line.search_bar.set_search_mode(false);
+        self.view_item.ev_scrolled_window.grab_focus();
+    }
+
+    pub fn go_to_line(&self, line: u64) {
+        let _ = self.core.goto_line(self.view_id, line - 1);
     }
 }

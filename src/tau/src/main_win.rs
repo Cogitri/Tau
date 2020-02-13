@@ -623,6 +623,16 @@ impl MainWin {
             );
             application.add_action(&show_terminal_action);
         }
+        {
+            let go_to_line_action = SimpleAction::new("go_to_line", None);
+            go_to_line_action.connect_activate(
+                clone!(@weak main_win => @default-panic, move |_,_| {
+                    trace!("{} 'find_next' {}", gettext("Handling"), gettext("action"));
+                    main_win.go_to_line();
+                }),
+            );
+            application.add_action(&go_to_line_action);
+        }
 
         // Put keyboard shortcuts here
         application.set_accels_for_action("app.find", &["<Primary>f"]);
@@ -946,6 +956,12 @@ impl MainWin {
     /// Open the `ShortcutsWin`, which contains info about shortcuts
     fn shortcuts(&self) {
         ShortcutsWin::new(&self.window);
+    }
+
+    fn go_to_line(&self) {
+        if let Some(edit_view) = self.get_current_edit_view() {
+            edit_view.start_go_to_line();
+        }
     }
 
     /// Open the find dialog of the current `EditView`

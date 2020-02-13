@@ -46,6 +46,13 @@ struct DragData {
     start_y: f64,
 }
 
+#[derive(Clone)]
+pub struct GoToLine {
+    pub popover: Popover,
+    pub search_entry: SearchEntry,
+    pub search_bar: SearchBar,
+}
+
 /// The `ViewItem` contains the various GTK parts related to the `edit_area` of the `EditView`
 #[derive(Clone)]
 pub struct ViewItem {
@@ -58,11 +65,12 @@ pub struct ViewItem {
     pub statusbar: EvBar,
     pub(crate) context_menu: Menu,
     pub(crate) gestures: Gestures,
+    pub(crate) go_to_line: GoToLine,
 }
 
 impl ViewItem {
     /// Sets up the drawing areas and scrollbars.
-    pub fn new(tab_size: u32) -> Self {
+    pub fn new(tab_size: u32, btn: &MenuButton) -> Self {
         let gbytes = Bytes::from_static(RESOURCE);
         let resource = Resource::new_from_data(&gbytes).unwrap();
         gio::resources_register(&resource);
@@ -99,6 +107,14 @@ impl ViewItem {
             .set_text(&format!("{}: {}", gettext("Tab Size"), tab_size));
         statusbar.tab_size_button.set_value(f64::from(tab_size));
 
+        let go_to_line = GoToLine {
+            popover: builder.get_object("go_to_line_popover").unwrap(),
+            search_entry: builder.get_object("go_to_line_search_entry").unwrap(),
+            search_bar: builder.get_object("go_to_line_search_bar").unwrap(),
+        };
+        go_to_line.popover.set_position(PositionType::Bottom);
+        go_to_line.popover.set_relative_to(Some(btn));
+
         let context_menu_builder =
             Builder::new_from_resource("/org/gnome/Tau/editview/context_menu.glade");
         let gmenu: gio::Menu = context_menu_builder.get_object("context_menu").unwrap();
@@ -121,6 +137,7 @@ impl ViewItem {
             ev_scrolled_window,
             context_menu,
             root_box: hbox,
+            go_to_line,
             gestures: Gestures {
                 drag,
                 drag_data: Rc::new(RefCell::new(DragData {
@@ -318,6 +335,15 @@ impl ViewItem {
                 );
                 gschema.set("font", &font_string).map_err(|e| error!("Failed to increase font size due to error: '{}'", e)).unwrap();
             }));
+
+        self.go_to_line.search_entry.connect_activate(
+            clone!(@weak edit_view => @default-panic, move |w| {
+                if let Some(line) = w.get_text() {
+                    let line = line.parse::<u64>().unwrap();
+                    edit_view.go_to_line(line);
+                }
+            }),
+        );
     }
 
     /// Gets the pango Context from the main drawing area.

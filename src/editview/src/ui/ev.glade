@@ -94,6 +94,24 @@
       </object>
     </child>
   </object>
+    <object class="GtkPopover" id="go_to_line_popover">
+    <property name="can_focus">False</property>
+    <child>
+      <object class="GtkSearchBar" id="go_to_line_search_bar">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <child>
+          <object class="GtkSearchEntry" id="go_to_line_search_entry">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="has_frame">False</property>
+            <property name="primary_icon_name">edit-find-symbolic</property>
+            <property name="input_purpose">number</property>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
   <object class="GtkAdjustment" id="hadj">
     <property name="upper">100</property>
     <property name="step_increment">1</property>
