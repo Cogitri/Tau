@@ -15,7 +15,7 @@ use gdk_pixbuf::Pixbuf;
 use gettextrs::gettext;
 use gio::prelude::*;
 use gio::{ActionMapExt, ApplicationExt, Resource, Settings, SettingsExt, SimpleAction};
-use glib::{Bytes, GString, MainContext, Receiver, SpawnFlags, SyncSender};
+use glib::{clone, Bytes, GString, MainContext, Receiver, SpawnFlags, SyncSender};
 use gtk::prelude::*;
 use gtk::{
     Application, ApplicationWindow, Builder, Button, ButtonsType, DialogFlags, EventBox,
@@ -285,9 +285,8 @@ impl MainWin {
         main_win.window.set_application(Some(&application.clone()));
 
         // This is called when the window is closed with the 'X' or via the application menu, etc.
-        main_win
-            .window
-            .connect_delete_event(enclose!((main_win) move |window, _| {
+        main_win.window.connect_delete_event(
+            clone!(@weak main_win => @default-panic, move |window, _| {
                 // Only destroy the window when the user has saved the changes or closes without saving
                 if main_win.close_all() == SaveAction::Cancel {
                     debug!("User chose to cancel exiting");
@@ -298,12 +297,12 @@ impl MainWin {
                     window.destroy();
                     Inhibit(false)
                 }
-            }));
+            }),
+        );
 
         // Save to `WinProp` when the size of the window is changed
-        main_win
-            .window
-            .connect_size_allocate(enclose!((main_win) move |window, _| {
+        main_win.window.connect_size_allocate(
+            clone!(@weak main_win => @default-panic, move |window, _| {
                 let win_size = window.get_size();
                 let maximized = window.is_maximized();
 
@@ -313,31 +312,31 @@ impl MainWin {
                     properties.width = win_size.0;
                     properties.height = win_size.1;
                 }
-            }));
+            }),
+        );
 
-        main_win
-            .notebook
-            .connect_switch_page(enclose!((main_win) move |_, w, _| {
+        main_win.notebook.connect_switch_page(
+            clone!(@weak main_win => @default-panic, move |_, w, _| {
                 // adjust headerbar title
                 main_win.update_titlebar(main_win.w_to_ev.borrow().get(w));
 
                 // stop all searches and close dialogs
                 main_win.views.borrow().values().for_each(|view| view.stop_search());
-            }));
+            }),
+        );
 
-        main_win
-            .notebook
-            .connect_page_removed(enclose!((main_win) move |notebook, _, _| {
+        main_win.notebook.connect_page_removed(
+            clone!(@weak main_win => @default-panic, move |notebook, _, _| {
                 // Set a sensible title if no tab is open (and we can't display a
                 // document's name)
                 if notebook.get_n_pages() == 0 {
                     main_win.set_title(glib::get_application_name().unwrap().as_str());
                 }
-            }));
+            }),
+        );
 
-        main_win
-            .window
-            .connect_focus_out_event(enclose!((main_win, gschema) move |_, _| {
+        main_win.window.connect_focus_out_event(
+            clone!(@weak main_win, @weak gschema => @default-panic, move |_, _| {
                 // main_win.saving is true if we're currently saving via a save dialog, so don't try
                 // to save again here
                 if gschema.get("save-when-out-of-focus") && !*main_win.saving.borrow() {
@@ -354,11 +353,12 @@ impl MainWin {
                 }
 
                 Inhibit(false)
-            }));
+            }),
+        );
 
         main_win
             .window
-            .connect_window_state_event(enclose!((main_win) move |_, event| {
+            .connect_window_state_event(clone!(@weak main_win => @default-panic, move |_, event| {
                 let fullscreen_mode = event.get_new_window_state().contains(WindowState::FULLSCREEN);
 
                 if main_win.fullscreen.get() ^ fullscreen_mode {
@@ -371,25 +371,29 @@ impl MainWin {
         let fullscreen_eventbox: EventBox =
             main_win.builder.get_object("fullscreen_eventbox").unwrap();
 
-        fullscreen_eventbox.connect_enter_notify_event(enclose!((main_win) move |_, _| {
-            if main_win.fullscreen.get() {
-                main_win.fullscreen_revealer.set_reveal_child(true);
-            }
-            Inhibit(false)
-        }));
+        fullscreen_eventbox.connect_enter_notify_event(
+            clone!(@weak main_win => @default-panic, move |_, _| {
+                if main_win.fullscreen.get() {
+                    main_win.fullscreen_revealer.set_reveal_child(true);
+                }
+                Inhibit(false)
+            }),
+        );
 
-        fullscreen_eventbox.connect_leave_notify_event(enclose!((main_win) move |_, _| {
-            if !main_win.fullscreen_hamburger_button.get_active() {
-                main_win.fullscreen_revealer.set_reveal_child(false);
-            }
-            Inhibit(false)
-        }));
+        fullscreen_eventbox.connect_leave_notify_event(
+            clone!(@weak main_win => @default-panic, move |_, _| {
+                if !main_win.fullscreen_hamburger_button.get_active() {
+                    main_win.fullscreen_revealer.set_reveal_child(false);
+                }
+                Inhibit(false)
+            }),
+        );
 
         // Below here we connect all actions, meaning that these closures will be run when the respective
         // action is triggered (e.g. by a button press)
         {
             let open_action = SimpleAction::new("open", None);
-            open_action.connect_activate(enclose!((main_win) move |_,_| {
+            open_action.connect_activate(clone!(@weak main_win => @default-panic, move |_,_| {
                 trace!("Handling action: 'open'");
                 main_win.handle_open_button();
             }));
@@ -397,7 +401,7 @@ impl MainWin {
         }
         {
             let new_action = SimpleAction::new("new", None);
-            new_action.connect_activate(enclose!((main_win) move |_,_| {
+            new_action.connect_activate(clone!(@weak main_win => @default-panic, move |_,_| {
                 trace!("Handling action: 'new'");
                 main_win.req_new_view(None);
             }));
@@ -405,7 +409,7 @@ impl MainWin {
         }
         {
             let prefs_action = SimpleAction::new("prefs", None);
-            prefs_action.connect_activate(enclose!((main_win) move |_,_| {
+            prefs_action.connect_activate(clone!(@weak main_win => @default-panic, move |_,_| {
                 trace!("Handling action: 'prefs'");
                 main_win.prefs()
             }));
@@ -413,7 +417,7 @@ impl MainWin {
         }
         {
             let about_action = SimpleAction::new("about", None);
-            about_action.connect_activate(enclose!((main_win) move |_,_| {
+            about_action.connect_activate(clone!(@weak main_win => @default-panic, move |_,_| {
                 trace!("Handling action: 'about'");
                 main_win.about()
             }));
@@ -421,7 +425,7 @@ impl MainWin {
         }
         {
             let find_action = SimpleAction::new("find", None);
-            find_action.connect_activate(enclose!((main_win) move |_,_| {
+            find_action.connect_activate(clone!(@weak main_win => @default-panic, move |_,_| {
                 trace!("Handling action: 'find'");
                 main_win.find();
             }));
@@ -429,7 +433,7 @@ impl MainWin {
         }
         {
             let replace_action = SimpleAction::new("replace", None);
-            replace_action.connect_activate(enclose!((main_win) move |_,_| {
+            replace_action.connect_activate(clone!(@weak main_win => @default-panic, move |_,_| {
                 trace!("Handling action: 'replace'");
                 main_win.replace()
             }));
@@ -437,7 +441,7 @@ impl MainWin {
         }
         {
             let copy_action = SimpleAction::new("copy", None);
-            copy_action.connect_activate(enclose!((main_win) move |_,_| {
+            copy_action.connect_activate(clone!(@weak main_win => @default-panic, move |_,_| {
                 trace!("Handling action: 'copy'");
                 if let Some(ev) = main_win.get_current_edit_view() {
                     ev.do_copy()
@@ -447,7 +451,7 @@ impl MainWin {
         }
         {
             let cut_action = SimpleAction::new("cut", None);
-            cut_action.connect_activate(enclose!((main_win) move |_,_| {
+            cut_action.connect_activate(clone!(@weak main_win => @default-panic, move |_,_| {
                 trace!("Handling action: 'cut'");
                 if let Some(ev) = main_win.get_current_edit_view() {
                     ev.do_cut()
@@ -457,7 +461,7 @@ impl MainWin {
         }
         {
             let paste_action = SimpleAction::new("paste", None);
-            paste_action.connect_activate(enclose!((main_win) move |_,_| {
+            paste_action.connect_activate(clone!(@weak main_win => @default-panic, move |_,_| {
                 trace!("Handling action: 'paste'");
                 if let Some(ev) = main_win.get_current_edit_view() {
                     ev.do_paste()
@@ -467,7 +471,7 @@ impl MainWin {
         }
         {
             let undo_action = SimpleAction::new("undo", None);
-            undo_action.connect_activate(enclose!((main_win) move |_,_| {
+            undo_action.connect_activate(clone!(@weak main_win => @default-panic, move |_,_| {
                 trace!("Handling action: 'undo'");
                 if let Some(ev) = main_win.get_current_edit_view() {
                     let _ = main_win.core.undo(ev.view_id);
@@ -477,7 +481,7 @@ impl MainWin {
         }
         {
             let redo_action = SimpleAction::new("redo", None);
-            redo_action.connect_activate(enclose!((main_win) move |_,_| {
+            redo_action.connect_activate(clone!(@weak main_win => @default-panic, move |_,_| {
                 trace!("Handling action: 'redo'");
                 if let Some(ev) = main_win.get_current_edit_view() {
                     let _ = main_win.core.redo(ev.view_id);
@@ -487,17 +491,19 @@ impl MainWin {
         }
         {
             let select_all_action = SimpleAction::new("select_all", None);
-            select_all_action.connect_activate(enclose!((main_win) move |_,_| {
-                trace!("Handling action: 'select_all'");
-                if let Some(ev) = main_win.get_current_edit_view() {
-                    let _ = main_win.core.select_all(ev.view_id);
-                }
-            }));
+            select_all_action.connect_activate(
+                clone!(@weak main_win => @default-panic, move |_,_| {
+                    trace!("Handling action: 'select_all'");
+                    if let Some(ev) = main_win.get_current_edit_view() {
+                        let _ = main_win.core.select_all(ev.view_id);
+                    }
+                }),
+            );
             application.add_action(&select_all_action);
         }
         {
             let save_action = SimpleAction::new("save", None);
-            save_action.connect_activate(enclose!((main_win) move |_,_| {
+            save_action.connect_activate(clone!(@weak main_win => @default-panic, move |_,_| {
                 trace!("Handling action: 'save'");
                 main_win.handle_save_button();
             }));
@@ -505,7 +511,7 @@ impl MainWin {
         }
         {
             let save_as_action = SimpleAction::new("save_as", None);
-            save_as_action.connect_activate(enclose!((main_win) move |_,_| {
+            save_as_action.connect_activate(clone!(@weak main_win => @default-panic, move |_,_| {
                 trace!("Handling action: 'save_as'");
                 main_win.current_save_as();
             }));
@@ -513,7 +519,7 @@ impl MainWin {
         }
         {
             let save_all_action = SimpleAction::new("save_all", None);
-            save_all_action.connect_activate(enclose!((main_win) move |_,_| {
+            save_all_action.connect_activate(clone!(@weak main_win => @default-panic, move |_,_| {
                 trace!("Handling action: 'save_all'");
                 main_win.save_all();
             }));
@@ -521,7 +527,7 @@ impl MainWin {
         }
         {
             let close_action = SimpleAction::new("close", None);
-            close_action.connect_activate(enclose!((main_win) move |_,_| {
+            close_action.connect_activate(clone!(@weak main_win => @default-panic, move |_,_| {
                 trace!("Handling action: 'close'");
                 main_win.close();
             }));
@@ -529,15 +535,17 @@ impl MainWin {
         }
         {
             let shortcuts_action = SimpleAction::new("shortcuts", None);
-            shortcuts_action.connect_activate(enclose!((main_win) move |_, _| {
-                trace!("Handling action: 'shortcuts'");
-                main_win.shortcuts();
-            }));
+            shortcuts_action.connect_activate(
+                clone!(@weak main_win => @default-panic, move |_, _| {
+                    trace!("Handling action: 'shortcuts'");
+                    main_win.shortcuts();
+                }),
+            );
             application.add_action(&shortcuts_action);
         }
         {
             let increase_font_size_action = SimpleAction::new("increase_font_size", None);
-            increase_font_size_action.connect_activate(enclose!((gschema) move |_,_| {
+            increase_font_size_action.connect_activate(clone!(@weak gschema => @default-panic, move |_,_| {
                 let font: String = gschema.get("font");
                 if let Some((name, mut size)) = functions::get_font_properties(&font) {
                     size += 1.0;
@@ -550,7 +558,7 @@ impl MainWin {
         }
         {
             let decrease_font_size_action = SimpleAction::new("decrease_font_size", None);
-            decrease_font_size_action.connect_activate(enclose!((gschema) move |_,_| {
+            decrease_font_size_action.connect_activate(clone!(@weak gschema => @default-panic, move |_,_| {
                 let font: String = gschema.get("font");
                 if let Some((name, mut size)) = functions::get_font_properties(&font) {
                     size -= 1.0;
@@ -564,7 +572,7 @@ impl MainWin {
         {
             // This is called when we run app.quit, e.g. via Ctrl+Q
             let quit_action = SimpleAction::new("quit", None);
-            quit_action.connect_activate(enclose!((main_win) move |_,_| {
+            quit_action.connect_activate(clone!(@weak main_win => @default-panic, move |_,_| {
                 trace!("Handling action: 'quit'");
                 // Same as in connect_destroy, only quit if the user saves or wants to close without saving
                 if main_win.close_all() == SaveAction::Cancel {
@@ -578,33 +586,41 @@ impl MainWin {
         }
         {
             let cycle_backward_action = SimpleAction::new("cycle_backward", None);
-            cycle_backward_action.connect_activate(enclose!((main_win) move |_,_| {
-                trace!("Handling action: 'cycle-backward'");
-                main_win.view_history.cycle_backward();
-            }));
+            cycle_backward_action.connect_activate(
+                clone!(@weak main_win => @default-panic, move |_,_| {
+                    trace!("Handling action: 'cycle-backward'");
+                    main_win.view_history.cycle_backward();
+                }),
+            );
             application.add_action(&cycle_backward_action);
         }
         {
             let cycle_forward_action = SimpleAction::new("cycle_forward", None);
-            cycle_forward_action.connect_activate(enclose!((main_win) move |_,_| {
-                trace!("Handling action: 'cycle-forward'");
-                main_win.view_history.cycle_forward();
-            }));
+            cycle_forward_action.connect_activate(
+                clone!(@weak main_win => @default-panic, move |_,_| {
+                    trace!("Handling action: 'cycle-forward'");
+                    main_win.view_history.cycle_forward();
+                }),
+            );
             application.add_action(&cycle_forward_action);
         }
         {
             let fullscreen_action = SimpleAction::new("toggle_fullscreen", None);
-            fullscreen_action.connect_activate(enclose!((main_win) move |_,_| {
-                trace!("Handling action: 'toggle_fullscreen'");
-                main_win.toggle_fullscreen();
-            }));
+            fullscreen_action.connect_activate(
+                clone!(@weak main_win => @default-panic, move |_,_| {
+                    trace!("Handling action: 'toggle_fullscreen'");
+                    main_win.toggle_fullscreen();
+                }),
+            );
             application.add_action(&fullscreen_action);
         }
         {
             let show_terminal_action = SimpleAction::new("show_terminal", None);
-            show_terminal_action.connect_activate(enclose!((main_win) move |_,_| {
-                main_win.add_terminal(true);
-            }));
+            show_terminal_action.connect_activate(
+                clone!(@weak main_win => @default-panic, move |_,_| {
+                    main_win.add_terminal(true);
+                }),
+            );
             application.add_action(&show_terminal_action);
         }
 
@@ -629,9 +645,8 @@ impl MainWin {
         application.set_accels_for_action("app.cycle_forward", &["<Primary><Shift>Tab"]);
         application.set_accels_for_action("app.toggle_fullscreen", &["F11"]);
 
-        main_win
-            .window
-            .connect_key_press_event(enclose!((main_win) move |_, ek| {
+        main_win.window.connect_key_press_event(
+            clone!(@strong main_win => @default-panic, move |_, ek| {
                 let key_val = ek.get_keyval();
                 let ctrl = ek.get_state().contains(ModifierType::CONTROL_MASK);
 
@@ -653,13 +668,14 @@ impl MainWin {
                 } else {
                     Inhibit(false)
                 }
-            }));
+            }),
+        );
 
         let main_context = MainContext::default();
 
         event_rx.attach(
             Some(&main_context),
-            enclose!((main_win) move |ev| {
+            clone!(@strong main_win => @default-panic, move |ev| {
                     main_win.handle_event(ev);
                     Continue(true)
             }),
@@ -1122,14 +1138,14 @@ impl MainWinExt for Rc<MainWin> {
                 .insert_page(&term, Some(&top_bar.event_box), None);
             self.term_notebook.set_tab_reorderable(&term, true);
 
-            top_bar
-                .close_button
-                .connect_clicked(enclose!((self => main_win, page_num) move |_| {
+            top_bar.close_button.connect_clicked(
+                clone!(@weak self as main_win, @strong page_num => @default-panic, move |_| {
                     main_win.close_terminal(page_num);
-                }));
+                }),
+            );
 
             top_bar.event_box.connect_button_press_event(
-                enclose!((self => main_win) move |_, eb| {
+                clone!(@weak self as main_win => @default-panic, move |_, eb| {
                     // 2 == middle click
                     if eb.get_button() == 2 {
                         main_win.close_terminal(page_num);
@@ -1158,22 +1174,24 @@ impl MainWinExt for Rc<MainWin> {
                 .term_notebook
                 .insert_page(&term, Some(&top_bar.event_box), None);
 
-            close_button.connect_clicked(enclose!((self => main_win) move |_| {
-                main_win.remove_terminal_area();
-            }));
+            close_button.connect_clicked(
+                clone!(@weak self as main_win => @default-panic, move |_| {
+                    main_win.remove_terminal_area();
+                }),
+            );
 
-            add_button.connect_clicked(enclose!((self => main_win) move |_| {
+            add_button.connect_clicked(clone!(@weak self as main_win => @default-panic,move |_| {
                 main_win.add_terminal(false);
             }));
 
-            top_bar
-                .close_button
-                .connect_clicked(enclose!((self => main_win, page_num) move |_| {
+            top_bar.close_button.connect_clicked(
+                clone!(@weak self as main_win, @strong page_num => @default-panic,move |_| {
                     main_win.close_terminal(page_num);
-                }));
+                }),
+            );
 
             top_bar.event_box.connect_button_press_event(
-                enclose!((self => main_win) move |_, eb| {
+                clone!(@weak self as main_win => @default-panic, move |_, eb| {
                     // 2 == middle click
                     if eb.get_button() == 2 {
                         main_win.close_terminal(page_num);
@@ -1354,7 +1372,7 @@ impl MainWinExt for Rc<MainWin> {
         let gschema = self.state.borrow_mut().settings.gschema.clone();
         let core = &self.core;
         gschema
-            .connect_changed(enclose!((gschema, self => main_win, core) move |_, key| {
+            .connect_changed(clone!(@weak self as main_win, @weak gschema, @strong core => @default-panic, move |_, key| {
             trace!("Key '{}' has changed!", key);
             match key {
                 "draw-trailing-spaces" | "draw-leading-spaces" | "draw-selection-spaces" | "draw-all-spaces" => {
@@ -1583,7 +1601,7 @@ impl MainWinExt for Rc<MainWin> {
             }
         }
 
-        fcn.connect_response(enclose!((self => main_win) move |fcd, res| {
+        fcn.connect_response(clone!(@weak self as main_win => @default-panic, move |fcd, res| {
             debug!(
                 "FileChooserNative open response: '{:#?}'",
                 res
@@ -1626,7 +1644,7 @@ impl MainWinExt for Rc<MainWin> {
         trace!("Requesting new view");
 
         self.runtime_opt.borrow_mut().as_mut().unwrap().spawn(
-            future::lazy(enclose!((self.core => core, self.event_tx => new_view_tx) move || {
+            future::lazy(clone!(@strong self.core as core, @strong self.event_tx as new_view_tx => move || {
                 core
                 .new_view(file_name.clone())
                 .then(|res|
@@ -1683,7 +1701,7 @@ impl MainWinExt for Rc<MainWin> {
             }
 
             edit_view.top_bar.close_button.connect_clicked(
-                enclose!((self => main_win, edit_view) move |_| {
+                clone!(@weak self as main_win, @weak edit_view => @default-panic, move |_| {
                     if main_win.close_view(&edit_view) != SaveAction::Cancel {
                         if let Some(path) = edit_view.file_name.borrow().as_ref() {
                             main_win
@@ -1699,7 +1717,7 @@ impl MainWinExt for Rc<MainWin> {
 
             #[allow(clippy::collapsible_if)]
             edit_view.top_bar.event_box.connect_button_press_event(
-                enclose!((self => main_win, edit_view) move |_, eb| {
+                clone!(@weak self as main_win, @weak edit_view => @default-panic, move |_, eb| {
                     // 2 == middle click
                     if eb.get_button() == 2 {
                         if main_win.close_view(&edit_view) != SaveAction::Cancel {
@@ -1757,7 +1775,7 @@ impl MainWinExt for Rc<MainWin> {
             fcn.set_current_name("Untitled.txt");
         }
 
-        fcn.connect_response(enclose!((edit_view, self => main_win) move |fcd, res| {
+        fcn.connect_response(clone!(@weak self as main_win, @weak edit_view => @default-panic, move |fcd, res| {
             debug!(
                 "FileChooserNative save response: '{:#?}'",
                 res

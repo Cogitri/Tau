@@ -11,10 +11,10 @@ use gdk::{
 };
 use gettextrs::gettext;
 use gio::prelude::*;
-use glib::{source::Continue, MainContext, PRIORITY_HIGH};
+use glib::{clone, source::Continue, MainContext, PRIORITY_HIGH};
 use gtk::prelude::*;
 use gtk::{ApplicationWindow, Clipboard, CssProvider, Grid, IMContextSimple, MenuButton, TreePath};
-use log::{debug, error, trace, warn};
+use log::{debug, info, trace, warn};
 use pango::{Attribute, Direction, FontDescription, TabAlign, TabArray};
 use pangocairo::functions as pangocairofuncs;
 use parking_lot::Mutex;
@@ -128,20 +128,26 @@ impl EditView {
 
         im_context.set_client_window(parent.get_window().as_ref());
 
-        std::thread::spawn(enclose!((edit_view.line_cache => linecache) move || loop {
-            while let Ok(update) = update_recv.recv() {
-                linecache.lock().update(update);
-            }
-            error!("Xi-Update sender disconnected");
-        }));
+        std::thread::spawn(
+            clone!(@strong edit_view.line_cache as linecache, @strong edit_view.update_sender as _sender => move || {
+                while let Ok(update) =  update_recv.recv() {
+                    linecache.lock().update(update);
+                }
+                info!("Xi-Update sender disconnected");
+            }),
+        );
 
-        gschema.connect_changed(enclose!((gschema, edit_view) move |_, key| {
-        trace!("Key '{}' has changed!", key);
-        if key == "tab-size" {
-                let val = gschema.get("tab-size");
-                edit_view.set_default_tab_size(val);
-            }
-        }));
+        // Don't panic here - this will be invoked on shutdown after the `EditView` has been destroyed already
+        // when saving the window state.
+        gschema.connect_changed(
+            clone!(@weak gschema, @weak edit_view => @default-return (), move |_, key| {
+            trace!("Key '{}' has changed!", key);
+            if key == "tab-size" {
+                    let val = gschema.get("tab-size");
+                    edit_view.set_default_tab_size(val);
+                }
+            }),
+        );
 
         edit_view
             .view_item
@@ -153,7 +159,7 @@ impl EditView {
     }
 
     fn connect_im_events(edit_view: &Rc<EditView>, im_context: &IMContextSimple) {
-        im_context.connect_commit(enclose!((edit_view) move |_, text| {
+        im_context.connect_commit(clone!(@weak edit_view => @default-panic, move |_, text| {
             let _ = edit_view.core.insert(edit_view.view_id, text);
         }));
     }
@@ -1257,7 +1263,7 @@ impl EditView {
 
         //TODO: Spawn a future on glib's mainloop instead once that is stable.
         std::thread::spawn(
-            enclose!((self.core => core, self.view_id => view_id) move || {
+            clone!(@strong self.core as core, @strong self.view_id as view_id => move || {
                 let board_future = core.cut(view_id);
 
                 let val = tokio::runtime::current_thread::block_on_all(board_future).unwrap();
@@ -1284,7 +1290,7 @@ impl EditView {
 
         //TODO: Spawn a future on glib's mainloop instead once that is stable.
         std::thread::spawn(
-            enclose!((self.core => core, self.view_id => view_id) move || {
+            clone!(@strong self.core as core, @strong self.view_id as view_id => move || {
                 let board_future = core.copy(view_id);
 
                 let val = tokio::runtime::current_thread::block_on_all(board_future).unwrap();
@@ -1310,7 +1316,7 @@ impl EditView {
 
         //TODO: Spawn a future on glib's mainloop instead once that is stable.
         std::thread::spawn(
-            enclose!((self.core => core, self.view_id => view_id) move || {
+            clone!(@strong self.core as core, @strong self.view_id as view_id => move || {
                 let board_future = core.copy(view_id);
 
                 let val = tokio::runtime::current_thread::block_on_all(board_future).unwrap();
@@ -1324,7 +1330,7 @@ impl EditView {
         debug!("Pasting text");
 
         Clipboard::get(&SELECTION_CLIPBOARD).request_text(
-            enclose!((self.core => core, self.view_id => view_id) move |_, text| {
+            clone!(@strong self.core as core, @strong self.view_id as view_id => move |_, text| {
                 if let Some(clip_content) = text {
                     let _ = core.insert(view_id, clip_content);
                 }
@@ -1336,7 +1342,7 @@ impl EditView {
         debug!("Pasting primary text");
 
         Clipboard::get(&SELECTION_PRIMARY).request_text(
-            enclose!((self.core => core, self.view_id => view_id) move |_, text| {
+            clone!(@strong self.core as core, @strong self.view_id as view_id => move |_, text| {
                 let _ = core.click_point_select(view_id, line, col);
                 if let Some(clip_content) = text {
                     let _ = core.insert(view_id, clip_content);

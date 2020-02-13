@@ -66,9 +66,6 @@
 // because we use the same println! for all of these.
 #![allow(clippy::if_same_then_else)]
 
-#[macro_use]
-extern crate enclose;
-
 mod about_win;
 mod errors;
 mod frontend;
@@ -91,7 +88,7 @@ use futures::{future, future::Future};
 use gettextrs::{gettext, TextDomain, TextDomainError};
 use gio::prelude::*;
 use gio::ApplicationFlags;
-use glib::{Char, MainContext};
+use glib::{clone, Char, MainContext};
 use gtk::Application;
 use log::{debug, error, info, max_level as log_level, warn, LevelFilter};
 use parking_lot::Mutex;
@@ -138,7 +135,7 @@ fn main() {
     let runtime_opt = Rc::new(RefCell::new(None));
 
     application.connect_startup(
-        enclose!((core_opt, application, event_rx_opt, event_tx, runtime_opt) move |_| {
+        clone!(@strong core_opt, @strong application, @strong event_rx_opt, @strong event_tx, @strong runtime_opt => move |_| {
             debug!("Starting Tau");
 
             // The channel to send the result of a request back to Xi
@@ -148,7 +145,7 @@ fn main() {
 
             let mut runtime = Runtime::new().unwrap();
 
-            let core_res = runtime.block_on(future::lazy(enclose!((request_tx, core_opt, event_tx) move || {
+            let core_res = runtime.block_on(future::lazy(clone!(@strong request_tx, @strong core_opt, @strong event_tx => move || {
                 let res = spawn_xi(
                     crate::globals::XI_PATH.unwrap_or("xi-core"),
                     TauFrontendBuilder {
@@ -236,7 +233,7 @@ fn main() {
         }),
     );
 
-    application.connect_activate(enclose!((core_opt, event_tx => new_view_tx, runtime_opt) move |_| {
+    application.connect_activate(clone!(@strong core_opt, @strong event_tx as new_view_tx, @strong runtime_opt => move |_| {
         debug!("Activating new view");
 
         // It's fine to unwrap here - we already made sure this is Some in connect_startup.
@@ -249,7 +246,7 @@ fn main() {
                 for file in paths {
                     if Path::new(&file).exists() {
                         runtime_opt.borrow_mut().as_mut().unwrap().spawn(
-                            future::lazy(enclose!((core, new_view_tx) move || {
+                            future::lazy(clone!(@strong core, @strong new_view_tx => move || {
                                 core
                                 .new_view(Some(file.clone()))
                                 .then(|res|
@@ -273,7 +270,7 @@ fn main() {
                 }
         } else {
             runtime_opt.borrow_mut().as_mut().unwrap().spawn(
-                future::lazy(enclose!((core, new_view_tx) move || {
+                future::lazy(clone!(@strong core, @strong new_view_tx => move || {
                     core
                     .new_view(None)
                     .then(|res|
@@ -296,7 +293,7 @@ fn main() {
     }));
 
     application.connect_open(
-        enclose!((core_opt, event_tx => new_view_tx, runtime_opt) move |_,files,_| {
+        clone!(@strong core_opt, @strong event_tx as new_view_tx, @strong runtime_opt => move |_,files,_| {
             debug!("Opening new file");
 
             // See above for why it's fine to unwrap here.
@@ -309,7 +306,7 @@ fn main() {
                     for file in paths {
                         if Path::new(&file).exists() {
                             runtime_opt.borrow_mut().as_mut().unwrap().spawn(
-                                future::lazy(enclose!((core, new_view_tx) move || {
+                                future::lazy(clone!(@strong core, @strong new_view_tx => move || {
                                     core
                                     .new_view(Some(file.clone()))
                                     .then(|res|
@@ -341,7 +338,7 @@ fn main() {
 
             for file in paths {
                 runtime_opt.borrow_mut().as_mut().unwrap().spawn(
-                    future::lazy(enclose!((core, new_view_tx) move || {
+                    future::lazy(clone!(@strong core, @strong new_view_tx => move || {
                         core
                         .new_view(Some(file.clone()))
                         .then(|res|
@@ -363,7 +360,7 @@ fn main() {
             }
         }));
 
-    application.connect_shutdown(enclose!((runtime_opt)move |_| {
+    application.connect_shutdown(clone!(@strong runtime_opt => move |_| {
         debug!("Shutting down…");
         if let Some(runtime) = runtime_opt.borrow_mut().take() {
             runtime.shutdown_now().wait().unwrap();

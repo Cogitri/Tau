@@ -1,4 +1,5 @@
 use gio::prelude::*;
+use glib::clone;
 use gtk::prelude::*;
 use gtk::{ButtonsType, DialogFlags, MessageDialog, MessageType};
 use log::error;
@@ -51,7 +52,7 @@ impl ErrorDialog {
             &err_msg.msg,
         );
 
-        err_dialog.connect_response(enclose!((err_msg) move |err_dialog, _| {
+        err_dialog.connect_response(clone!(@strong err_msg => move |err_dialog, _| {
             err_dialog.destroy();
 
             if err_msg.fatal {

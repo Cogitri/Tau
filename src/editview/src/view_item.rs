@@ -3,7 +3,7 @@ use gdk::{Cursor, CursorType, DisplayManager, WindowExt};
 use gettextrs::gettext;
 use gio::prelude::*;
 use gio::Resource;
-use glib::Bytes;
+use glib::{clone, Bytes};
 use gtk::prelude::*;
 use gtk::{
     Adjustment, Box, Builder, Button, CheckButton, EventBox, GestureDrag, GestureZoom, Grid,
@@ -139,23 +139,25 @@ impl ViewItem {
             edit_view.view_id,
         );
 
-        self.ev_scrolled_window
-            .connect_button_press_event(enclose!((edit_view) move |_,eb| {
+        self.ev_scrolled_window.connect_button_press_event(
+            clone!(@weak edit_view => @default-panic, move |_,eb| {
                 edit_view.handle_button_press(eb)
-            }));
+            }),
+        );
 
         self.edit_area
-            .connect_draw(enclose!((edit_view) move |_,ctx| {
+            .connect_draw(clone!(@weak edit_view => @default-panic, move |_,ctx| {
                 edit_view.handle_da_draw(ctx)
             }));
 
-        self.ev_scrolled_window
-            .connect_key_press_event(enclose!((edit_view) move |_, ek| {
+        self.ev_scrolled_window.connect_key_press_event(
+            clone!(@weak edit_view => @default-panic, move |_, ek| {
                 edit_view.handle_key_press_event(ek)
-            }));
+            }),
+        );
 
         self.gestures.drag.connect_drag_begin(
-            enclose!((self.gestures.drag_data => drag_data) move |_, start_x, start_y| {
+            clone!(@weak self.gestures.drag_data as drag_data => @default-panic, move |_, start_x, start_y| {
                 let new_data = DragData {
                     start_x,
                     start_y,
@@ -165,14 +167,14 @@ impl ViewItem {
         );
 
         self.gestures.drag.connect_drag_update(
-            enclose!((edit_view, self.gestures.drag_data => drag_data) move |_, offset_x, offset_y| {
+            clone!(@weak edit_view, @weak self.gestures.drag_data as drag_data => @default-panic, move |_, offset_x, offset_y| {
                 let drag_data = drag_data.borrow();
                 edit_view.handle_drag(drag_data.start_x + offset_x, drag_data.start_y + offset_y);
             }),
         );
 
         self.gestures.drag.connect_drag_end(
-            enclose!((edit_view, self.gestures.drag_data => drag_data) move |_, offset_x, offset_y| {
+            clone!(@weak edit_view, @weak self.gestures.drag_data as drag_data => @default-panic, move |_, offset_x, offset_y| {
                 let drag_data = drag_data.borrow();
                 edit_view.handle_drag(drag_data.start_x + offset_x, drag_data.start_y + offset_y);
                 edit_view.do_copy_primary();
@@ -190,22 +192,23 @@ impl ViewItem {
             w.grab_focus();
         });
 
-        self.edit_area
-            .connect_size_allocate(enclose!((edit_view) move |_,alloc| {
+        self.edit_area.connect_size_allocate(
+            clone!(@weak edit_view => @default-panic, move |_,alloc| {
                 debug!("Size changed to: Width: '{}'; Height: '{}'", alloc.width, alloc.height);
                 edit_view.da_size_allocate(alloc.width, alloc.height);
                 edit_view.do_resize(alloc.width, alloc.height);
-            }));
+            }),
+        );
 
         self.linecount
-            .connect_draw(enclose!((edit_view) move |_,ctx| {
+            .connect_draw(clone!(@weak edit_view => @default-panic, move |_,ctx| {
                 edit_view.handle_linecount_draw(ctx)
             }));
 
         self.statusbar
             .syntax_treeview
             .get_selection()
-            .connect_changed(enclose!((edit_view) move |ts| {
+            .connect_changed(clone!(@weak edit_view => @default-panic, move |ts| {
                 if let Some(syntax_tup) = ts.get_selected() {
                     let selected_syntax =  syntax_tup.0.get_value(&syntax_tup.1, 0);
                     if let Ok(Some(lang)) = selected_syntax.get::<&str>() {
@@ -226,9 +229,8 @@ impl ViewItem {
                 }
             }));
 
-        self.statusbar
-            .tab_size_button
-            .connect_value_changed(enclose!((edit_view) move |sb| {
+        self.statusbar.tab_size_button.connect_value_changed(
+            clone!(@weak edit_view => @default-panic, move |sb| {
                 // We only allow vals that fit in a u32 via es_tab_size_spinbutton_adj
                 let val = sb.get_value() as u32;
                 edit_view.view_item.statusbar.tab_width_label.set_text(
@@ -252,12 +254,11 @@ impl ViewItem {
                 );
 
                 edit_view.view_item.edit_area.queue_draw();
-            }));
+            }),
+        );
 
-        self.statusbar
-            .insert_spaces_button
-            .connect_toggled(enclose!(
-                (edit_view) move | tb | {
+        self.statusbar.insert_spaces_button.connect_toggled(
+            clone!(@weak edit_view => @default-panic, move | tb | {
                     let val = tb.get_active();
                     let _ = edit_view.core.notify(
                         "modify_user_config",
@@ -267,12 +268,11 @@ impl ViewItem {
                         }),
                     );
                 }
-            ));
+            ),
+        );
 
-        self.statusbar
-            .auto_indention_button
-            .connect_toggled(enclose!(
-                (edit_view) move | tb | {
+        self.statusbar.auto_indention_button.connect_toggled(
+            clone!(@weak edit_view => @default-panic, move | tb | {
                     let val = tb.get_active();
                     let _ = edit_view.core.notify(
                         "modify_user_config",
@@ -282,24 +282,25 @@ impl ViewItem {
                         }),
                     );
                 }
-            ));
+            ),
+        );
 
         self.ev_scrolled_window
             .get_vadjustment()
             .unwrap()
-            .connect_value_changed(enclose!((edit_view) move |_| {
+            .connect_value_changed(clone!(@weak edit_view => @default-panic, move |_| {
                 edit_view.update_visible_scroll_region();
             }));
 
         // Make scrolling possible even when scrolling on the linecount
         self.linecount
-            .connect_scroll_event(enclose!((edit_view) move |_,es| {
+            .connect_scroll_event(clone!(@weak edit_view => @default-panic, move |_,es| {
                     edit_view.view_item.ev_scrolled_window.emit("scroll-event", &[&es.to_value()]).unwrap();
                     Inhibit(false)
             }));
 
         self.gestures
-            .zoom.connect_scale_changed(enclose!((edit_view) move |_, factor| {
+            .zoom.connect_scale_changed(clone!(@weak edit_view => @default-panic, move |_, factor| {
                 let gschema = { edit_view.main_state.borrow().settings.gschema.clone() };
                 let font_desc = &edit_view.edit_font.borrow().font_desc;
                 // The factor is between ~0.1 and ~2.0 usually. It's updated every time the position of the user's finger changes,
@@ -463,46 +464,51 @@ impl FindReplace {
             ev.view_id
         );
 
-        self.popover.connect_event(enclose!((ev) move |_, event| {
-            ev.find_replace.search_bar.handle_event(event);
+        self.popover
+            .connect_event(clone!(@weak ev => @default-panic, move |_, event| {
+                ev.find_replace.search_bar.handle_event(event);
 
-            Inhibit(false)
-        }));
+                Inhibit(false)
+            }));
 
-        self.popover.connect_closed(enclose!((ev) move |_| {
-            ev.stop_search();
-            ev.stop_replace();
-        }));
+        self.popover
+            .connect_closed(clone!(@weak ev => @default-panic, move |_| {
+                ev.stop_search();
+                ev.stop_replace();
+            }));
 
-        self.show_replace_button
-            .connect_toggled(enclose!((ev) move |toggle_btn| {
+        self.show_replace_button.connect_toggled(
+            clone!(@weak ev => @default-panic, move |toggle_btn| {
                 if toggle_btn.get_active() {
                     ev.show_replace();
                 } else {
                     ev.hide_replace();
                 }
-            }));
+            }),
+        );
 
-        self.show_options_button
-            .connect_toggled(enclose!((ev) move |toggle_btn| {
+        self.show_options_button.connect_toggled(
+            clone!(@weak ev => @default-panic, move |toggle_btn| {
                 if toggle_btn.get_active() {
                     ev.show_findreplace_opts();
                 } else {
                     ev.hide_findreplace_opts();
                 }
-            }));
+            }),
+        );
 
         self.search_bar.connect_entry(&self.search_entry);
 
-        self.search_bar
-            .connect_property_search_mode_enabled_notify(enclose!((ev) move |sb| {
+        self.search_bar.connect_property_search_mode_enabled_notify(
+            clone!(@weak ev => @default-panic, move |sb| {
                 if ! sb.get_search_mode() {
                     ev.stop_search();
                 }
-            }));
+            }),
+        );
 
         self.search_entry
-            .connect_search_changed(enclose!((ev) move |w| {
+            .connect_search_changed(clone!(@weak ev => @default-panic, move |w| {
                 if let Some(text) = w.get_text() {
                     ev.search_changed(Some(text.to_string()));
                 } else {
@@ -511,17 +517,17 @@ impl FindReplace {
             }));
 
         self.replace_entry
-            .connect_next_match(enclose!((ev) move |_| {
+            .connect_next_match(clone!(@weak ev => @default-panic, move |_| {
                 ev.find_next();
             }));
 
         self.replace_entry
-            .connect_previous_match(enclose!((ev) move |_| {
+            .connect_previous_match(clone!(@weak ev => @default-panic, move |_| {
                 ev.find_prev();
             }));
 
         self.replace_entry
-            .connect_stop_search(enclose!((ev) move |_| {
+            .connect_stop_search(clone!(@weak ev => @default-panic, move |_| {
                 ev.stop_replace();
             }));
 
@@ -535,42 +541,46 @@ impl FindReplace {
         };
 
         self.use_regex_button
-            .connect_toggled(enclose!((ev) move |_| restart_search(&ev)));
+            .connect_toggled(clone!(@weak ev => @default-panic, move |_| restart_search(&ev)));
 
         self.whole_word_button
-            .connect_toggled(enclose!((ev) move |_| restart_search(&ev)));
+            .connect_toggled(clone!(@weak ev => @default-panic, move |_| restart_search(&ev)));
 
         self.case_sensitive_button
-            .connect_toggled(enclose!((ev) move |_| restart_search(&ev)));
-
-        self.search_entry.connect_activate(enclose!((ev) move |_| {
-            ev.find_next();
-        }));
+            .connect_toggled(clone!(@weak ev => @default-panic, move |_| restart_search(&ev)));
 
         self.search_entry
-            .connect_stop_search(enclose!((ev) move |_| {
+            .connect_activate(clone!(@weak ev => @default-panic, move |_| {
+                ev.find_next();
+            }));
+
+        self.search_entry
+            .connect_stop_search(clone!(@weak ev => @default-panic, move |_| {
                 ev.stop_search();
             }));
 
-        self.replace_button.connect_clicked(enclose!((ev) move |_| {
-            ev.replace();
-        }));
+        self.replace_button
+            .connect_clicked(clone!(@weak ev => @default-panic, move |_| {
+                ev.replace();
+            }));
 
         self.replace_all_button
-            .connect_clicked(enclose!((ev) move |_| {
+            .connect_clicked(clone!(@weak ev => @default-panic, move |_| {
                 ev.replace_all();
             }));
 
-        self.go_down_button.connect_clicked(enclose!((ev) move |_| {
-            ev.find_next();
-        }));
+        self.go_down_button
+            .connect_clicked(clone!(@weak ev => @default-panic, move |_| {
+                ev.find_next();
+            }));
 
-        self.go_up_button.connect_clicked(enclose!((ev) move |_| {
-            ev.find_prev();
-        }));
+        self.go_up_button
+            .connect_clicked(clone!(@weak ev => @default-panic, move |_| {
+                ev.find_prev();
+            }));
 
         self.find_all_button
-            .connect_clicked(enclose!((ev) move |_| {
+            .connect_clicked(clone!(@weak ev => @default-panic, move |_| {
                 ev.find_all();
             }));
     }

@@ -4,7 +4,7 @@ use editview::MainState;
 use gettextrs::gettext;
 use gio::prelude::*;
 use gio::{Settings, SettingsBindFlags};
-use glib::GString;
+use glib::{clone, GString};
 use gtk::prelude::*;
 use gtk::{
     ApplicationWindow, Builder, Button, ComboBoxText, Entry, FontChooserWidget, Image, RadioButton,
@@ -112,26 +112,23 @@ impl PrefsWin {
 
         let font_desc: &String = &gschema.get("font");
         font_chooser_widget.set_font_desc(&FontDescription::from_string(font_desc));
-        font_chooser_widget.connect_property_font_desc_notify(
-            enclose!((font_chooser_widget) move |_| {
-                    match font_chooser_widget.get_font_size() / pango::SCALE {
-                        size if size < 6 => {
-                            if let Some(mut desc) = font_chooser_widget.get_font_desc() {
-                                desc.set_size(6 * pango::SCALE);
-                                font_chooser_widget.set_font_desc(&desc);
-                            }
-                        },
-                        size if size > 72 => {
-                            if let Some(mut desc) = font_chooser_widget.get_font_desc() {
-                                desc.set_size(72 * pango::SCALE);
-                                font_chooser_widget.set_font_desc(&desc);
-                            }
-                        },
-                        _ => (),
+        font_chooser_widget.connect_property_font_desc_notify(move |font_chooser_widget| {
+            match font_chooser_widget.get_font_size() / pango::SCALE {
+                size if size < 6 => {
+                    if let Some(mut desc) = font_chooser_widget.get_font_desc() {
+                        desc.set_size(6 * pango::SCALE);
+                        font_chooser_widget.set_font_desc(&desc);
                     }
                 }
-            ),
-        );
+                size if size > 72 => {
+                    if let Some(mut desc) = font_chooser_widget.get_font_desc() {
+                        desc.set_size(72 * pango::SCALE);
+                        font_chooser_widget.set_font_desc(&desc);
+                    }
+                }
+                _ => (),
+            }
+        });
 
         {
             let main_state = main_state.borrow();
@@ -170,20 +167,22 @@ impl PrefsWin {
             }
         }
 
-        theme_combo_box.connect_changed(enclose!((core, main_state, gschema) move |cb|{
-            if let Some(theme_name) = cb.get_active_text() {
-                let theme_name = theme_name.to_string();
-                debug!("Theme changed to '{}'", &theme_name);
-                let _ =  core.set_theme(&theme_name);
+        theme_combo_box.connect_changed(
+            clone!(@strong core, @weak main_state, @weak gschema => @default-panic, move |cb|{
+                if let Some(theme_name) = cb.get_active_text() {
+                    let theme_name = theme_name.to_string();
+                    debug!("Theme changed to '{}'", &theme_name);
+                    let _ =  core.set_theme(&theme_name);
 
-                gschema.set("theme-name", &theme_name).unwrap();
+                    gschema.set("theme-name", &theme_name).unwrap();
 
-                let mut main_state = main_state.borrow_mut();
-                main_state.theme_name = theme_name;
-            }
-        }));
+                    let mut main_state = main_state.borrow_mut();
+                    main_state.theme_name = theme_name;
+                }
+            }),
+        );
 
-        margin_switch.connect_state_set(enclose!((margin_spinbutton) move |_, state| {
+        margin_switch.connect_state_set(clone!(@strong margin_spinbutton => move |_, state| {
             margin_spinbutton.set_sensitive(state);
             Inhibit(false)
         }));
@@ -349,11 +348,11 @@ impl PrefsWin {
             SettingsBindFlags::DEFAULT,
         );
 
-        syntax_config_combo_box.connect_changed(enclose!((
-            syntax_config_insert_spaces_switch,
-            syntax_config_tab_size_spinbutton,
-            syntax_config,
-            ) move |cb| {
+        syntax_config_combo_box.connect_changed(clone!(
+            @strong syntax_config_insert_spaces_switch,
+            @strong syntax_config_tab_size_spinbutton,
+            @strong syntax_config
+            => move |cb| {
                 if let Some(lang) = cb.get_active_text() {
                     syntax_config_set_buttons(
                         lang.as_str(),
@@ -366,14 +365,14 @@ impl PrefsWin {
         ));
 
         syntax_config_apply_button.connect_clicked(
-            enclose!((
-                syntax_config_combo_box,
-                syntax_config_insert_spaces_switch,
-                syntax_config_tab_size_switch,
-                syntax_config_tab_size_spinbutton,
-                syntax_config,
-                gschema,
-                ) move |_| {
+            clone!(
+                @strong syntax_config_combo_box,
+                @strong syntax_config_insert_spaces_switch,
+                @strong syntax_config_tab_size_switch,
+                @strong syntax_config_tab_size_spinbutton,
+                @strong syntax_config,
+                @weak gschema
+                => @default-panic, move |_| {
                     if let Some(lang) = syntax_config_combo_box.get_active_text() {
                         let tab_size = if syntax_config_tab_size_switch.get_active() {
                             Some(syntax_config_tab_size_spinbutton.get_value_as_int() as u32)
@@ -413,16 +412,14 @@ impl PrefsWin {
             )
         );
 
-        syntax_config_insert_spaces_switch.connect_property_active_notify(enclose!(
-            (syntax_config_insert_spaces_switch) move | sw | {
+        syntax_config_insert_spaces_switch.connect_property_active_notify(clone!(
+            @strong syntax_config_insert_spaces_switch => move | sw | {
                 syntax_config_insert_spaces_switch.set_sensitive(sw.get_active());
             }
         ));
 
-        syntax_config_tab_size_switch.connect_property_active_notify(enclose!(
-            (
-                syntax_config_tab_size_spinbutton
-            ) move | sw | {
+        syntax_config_tab_size_switch.connect_property_active_notify(clone!(
+            @strong syntax_config_tab_size_spinbutton => move | sw | {
                     let active = sw.get_active();
                     syntax_config_tab_size_spinbutton.set_sensitive(active);
                 }

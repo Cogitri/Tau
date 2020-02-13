@@ -17,7 +17,6 @@ chrono = "0.4"
 crossbeam-channel = "0.4"
 dirs = "2"
 editview = { path="../editview" }
-enclose = "1"
 env_logger = "0.7"
 futures = "0.1"
 gdk = ""

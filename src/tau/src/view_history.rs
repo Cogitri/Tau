@@ -1,6 +1,6 @@
 use gdk::enums::key;
 use glib::object::{ObjectExt, WeakRef};
-use glib::SignalHandlerId;
+use glib::{clone, SignalHandlerId};
 use gtk::prelude::*;
 use gtk::{Inhibit, Notebook, Widget};
 use log::debug;
@@ -88,21 +88,23 @@ impl ViewHistoryExt for Rc<RefCell<ViewHistory>> {
             if let Some(notebook) = view_history.parent.upgrade() {
                 if view_history.add_handler.is_none() {
                     view_history.add_handler = Some(notebook.connect_page_added(
-                        enclose!((self => vh) move |_, w, _| {
+                        clone!(@weak self as vh => @default-panic, move |_, w, _| {
                             vh.borrow_mut().book.push((*w).downgrade());
                         }),
                     ));
                 }
                 if view_history.remove_handler.is_none() {
-                    notebook.connect_page_removed(enclose!((self => vh) move |_, w, _| {
-                        vh.borrow_mut().book.retain(|x| {
-                            if let Some(listed_widget) = x.upgrade() {
-                                listed_widget != *w
-                            } else {
-                                false
-                            }
-                        });
-                    }));
+                    notebook.connect_page_removed(
+                        clone!(@weak self as vh => @default-panic, move |_, w, _| {
+                            vh.borrow_mut().book.retain(|x| {
+                                if let Some(listed_widget) = x.upgrade() {
+                                    listed_widget != *w
+                                } else {
+                                    false
+                                }
+                            });
+                        }),
+                    );
                 }
             }
         }
@@ -120,7 +122,7 @@ impl ViewHistoryExt for Rc<RefCell<ViewHistory>> {
 
             // register switch handler
             view_history.switch_handler = Some(notebook.connect_switch_page(
-                enclose!((self => vh) move |_, w, _| {
+                clone!(@weak self as vh => @default-panic, move |_, w, _| {
                     vh.update(w);
                 }),
             ));
@@ -205,7 +207,7 @@ impl ViewHistoryExt for Rc<RefCell<ViewHistory>> {
                 // register stop handler
                 if view_history.stop_handler == None {
                     view_history.stop_handler = Some(notebook.connect_key_release_event(
-                        enclose!((self => vh) move |_, ek| {
+                        clone!(@weak self as vh => @default-panic, move |_, ek| {
                             match ek.get_keyval() {
                                 key::Control_L | key::Control_R => {
                                     vh.write_history();

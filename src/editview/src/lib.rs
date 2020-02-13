@@ -1,8 +1,5 @@
 #![deny(clippy::all)]
 
-#[macro_use]
-extern crate enclose;
-
 pub mod draw_invisible;
 pub mod edit_view;
 pub mod fonts;

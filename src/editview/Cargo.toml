@@ -15,7 +15,6 @@ build = "build.rs"
 [dependencies]
 cairo-rs = ""
 crossbeam-channel = "0.4"
-enclose = "1"
 futures = "0.1"
 gdk = ""
 gettext-rs = { version="0.4", features=["gettext-system"] }
