@@ -817,7 +817,7 @@ impl EditView {
         // Find the end index of the last style first
         let mut end_index = 0u32;
         for style in &line.styles {
-            end_index += (style.offset + style.length as i64) as u32;
+            end_index = (end_index as i64 + (style.offset + style.length as i64)) as u32;
         }
 
         let attr_list = pango::AttrList::new();
