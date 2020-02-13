@@ -391,6 +391,38 @@
         </child>
         <child>
           <object class="HdyPreferencesGroup">
+            <property name="title" translatable="yes">Terminal</property>
+            <property name="visible">True</property>
+            <child>
+              <object class="HdyActionRow">
+                <property name="title" translatable="yes">Show the embedded terminal on startup</property>
+                <property name="visible">True</property>
+                <property name="activatable_widget">show_terminal_switch</property>
+                <child type="action">
+                  <object class="GtkSwitch" id="show_terminal_switch">
+                    <property name="visible">True</property>
+                    <property name="valign">center</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="HdyActionRow">
+                <property name="title" translatable="yes">What shell to start</property>
+                <property name="visible">True</property>
+                <property name="activatable_widget">terminal_path_entry</property>
+                <child type="action">
+                  <object class="GtkEntry" id="terminal_path_entry">
+                    <property name="visible">True</property>
+                    <property name="valign">center</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="HdyPreferencesGroup">
             <property name="title" translatable="yes">Highlighting spaces</property>
             <property name="visible">True</property>
             <child>

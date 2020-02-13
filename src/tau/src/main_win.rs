@@ -1544,7 +1544,7 @@ impl MainWinExt for Rc<MainWin> {
                     }
                 }
                 // Valid keys, but no immediate action to be taken
-                "window-height" | "window-width" | "window-maximized" | "save-when-out-of-focus" | "session" => {}
+                "window-height" | "window-width" | "window-maximized" | "save-when-out-of-focus" | "session" | "terminal-path" => {}
                 key => {
                     error!("Unknown GSettings key change event '{}'. Please make sure your GSchema is up-to-date.", key);
                 }

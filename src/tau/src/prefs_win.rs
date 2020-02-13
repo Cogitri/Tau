@@ -7,7 +7,7 @@ use gio::{Settings, SettingsBindFlags};
 use glib::GString;
 use gtk::prelude::*;
 use gtk::{
-    ApplicationWindow, Builder, Button, ComboBoxText, FontChooserWidget, Image, RadioButton,
+    ApplicationWindow, Builder, Button, ComboBoxText, Entry, FontChooserWidget, Image, RadioButton,
     SpinButton, Switch,
 };
 use log::{debug, error, trace};
@@ -109,6 +109,9 @@ impl PrefsWin {
             .unwrap();
         let syntax_config_apply_button: Button =
             builder.get_object("syntax_config_apply_button").unwrap();
+
+        let show_terminal_switch: Switch = builder.get_object("show_terminal_switch").unwrap();
+        let terminal_path_entry: Entry = builder.get_object("terminal_path_entry").unwrap();
 
         let syntax_changes = gschema.get_strv("syntax-config");
         let syntax_config: HashMap<String, SyntaxParams> = syntax_changes
@@ -345,6 +348,20 @@ impl PrefsWin {
             "full-title",
             &full_title_switch,
             "active",
+            SettingsBindFlags::DEFAULT,
+        );
+
+        gschema.bind(
+            "show-terminal",
+            &show_terminal_switch,
+            "active",
+            SettingsBindFlags::DEFAULT,
+        );
+
+        gschema.bind(
+            "terminal-path",
+            &terminal_path_entry,
+            "text",
             SettingsBindFlags::DEFAULT,
         );
 
