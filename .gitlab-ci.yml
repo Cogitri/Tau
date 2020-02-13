@@ -46,9 +46,9 @@ test-native:
     - unzip 1.050R-it.zip
     - cp source-code-pro-*-it/OTF/*.otf ~/.fonts/
     - fc-cache -f -v
-    - wget https://gitlab.gnome.org/Community/Purism/libhandy/-/archive/v0.0.10/libhandy-v0.0.10.tar.gz
-    - tar xf libhandy-v0.0.10.tar.gz
-    - cd libhandy-v0.0.10
+    - wget https://gitlab.gnome.org/Community/Purism/libhandy/-/archive/v0.0.13/libhandy-v0.0.13.tar.gz
+    - tar xf libhandy-v0.0.13.tar.gz
+    - cd libhandy-v0.0.13
     - meson -Dprofiling=false -Dintrospection=enabled -Dgtk_doc=false -Dtests=false -Dexamples=false -Dvapi=false -Dglade_vatalog=disabled build
     - ninja -C build install
     - popd
