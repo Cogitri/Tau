@@ -433,8 +433,6 @@ impl FindReplace {
         let show_options_button = builder.get_object("show_options_button").unwrap();
 
         popover.set_position(PositionType::Bottom);
-        #[cfg(not(feature = "gtk_v3_22"))]
-        popover.set_transitions_enabled(true);
         popover.set_relative_to(Some(btn));
 
         Self {

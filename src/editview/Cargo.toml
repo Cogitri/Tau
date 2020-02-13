@@ -12,11 +12,6 @@ description = "The EditView GTK widget, backed by Xi"
 readme = "README.md"
 build = "build.rs"
 
-[features]
-default = []
-
-gtk_v3_22 = ["gtk/v3_22"]
-
 [dependencies]
 cairo-rs = ""
 crossbeam-channel = "0.4"

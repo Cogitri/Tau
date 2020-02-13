@@ -3,11 +3,6 @@ option('xi-core',
   type: 'combo',
   choices: ['auto', 'builtin', 'system'],
 )
-option('libhandy',
-  description: 'Enable libhandy integration, offering mobile view compatibility and generally fancier widgets',
-  type: 'combo',
-  choices: ['auto', 'enabled', 'disabled'],
-)
 
 option('profile',
   description: 'Which profile to build for (development enables debugging&changes App ID, allowing parallel execution of different profiles)',

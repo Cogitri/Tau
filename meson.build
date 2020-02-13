@@ -8,7 +8,8 @@ dependency('glib-2.0', version: '>= 2.38')
 dependency('gio-2.0', version: '>= 2.38')
 dependency('cairo', version: '>= 1')
 dependency('pango', version: '>=1.38')
-dependency('gtk+-3.0', version: '>= 3.20')
+dependency('gtk+-3.0', version: '>= 3.24')
+dependency('libhandy-0.0', version: '>=0.0.10')
 
 tau_prefix = get_option('prefix')
 tau_bindir = join_paths(tau_prefix, get_option('bindir'))
@@ -64,37 +65,6 @@ conf = configuration_data()
 
 conf.set('application_id', application_id)
 
-gtk3_22 = 'false'
-
-libhandy_opt = get_option('libhandy')
-
-# Check for libhandy. It needs GTK+3.24 which lots of stable distros (e.g. Debian, Ubuntu LTS) don't
-# ship yet. If libhandy is found we're guarenteed to have GTK 3.22.
-if libhandy_opt == 'auto'
-  libhandy_dep = dependency('libhandy-0.0', version: '>=0.0.10', required: false)
-  if libhandy_dep.found()
-    message('Found libhandy, enabling mobile support and fancier widgets')
-    libhandy_opt = 'enabled'
-    gtk3_22 = 'true'
-  else
-    message('Couldn\'t find libhandy, disabling mobile support and fancier widgets. Please install libhandy if possible')
-    libhandy_opt = 'disabled'
-    opt_gtk3_22_dep = dependency('gtk+-3.0', version: '>= 3.22', required: false)
-  endif
-elif libhandy_opt == 'enabled'
-  dependency('libhandy-0.0', version: '>=0.0.10')
-  gtk3_22 = 'true'
-else
-  # This is only used to decide what transition code to use for the search/replace Popover
-  opt_gtk3_22_dep = dependency('gtk+-3.0', version: '>= 3.22', required: false)
-endif
-
-# We may already set it to true above since libhandy needs GTK+3.24.1, so we're guarenteed
-# to have >=3.22 already.
-if gtk3_22 == 'false' and opt_gtk3_22_dep.found()
-    gtk3_22='true'
-endif
-
 sources = files(
   'src/editview/src/main_state.rs',
   'src/editview/src/edit_view.rs',
@@ -119,11 +89,9 @@ sources = files(
   'src/tau/src/shortcuts_win.rs',
   'src/tau/src/ui/shortcuts_win.glade',
   'src/tau/src/ui/tau.glade',
-  'src/tau/src/ui/prefs_win.glade',
   'src/tau/src/ui/prefs_win_handy.glade',
   'src/tau/src/ui/tau.glade',
   'src/tau/src/ui/app.css',
-  'src/tau/src/ui/prefs_win.glade',
   'src/tau/src/ui/resources.xml',
   'Cargo.toml',
   'Cargo.lock',
@@ -169,8 +137,6 @@ if xi_opt == 'builtin'
                                     '@OUTPUT@',
                                     xi_vendor_target_dir,
                                     'xi-core',
-                                    '',
-                                    '',
                                     tau_plugin_dir,
                                     tau_localedir,
                                     meson.project_version(),
@@ -206,7 +172,6 @@ xi_syntect_plugin_dep = custom_target('cargo-build-syntect',
                                   '@OUTPUT@',
                                   xi_vendor_target_dir,
                                   'xi-syntect-plugin',
-                                  '',
                                   tau_plugin_dir,
                                   tau_localedir,
                                   meson.project_version(),
@@ -247,8 +212,6 @@ tau = custom_target('cargo-build-tau',
                                   '@OUTPUT@',
                                   meson.current_build_dir(),
                                   'tau',
-                                  gtk3_22,
-                                  libhandy_opt,
                                   tau_plugin_dir,
                                   tau_localedir,
                                   version,

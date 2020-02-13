@@ -14,14 +14,14 @@ set -e
 
 # These variables are used by Tau itself in src/globals.rs
 # to decide where to look for certain system components
-export TAU_PLUGIN_DIR="${8}"
-export TAU_LOCALEDIR="${9}"
-export TAU_VERSION="${10}"
-export TAU_XI_BINARY_PATH="${11}"
-export GRESOURCE_BINARY_PATH="${12}"
-export TAU_APP_ID="${13}"
+export TAU_PLUGIN_DIR="${6}"
+export TAU_LOCALEDIR="${7}"
+export TAU_VERSION="${8}"
+export TAU_XI_BINARY_PATH="${9}"
+export GRESOURCE_BINARY_PATH="${10}"
+export TAU_APP_ID="${11}"
 # In case we're in development mode this will be "Tau (Development)"
-export TAU_NAME="${14}"
+export TAU_NAME="${12}"
 
 # ANSI codes for getting colors and resetting it
 RED='\033[0;31m'
@@ -30,11 +30,10 @@ NO_COLOR='\033[0m'
 
 echo -e \
 "
-\tBuild Mode:\t\t${GREEN}${15}${NO_COLOR}
+\tBuild Mode:\t\t${GREEN}${13}${NO_COLOR}
 \tTau Plugindir:\t\t${GREEN}${TAU_PLUGIN_DIR}${NO_COLOR}
 \tTau Localedir:\t\t${GREEN}${TAU_LOCALEDIR}${NO_COLOR}
 \tTau Version:\t\t${GREEN}${TAU_VERSION}${NO_COLOR}
-\tDetected GTK+3.22:\t${GREEN}${6}${NO_COLOR}
 "
 
 cd "$1"
@@ -44,14 +43,7 @@ if [ "$5" = "tau" ]; then
     manifest_path="--manifest-path=${1}/src/tau/Cargo.toml"
 fi
 
-# libhandy needs GTK3.24 so we're guarenteed to have >=3.22
-if [ "$7" = "enabled" ]; then
-    features="--features handy"
-elif [ "$6" = "true" ]; then
-    features="--features gtk_v3_22"
-fi
-
-if [ "${15}" = "development" ]; then
+if [ "${13}" = "development" ]; then
     cargo build --target-dir "${4}" ${manifest_path} ${features}
     
     # Cargo can place this here if we're crosscompiling

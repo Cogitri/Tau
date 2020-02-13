@@ -2,7 +2,6 @@
 <gresources>
   <gresource prefix="/org/gnome/Tau/">
       <file preprocess="xml-stripblanks">tau.glade</file>
-      <file preprocess="xml-stripblanks">prefs_win.glade</file>
       <file preprocess="xml-stripblanks">prefs_win_handy.glade</file>
       <file preprocess="xml-stripblanks">shortcuts_win.glade</file>
       <file alias="org.gnome.Tau.svg">../../../../data/icons/hicolor/scalable/apps/org.gnome.Tau.svg</file>

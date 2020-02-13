@@ -1054,10 +1054,7 @@ impl EditView {
                 self.do_paste_primary(line, col);
             }
             3 => {
-                #[cfg(feature = "gtk_v3_22")]
                 self.view_item.context_menu.popup_at_pointer(Some(&eb));
-                #[cfg(not(feature = "gtk_v3_22"))]
-                self.view_item.context_menu.popup_easy(3, eb.get_time());
             }
             _ => {}
         }
@@ -1367,10 +1364,7 @@ impl EditView {
             }
         } else {
             self.find_replace.search_bar.set_search_mode(true);
-            #[cfg(feature = "gtk_v3_22")]
             self.find_replace.popover.popup();
-            #[cfg(not(feature = "gtk_v3_22"))]
-            self.find_replace.popover.show();
             self.find_replace
                 .option_revealer
                 .set_reveal_child(self.find_replace.show_options_button.get_active());
@@ -1401,10 +1395,7 @@ impl EditView {
         } else {
             self.find_replace.show_replace_button.set_active(true);
             self.find_replace.search_bar.set_search_mode(true);
-            #[cfg(feature = "gtk_v3_22")]
             self.find_replace.popover.popup();
-            #[cfg(not(feature = "gtk_v3_22"))]
-            self.find_replace.popover.show();
             self.find_replace
                 .option_revealer
                 .set_reveal_child(self.find_replace.show_options_button.get_active());
@@ -1437,10 +1428,7 @@ impl EditView {
 
     /// Closes the find/replace dialog
     pub fn stop_search(&self) {
-        #[cfg(feature = "gtk_v3_22")]
         self.find_replace.popover.popdown();
-        #[cfg(not(feature = "gtk_v3_22"))]
-        self.find_replace.popover.hide();
         self.find_replace.show_replace_button.set_active(false);
         self.find_replace.show_options_button.set_active(false);
         self.find_replace.search_bar.set_search_mode(false);

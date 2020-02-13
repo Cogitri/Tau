@@ -11,13 +11,6 @@ license = "MIT"
 edition = "2018"
 build = "build.rs"
 
-[features]
-default = []
-
-gtk_v3_22 = ["gtk/v3_22", "editview/gtk_v3_22"]
-
-handy = ["libhandy", "gtk_v3_22"]
-
 [dependencies]
 cairo-rs = ""
 chrono = "0.4"
@@ -34,6 +27,7 @@ gio = ""
 glib = ""
 gtk = { version="0.8", features=["v3_20"] }
 human-panic = "1"
+libhandy = { git="https://gitlab.gnome.org/World/Rust/libhandy-rs.git", version = "0.5" }
 log = "0.4"
 pango = ""
 pangocairo = ""
@@ -44,6 +38,3 @@ syntect = "3"
 tokio = "0.1"
 vte-rs = { git="https://github.com/Cogitri/vte-rs", branch="regen" }
 xrl = "0.0.8"
-
-# Optional deps
-libhandy = { git="https://gitlab.gnome.org/World/Rust/libhandy-rs.git", version = "0.5", optional = true }
