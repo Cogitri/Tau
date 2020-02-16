@@ -38,6 +38,16 @@ modules:
       - type: archive
         url: https://gitlab.gnome.org/Community/Purism/libhandy/-/archive/v0.0.10/libhandy-v0.0.10.tar.gz
         sha256: 9f4528c07bdb9796300ff0efb165cdc48cfcd7f28952c9d776de15b735844981
+  - name: vte2.91
+    buildsystem: meson
+    config-opts:
+      - -Ddocs=false
+    build-options:
+      env: { CXXFLAGS: "-fno-exceptions" }
+    sources:
+      - type: archive
+        url: https://download.gnome.org/sources/vte/0.58/vte-0.58.3.tar.xz
+        sha256: 22dcb54ac2ad1a56ab0a745e16ccfeb383f0b5860b5bfa1784561216f98d4975
   - name: Tau
     buildsystem: meson
     config-opts:
