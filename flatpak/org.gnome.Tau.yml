@@ -36,8 +36,8 @@ modules:
       - -Dglade_catalog=disabled
     sources:
       - type: archive
-        url: https://gitlab.gnome.org/Community/Purism/libhandy/-/archive/v0.0.10/libhandy-v0.0.10.tar.gz
-        sha256: 9f4528c07bdb9796300ff0efb165cdc48cfcd7f28952c9d776de15b735844981
+        url: https://source.puri.sm/Librem5/libhandy/-/archive/v0.0.13/libhandy-v0.0.13.tar.gz
+        sha256: 138bec94e66d15a7a19350b65845d4529bcd969ea913ab3eb438f56fe47d5d37
   - name: vte2.91
     buildsystem: meson
     config-opts:
