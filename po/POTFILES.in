@@ -9,7 +9,6 @@ src/editview/src/ui/context_menu.glade
 src/editview/src/ui/ev.glade
 src/editview/src/ui/find_replace.glade
 src/tau/src/ui/shortcuts_win.glade
-src/tau/src/ui/prefs_win.glade
 src/tau/src/ui/prefs_win_handy.glade
 src/tau/src/ui/tau.glade
 
