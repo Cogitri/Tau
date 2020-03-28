@@ -68,6 +68,11 @@ You need the following dependencies installed:
 	* Pango >= 1.38
 	* Rust >= 1.36 # required for one of our deps
 
+On Ubuntu (>=19.10) you can install them with:
+```sh
+sudo apt install meson ninja-build libglib2.0-dev librust-cairo-sys-rs-dev librust-pangocairo-sys-dev librust-gtk+v3-24-dev libhandy-0.0-dev appstream-util libvte-2.91-dev gettext
+```
+
 You can enable optional functionality with the `libhandy` meson switch,
 like a more compact settings menu. You need the following dependencies
 installed for that:
