@@ -1,3 +1,32 @@
+## Changes in v0.11.0
+
+### Feature changes
+
+ - (tau): add settings for terminal to preferences window
+ - (tau): add terminals to tabs
+ - (tau): Allow setting a custom shell
+ - (tau): add terminal
+ - (tau): use libhandy widgets for syntax configuration
+ - (tau): make tab&space drawing preferences more friendly on mobile
+ - (tau): use HdyActionRow instead of HdyPrefenrecesRow where appropriate
+ - (tau): use GtkSwitch instead of GtkCheckButton
+ - (tau): squash preferences into two pages
+
+### Bugfixes
+
+ - (tau): fix numerous typos
+ - (editview): fix crashing on negative end_index
+ - (editview): redraw upon changing syntax or tab size
+ - (tau): only display the syntect warning if syntect is not available
+ - (tau): fix appearance of syntax configuration in PrefsWin
+ - (tau): fix setting margin_spinbutton's sensitivity upon flipping margin_switch
+ - (tau): use consistent capitalisation in titles
+ - (tau): Always use actually activatable widget for HdyActionRow
+ - (tau): fix hiding warning about syntect missing  when syntect is available
+ - (tau): fix alignment on syntect warnings in PrefsWin
+ - (tau): disable GtkNotebook's border
+ - (tau): sync titlebar properly on tab switch
+
 ## Changes in v0.10.2
 
 ### Feature changes

@@ -33,6 +33,44 @@
 	</provides>
 
 	<releases>
+		<release version="0.11.0" date="2020-03-29">
+			<p>
+				This is the first relase of Tau's 0.11 series. It mainly contains two new
+				features: a much improved settings view and a built-in terminal. Overall the
+				following feature changes have been done:
+			</p>
+
+			<ul>
+				<li>(tau): add settings for terminal to preferences window</li>
+				<li>(tau): add terminals to tabs</li>
+				<li>(tau): Allow setting a custom shell</li>
+				<li>(tau): add terminal</li>
+				<li>(tau): use libhandy widgets for syntax configuration</li>
+				<li>(tau): make tab&amp;space drawing preferences more friendly on mobile</li>
+				<li>(tau): use HdyActionRow instead of HdyPrefenrecesRow where appropriate</li>
+				<li>(tau): use GtkSwitch instead of GtkCheckButton</li>
+				<li>(tau): squash preferences into two pages</li>
+			</ul>
+
+			<p>
+				And the following bugfixes:
+			</p>
+
+			<ul>
+				<li>(tau): fix numerous typos</li>
+				<li>(editview): fix crashing on negative end_index</li>
+				<li>(editview): redraw upon changing syntax or tab size</li>
+				<li>(tau): only display the syntect warning if syntect is not available</li>
+				<li>(tau): fix appearance of syntax configuration in PrefsWin</li>
+				<li>(tau): fix setting margin_spinbutton's sensitivity upon flipping margin_switch</li>
+				<li>(tau): use consistent capitalisation in titles</li>
+				<li>(tau): Always use actually activatable widget for HdyActionRow</li>
+				<li>(tau): fix hiding warning about syntect missing  when syntect is available</li>
+				<li>(tau): fix alignment on syntect warnings in PrefsWin</li>
+				<li>(tau): disable GtkNotebook's border</li>
+				<li>(tau): sync titlebar properly on tab switch</li>
+			</ul>
+		</release>
 		<release version="0.10.2" date="2020-01-20">
 			<p>
 				This is the second patch relase of Tau's 0.10 series.
