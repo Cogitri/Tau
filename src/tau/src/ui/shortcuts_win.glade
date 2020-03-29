@@ -115,7 +115,7 @@
                         <child>
                             <object class="GtkShortcutsShortcut">
                                 <property name="accelerator">&lt;ctrl&gt;D</property>
-                                <property name="title" translatable="yes" context="shortcut window">Hightlight the next occurence of the current selection</property>
+                                <property name="title" translatable="yes" context="shortcut window">Highlight the next occurrence of the current selection</property>
                             </object>
                         </child>
                         <child>

@@ -28,7 +28,7 @@ pub struct EvBar {
     pub column_label: Label,
     list_model: ListStore,
     edit_settings_popover: Popover,
-    pub auto_indention_button: ToggleButton,
+    pub auto_indentation_button: ToggleButton,
     pub insert_spaces_button: ToggleButton,
     pub tab_size_button: SpinButton,
     pub tab_width_label: Label,
@@ -83,8 +83,8 @@ impl ViewItem {
             column_label: builder.get_object("column_label").unwrap(),
             list_model: builder.get_object("syntax_liststore").unwrap(),
             edit_settings_popover: builder.get_object("edit_settings_popover").unwrap(),
-            auto_indention_button: builder
-                .get_object("edit_settings_automatic_indention_checkbutton")
+            auto_indentation_button: builder
+                .get_object("edit_settings_automatic_indentation_checkbutton")
                 .unwrap(),
             insert_spaces_button: builder
                 .get_object("edit_settings_insert_spaces_checkbutton")
@@ -271,7 +271,7 @@ impl ViewItem {
             ),
         );
 
-        self.statusbar.auto_indention_button.connect_toggled(
+        self.statusbar.auto_indentation_button.connect_toggled(
             clone!(@weak edit_view => @default-panic, move | tb | {
                     let val = tb.get_active();
                     let _ = edit_view.core.notify(

@@ -17,8 +17,8 @@
         <property name="valign">start</property>
         <property name="orientation">vertical</property>
         <child>
-          <object class="GtkCheckButton" id="edit_settings_automatic_indention_checkbutton">
-            <property name="label" translatable="yes">Enable automatic indention</property>
+          <object class="GtkCheckButton" id="edit_settings_automatic_indentation_checkbutton">
+            <property name="label" translatable="yes">Enable automatic indentation</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">False</property>

@@ -106,7 +106,7 @@ impl WinProp {
 /// Indicates which plugins, which have tight integration with Tau, have been started
 #[derive(Debug, Default, PartialEq)]
 pub struct StartedPlugins {
-    /// Provides auto-indention and syntax highlighting
+    /// Provides auto-indentation and syntax highlighting
     pub syntect: bool,
 }
 
@@ -821,7 +821,7 @@ impl MainWin {
                     .set_sensitive(true);
                 ev.view_item
                     .statusbar
-                    .auto_indention_button
+                    .auto_indentation_button
                     .set_sensitive(true);
             }
         }
@@ -838,7 +838,7 @@ impl MainWin {
                     .set_sensitive(false);
                 ev.view_item
                     .statusbar
-                    .auto_indention_button
+                    .auto_indentation_button
                     .set_sensitive(false);
             }
         }

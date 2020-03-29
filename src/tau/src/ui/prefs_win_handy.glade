@@ -83,7 +83,7 @@
             </child>
             <child>
               <object class="HdyActionRow">
-                <property name="title" translatable="yes">Hightlight the current line</property>
+                <property name="title" translatable="yes">Highlight the current line</property>
                 <property name="visible">True</property>
                 <property name="activatable_widget">highlight_line_switch</property>
                 <child type="action">
@@ -320,16 +320,16 @@
             </child>
             <child>
               <object class="HdyActionRow">
-                <property name="title" translatable="yes">Automatic indention</property>
+                <property name="title" translatable="yes">Automatic indentation</property>
                 <property name="visible">True</property>
-                <property name="activatable_widget">auto_indention_switch</property>
+                <property name="activatable_widget">auto_indentation_switch</property>
                 <child type="action">
-                  <object class="GtkBox" id="auto_indention_gtk_box">
+                  <object class="GtkBox" id="auto_indentation_gtk_box">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="valign">center</property>
                     <child>
-                      <object class="GtkSwitch" id="auto_indention_switch">
+                      <object class="GtkSwitch" id="auto_indentation_switch">
                         <property name="visible">True</property>
                         <property name="valign">center</property>
                       </object>
@@ -340,7 +340,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkImage" id="syntect_warn_automatic_indention_image">
+                      <object class="GtkImage" id="syntect_warn_automatic_indentation_image">
                         <property name="can_focus">False</property>
                         <property name="stock">gtk-dialog-warning</property>
                         <property name="valign">center</property>

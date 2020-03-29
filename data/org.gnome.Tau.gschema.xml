@@ -102,13 +102,13 @@
 
         <key name="use-tab-stops" type="b">
             <default>true</default>
-            <summary>Treat indention with spaces like tabs</summary>
+            <summary>Treat indentation with spaces like tabs</summary>
             <description>If “translate-tabs-to-spaces” is true, Backspace will delete multiple spaces, up to the previous tab stop</description>
         </key>
 
         <key name="auto-indent" type="b">
             <default>true</default>
-            <summary>Automatically match document’s indention on newlines</summary>
+            <summary>Automatically match document’s indentation on newlines</summary>
         </key>
 
         <key name="font" type="s">
@@ -205,7 +205,7 @@
             <default>false</default>
             <summary>Full path in title bar</summary>
             <description>
-                Weather or not to display full path instead of file name in Tau's title bar.
+                Whether or not to display full path instead of file name in Tau's title bar.
             </description>
         </key>
 

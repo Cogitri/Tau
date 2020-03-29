@@ -49,7 +49,7 @@ impl PrefsWin {
         let margin_spinbutton: SpinButton = builder.get_object("margin_spinbutton").unwrap();
         let highlight_line_switch: Switch = builder.get_object("highlight_line_switch").unwrap();
         let tab_size_spinbutton: SpinButton = builder.get_object("tab_size_spinbutton").unwrap();
-        let auto_indention_switch: Switch = builder.get_object("auto_indention_switch").unwrap();
+        let auto_indentation_switch: Switch = builder.get_object("auto_indentation_switch").unwrap();
         let insert_spaces_switch: Switch = builder.get_object("insert_spaces_switch").unwrap();
         let save_when_out_of_focus_switch: Switch =
             builder.get_object("save_when_out_of_focus_switch").unwrap();
@@ -74,8 +74,8 @@ impl PrefsWin {
         let draw_all_spaces_radio: RadioButton =
             builder.get_object("spaces_all_radio_button").unwrap();
 
-        let syntect_warn_automatic_indention_image: Image = builder
-            .get_object("syntect_warn_automatic_indention_image")
+        let syntect_warn_automatic_indentation_image: Image = builder
+            .get_object("syntect_warn_automatic_indentation_image")
             .unwrap();
         let syntect_warn_insert_spaces_image: Image = builder
             .get_object("syntect_warn_insert_spaces_image")
@@ -294,7 +294,7 @@ impl PrefsWin {
 
         gschema.bind(
             "auto-indent",
-            &auto_indention_switch,
+            &auto_indentation_switch,
             "active",
             SettingsBindFlags::DEFAULT,
         );
@@ -435,11 +435,11 @@ impl PrefsWin {
             syntect_warn_insert_spaces_image.set_visible(true);
             syntect_warn_insert_spaces_image.set_tooltip_text(Some(&gettext_msg));
 
-            syntect_warn_automatic_indention_image.set_visible(true);
-            syntect_warn_automatic_indention_image.set_tooltip_text(Some(&gettext_msg));
+            syntect_warn_automatic_indentation_image.set_visible(true);
+            syntect_warn_automatic_indentation_image.set_tooltip_text(Some(&gettext_msg));
         } else {
             syntect_warn_insert_spaces_image.set_visible(false);
-            syntect_warn_automatic_indention_image.set_visible(false);
+            syntect_warn_automatic_indentation_image.set_visible(false);
         }
 
         Self {
