@@ -33,9 +33,15 @@
 	</provides>
 
 	<releases>
+		<release version="0.11.2" date="2020-03-29">
+			<p>
+				Another brownbag release, the 0.11.1 tarball didn't contain some vendored dependencies.
+				The vendor script should be fixed now, so building via the tarball should work now.
+			</p>
+		</release>
 		<release version="0.11.1" date="2020-03-29">
 			<p>
-				Brownbag release, the 0.11.1 tarball didn't contain some vendored dependencies.
+				Brownbag release, the 0.11.0 tarball didn't contain some vendored dependencies.
 			</p>
 		</release>
 		<release version="0.11.0" date="2020-03-29">
