@@ -49,7 +49,8 @@ impl PrefsWin {
         let margin_spinbutton: SpinButton = builder.get_object("margin_spinbutton").unwrap();
         let highlight_line_switch: Switch = builder.get_object("highlight_line_switch").unwrap();
         let tab_size_spinbutton: SpinButton = builder.get_object("tab_size_spinbutton").unwrap();
-        let auto_indentation_switch: Switch = builder.get_object("auto_indentation_switch").unwrap();
+        let auto_indentation_switch: Switch =
+            builder.get_object("auto_indentation_switch").unwrap();
         let insert_spaces_switch: Switch = builder.get_object("insert_spaces_switch").unwrap();
         let save_when_out_of_focus_switch: Switch =
             builder.get_object("save_when_out_of_focus_switch").unwrap();
