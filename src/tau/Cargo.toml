@@ -26,7 +26,7 @@ gio = ""
 glib = ""
 gtk = { version="0.8", features=["v3_20"] }
 human-panic = "1"
-libhandy = { git="https://gitlab.gnome.org/World/Rust/libhandy-rs.git", version = "0.5" }
+libhandy = "0.5"
 log = "0.4"
 pango = ""
 pangocairo = ""
@@ -35,5 +35,5 @@ serde = { version="1", features = ["derive"] }
 serde_json = "1"
 syntect = "3"
 tokio = "0.1"
-vte-rs = { git="https://github.com/Cogitri/vte-rs", branch="regen" }
+vte-rs = "0.3"
 xrl = "0.0.8"
