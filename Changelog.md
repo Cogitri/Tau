@@ -1,3 +1,13 @@
+## Changes in v0.11.1
+
+### Feature changes
+
+ - No new features
+
+### Bugfixes
+
+ - (tau): fix the tarball (include all vendored deps in it)
+
 ## Changes in v0.11.0
 
 ### Feature changes

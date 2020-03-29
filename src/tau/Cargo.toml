@@ -1,6 +1,6 @@
 [package]
 name = "tau"
-version = "0.11.0"
+version = "0.11.1"
 authors = ["Rasmus Thomsen <oss@cogitri.dev>"]
 homepage = "https://gxi.cogitri.dev"
 description = "GTK frontend, written in Rust, for the Xi editor"
