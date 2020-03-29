@@ -1,13 +1,8 @@
-#!/bin/bash
+#!/bin/bash -e
 
 if ! [ "$MESON_BUILD_ROOT" ]; then
     echo "This can only be run via meson, exiting!"
     exit 1
-fi
-
-if ! cargo-vendor vendor --help >/dev/null 2>&1; then
-	echo "Couldn't find cargo-vendor, exiting!"
-	exit 1
 fi
 
 PKGVER=$1-$2
@@ -38,7 +33,7 @@ ginst \
 
 pushd "${SRC}"/vendor/xi-editor/rust
 mkdir -p "${DIST}"/vendor/xi-editor/rust/.cargo/
-cargo-vendor vendor xi-vendor --no-merge-sources | sed -r 's|(^directory = ).*(xi-vendor.*)|\1"\2|g' > "${DIST}"/vendor/xi-editor/rust/.cargo/config
+cargo vendor xi-vendor | sed -r 's|(^directory = ).*(xi-vendor.*)|\1"\2|g' > "${DIST}"/vendor/xi-editor/rust/.cargo/config
 ginst xi-vendor
 mv "${DIST}"/xi-vendor "${DIST}"/vendor/xi-editor/rust/
 popd
@@ -46,15 +41,16 @@ popd
 pushd "${SRC}"/vendor/xi-editor/rust/syntect-plugin/
 mkdir -p "${DIST}"/vendor/xi-editor/rust/syntect-plugin/.cargo/
 # Replace full path with relative path via sed
-cargo-vendor vendor --no-merge-sources | sed -r 's|(^directory = ).*(vendor.*)|\1"\2|g' > "${DIST}"/vendor/xi-editor/rust/syntect-plugin/.cargo/config
+cargo vendor syntect-vendor | sed -r 's|(^directory = ).*(syntect-vendor.*)|\1"\2|g' > "${DIST}"/vendor/xi-editor/rust/syntect-plugin/.cargo/config
+ginst syntect-vendor
+mv "${DIST}"/syntect-vendor "${DIST}"/vendor/xi-editor/rust/syntect-vendor
 popd
 
 ginst vendor
 
-mkdir "${DIST}"/.cargo
-cargo-vendor vendor cargo-vendor | sed 's/^directory = ".*"/directory = "cargo-vendor"/g' > "${DIST}"/.cargo/config
-ginst cargo-vendor
-ginst .cargo
+mkdir -p "${DIST}"/.cargo
+cargo vendor tau-vendor | sed 's/^directory = ".*"/directory = "tau-vendor"/g' > "${DIST}"/.cargo/config
+ginst tau-vendor
 
 # packaging
 cd "${DEST}"/dist
