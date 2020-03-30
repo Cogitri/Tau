@@ -29,6 +29,8 @@ printf "%s\\n\\n%s" "$(./scripts/make-changelog.sh v${next} v${current})" "$(cat
 
 ninja -C _build test
 
+cargo check
+
 git commit -av
 git tag v$next
 
