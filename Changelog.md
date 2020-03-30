@@ -1,3 +1,13 @@
+## Changes in v0.11.3
+
+### Feature changes
+
+ - No new features
+
+### Bugfixes
+
+ - No bugfixes
+
 ## Changes in v0.11.2
 
 ### Feature changes
