@@ -44,7 +44,7 @@ if [ "$5" = "tau" ]; then
 fi
 
 if [ "${13}" = "development" ]; then
-    cargo build --frozen --target-dir "${4}" ${manifest_path} ${features}
+    cargo build --target-dir "${4}" ${manifest_path} ${features}
     
     # Cargo can place this here if we're crosscompiling
     if [ -f "${4}/${RUST_TARGET}/debug/${5}" ]; then
