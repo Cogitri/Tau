@@ -933,7 +933,7 @@ impl MainWin {
             &self.state,
             &self.core,
             gschema,
-            lang.as_ref().map(String::as_str),
+            lang.as_deref(),
             &self.started_plugins.borrow(),
         );
     }

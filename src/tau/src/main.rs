@@ -157,7 +157,7 @@ fn main() {
 
                 if let Ok((client, core_stderr)) = res {
                     let _ = client.client_started(
-                        xi_config_dir.as_ref().map(String::as_str),
+                        xi_config_dir.as_deref(),
                         crate::globals::PLUGIN_DIR,
                     );
 
