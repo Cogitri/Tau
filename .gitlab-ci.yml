@@ -1,4 +1,5 @@
 image: rust:latest
+include: 'https://gitlab.gnome.org/GNOME/citemplates/raw/master/flatpak/flatpak-ci-initiative-sdk-extensions.yml'
 
 stages:
   - qa
@@ -13,24 +14,16 @@ variables:
   GETTEXT_BIN_DIR : /usr/bin
   GETTEXT_LIB_DIR: /usr/lib/gettext
   GETTEXT_INCLUDE_DIR: /usr/include
+  GIT_SUBMODULE_STRATEGY: 'normal'
   BUNDLE: "org.gnome.Tau.flatpak"
   MANIFEST_PATH: "flatpak/org.gnome.Tau.yml"
   DBUS_ID: "org.gnome.Tau"
 
 
-.flatpak_cache_template: &flatpak_cache
-  cache:
-    key: "flatpak"
-    paths:
-      - .flatpak-builder/cache/
-      - _build/target/
-
-
-before_script:
-  - apt-get update -qq && apt-get install -y libgtk-3-dev gettext appstream-util desktop-file-utils meson gobject-introspection libgirepository1.0-dev libvte-2.91-dev
-
 qa:
   stage: qa
+  before_script:
+    - apt-get update -qq && apt-get install -y libgtk-3-dev gettext appstream-util desktop-file-utils meson gobject-introspection libgirepository1.0-dev libvte-2.91-dev
   script:
     - rustup component add rustfmt
     - rustup component add clippy
@@ -44,6 +37,8 @@ qa:
 
 test-native:
   stage: test
+  before_script:
+    - apt-get update -qq && apt-get install -y libgtk-3-dev gettext appstream-util desktop-file-utils meson gobject-introspection libgirepository1.0-dev libvte-2.91-dev
   script:
     - pushd /tmp
     - wget https://github.com/adobe-fonts/source-code-pro/archive/2.030R-ro/1.050R-it.zip
@@ -78,57 +73,18 @@ test-cross:
     - aptitude install -y pkg-config # Reinstall pkg-config as aptitude will have uninstalled it for GTK
     - rustup target add armv7-unknown-linux-gnueabihf
     - apt-get install -y gettext appstream-util desktop-file-utils meson libglib2.0-bin # native deps of Tau
-    - meson build
+    - meson -Dprofile=development build
     - ninja -C build # Can't run tests for crosscompiled binaries
 
 flatpak:
-  # Switch to https://hub.docker.com/r/freedesktopsdk/sdk once images for 18.08 are available or we can upgrade to 19.08
-  image: "registry.gitlab.gnome.org/gnome/gnome-runtime-images/rust_bundle:master"
-  stage: "test"
-  script:
-    # Build the flatpak repo
-    - flatpak-builder --stop-at Tau app ${MANIFEST_PATH}
-    - flatpak-builder --run app ${MANIFEST_PATH} meson --prefix=/app _build
-    - flatpak-builder --run app ${MANIFEST_PATH} ninja -C _build install
-
-    # Create a flatpak bundle
-    - flatpak-builder --finish-only app ${MANIFEST_PATH}
-    - flatpak build-export repo app
-    - flatpak build-bundle repo ${BUNDLE} ${DBUS_ID}
-
-  artifacts:
-    paths:
-      - "${BUNDLE}"
-    expire_in: 2 days
-  <<: *flatpak_cache
-
-
-review:
-  stage: review
-  dependencies:
-    - flatpak
-  script:
-    - echo "Generating flatpak deployment"
-  artifacts:
-    paths:
-      - "${BUNDLE}"
-    expire_in: 30 days
-  environment:
-    name: "review/${CI_COMMIT_REF_NAME}"
-    url: "https://gitlab.gnome.org/$CI_PROJECT_PATH/-/jobs/$CI_JOB_ID/artifacts/raw/${BUNDLE}"
-    on_stop: stop_review
-  except:
-    - master@World/Tau
-    - tags
-
-stop_review:
-  stage: review
-  script:
-    - echo "Stopping flatpak deployment"
-  when: manual
-  environment:
-    name: "review/${CI_COMMIT_REF_NAME}"
-    action: stop
-  except:
-    - master@World/Tau
-    - tags
+    extends: '.flatpak'
+    image: "registry.gitlab.gnome.org/gnome/gnome-runtime-images/rust_bundle:master"
+    stage: 'flatpak'
+    variables:
+        MANIFEST_PATH: "flatpak/org.gnome.Tau.yml"
+        RUNTIME_REPO: "https://nightly.gnome.org/gnome-nightly.flatpakrepo"
+        FLATPAK_MODULE: "Tau"
+        # Make sure to keep this in sync with the Flatpak manifest, all arguments
+        # are passed except the config-args because we build it ourselves
+        MESON_ARGS: "-Dprofile=development"
+        APP_ID: "org.gnome.TauDevel"
