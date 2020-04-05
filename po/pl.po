@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tau\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Tau/issues\n"
-"POT-Creation-Date: 2020-03-15 12:29+0000\n"
-"PO-Revision-Date: 2020-03-15 14:58+0100\n"
+"POT-Creation-Date: 2020-03-29 18:08+0000\n"
+"PO-Revision-Date: 2020-04-05 11:38+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -154,7 +154,7 @@ msgid "Whether spaces should be inserted instead of tabs"
 msgstr "Czy wstawiać spacje zamiast tabulacji"
 
 #: data/org.gnome.Tau.gschema.xml:105
-msgid "Treat indention with spaces like tabs"
+msgid "Treat indentation with spaces like tabs"
 msgstr "Traktowanie wcięć ze spacjami jak tabulacje"
 
 #: data/org.gnome.Tau.gschema.xml:106
@@ -166,7 +166,7 @@ msgstr ""
 "to klawisz Backspace usunie wiele spacji, do końca poprzedniej tabulacji"
 
 #: data/org.gnome.Tau.gschema.xml:111
-msgid "Automatically match document’s indention on newlines"
+msgid "Automatically match document’s indentation on newlines"
 msgstr "Automatyczne dopasowanie do wcięć dokumentu w nowych wierszach"
 
 #: data/org.gnome.Tau.gschema.xml:116
@@ -269,7 +269,7 @@ msgstr "Pełna ścieżka na pasku tytułu"
 
 #: data/org.gnome.Tau.gschema.xml:207
 msgid ""
-"Weather or not to display full path instead of file name in Tau's title bar."
+"Whether or not to display full path instead of file name in Tau's title bar."
 msgstr ""
 "Czy wyświetlać pełną ścieżkę zamiast nazwy pliku na pasku tytułu programu."
 
@@ -314,7 +314,7 @@ msgid "Select All"
 msgstr "Zaznacz wszystko"
 
 #: src/editview/src/ui/ev.glade:21
-msgid "Enable automatic indention"
+msgid "Enable automatic indentation"
 msgstr "Automatyczne wcięcia"
 
 #: src/editview/src/ui/find_replace.glade:32
@@ -447,7 +447,7 @@ msgstr "Redakcja"
 
 #: src/tau/src/ui/shortcuts_win.glade:118
 msgctxt "shortcut window"
-msgid "Hightlight the next occurence of the current selection"
+msgid "Highlight the next occurrence of the current selection"
 msgstr "Wyróżnienie następnego wystąpienia bieżącego zaznaczenia"
 
 #: src/tau/src/ui/shortcuts_win.glade:124
@@ -626,7 +626,7 @@ msgid "Display right hand margin"
 msgstr "Margines po prawej stronie"
 
 #: src/tau/src/ui/prefs_win_handy.glade:86
-msgid "Hightlight the current line"
+msgid "Highlight the current line"
 msgstr "Wyróżnianie bieżącego wiersza"
 
 #: src/tau/src/ui/prefs_win_handy.glade:112
@@ -670,7 +670,7 @@ msgid "Indention"
 msgstr "Wcięcia"
 
 #: src/tau/src/ui/prefs_win_handy.glade:323
-msgid "Automatic indention"
+msgid "Automatic indentation"
 msgstr "Automatyczne wcięcia"
 
 #: src/tau/src/ui/prefs_win_handy.glade:360
