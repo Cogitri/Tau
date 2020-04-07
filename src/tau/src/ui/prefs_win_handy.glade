@@ -53,6 +53,7 @@
                       <object class="GtkSwitch" id="margin_switch">
                         <property name="visible">True</property>
                         <property name="valign">center</property>
+                        <property name="margin_right">12</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
@@ -192,6 +193,7 @@
                       <object class="GtkSwitch" id="syntax_config_tab_size_switch">
                         <property name="visible">True</property>
                         <property name="valign">center</property>
+                        <property name="margin_right">12</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
