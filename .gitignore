@@ -18,3 +18,4 @@ repo/**
 cargo-vendor/**
 _build/**
 *.gresource
+tau-vendor/**
