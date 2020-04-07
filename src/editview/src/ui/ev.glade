@@ -16,6 +16,7 @@
         <property name="halign">start</property>
         <property name="valign">start</property>
         <property name="orientation">vertical</property>
+        <property name="margin">12</property>
         <child>
           <object class="GtkCheckButton" id="edit_settings_automatic_indentation_checkbutton">
             <property name="label" translatable="yes">Enable automatic indentation</property>
