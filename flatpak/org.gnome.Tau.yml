@@ -1,4 +1,4 @@
-app-id: org.gnome.Tau
+app-id: org.gnome.TauDevel
 runtime: org.gnome.Platform
 runtime-version: master
 sdk: org.gnome.Sdk
