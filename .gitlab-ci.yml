@@ -17,8 +17,8 @@ variables:
   GIT_SUBMODULE_STRATEGY: 'normal'
   BUNDLE: "org.gnome.Tau.flatpak"
   MANIFEST_PATH: "flatpak/org.gnome.Tau.yml"
-  DBUS_ID: "org.gnome.Tau"
-
+  DBUS_ID: "org.gnome.TauDevel"
+  TEST_RUN_ARGS: "validate-desktop validate-appdata 'Validate schema file'"
 
 qa:
   stage: qa
