@@ -1,0 +1,864 @@
+# Indonesian translation for tau.
+# Copyright (C) 2020 tau's COPYRIGHT HOLDER
+# This file is distributed under the same license as the tau package.
+# Andika Triwidada <atriwidada@gnome.org>, 2020.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: tau master\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Tau/issues\n"
+"POT-Creation-Date: 2020-04-08 19:32+0000\n"
+"PO-Revision-Date: 2020-04-10 20:33+0700\n"
+"Language-Team: Indonesian <gnome-l10n-id@googlegroups.com>\n"
+"Language: id\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Last-Translator: Andika Triwidada <andika@gmail.com>\n"
+"X-Generator: Poedit 2.3\n"
+
+#: data/org.gnome.Tau.appdata.xml.in.in:7 data/org.gnome.Tau.desktop.in.in:3
+msgid "Tau"
+msgstr "Tau"
+
+#: data/org.gnome.Tau.appdata.xml.in.in:8
+msgid "GTK frontend for the xi text editor"
+msgstr "Frontend GTK untuk penyunting teks Xi"
+
+#: data/org.gnome.Tau.appdata.xml.in.in:13
+msgid ""
+"Tau is a GTK frontend for the xi text editor written in Rust. It’s a very "
+"fast plain text editor."
+msgstr ""
+"Tau adalah frontend GTK untuk penyunting teks Xi yang ditulis dalam Rust. "
+"Ini adalah penyunting teks polos yang sangat cepat."
+
+#: data/org.gnome.Tau.appdata.xml.in.in:28
+msgid "Rasmus “Cogitri” Thomsen"
+msgstr "Rasmus “Cogitri” Thomsen"
+
+#: data/org.gnome.Tau.desktop.in.in:5
+msgid "The Tau text editor"
+msgstr "Penyunting teks Tau"
+
+#. Translators: Search terms to find this application. Do NOT translate or localize the semicolons! The list MUST also end with a semicolon!
+#: data/org.gnome.Tau.desktop.in.in:15
+msgid "Text;Editor;Plaintext;Write;gxi;"
+msgstr "Teks;Penyunting;Editor;Teks polos;gxi;"
+
+#: data/org.gnome.Tau.desktop.in.in:18
+msgid "Launch a new Tau instance"
+msgstr "Luncurkan instansi baru Tau"
+
+#: data/org.gnome.Tau.gschema.xml:9
+msgid "Xi-Editor’s theme"
+msgstr "Tema Xi-Penyunting"
+
+#: data/org.gnome.Tau.gschema.xml:10
+msgid "Sets the theme used for the editing area"
+msgstr "Mengatur tema yang digunakan untuk area penyuntingan"
+
+#: data/org.gnome.Tau.gschema.xml:17 src/tau/src/ui/prefs_win_handy.glade:449
+msgid "Draw trailing spaces"
+msgstr "Gambar spasi di belakang"
+
+#: data/org.gnome.Tau.gschema.xml:18
+msgid "Draw spaces which are at the end of a line"
+msgstr "Menggambar spasi yang berada di akhir baris"
+
+#: data/org.gnome.Tau.gschema.xml:25 src/tau/src/ui/prefs_win_handy.glade:466
+msgid "Draw leading spaces"
+msgstr "Gambar spasi di depan"
+
+#: data/org.gnome.Tau.gschema.xml:26
+msgid "Draw spaces which are at the beginning of a line"
+msgstr "Menggambar spasi yang berada di awal baris"
+
+#: data/org.gnome.Tau.gschema.xml:33 src/tau/src/ui/prefs_win_handy.glade:483
+msgid "Draw selected spaces"
+msgstr "Gambar spasi yang dipilih"
+
+#: data/org.gnome.Tau.gschema.xml:34
+msgid "Draw spaces whenever they are selected"
+msgstr "Menggambar spasi setiap kali mereka dipilih"
+
+#: data/org.gnome.Tau.gschema.xml:41 src/tau/src/ui/prefs_win_handy.glade:432
+msgid "Draw all spaces"
+msgstr "Gambarl semua spasi"
+
+#: data/org.gnome.Tau.gschema.xml:42
+msgid "Draw spaces, no matter the position"
+msgstr "Menggambar spasi, tidak peduli posisi"
+
+#: data/org.gnome.Tau.gschema.xml:49
+msgid "Draw a right hand margin"
+msgstr "Gambar marjin kanan"
+
+#: data/org.gnome.Tau.gschema.xml:50
+msgid "Draw a right hand margin to limit the text width"
+msgstr "Gambarlah marjin kanan untuk membatasi lebar teks"
+
+#: data/org.gnome.Tau.gschema.xml:58
+msgid "At what column to display the margin"
+msgstr "Pada kolom berapa menampilkan marjin"
+
+#: data/org.gnome.Tau.gschema.xml:59
+msgid "Sets the column at which the margin should be drawn"
+msgstr "Mengatur kolom di mana marjin harus digambar"
+
+#: data/org.gnome.Tau.gschema.xml:66
+msgid "Whether the current line should be highlighted"
+msgstr "Apakah baris saat ini harus disorot"
+
+#: data/org.gnome.Tau.gschema.xml:67
+msgid ""
+"Sets if the current line should be highlighted, which eases navigation "
+"through the document"
+msgstr ""
+"Mengatur apakah baris saat ini harus disorot, yang memudahkan navigasi "
+"melalui dokumen"
+
+#: data/org.gnome.Tau.gschema.xml:75
+msgid "Sets the height of the window in the next start-up"
+msgstr "Mengatur ketinggian jendela di awal berjalan berikutnya"
+
+#: data/org.gnome.Tau.gschema.xml:81
+msgid "Sets the width of the window in the next start-up"
+msgstr "Mengatur lebar jendela di awal berjalan berikutnya"
+
+#: data/org.gnome.Tau.gschema.xml:86
+msgid "Sets if the window should be maximized during the next start-up"
+msgstr ""
+"Mengatur apakah jendela harus dimaksimalkan selama awal berjalan berikutnya"
+
+#: data/org.gnome.Tau.gschema.xml:92 src/editview/src/ui/ev.glade:76
+#: src/tau/src/ui/prefs_win_handy.glade:268
+msgid "Tab size"
+msgstr "Ukuran tab"
+
+#: data/org.gnome.Tau.gschema.xml:93
+msgid "Amount of spaces that a tab is wide"
+msgstr "Banyaknya spasi selebar tab"
+
+#: data/org.gnome.Tau.gschema.xml:99 src/editview/src/ui/ev.glade:37
+#: src/tau/src/ui/prefs_win_handy.glade:227
+#: src/tau/src/ui/prefs_win_handy.glade:289
+msgid "Insert spaces instead of tabs"
+msgstr "Sisipkan spasi, jangan tab"
+
+#: data/org.gnome.Tau.gschema.xml:100
+msgid "Whether spaces should be inserted instead of tabs"
+msgstr "Apakah spasi harus disisipkan dan bukan tab"
+
+#: data/org.gnome.Tau.gschema.xml:105
+msgid "Treat indentation with spaces like tabs"
+msgstr "Perlakukan indentasi dengan spasi seperti tab"
+
+#: data/org.gnome.Tau.gschema.xml:106
+msgid ""
+"If “translate-tabs-to-spaces” is true, Backspace will delete multiple "
+"spaces, up to the previous tab stop"
+msgstr ""
+"Jika \"translate-tabs-to-spaces\" adalah true, Backspace akan menghapus "
+"beberapa spasi, sampai perhentian tab sebelumnya"
+
+#: data/org.gnome.Tau.gschema.xml:111
+msgid "Automatically match document’s indentation on newlines"
+msgstr "Secara otomatis mencocokkan indentasi dokumen pada baris baru"
+
+#: data/org.gnome.Tau.gschema.xml:116
+msgid "The font used for editing"
+msgstr "Fonta yang digunakan untuk menyunting"
+
+#: data/org.gnome.Tau.gschema.xml:121
+msgid "Wrap lines at the end of the document"
+msgstr "Lipat baris di akhir dokumen"
+
+#: data/org.gnome.Tau.gschema.xml:126 src/tau/src/ui/prefs_win_handy.glade:540
+msgid "Draw trailing tabs"
+msgstr "Gambar tab di belakang"
+
+#: data/org.gnome.Tau.gschema.xml:127
+msgid "Draw tabs which are at the end of a line"
+msgstr "Menggambar tab yang berada di akhir baris"
+
+#: data/org.gnome.Tau.gschema.xml:134 src/tau/src/ui/prefs_win_handy.glade:557
+msgid "Draw leading tabs"
+msgstr "Menggambar tab di depan"
+
+#: data/org.gnome.Tau.gschema.xml:135
+msgid "Draw tabs which are at the beginning of a line"
+msgstr "Menggambar tab yang berada di awal baris"
+
+#: data/org.gnome.Tau.gschema.xml:142 src/tau/src/ui/prefs_win_handy.glade:574
+msgid "Draw selected tabs"
+msgstr "Menggambar tab yang dipilih"
+
+#: data/org.gnome.Tau.gschema.xml:143
+msgid "Draw tabs whenever they are selected"
+msgstr "Menggambar tab kapan pun mereka dipilih"
+
+#: data/org.gnome.Tau.gschema.xml:150 src/tau/src/ui/prefs_win_handy.glade:523
+msgid "Draw all tabs"
+msgstr "Menggambar semua tab"
+
+#: data/org.gnome.Tau.gschema.xml:151
+msgid "Draw all tabs, no matter the position"
+msgstr "Menggambar semua tab, tidak peduli posisi"
+
+#: data/org.gnome.Tau.gschema.xml:158
+msgid "Draw the cursor"
+msgstr "Menggambar kursor"
+
+#: data/org.gnome.Tau.gschema.xml:159
+msgid "Whether to draw the cursor"
+msgstr "Apakah akan menggambar kursor"
+
+#: data/org.gnome.Tau.gschema.xml:166
+msgid "Syntax specific settings"
+msgstr "Pengaturan spesifik sintaks"
+
+#: data/org.gnome.Tau.gschema.xml:167
+msgid ""
+"A JSON string containing syntax specific settings (e.g. tab width of 2 for "
+"YAML)"
+msgstr ""
+"Sebuah string JSON yang berisi pengaturan spesifik sintaks (mis. lebar tab "
+"2 untuk YAML)"
+
+#: data/org.gnome.Tau.gschema.xml:174
+msgid "Save when Tau moves out of focus"
+msgstr "Simpan ketika Tau keluar dari fokus"
+
+#: data/org.gnome.Tau.gschema.xml:175
+msgid "Automatically save all open files when Tau moves out of focus"
+msgstr ""
+"Secara otomatis menyimpan semua berkas terbuka ketika Tau keluar dari fokus"
+
+#: data/org.gnome.Tau.gschema.xml:182 src/tau/src/ui/prefs_win_handy.glade:100
+msgid "Show line count"
+msgstr "Tampilkan cacah baris"
+
+#: data/org.gnome.Tau.gschema.xml:183
+msgid "Whether or not to show the line count in the editing pane"
+msgstr "Apakah akan menampilkan cacah baris di panel penyuntingan atau tidak"
+
+#: data/org.gnome.Tau.gschema.xml:190
+msgid "Open files"
+msgstr "Berkas yang terbuka"
+
+#: data/org.gnome.Tau.gschema.xml:191
+msgid "List of file paths open in the current or most recent session"
+msgstr "Daftar path berkas yang terbuka di sesi saat ini atau terbaru"
+
+#: data/org.gnome.Tau.gschema.xml:198
+msgid "Restore session"
+msgstr "Memulihkan sesi"
+
+#: data/org.gnome.Tau.gschema.xml:199
+msgid "Whether or not to restore last session on start-up"
+msgstr "Apakah memulihkan sesi terakhir saat mulai berjalan atau tidak"
+
+#: data/org.gnome.Tau.gschema.xml:206
+msgid "Full path in title bar"
+msgstr "Path lengkap di bilah judul"
+
+#: data/org.gnome.Tau.gschema.xml:207
+msgid ""
+"Whether or not to display full path instead of file name in Tau's title bar."
+msgstr ""
+"Apakah menampilkan path lengkap bukan hanya nama berkas di bilah judul Tau "
+"atau tidak."
+
+#: data/org.gnome.Tau.gschema.xml:214
+msgid "Show terminal"
+msgstr "Tampilkan terminal"
+
+#: data/org.gnome.Tau.gschema.xml:215
+msgid "Whether or not to show an integrated terminal in Tau's editing pane"
+msgstr ""
+"Apakah menampilkan terminal terpadu di panel penyuntingan Tau atau tidak"
+
+#: data/org.gnome.Tau.gschema.xml:222
+msgid "Path to the shell executable"
+msgstr "Path ke executable shell"
+
+#: data/org.gnome.Tau.gschema.xml:223
+msgid "The path to the shell you want to use."
+msgstr "Path ke shell yang ingin Anda gunakan."
+
+#: src/editview/src/ui/context_menu.glade:6
+msgid "Cut"
+msgstr "Potong"
+
+#: src/editview/src/ui/context_menu.glade:10
+msgid "Copy"
+msgstr "Salin"
+
+#: src/editview/src/ui/context_menu.glade:14
+msgid "Paste"
+msgstr "Tempel"
+
+#: src/editview/src/ui/context_menu.glade:20
+msgid "Undo"
+msgstr "Tak Jadi"
+
+#: src/editview/src/ui/context_menu.glade:24
+msgid "Redo"
+msgstr "Jadi Lagi"
+
+#: src/editview/src/ui/context_menu.glade:30
+msgid "Select All"
+msgstr "Pilih Semua"
+
+#: src/editview/src/ui/ev.glade:22
+msgid "Enable automatic indentation"
+msgstr "Fungsikan indentasi otomatis"
+
+#: src/editview/src/ui/find_replace.glade:32
+msgid "Find"
+msgstr "Cari"
+
+#: src/editview/src/ui/find_replace.glade:82
+msgid "Find and select all search matches"
+msgstr "Cari dan pilih semua kecocokan pencarian"
+
+#: src/editview/src/ui/find_replace.glade:102
+msgid "Switch between Search and Search-and-Replace"
+msgstr "Beralih antara Cari dan Cari-dan-Ganti"
+
+#: src/editview/src/ui/find_replace.glade:123
+msgid "Show or hide search options such as case sensitivity"
+msgstr ""
+"Menampilkan atau menyembunyikan opsi penelusuran seperti sensitivitas besar "
+"kecil huruf"
+
+#: src/editview/src/ui/find_replace.glade:160
+#: src/editview/src/ui/find_replace.glade:170
+msgid "Replace"
+msgstr "Ganti"
+
+#: src/editview/src/ui/find_replace.glade:182
+msgid "Replace All"
+msgstr "Ganti Semua"
+
+#: src/editview/src/ui/find_replace.glade:211
+msgid "Regular expressions"
+msgstr "Ekspresi reguler"
+
+#: src/editview/src/ui/find_replace.glade:226
+msgid "Case sensitive"
+msgstr "Peka huruf besar kecil"
+
+#: src/editview/src/ui/find_replace.glade:240
+msgid "Match whole word only"
+msgstr "Hanya cocok seluruh kata"
+
+#: src/editview/src/ui/find_replace.glade:265
+msgid "No Results"
+msgstr "Tidak Ada Hasil"
+
+#: src/tau/src/ui/shortcuts_win.glade:14
+msgctxt "shortcut window"
+msgid "Documents"
+msgstr "Dokumen"
+
+#: src/tau/src/ui/shortcuts_win.glade:18
+msgctxt "shortcut window"
+msgid "Create new document"
+msgstr "Buat dokumen baru"
+
+#: src/tau/src/ui/shortcuts_win.glade:24
+msgctxt "shortcut window"
+msgid "Open a document"
+msgstr "Buka dokumen"
+
+#: src/tau/src/ui/shortcuts_win.glade:30
+msgctxt "shortcut window"
+msgid "Save the document"
+msgstr "Simpan dokumen"
+
+#: src/tau/src/ui/shortcuts_win.glade:36
+msgctxt "shortcut window"
+msgid "Save the document as…"
+msgstr "Simpan dokumen sebagai…"
+
+#: src/tau/src/ui/shortcuts_win.glade:42
+msgctxt "shortcut window"
+msgid "Close the document"
+msgstr "Tutup dokumen"
+
+#: src/tau/src/ui/shortcuts_win.glade:49
+msgctxt "shortcut window"
+msgid "Navigation"
+msgstr "Navigasi"
+
+#: src/tau/src/ui/shortcuts_win.glade:53
+#, fuzzy
+msgctxt "shortcut window"
+msgid "Cycle tab history backward"
+msgstr "Siklus tab Sejarah mundur"
+
+#: src/tau/src/ui/shortcuts_win.glade:59
+#, fuzzy
+msgctxt "shortcut window"
+msgid "Cycle tab history forward"
+msgstr "Siklus tab Sejarah maju"
+
+#: src/tau/src/ui/shortcuts_win.glade:65
+msgctxt "shortcut window"
+msgid "Toggle fullscreen"
+msgstr "Jungkit mode layar penuh"
+
+#: src/tau/src/ui/shortcuts_win.glade:72 src/tau/src/ui/shortcuts_win.glade:76
+msgctxt "shortcut window"
+msgid "Find"
+msgstr "Cari"
+
+#: src/tau/src/ui/shortcuts_win.glade:82
+msgctxt "shortcut window"
+msgid "Find the next match"
+msgstr "Cari cocok berikutnya"
+
+#: src/tau/src/ui/shortcuts_win.glade:88
+msgctxt "shortcut window"
+msgid "Find the previous match"
+msgstr "Cari cocok sebelumnya"
+
+#: src/tau/src/ui/shortcuts_win.glade:94
+msgctxt "shortcut window"
+msgid "Find and replace"
+msgstr "Cari dan ganti"
+
+#: src/tau/src/ui/shortcuts_win.glade:100
+msgctxt "shortcut window"
+msgid "Find all matches"
+msgstr "Temukan semua kecocokan"
+
+#: src/tau/src/ui/shortcuts_win.glade:106
+msgctxt "shortcut window"
+msgid "Close the find window"
+msgstr "Tutup jendela pencarian"
+
+#: src/tau/src/ui/shortcuts_win.glade:114
+msgctxt "shortcut window"
+msgid "Editing"
+msgstr "Penyuntingan"
+
+#: src/tau/src/ui/shortcuts_win.glade:118
+msgctxt "shortcut window"
+msgid "Highlight the next occurrence of the current selection"
+msgstr "Sorot kemunculan berikutnya dari pilihan saat ini"
+
+#: src/tau/src/ui/shortcuts_win.glade:124
+msgctxt "shortcut window"
+msgid "Delete the current selection"
+msgstr "Menghapus pilihan saat ini"
+
+#: src/tau/src/ui/shortcuts_win.glade:130
+msgctxt "shortcut window"
+msgid "Delete an entire word"
+msgstr "Menghapus seluruh kata"
+
+#: src/tau/src/ui/shortcuts_win.glade:136
+#, fuzzy
+msgctxt "shortcut window"
+msgid "Outdent the current selection"
+msgstr "Outdent pilihan saat ini"
+
+#: src/tau/src/ui/shortcuts_win.glade:142
+msgctxt "shortcut window"
+msgid "Move to start of the line"
+msgstr "Pindah ke awal baris"
+
+#: src/tau/src/ui/shortcuts_win.glade:148
+msgctxt "shortcut window"
+msgid "Move to start of the document"
+msgstr "Pindah ke awal dokumen"
+
+#: src/tau/src/ui/shortcuts_win.glade:155
+msgctxt "shortcut window"
+msgid "Move to end of the line"
+msgstr "Pindah ke akhir baris"
+
+#: src/tau/src/ui/shortcuts_win.glade:161
+msgctxt "shortcut window"
+msgid "Move to end of the document"
+msgstr "Pindah ke akhir dokumen"
+
+#: src/tau/src/ui/shortcuts_win.glade:167
+msgctxt "shortcut window"
+msgid "Move up for the height of the view"
+msgstr "Pindah ke atas ke ketinggian tampilan"
+
+#: src/tau/src/ui/shortcuts_win.glade:173
+msgctxt "shortcut window"
+msgid "Move down for the height of the view"
+msgstr "Pindah ke bawah ke ketinggian tampilan"
+
+#: src/tau/src/ui/shortcuts_win.glade:179
+msgctxt "shortcut window"
+msgid "Enable/Disable the cursor"
+msgstr "Aktifkan/nonaktifkan kursor"
+
+#: src/tau/src/ui/shortcuts_win.glade:186
+msgctxt "shortcut window"
+msgid "Copy and Paste"
+msgstr "Salin dan Tempel"
+
+#: src/tau/src/ui/shortcuts_win.glade:190
+msgctxt "shortcut window"
+msgid "Copy the current selection"
+msgstr "Salin pilihan saat ini"
+
+#: src/tau/src/ui/shortcuts_win.glade:196
+msgctxt "shortcut window"
+msgid "Paste what's currently in the clipboard"
+msgstr "Tempelkan apa yang saat ini ada di papan klip"
+
+#: src/tau/src/ui/shortcuts_win.glade:202
+#: src/tau/src/ui/shortcuts_win.glade:208
+msgctxt "shortcut window"
+msgid "Cut the current selection"
+msgstr "Potong pilihan saat ini"
+
+#: src/tau/src/ui/shortcuts_win.glade:215
+msgctxt "shortcut window"
+msgid "Undo and Redo"
+msgstr "Tak Jadi dan Jadi Lagi"
+
+#: src/tau/src/ui/shortcuts_win.glade:219
+msgctxt "shortcut window"
+msgid "Undo"
+msgstr "Tak Jadi"
+
+#: src/tau/src/ui/shortcuts_win.glade:225
+msgctxt "shortcut window"
+msgid "Redo"
+msgstr "Jadi Lagi"
+
+#: src/tau/src/ui/shortcuts_win.glade:232
+msgctxt "shortcut window"
+msgid "Selections"
+msgstr "Pilihan"
+
+#: src/tau/src/ui/shortcuts_win.glade:236
+msgctxt "shortcut window"
+msgid "Select all"
+msgstr "Pilih semua"
+
+#: src/tau/src/ui/shortcuts_win.glade:242
+msgctxt "shortcut window"
+msgid "Move up and select everything from current cursor position"
+msgstr "Pindah ke atas dan pilih semuanya dari posisi kursor saat ini"
+
+#: src/tau/src/ui/shortcuts_win.glade:248
+msgctxt "shortcut window"
+msgid "Move down and select everything from current cursor position"
+msgstr "Pindah ke bawah dan pilih semuanya dari posisi kursor saat ini"
+
+#: src/tau/src/ui/shortcuts_win.glade:254
+msgctxt "shortcut window"
+msgid "Move left and select everything from current cursor position"
+msgstr "Pindah ke kiri dan pilih semuanya dari posisi kursor saat ini"
+
+#: src/tau/src/ui/shortcuts_win.glade:260
+msgctxt "shortcut window"
+msgid "Move left and select the next word"
+msgstr "Pindah ke kiri dan pilih kata berikutnya"
+
+#: src/tau/src/ui/shortcuts_win.glade:266
+msgctxt "shortcut window"
+msgid "Move right and select everything from current cursor position"
+msgstr "Pindah ke kanan dan pilih semuanya dari posisi kursor saat ini"
+
+#: src/tau/src/ui/shortcuts_win.glade:272
+msgctxt "shortcut window"
+msgid "Move right and select the next word"
+msgstr "Pindah ke kanan dan pilih kata berikutnya"
+
+#: src/tau/src/ui/shortcuts_win.glade:278
+msgctxt "shortcut window"
+msgid "Move to start of the line and select"
+msgstr "Pindah ke awal baris dan pilih"
+
+#: src/tau/src/ui/shortcuts_win.glade:284
+msgctxt "shortcut window"
+msgid "Move to start of the document and select"
+msgstr "Pindah ke awal dokumen dan pilih"
+
+#: src/tau/src/ui/shortcuts_win.glade:290
+msgctxt "shortcut window"
+msgid "Move to end of the line and select"
+msgstr "Pindah ke akhir baris dan pilih"
+
+#: src/tau/src/ui/shortcuts_win.glade:296
+msgctxt "shortcut window"
+msgid "Move to end of the document and select"
+msgstr "Pindah ke akhir dokumen dan pilih"
+
+#: src/tau/src/ui/shortcuts_win.glade:302
+msgctxt "shortcut window"
+msgid "Move up for the height of the view and select"
+msgstr "Pindah ke atas ke ketinggian tampilan dan pilih"
+
+#: src/tau/src/ui/shortcuts_win.glade:308
+msgctxt "shortcut window"
+msgid "Move down for the height of the view and select"
+msgstr "Pindah ke bawah ke ketinggian tampilan dan pilih"
+
+#: src/tau/src/ui/prefs_win_handy.glade:28 src/tau/src/ui/tau.glade:139
+#: src/tau/src/ui/tau.glade:346
+msgid "Preferences"
+msgstr "Preferensi"
+
+#: src/tau/src/ui/prefs_win_handy.glade:39
+msgid "View"
+msgstr "Tilik"
+
+#: src/tau/src/ui/prefs_win_handy.glade:40
+msgid "Preferences related to the View’s look"
+msgstr "Preferensi yang terkait dengan tampilan Tilikan"
+
+#: src/tau/src/ui/prefs_win_handy.glade:44
+msgid "Display right hand margin"
+msgstr "Menampilkan margin kanan"
+
+#: src/tau/src/ui/prefs_win_handy.glade:87
+msgid "Highlight the current line"
+msgstr "Sorot baris saat ini"
+
+#: src/tau/src/ui/prefs_win_handy.glade:113
+msgid "Show full path in title bar"
+msgstr "Tampilkan path lengkap di bilah judul"
+
+#: src/tau/src/ui/prefs_win_handy.glade:126
+msgid "Restore last opened files on start-up"
+msgstr "Pulihkan berkas yang dibuka terakhir saat mulai berjalan"
+
+#: src/tau/src/ui/prefs_win_handy.glade:140
+msgid "Wrap lines at the end of the view"
+msgstr "Lipat baris di akhir tampilan"
+
+#: src/tau/src/ui/prefs_win_handy.glade:152
+msgid "Theme configuration"
+msgstr "Konfigurasi tema"
+
+#: src/tau/src/ui/prefs_win_handy.glade:167
+msgid "Syntax configuration"
+msgstr "Konfigurasi sintaks"
+
+#: src/tau/src/ui/prefs_win_handy.glade:171
+msgid "Syntax selection"
+msgstr "Pemilihan sintaks"
+
+#: src/tau/src/ui/prefs_win_handy.glade:184
+msgid "Syntax-specific tab size"
+msgstr "Ukuran tab spesifik sintaks"
+
+#: src/tau/src/ui/prefs_win_handy.glade:240
+msgid "Apply syntax configuration settings"
+msgstr "Menerapkan pengaturan konfigurasi sintaks"
+
+#: src/tau/src/ui/prefs_win_handy.glade:260
+msgid "Editor"
+msgstr "Penyunting"
+
+#: src/tau/src/ui/prefs_win_handy.glade:264
+#, fuzzy
+msgid "Indention"
+msgstr "Indention"
+
+#: src/tau/src/ui/prefs_win_handy.glade:325
+msgid "Automatic indentation"
+msgstr "Indentasi otomatis"
+
+#: src/tau/src/ui/prefs_win_handy.glade:362
+msgid "Delete spaces up to the previous tab stop"
+msgstr "Menghapus spasi sampai posisi tab sebelumnya"
+
+#: src/tau/src/ui/prefs_win_handy.glade:377
+msgid "File saving"
+msgstr "Penyimpanan berkas"
+
+#: src/tau/src/ui/prefs_win_handy.glade:381
+msgid "Save files when the Tau goes out of focus"
+msgstr "Menyimpan berkas ketika Tau lepas dari fokus"
+
+#: src/tau/src/ui/prefs_win_handy.glade:396 src/tau/src/main_win.rs:1135
+#: src/tau/src/main_win.rs:1172
+msgid "Terminal"
+msgstr "Terminal"
+
+#: src/tau/src/ui/prefs_win_handy.glade:400
+#, fuzzy
+msgid "Show the embedded terminal on startup"
+msgstr "Tampilkan terminal tertanam pada saat startup"
+
+#: src/tau/src/ui/prefs_win_handy.glade:413
+msgid "What shell to start"
+msgstr "Shell apa yang dimulai"
+
+#: src/tau/src/ui/prefs_win_handy.glade:428
+#, fuzzy
+msgid "Highlighting spaces"
+msgstr "Menyoroti Ruang"
+
+#: src/tau/src/ui/prefs_win_handy.glade:500
+msgid "Don't draw spaces"
+msgstr "Jangan menggambar spasi"
+
+#: src/tau/src/ui/prefs_win_handy.glade:519
+#, fuzzy
+msgid "Highlighting tabs"
+msgstr "Menyorot tab"
+
+#: src/tau/src/ui/prefs_win_handy.glade:591
+msgid "Don't draw tabs"
+msgstr "Jangan menggambar tab"
+
+#: src/tau/src/ui/prefs_win_handy.glade:610
+#: src/tau/src/ui/prefs_win_handy.glade:614
+msgid "Font configuration"
+msgstr "Konfigurasi fonta"
+
+#: src/tau/src/ui/tau.glade:22 src/tau/src/ui/tau.glade:229
+msgid "Save As…"
+msgstr "Simpan Sebagai…"
+
+#: src/tau/src/ui/tau.glade:36 src/tau/src/ui/tau.glade:243
+msgid "Save All"
+msgstr "Simpan Semua"
+
+#: src/tau/src/ui/tau.glade:61 src/tau/src/ui/tau.glade:268
+msgid "Find…"
+msgstr "Cari…"
+
+#: src/tau/src/ui/tau.glade:75 src/tau/src/ui/tau.glade:282
+msgid "Replace…"
+msgstr "Ganti…"
+
+#: src/tau/src/ui/tau.glade:100 src/tau/src/ui/tau.glade:307
+msgid "Show Terminal"
+msgstr "Tampilkan Terminal"
+
+#: src/tau/src/ui/tau.glade:114 src/tau/src/ui/tau.glade:321
+msgid "Toggle Fullscreen"
+msgstr "Jungkit Mode Layar Penuh"
+
+#: src/tau/src/ui/tau.glade:164 src/tau/src/ui/tau.glade:371
+msgid "Help"
+msgstr "Bantuan"
+
+#: src/tau/src/ui/tau.glade:178 src/tau/src/ui/tau.glade:385
+msgid "Keyboard Shortcuts"
+msgstr "Pintasan Papan Tik"
+
+#: src/tau/src/ui/tau.glade:192 src/tau/src/ui/tau.glade:399
+msgid "About Tau"
+msgstr "Tentang Tau"
+
+#: src/tau/src/ui/tau.glade:434 src/tau/src/ui/tau.glade:543
+#: src/tau/src/main_win.rs:1590
+msgid "Open"
+msgstr "Buka"
+
+#: src/tau/src/ui/tau.glade:475 src/tau/src/ui/tau.glade:603
+#: src/tau/src/main_win.rs:1320 src/tau/src/main_win.rs:1767
+msgid "Save"
+msgstr "Simpan"
+
+#: src/editview/src/edit_view.rs:186 src/editview/src/edit_view.rs:188
+#: src/tau/src/main_win.rs:1047 src/tau/src/main_win.rs:1050
+#: src/tau/src/main_win.rs:1873
+msgid "Untitled"
+msgstr "Tanpa judul"
+
+#: src/editview/src/edit_view.rs:924 src/editview/src/edit_view.rs:934
+msgid "Line"
+msgstr "Baris"
+
+#: src/editview/src/edit_view.rs:939
+msgid "Column"
+msgstr "Kolom"
+
+#. We localized it ourselves, so we have to turn it into English again when sending it to Xi
+#: src/editview/src/edit_view.rs:1553 src/editview/src/view_item.rs:221
+#: src/editview/src/view_item.rs:337
+msgid "Plain Text"
+msgstr "Teks Polos"
+
+#: src/editview/src/view_item.rs:99 src/editview/src/view_item.rs:238
+msgid "Tab Size"
+msgstr "Ukuran Tab"
+
+#: src/tau/src/about_win.rs:17
+msgid "GTK frontend for the xi text editor, written in Rust"
+msgstr "Frontend GTK untuk penyunting teks xi, ditulis dalam Rust"
+
+#: src/tau/src/about_win.rs:25
+msgid "translator-credits"
+msgstr "Andika Triwidada <andika@gmail.com>, 2020."
+
+#: src/tau/src/functions.rs:132
+msgid "Welcome to Tau's terminal."
+msgstr "Selamat datang di terminal Tau."
+
+#: src/tau/src/main.rs:119
+msgid "Start a new instance of the application"
+msgstr "Memulai sebuah instance baru dari aplikasi"
+
+#: src/tau/src/main.rs:283
+msgid "Failed open new view due to error"
+msgstr "Gagal membuka tampilan baru karena kesalahan"
+
+#: src/tau/src/main.rs:351 src/tau/src/main_win.rs:1657
+msgid "Failed to open new view due to error"
+msgstr "Gagal membuka tampilan baru karena kesalahan"
+
+#: src/tau/src/main_win.rs:986 src/tau/src/main_win.rs:994
+#, fuzzy
+msgid ""
+"Couldn’t get Documents directory to autosave unnamed file. Please make sure "
+"“XDG_DATA_DIR” or similar is set."
+msgstr ""
+"Tidak bisa mendapatkan direktori dokumen untuk autosave berkas tanpa nama. "
+"Pastikan \"XDG_DATA_DIR\" atau yang serupa sudah diatur."
+
+#: src/tau/src/main_win.rs:1309
+msgid "Save unsaved changes"
+msgstr "Menyimpan perubahan yang belum disimpan"
+
+#: src/tau/src/main_win.rs:1312
+msgid "Close Without Saving"
+msgstr "Tutup Tanpa Menyimpan"
+
+#: src/tau/src/main_win.rs:1316 src/tau/src/main_win.rs:1591
+#: src/tau/src/main_win.rs:1768
+msgid "Cancel"
+msgstr "Batal"
+
+#: src/tau/src/main_win.rs:1587
+msgid "Open a file to edit"
+msgstr "Membuka berkas untuk menyunting"
+
+#: src/tau/src/main_win.rs:1616
+msgid "Couldn’t open file"
+msgstr "Tidak dapat membuka berkas"
+
+#: src/tau/src/main_win.rs:1764
+msgid "Save file"
+msgstr "Simpan berkas"
+
+#: src/tau/src/main_win.rs:1806
+msgid "Couldn’t save file"
+msgstr "Tidak bisa menyimpan berkas"
+
+#: src/tau/src/prefs_win.rs:435
+#, fuzzy
+msgid ""
+"Couldn’t find the xi-syntect-plugin. As such these settings won’t work in "
+"the current session."
+msgstr ""
+"Tidak dapat menemukan plugin Xi-syntect. Dengan demikian pengaturan ini "
+"tidak akan bekerja pada sesi saat ini."
