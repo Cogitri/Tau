@@ -61,7 +61,6 @@ pub fn new_settings() -> editview::Settings {
         edit_font: gschema.get("font"),
         draw_cursor: gschema.get("draw-cursor"),
         show_linecount: gschema.get("show-linecount"),
-        restore_session: gschema.get("restore-session"),
         full_title: gschema.get("full-title"),
         interface_font,
         gschema,

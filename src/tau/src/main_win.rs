@@ -1547,9 +1547,6 @@ impl MainWinExt for Rc<MainWin> {
                         ev.view_item.edit_area.queue_draw();
                     }
                 }
-                "restore-session" => {
-                    main_win.state.borrow_mut().settings.restore_session = gschema.get("restore-session");
-                }
                 "full-title" => {
                     main_win.state.borrow_mut().settings.full_title = gschema.get("full-title");
                     main_win.update_titlebar(main_win.get_current_edit_view().as_ref());
@@ -1562,7 +1559,7 @@ impl MainWinExt for Rc<MainWin> {
                     }
                 }
                 // Valid keys, but no immediate action to be taken
-                "window-height" | "window-width" | "window-maximized" | "save-when-out-of-focus" | "session" | "terminal-path" => {}
+                "window-height" | "window-width" | "window-maximized" | "save-when-out-of-focus" | "session" | "terminal-path" | "restore-session" => {}
                 key => {
                     error!("Unknown GSettings key change event '{}'. Please make sure your GSchema is up-to-date.", key);
                 }

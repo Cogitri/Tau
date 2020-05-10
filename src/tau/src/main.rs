@@ -134,6 +134,16 @@ fn main() {
 
     let runtime_opt = Rc::new(RefCell::new(None));
 
+    let args = &args().collect::<Vec<_>>();
+    //FIXME: Use handle-local-options once https://github.com/gtk-rs/gtk/issues/580 is a thing
+    let mut new_instance = false;
+    for arg in args {
+        match arg.as_str() {
+            "-n" | "--new-instance" => new_instance = true,
+            _ => (),
+        }
+    }
+
     application.connect_startup(
         clone!(@strong core_opt, @strong application, @strong event_rx_opt, @strong event_tx, @strong runtime_opt => move |_| {
             debug!("Starting Tau");
@@ -241,7 +251,7 @@ fn main() {
 
         let schema = gio::Settings::new("org.gnome.Tau");
         if schema
-            .get("restore-session") {
+            .get("restore-session") && !new_instance {
                 let paths = schema.get_session();
                 for file in paths {
                     if Path::new(&file).exists() {
@@ -301,7 +311,7 @@ fn main() {
 
             let schema = gio::Settings::new("org.gnome.Tau");
             if schema
-                .get("restore-session") {
+                .get("restore-session") && !new_instance {
                     let paths = schema.get_session();
                     for file in paths {
                         if Path::new(&file).exists() {
@@ -366,16 +376,6 @@ fn main() {
             runtime.shutdown_now().wait().unwrap();
         }
     }));
-
-    let args = &args().collect::<Vec<_>>();
-    //FIXME: Use handle-local-options once https://github.com/gtk-rs/gtk/issues/580 is a thing
-    let mut new_instance = false;
-    for arg in args {
-        match arg.as_str() {
-            "-n" | "--new-instance" => new_instance = true,
-            _ => (),
-        }
-    }
 
     if new_instance {
         application.set_flags(ApplicationFlags::HANDLES_OPEN | ApplicationFlags::NON_UNIQUE);
