@@ -253,6 +253,29 @@ fn main() {
         if schema
             .get("restore-session") && !new_instance {
                 let paths = schema.get_session();
+                if paths.is_empty() {
+                    runtime_opt.borrow_mut().as_mut().unwrap().spawn(
+                        future::lazy(clone!(@strong core, @strong new_view_tx => move || {
+                            core
+                            .new_view(None)
+                            .then(|res|
+                                future::lazy(move || {
+                                    match res {
+                                        Ok(view_id) => new_view_tx.send(XiEvent::NewView(Ok((view_id, None)))).unwrap(),
+                                        Err(e) => {
+                                            if let xrl::ClientError::ErrorReturned(value) = e {
+                                                let err: XiClientError = serde_json::from_value(value).unwrap();
+                                                new_view_tx.send(XiEvent::NewView(Err(format!("{}: '{}'", gettext("Failed open new view due to error"), err.message)))).unwrap()
+                                            }
+                                        },
+                                    }
+                                    Ok(())
+                                })
+                                )
+                        }))
+                    );
+                    return;
+                }
                 for file in paths {
                     if Path::new(&file).exists() {
                         runtime_opt.borrow_mut().as_mut().unwrap().spawn(
