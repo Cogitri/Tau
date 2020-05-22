@@ -2,10 +2,6 @@ use editview::main_state::ShowInvisibles;
 use editview::Settings;
 use gettextrs::gettext;
 use gio::prelude::*;
-use log::error;
-use serde_json::json;
-use std::cmp::max;
-use xrl::Client;
 
 pub fn get_font_properties(font: &str) -> Option<(String, f32)> {
     let font_vec = font.split_whitespace().collect::<Vec<_>>();
@@ -64,65 +60,6 @@ pub fn new_settings() -> editview::Settings {
         full_title: gschema.get("full-title"),
         interface_font,
         gschema,
-    }
-}
-
-/// Send the current config to xi-editor during startup
-pub fn setup_config(core: &Client) {
-    #[cfg(windows)]
-    const LINE_ENDING: &str = "\r\n";
-    #[cfg(not(windows))]
-    const LINE_ENDING: &str = "\n";
-
-    let gschema = gio::Settings::new("org.gnome.Tau");
-
-    let tab_size = gschema.get::<u32>("tab-size");
-    let autodetect_whitespace = gschema.get::<bool>("auto-indent");
-    let translate_tabs_to_spaces = gschema.get::<bool>("translate-tabs-to-spaces");
-    let use_tab_stops = gschema.get::<bool>("use-tab-stops");
-    let word_wrap = gschema.get::<bool>("word-wrap");
-
-    let font = gschema.get::<String>("font");
-    let font_vec = font.split_whitespace().collect::<Vec<_>>();
-    let (font_size, font_name) = if let Some((size, splitted_name)) = font_vec.split_last() {
-        (size.parse::<f32>().unwrap_or(14.0), splitted_name.join(" "))
-    } else {
-        error!("Failed to get font configuration. Resetting...");
-        gschema.reset("font");
-        (14.0, "Monospace".to_string())
-    };
-
-    tokio::executor::current_thread::block_on_all(core.modify_user_config(
-        "general",
-        json!({
-            "tab_size": max(1, tab_size),
-            "autodetect_whitespace": autodetect_whitespace,
-            "translate_tabs_to_spaces": translate_tabs_to_spaces,
-            "font_face": font_name,
-            "font_size": if font_size.is_nan() {
-                14.0
-            } else if font_size < 6.0 {
-                6.0
-            } else if font_size > 72.0 {
-                72.0
-            } else { font_size },
-            "use_tab_stops": use_tab_stops,
-            "word_wrap": word_wrap,
-            "line_ending": LINE_ENDING,
-        }),
-    ))
-    .unwrap();
-
-    let val = gschema.get_strv("syntax-config");
-
-    for x in val {
-        if let Ok(val) = serde_json::from_str(x.as_str()) {
-            tokio::executor::current_thread::block_on_all(core.notify("modify_user_config", val))
-                .unwrap();
-        } else {
-            error!("Failed to deserialize syntax config. Resetting...");
-            gschema.reset("syntax-config");
-        }
     }
 }
 

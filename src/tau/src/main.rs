@@ -72,6 +72,7 @@ mod frontend;
 mod functions;
 mod globals;
 mod main_win;
+mod main_win_builder;
 mod prefs_win;
 mod session;
 mod shortcuts_win;
@@ -79,26 +80,19 @@ mod syntax_config;
 mod view_history;
 
 use crate::errors::XiClientError;
-use crate::frontend::{TauFrontendBuilder, XiEvent, XiRequest};
-use crate::main_win::MainWin;
+use crate::frontend::XiEvent;
+use crate::main_win_builder::MainWinBuilder;
 use crate::session::SessionHandler;
-use crossbeam_channel::unbounded;
-use futures::stream::Stream;
-use futures::{future, future::Future};
 use gettextrs::{gettext, TextDomain, TextDomainError};
 use gio::prelude::*;
 use gio::ApplicationFlags;
-use glib::{clone, Char, MainContext};
+use glib::{clone, Char};
 use gtk::Application;
-use log::{debug, error, info, max_level as log_level, warn, LevelFilter};
-use parking_lot::Mutex;
+use log::{debug, error, info, warn};
 use std::cell::RefCell;
 use std::env::args;
 use std::path::Path;
 use std::rc::Rc;
-use std::sync::Arc;
-use tokio::runtime::Runtime;
-use xrl::spawn as spawn_xi;
 
 fn main() {
     //PanicHandler::new();
@@ -120,20 +114,6 @@ fn main() {
         None,
     );
 
-    // The channel through which all events from Xi are sent from `crate::frontend::TauFrontend` to
-    // the MainWin
-    let (event_tx, event_rx) = MainContext::sync_channel::<XiEvent>(glib::PRIORITY_HIGH, 5);
-    // Set this to none here so we can move it into the closures without actually starting Xi every time.
-    // This significantly improves startup time when Tau is already opened and you open a new file via
-    // the CLI.
-    let core_opt = Arc::new(Mutex::new(None));
-
-    //FIXME: This is a hack to satisfy the borrowchecker. `connect_startup` is a FnMut even though
-    // it's only called once, so it's fine to move new_view_rx and event_rx into connect_startup
-    let event_rx_opt = Rc::new(RefCell::new(Some(event_rx)));
-
-    let runtime_opt = Rc::new(RefCell::new(None));
-
     let args = &args().collect::<Vec<_>>();
     //FIXME: Use handle-local-options once https://github.com/gtk-rs/gtk/issues/580 is a thing
     let mut new_instance = false;
@@ -144,260 +124,107 @@ fn main() {
         }
     }
 
-    application.connect_startup(
-        clone!(@strong core_opt, @strong application, @strong event_rx_opt, @strong event_tx, @strong runtime_opt => move |_| {
-            debug!("Starting Tau");
+    let main_win_builder = Rc::new(RefCell::new(MainWinBuilder::new(application.clone())));
 
-            // The channel to send the result of a request back to Xi
-            let (request_tx, request_rx) = unbounded::<XiRequest>();
+    application.connect_startup(clone!(@weak main_win_builder => @default-panic, move |_| {
+        debug!("Starting Tau");
 
-            let xi_config_dir = std::env::var("XI_CONFIG_DIR").ok();
+        glib::set_application_name(crate::globals::NAME.unwrap_or("Tau (Development)"));
 
-            let mut runtime = Runtime::new().unwrap();
-
-            let core_res = runtime.block_on(future::lazy(clone!(@strong request_tx, @strong core_opt, @strong event_tx => move || {
-                let res = spawn_xi(
-                    crate::globals::XI_PATH.unwrap_or("xi-core"),
-                    TauFrontendBuilder {
-                        request_rx,
-                        event_tx,
-                        request_tx: request_tx.clone(),
-                    },
-                );
-
-                if let Ok((client, core_stderr)) = res {
-                    let _ = client.client_started(
-                        xi_config_dir.as_deref(),
-                        crate::globals::PLUGIN_DIR,
-                    );
-
-                    core_opt.lock().replace(Some(client.clone()));
-
-                    Ok((client,core_stderr))
-                } else {
-                    Err(res.err().unwrap())
+        // No need to gettext this, gettext doesn't work yet
+        match TextDomain::new("tau")
+            .push(crate::globals::LOCALEDIR.unwrap_or("po"))
+            .init()
+        {
+            Ok(locale) => info!("Translation found, setting locale to {:?}", locale),
+            Err(TextDomainError::TranslationNotFound(lang)) => {
+                // We don't have an 'en' catalog since the messages are English by default
+                if lang != "en" {
+                    warn!("Translation not found for lang {}", lang)
                 }
-            })));
-
-            let (core, core_stderr) = core_res.unwrap_or_else(|e| {
-                error!("{}", e);
-                panic!();
-            });
-
-            runtime.spawn(future::lazy(move || {
-                tokio::spawn(
-                    core_stderr
-                        .for_each(|msg| {
-                            if msg.contains("[ERROR]") {
-                                println!("{}", msg)
-                            } else if msg.contains("[WARN]") {
-                                if log_level() >= LevelFilter::Warn {
-                                    println!("{}", msg)
-                                } else if log_level() >= LevelFilter::Info && msg.contains("deprecated") {
-                                    println!("{}", msg)
-                                }
-                            } else if msg.contains("[INFO]") && log_level() >= LevelFilter::Info {
-                                println!("{}", msg)
-                            } else if msg.contains("[DEBUG]") && log_level() >= LevelFilter::Debug {
-                                println!("{}", msg)
-                            } else if msg.contains("[TRACE]") && log_level() >= LevelFilter::Trace {
-                                println!("{}", msg)
-                            }
-                            Ok(())
-                        })
-                        .map_err(|_| ()),
-                );
-
-                future::ok(())
-            }));
-
-            glib::set_application_name(crate::globals::NAME.unwrap_or("Tau (Development)"));
-
-            // No need to gettext this, gettext doesn't work yet
-            match TextDomain::new("tau")
-                .push(crate::globals::LOCALEDIR.unwrap_or("po"))
-                .init()
-            {
-                Ok(locale) => info!("Translation found, setting locale to {:?}", locale),
-                Err(TextDomainError::TranslationNotFound(lang)) => {
-                    // We don't have an 'en' catalog since the messages are English by default
-                    if lang != "en" {
-                        warn!("Translation not found for lang {}", lang)
-                    }
-                }
-                Err(TextDomainError::InvalidLocale(locale)) => warn!("Invalid locale {}", locale),
             }
+            Err(TextDomainError::InvalidLocale(locale)) => warn!("Invalid locale {}", locale),
+        }
 
-            runtime_opt.replace(Some(runtime));
+        main_win_builder.borrow_mut().build();
+    }));
 
-            crate::functions::setup_config(&core);
-
-            MainWin::new(
-                &application,
-                core,
-                event_rx_opt.borrow_mut().take().unwrap(),
-                event_tx.clone(),
-                request_tx,
-                runtime_opt.clone(),
-            );
-        }),
-    );
-
-    application.connect_activate(clone!(@strong core_opt, @strong event_tx as new_view_tx, @strong runtime_opt => move |_| {
+    application.connect_activate(clone!(@weak main_win_builder => @default-panic, move |_| {
         debug!("Activating new view");
 
-        // It's fine to unwrap here - we already made sure this is Some in connect_startup.
-        let core = core_opt.lock().clone().unwrap().unwrap();
-
         let schema = gio::Settings::new("org.gnome.Tau");
+        let paths = schema.get_session();
         if schema
-            .get("restore-session") && !new_instance {
-                let paths = schema.get_session();
-                if paths.is_empty() {
-                    runtime_opt.borrow_mut().as_mut().unwrap().spawn(
-                        future::lazy(clone!(@strong core, @strong new_view_tx => move || {
-                            core
-                            .new_view(None)
-                            .then(|res|
-                                future::lazy(move || {
-                                    match res {
-                                        Ok(view_id) => new_view_tx.send(XiEvent::NewView(Ok((view_id, None)))).unwrap(),
-                                        Err(e) => {
-                                            if let xrl::ClientError::ErrorReturned(value) = e {
-                                                let err: XiClientError = serde_json::from_value(value).unwrap();
-                                                new_view_tx.send(XiEvent::NewView(Err(format!("{}: '{}'", gettext("Failed open new view due to error"), err.message)))).unwrap()
-                                            }
-                                        },
-                                    }
-                                    Ok(())
-                                })
-                                )
-                        }))
-                    );
-                    return;
-                }
+            .get("restore-session") && !new_instance && !paths.is_empty() {
                 for file in paths {
                     if Path::new(&file).exists() {
-                        runtime_opt.borrow_mut().as_mut().unwrap().spawn(
-                            future::lazy(clone!(@strong core, @strong new_view_tx => move || {
-                                core
-                                .new_view(Some(file.clone()))
-                                .then(|res|
-                                    future::lazy(move || {
-                                        match res {
-                                            Ok(view_id) => new_view_tx.send(XiEvent::NewView(Ok((view_id, Some(file))))).unwrap(),
-                                            Err(_) => {
-                                                gio::Settings::new("org.gnome.Tau").session_remove(&file);
-                                                error!("Failed to restore file `{}`", file);
-                                            },
-                                        }
-                                        Ok(())
-                                    })
-                                )
-                            }))
-                        );
+                        if main_win_builder.borrow().spawn_view(Some(file.clone())).is_err() {
+                            error!("Failed to restore file `{}`", file);
+                            schema.session_remove(&file);
+                        }
                     } else {
                         schema.session_remove(&file);
                         error!("Failed to restore file `{}`", file);
                     }
                 }
-        } else {
-            runtime_opt.borrow_mut().as_mut().unwrap().spawn(
-                future::lazy(clone!(@strong core, @strong new_view_tx => move || {
-                    core
-                    .new_view(None)
-                    .then(|res|
-                        future::lazy(move || {
-                            match res {
-                                Ok(view_id) => new_view_tx.send(XiEvent::NewView(Ok((view_id, None)))).unwrap(),
-                                Err(e) => {
-                                    if let xrl::ClientError::ErrorReturned(value) = e {
-                                        let err: XiClientError = serde_json::from_value(value).unwrap();
-                                        new_view_tx.send(XiEvent::NewView(Err(format!("{}: '{}'", gettext("Failed open new view due to error"), err.message)))).unwrap()
-                                    }
-                                },
-                            }
-                            Ok(())
-                        })
-                        )
-                }))
-            );
+        } else if let Err(e) = main_win_builder.borrow().spawn_view(None) {
+            if let xrl::ClientError::ErrorReturned(value) = e {
+                let err: XiClientError = serde_json::from_value(value).unwrap();
+                main_win_builder.borrow().event_tx
+                    .send(XiEvent::NewView(Err(format!(
+                        "{}: '{}'",
+                        gettext("Failed open new view due to error"),
+                        err.message
+                    ))))
+                    .unwrap()
+            }
         };
     }));
 
     application.connect_open(
-        clone!(@strong core_opt, @strong event_tx as new_view_tx, @strong runtime_opt => move |_,files,_| {
-            debug!("Opening new file");
+        clone!(@weak main_win_builder => @default-panic, move |_,files,_| {
+            debug!("Opening new files");
 
-            // See above for why it's fine to unwrap here.
-            let core = core_opt.lock().clone().unwrap().unwrap();
-
-            let schema = gio::Settings::new("org.gnome.Tau");
-            if schema
-                .get("restore-session") && !new_instance {
-                    let paths = schema.get_session();
-                    for file in paths {
-                        if Path::new(&file).exists() {
-                            runtime_opt.borrow_mut().as_mut().unwrap().spawn(
-                                future::lazy(clone!(@strong core, @strong new_view_tx => move || {
-                                    core
-                                    .new_view(Some(file.clone()))
-                                    .then(|res|
-                                        future::lazy(move || {
-                                            match res {
-                                                Ok(view_id) => new_view_tx.send(XiEvent::NewView(Ok((view_id, Some(file))))).unwrap(),
-                                                Err(_) => {
-                                                    gio::Settings::new("org.gnome.Tau").session_remove(&file);
-                                                    error!("Failed to restore file `{}`", file);
-                                                },
-                                            }
-                                            Ok(())
-                                        })
-                                    )
-                                }))
-                            );
-                        } else {
-                            schema.session_remove(&file);
-                            error!("Failed to restore file `{}`", file);
-                        }
-                    }
-            }
-
-            let paths: Vec<String> = files.iter()
+            let mut paths: Vec<String> = files.iter()
                 .filter_map(gio::File::get_path)
                 .map(std::path::PathBuf::into_os_string)
                 .filter_map(|s| s.into_string().ok())
                 .collect();
 
-            for file in paths {
-                runtime_opt.borrow_mut().as_mut().unwrap().spawn(
-                    future::lazy(clone!(@strong core, @strong new_view_tx => move || {
-                        core
-                        .new_view(Some(file.clone()))
-                        .then(|res|
-                            future::lazy(move || {
-                                match res {
-                                    Ok(view_id) => new_view_tx.send(XiEvent::NewView(Ok((view_id, Some(file))))).unwrap(),
-                                    Err(e) => {
-                                        if let xrl::ClientError::ErrorReturned(value) = e {
-                                            let err: XiClientError = serde_json::from_value(value).unwrap();
-                                            new_view_tx.send(XiEvent::NewView(Err(format!("{}: '{}'", gettext("Failed to open new view due to error"), err.message)))).unwrap()
-                                        }
-                                    },
-                                }
-                                Ok(())
-                            })
-                        )
-                    }))
-                );
-            }
-        }));
+            debug!("Files: {:#?}", paths);
 
-    application.connect_shutdown(clone!(@strong runtime_opt => move |_| {
-        debug!("Shutting down…");
-        if let Some(runtime) = runtime_opt.borrow_mut().take() {
-            runtime.shutdown_now().wait().unwrap();
-        }
+
+            let schema = gio::Settings::new("org.gnome.Tau");
+            let mut session_paths = Vec::new();
+            if schema
+                .get("restore-session") && !new_instance {
+                    session_paths.append(&mut schema.get_session());
+                    paths.extend(session_paths.iter().cloned())
+                }
+
+            for file in paths {
+                if let Err(e) = main_win_builder.borrow().spawn_view(Some(file.clone())) {
+                    if session_paths.contains(&file) {
+                        schema.session_remove(&file);
+                        continue;
+                    }
+                    else if let xrl::ClientError::ErrorReturned(value) = e {
+                        let err: XiClientError = serde_json::from_value(value).unwrap();
+                        main_win_builder.borrow().event_tx
+                            .send(XiEvent::NewView(Err(format!(
+                                "{}: '{}'",
+                                gettext("Failed open new view due to error"),
+                                err.message
+                            ))))
+                            .unwrap()
+                    }
+                }
+            }
+        }),
+    );
+
+    application.connect_shutdown(clone!(@strong main_win_builder => move |_| {
+        main_win_builder.borrow_mut().shutdown();
     }));
 
     if new_instance {
