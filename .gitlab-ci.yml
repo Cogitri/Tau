@@ -78,7 +78,7 @@ test-cross:
 
 flatpak:
     extends: '.flatpak'
-    image: "registry.gitlab.gnome.org/gnome/gnome-runtime-images/rust_bundle:master"
+    image: "registry.gitlab.gnome.org/gnome/gnome-runtime-images/rust_bundle:3.36"
     stage: 'flatpak'
     variables:
         MANIFEST_PATH: "flatpak/org.gnome.Tau.yml"
