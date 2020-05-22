@@ -1,5 +1,0 @@
-sign-commit = true
-pre-release-commit-message = "project: release {{version}}"
-no-dev-version = true
-tag-message = "release v{{version}}"
-tag-prefix = "v"
