@@ -27,7 +27,7 @@ pangocairo = ""
 parking_lot = "0.10"
 serde = { version="", features = ["derive"] }
 serde_json = ""
-syntect = ""
+syntect = "3"
 tau-linecache = { path="../tau-linecache" }
 tokio = "0.1"
 unicode-segmentation = "1"
