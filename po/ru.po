@@ -1,0 +1,720 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2020-05-18 10:16+0600\n"
+"PO-Revision-Date: 2020-05-22 11:55+0600\n"
+"Last-Translator: Dead Mozay <dead_mozay@opensuse.org>\n"
+"Language-Team: \n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.3.1\n"
+"X-Poedit-Basepath: ..\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: data/org.gnome.Tau.gschema.xml:9
+msgid "Xi-Editor’s theme"
+msgstr "Тема Xi-Editor"
+
+#: data/org.gnome.Tau.gschema.xml:10
+msgid "Sets the theme used for the editing area"
+msgstr "Тема области редактора"
+
+#: data/org.gnome.Tau.gschema.xml:17 src/tau/src/ui/prefs_win_handy.glade:449
+msgid "Draw trailing spaces"
+msgstr "Отображать пробелы в конце"
+
+#: data/org.gnome.Tau.gschema.xml:18
+msgid "Draw spaces which are at the end of a line"
+msgstr "Отображать пробелы, которые находятся в конце строк"
+
+#: data/org.gnome.Tau.gschema.xml:25 src/tau/src/ui/prefs_win_handy.glade:466
+msgid "Draw leading spaces"
+msgstr "Отображать ведущие пробелы"
+
+#: data/org.gnome.Tau.gschema.xml:26
+msgid "Draw spaces which are at the beginning of a line"
+msgstr "Отображать пробелы, которые находятся в начале строк"
+
+#: data/org.gnome.Tau.gschema.xml:33 src/tau/src/ui/prefs_win_handy.glade:483
+msgid "Draw selected spaces"
+msgstr "Отображать выделенные пробелы"
+
+#: data/org.gnome.Tau.gschema.xml:34
+msgid "Draw spaces whenever they are selected"
+msgstr "Отображать пробелы, когда они выбраны"
+
+#: data/org.gnome.Tau.gschema.xml:41 src/tau/src/ui/prefs_win_handy.glade:432
+msgid "Draw all spaces"
+msgstr "Отображать все пробелы"
+
+#: data/org.gnome.Tau.gschema.xml:42
+msgid "Draw spaces, no matter the position"
+msgstr "Отображать пробелы, независимо от позиции"
+
+#: data/org.gnome.Tau.gschema.xml:49
+msgid "Draw a right hand margin"
+msgstr "Отображать поле справа"
+
+#: data/org.gnome.Tau.gschema.xml:50
+msgid "Draw a right hand margin to limit the text width"
+msgstr "Отображать поле справа, чтобы ограничить ширину текста"
+
+#: data/org.gnome.Tau.gschema.xml:58
+msgid "At what column to display the margin"
+msgstr "В каком столбце отображать поля"
+
+#: data/org.gnome.Tau.gschema.xml:59
+msgid "Sets the column at which the margin should be drawn"
+msgstr "Устанавливает столбец, в котором должно быть нарисовано поле"
+
+#: data/org.gnome.Tau.gschema.xml:66
+msgid "Whether the current line should be highlighted"
+msgstr "Должна ли быть выделена текущая строка"
+
+#: data/org.gnome.Tau.gschema.xml:67
+msgid ""
+"Sets if the current line should be highlighted, which eases navigation "
+"through the document"
+msgstr ""
+"Устанавливает, должна ли быть выделена текущая строка, что облегчает "
+"навигацию по документу"
+
+#: data/org.gnome.Tau.gschema.xml:75
+msgid "Sets the height of the window in the next start-up"
+msgstr "Устанавливает высоту окна при следующем запуске"
+
+#: data/org.gnome.Tau.gschema.xml:81
+msgid "Sets the width of the window in the next start-up"
+msgstr "Устанавливает ширину окна при следующем запуске"
+
+#: data/org.gnome.Tau.gschema.xml:86
+msgid "Sets if the window should be maximized during the next start-up"
+msgstr ""
+"Устанавливает, должно ли окно быть развернуто во время следующего запуска"
+
+#: data/org.gnome.Tau.gschema.xml:92 src/editview/src/ui/ev.glade:76
+#: src/tau/src/ui/prefs_win_handy.glade:268
+msgid "Tab size"
+msgstr "Размер табуляции"
+
+#: data/org.gnome.Tau.gschema.xml:93
+msgid "Amount of spaces that a tab is wide"
+msgstr "Количество пробелов в ширине табуляции"
+
+#: data/org.gnome.Tau.gschema.xml:99 src/editview/src/ui/ev.glade:37
+#: src/tau/src/ui/prefs_win_handy.glade:227
+#: src/tau/src/ui/prefs_win_handy.glade:289
+msgid "Insert spaces instead of tabs"
+msgstr "Вставлять пробелы вместо табуляции"
+
+#: data/org.gnome.Tau.gschema.xml:100
+msgid "Whether spaces should be inserted instead of tabs"
+msgstr "Должны ли быть вставлены пробелы вместо табуляции"
+
+#: data/org.gnome.Tau.gschema.xml:105
+msgid "Treat indentation with spaces like tabs"
+msgstr "Относится к отступам с пробелами, как табуляции"
+
+#: data/org.gnome.Tau.gschema.xml:106
+msgid ""
+"If “translate-tabs-to-spaces” is true, Backspace will delete multiple "
+"spaces, up to the previous tab stop"
+msgstr ""
+"Если значение \"translate-tabs-to-space\" равно true, Backspace удалит "
+"несколько пробелов, вплоть до предыдущей остановки табуляции"
+
+#: data/org.gnome.Tau.gschema.xml:111
+msgid "Automatically match document’s indentation on newlines"
+msgstr "Автоматически сопоставлять отступы документа на новых строках"
+
+#: data/org.gnome.Tau.gschema.xml:116
+msgid "The font used for editing"
+msgstr "Шрифт, используемый для редактирования"
+
+#: data/org.gnome.Tau.gschema.xml:121
+msgid "Wrap lines at the end of the document"
+msgstr "Перенос строк в конце документа"
+
+#: data/org.gnome.Tau.gschema.xml:126 src/tau/src/ui/prefs_win_handy.glade:540
+msgid "Draw trailing tabs"
+msgstr "Отображать табуляции в конце"
+
+#: data/org.gnome.Tau.gschema.xml:127
+msgid "Draw tabs which are at the end of a line"
+msgstr "Отображать табуляции, которые находятся в конце строк"
+
+#: data/org.gnome.Tau.gschema.xml:134 src/tau/src/ui/prefs_win_handy.glade:557
+msgid "Draw leading tabs"
+msgstr "Отображать ведущие табуляции"
+
+#: data/org.gnome.Tau.gschema.xml:135
+msgid "Draw tabs which are at the beginning of a line"
+msgstr "Отображать табуляции, которые находятся в начале строк"
+
+#: data/org.gnome.Tau.gschema.xml:142 src/tau/src/ui/prefs_win_handy.glade:574
+msgid "Draw selected tabs"
+msgstr "Отображать выбранные табуляции"
+
+#: data/org.gnome.Tau.gschema.xml:143
+msgid "Draw tabs whenever they are selected"
+msgstr "Отображать табуляции всякий раз, когда они выбраны"
+
+#: data/org.gnome.Tau.gschema.xml:150 src/tau/src/ui/prefs_win_handy.glade:523
+msgid "Draw all tabs"
+msgstr "Отображать все табуляции"
+
+#: data/org.gnome.Tau.gschema.xml:151
+msgid "Draw all tabs, no matter the position"
+msgstr "Отображать все табуляции, независимо от позиции"
+
+#: data/org.gnome.Tau.gschema.xml:158
+msgid "Draw the cursor"
+msgstr "Отображать курсор"
+
+#: data/org.gnome.Tau.gschema.xml:159
+msgid "Whether to draw the cursor"
+msgstr "Нужно ли отображать курсор"
+
+#: data/org.gnome.Tau.gschema.xml:166
+msgid "Syntax specific settings"
+msgstr "Настройки синтаксиса"
+
+#: data/org.gnome.Tau.gschema.xml:167
+msgid ""
+"A JSON string containing syntax specific settings (e.g. tab width of 2 for "
+"YAML)"
+msgstr ""
+"Строка JSON, содержащая специфичные для синтаксиса настройки (например, "
+"ширина вкладки 2 для YAML)"
+
+#: data/org.gnome.Tau.gschema.xml:174
+msgid "Save when Tau moves out of focus"
+msgstr "Сохранять, когда Tau не в фокусе"
+
+#: data/org.gnome.Tau.gschema.xml:175
+msgid "Automatically save all open files when Tau moves out of focus"
+msgstr "Автоматически сохранять все файлы, когда Tau теряет фокус"
+
+#: data/org.gnome.Tau.gschema.xml:182 src/tau/src/ui/prefs_win_handy.glade:100
+msgid "Show line count"
+msgstr "Показать количество строк"
+
+#: data/org.gnome.Tau.gschema.xml:183
+msgid "Whether or not to show the line count in the editing pane"
+msgstr "Показывать или нет количество строк на панели редактирования"
+
+#: data/org.gnome.Tau.gschema.xml:190
+msgid "Open files"
+msgstr "Открытые файлы"
+
+#: data/org.gnome.Tau.gschema.xml:191
+msgid "List of file paths open in the current or most recent session"
+msgstr "Список путей к файлам, открытых в текущем или последнем сеансе"
+
+#: data/org.gnome.Tau.gschema.xml:198
+msgid "Restore session"
+msgstr "Восстановить сессию"
+
+#: data/org.gnome.Tau.gschema.xml:199
+msgid "Whether or not to restore last session on start-up"
+msgstr "Так или иначе восстанавливать последнюю сессию при запуске"
+
+#: data/org.gnome.Tau.gschema.xml:206
+msgid "Full path in title bar"
+msgstr "Полный путь в строке заголовка"
+
+#: data/org.gnome.Tau.gschema.xml:207
+msgid ""
+"Whether or not to display full path instead of file name in Tau's title bar."
+msgstr ""
+"Отображать или нет полный путь вместо имени файла в строке заголовка Tau."
+
+#: data/org.gnome.Tau.gschema.xml:214
+msgid "Show terminal"
+msgstr "Показать терминал"
+
+#: data/org.gnome.Tau.gschema.xml:215
+msgid "Whether or not to show an integrated terminal in Tau's editing pane"
+msgstr "Показывать или нет встроенный терминал на панели редактирования Tau"
+
+#: data/org.gnome.Tau.gschema.xml:222
+msgid "Path to the shell executable"
+msgstr "Путь к исполняемому файлу оболочки"
+
+#: data/org.gnome.Tau.gschema.xml:223
+msgid "The path to the shell you want to use."
+msgstr "Путь к оболочке."
+
+#: src/editview/src/ui/context_menu.glade:6
+msgid "Cut"
+msgstr "Вырезать"
+
+#: src/editview/src/ui/context_menu.glade:10
+msgid "Copy"
+msgstr "Копировать"
+
+#: src/editview/src/ui/context_menu.glade:14
+msgid "Paste"
+msgstr "Вставить"
+
+#: src/editview/src/ui/context_menu.glade:20
+msgid "Undo"
+msgstr "Отменить"
+
+#: src/editview/src/ui/context_menu.glade:24
+msgid "Redo"
+msgstr "Вернуть"
+
+#: src/editview/src/ui/context_menu.glade:30
+msgid "Select All"
+msgstr "Выделить все"
+
+#: src/editview/src/ui/ev.glade:22
+msgid "Enable automatic indentation"
+msgstr "Включить автоматический отступ"
+
+#: src/editview/src/ui/find_replace.glade:32
+msgid "Find"
+msgstr "Найти"
+
+#: src/editview/src/ui/find_replace.glade:82
+msgid "Find and select all search matches"
+msgstr "Найти и выбрать все результаты поиска"
+
+#: src/editview/src/ui/find_replace.glade:102
+msgid "Switch between Search and Search-and-Replace"
+msgstr "Переключение между поиском и поиском и заменой"
+
+#: src/editview/src/ui/find_replace.glade:123
+msgid "Show or hide search options such as case sensitivity"
+msgstr ""
+"Показать или скрыть параметры поиска, такие как чувствительность к регистру"
+
+#: src/editview/src/ui/find_replace.glade:160
+#: src/editview/src/ui/find_replace.glade:170
+msgid "Replace"
+msgstr "Заменить"
+
+#: src/editview/src/ui/find_replace.glade:182
+msgid "Replace All"
+msgstr "Заменить все"
+
+#: src/editview/src/ui/find_replace.glade:211
+msgid "Regular expressions"
+msgstr "Регулярные выражения"
+
+#: src/editview/src/ui/find_replace.glade:226
+msgid "Case sensitive"
+msgstr "Чувствительный к регистру"
+
+#: src/editview/src/ui/find_replace.glade:240
+msgid "Match whole word only"
+msgstr "Совпадение всего слова"
+
+#: src/editview/src/ui/find_replace.glade:265
+msgid "No Results"
+msgstr "Нет результатов"
+
+#: src/tau/src/ui/prefs_win_handy.glade:28 src/tau/src/ui/tau.glade:139
+#: src/tau/src/ui/tau.glade:346
+msgid "Preferences"
+msgstr "Параметры"
+
+#: src/tau/src/ui/prefs_win_handy.glade:39
+msgid "View"
+msgstr "Вид"
+
+#: src/tau/src/ui/prefs_win_handy.glade:40
+msgid "Preferences related to the View’s look"
+msgstr "Параметры внешнего вида"
+
+#: src/tau/src/ui/prefs_win_handy.glade:44
+msgid "Display right hand margin"
+msgstr "Показать поле справа"
+
+#: src/tau/src/ui/prefs_win_handy.glade:87
+msgid "Highlight the current line"
+msgstr "Выделить текущую строку"
+
+#: src/tau/src/ui/prefs_win_handy.glade:113
+msgid "Show full path in title bar"
+msgstr "Показать полный путь в строке заголовка"
+
+#: src/tau/src/ui/prefs_win_handy.glade:126
+msgid "Restore last opened files on start-up"
+msgstr "Восстанавливать последние открытые файлы при запуске"
+
+#: src/tau/src/ui/prefs_win_handy.glade:140
+msgid "Wrap lines at the end of the view"
+msgstr "Перенос строк по размеру окна"
+
+#: src/tau/src/ui/prefs_win_handy.glade:152
+msgid "Theme configuration"
+msgstr "Тема"
+
+#: src/tau/src/ui/prefs_win_handy.glade:167
+msgid "Syntax configuration"
+msgstr "Настройка синтаксиса"
+
+#: src/tau/src/ui/prefs_win_handy.glade:171
+msgid "Syntax selection"
+msgstr "Выбор синтаксиса"
+
+#: src/tau/src/ui/prefs_win_handy.glade:184
+msgid "Syntax-specific tab size"
+msgstr "Размер табуляции"
+
+#: src/tau/src/ui/prefs_win_handy.glade:240
+msgid "Apply syntax configuration settings"
+msgstr "Применить настройки синтаксиса"
+
+#: src/tau/src/ui/prefs_win_handy.glade:260
+msgid "Editor"
+msgstr "Редактор"
+
+#: src/tau/src/ui/prefs_win_handy.glade:264
+msgid "Indention"
+msgstr "Отступ"
+
+#: src/tau/src/ui/prefs_win_handy.glade:325
+msgid "Automatic indentation"
+msgstr "Автоматический отступ"
+
+#: src/tau/src/ui/prefs_win_handy.glade:362
+msgid "Delete spaces up to the previous tab stop"
+msgstr "Удалить пробелы до предыдущей табуляции"
+
+#: src/tau/src/ui/prefs_win_handy.glade:377
+msgid "File saving"
+msgstr "Сохранение файла"
+
+#: src/tau/src/ui/prefs_win_handy.glade:381
+msgid "Save files when the Tau goes out of focus"
+msgstr "Сохранять файлы, когда Tau не в фокусе"
+
+#: src/tau/src/ui/prefs_win_handy.glade:396
+msgid "Terminal"
+msgstr "Терминал"
+
+#: src/tau/src/ui/prefs_win_handy.glade:400
+msgid "Show the embedded terminal on startup"
+msgstr "Показывать встроенный терминал при запуске"
+
+#: src/tau/src/ui/prefs_win_handy.glade:413
+msgid "What shell to start"
+msgstr "Какую оболочку запустить"
+
+#: src/tau/src/ui/prefs_win_handy.glade:428
+msgid "Highlighting spaces"
+msgstr "Подсветка пробелов"
+
+#: src/tau/src/ui/prefs_win_handy.glade:500
+msgid "Don't draw spaces"
+msgstr "Не отображать пробелы"
+
+#: src/tau/src/ui/prefs_win_handy.glade:519
+msgid "Highlighting tabs"
+msgstr "Подсветка табуляции"
+
+#: src/tau/src/ui/prefs_win_handy.glade:591
+msgid "Don't draw tabs"
+msgstr "Не отображать табуляции"
+
+#: src/tau/src/ui/prefs_win_handy.glade:610
+#: src/tau/src/ui/prefs_win_handy.glade:614
+msgid "Font configuration"
+msgstr "Конфигурация шрифтов"
+
+#: src/tau/src/ui/shortcuts_win.glade:14
+msgctxt "shortcut window"
+msgid "Documents"
+msgstr "Документы"
+
+#: src/tau/src/ui/shortcuts_win.glade:18
+msgctxt "shortcut window"
+msgid "Create new document"
+msgstr "Создать новый документ"
+
+#: src/tau/src/ui/shortcuts_win.glade:24
+msgctxt "shortcut window"
+msgid "Open a document"
+msgstr "Открыть документ"
+
+#: src/tau/src/ui/shortcuts_win.glade:30
+msgctxt "shortcut window"
+msgid "Save the document"
+msgstr "Сохранить документ"
+
+#: src/tau/src/ui/shortcuts_win.glade:36
+msgctxt "shortcut window"
+msgid "Save the document as…"
+msgstr "Сохранить документ как"
+
+#: src/tau/src/ui/shortcuts_win.glade:42
+msgctxt "shortcut window"
+msgid "Close the document"
+msgstr "Закрыть документ"
+
+#: src/tau/src/ui/shortcuts_win.glade:49
+msgctxt "shortcut window"
+msgid "Navigation"
+msgstr "Навигация"
+
+#: src/tau/src/ui/shortcuts_win.glade:53
+msgctxt "shortcut window"
+msgid "Cycle tab history backward"
+msgstr "Переключение вкладок назад"
+
+#: src/tau/src/ui/shortcuts_win.glade:59
+msgctxt "shortcut window"
+msgid "Cycle tab history forward"
+msgstr "Переключение вкладок вперед"
+
+#: src/tau/src/ui/shortcuts_win.glade:65
+msgctxt "shortcut window"
+msgid "Toggle fullscreen"
+msgstr "Включить полно экранный режим"
+
+#: src/tau/src/ui/shortcuts_win.glade:72 src/tau/src/ui/shortcuts_win.glade:76
+msgctxt "shortcut window"
+msgid "Find"
+msgstr "Найти"
+
+#: src/tau/src/ui/shortcuts_win.glade:82
+msgctxt "shortcut window"
+msgid "Find the next match"
+msgstr "Найти следующее совпадение"
+
+#: src/tau/src/ui/shortcuts_win.glade:88
+msgctxt "shortcut window"
+msgid "Find the previous match"
+msgstr "Найти предыдущее совпадение"
+
+#: src/tau/src/ui/shortcuts_win.glade:94
+msgctxt "shortcut window"
+msgid "Find and replace"
+msgstr "Найти и заменить"
+
+#: src/tau/src/ui/shortcuts_win.glade:100
+msgctxt "shortcut window"
+msgid "Find all matches"
+msgstr "Найти все совпадения"
+
+#: src/tau/src/ui/shortcuts_win.glade:106
+msgctxt "shortcut window"
+msgid "Close the find window"
+msgstr "Закрыть окно поиска"
+
+#: src/tau/src/ui/shortcuts_win.glade:114
+msgctxt "shortcut window"
+msgid "Editing"
+msgstr "Редактирование"
+
+#: src/tau/src/ui/shortcuts_win.glade:118
+msgctxt "shortcut window"
+msgid "Highlight the next occurrence of the current selection"
+msgstr "Подсветка текста по выделенному фрагменту"
+
+#: src/tau/src/ui/shortcuts_win.glade:124
+msgctxt "shortcut window"
+msgid "Delete the current selection"
+msgstr "Удалить выделенное"
+
+#: src/tau/src/ui/shortcuts_win.glade:130
+msgctxt "shortcut window"
+msgid "Delete an entire word"
+msgstr "Удалить все слово"
+
+#: src/tau/src/ui/shortcuts_win.glade:136
+msgctxt "shortcut window"
+msgid "Outdent the current selection"
+msgstr "Выровнять по отступу"
+
+#: src/tau/src/ui/shortcuts_win.glade:142
+msgctxt "shortcut window"
+msgid "Move to start of the line"
+msgstr "Перейти к началу строки"
+
+#: src/tau/src/ui/shortcuts_win.glade:148
+msgctxt "shortcut window"
+msgid "Move to start of the document"
+msgstr "Перейти к началу документа"
+
+#: src/tau/src/ui/shortcuts_win.glade:155
+msgctxt "shortcut window"
+msgid "Move to end of the line"
+msgstr "Перейти в конец строки"
+
+#: src/tau/src/ui/shortcuts_win.glade:161
+msgctxt "shortcut window"
+msgid "Move to end of the document"
+msgstr "Перейти в конец документа"
+
+#: src/tau/src/ui/shortcuts_win.glade:167
+msgctxt "shortcut window"
+msgid "Move up for the height of the view"
+msgstr "Пролистать вверх на одну страницу"
+
+#: src/tau/src/ui/shortcuts_win.glade:173
+msgctxt "shortcut window"
+msgid "Move down for the height of the view"
+msgstr "Пролистать вниз на одну страницу"
+
+#: src/tau/src/ui/shortcuts_win.glade:179
+msgctxt "shortcut window"
+msgid "Enable/Disable the cursor"
+msgstr "Включить/Отключить курсор"
+
+#: src/tau/src/ui/shortcuts_win.glade:186
+msgctxt "shortcut window"
+msgid "Copy and Paste"
+msgstr "Копировать и вставить"
+
+#: src/tau/src/ui/shortcuts_win.glade:190
+msgctxt "shortcut window"
+msgid "Copy the current selection"
+msgstr "Копировать выделенное"
+
+#: src/tau/src/ui/shortcuts_win.glade:196
+msgctxt "shortcut window"
+msgid "Paste what's currently in the clipboard"
+msgstr "Вставить из буфера обмена"
+
+#: src/tau/src/ui/shortcuts_win.glade:202
+#: src/tau/src/ui/shortcuts_win.glade:208
+msgctxt "shortcut window"
+msgid "Cut the current selection"
+msgstr "Вырезать выделенный фрагмент"
+
+#: src/tau/src/ui/shortcuts_win.glade:215
+msgctxt "shortcut window"
+msgid "Undo and Redo"
+msgstr "Отменить и Вернуть"
+
+#: src/tau/src/ui/shortcuts_win.glade:219
+msgctxt "shortcut window"
+msgid "Undo"
+msgstr "Отменить"
+
+#: src/tau/src/ui/shortcuts_win.glade:225
+msgctxt "shortcut window"
+msgid "Redo"
+msgstr "Вернуть"
+
+#: src/tau/src/ui/shortcuts_win.glade:232
+msgctxt "shortcut window"
+msgid "Selections"
+msgstr "Выбор"
+
+#: src/tau/src/ui/shortcuts_win.glade:236
+msgctxt "shortcut window"
+msgid "Select all"
+msgstr "Выделить все"
+
+#: src/tau/src/ui/shortcuts_win.glade:242
+msgctxt "shortcut window"
+msgid "Move up and select everything from current cursor position"
+msgstr "Переместить вверх и выделить все из текущей позиции курсора"
+
+#: src/tau/src/ui/shortcuts_win.glade:248
+msgctxt "shortcut window"
+msgid "Move down and select everything from current cursor position"
+msgstr "Переместить вниз и выделить все из текущей позиции курсора"
+
+#: src/tau/src/ui/shortcuts_win.glade:254
+msgctxt "shortcut window"
+msgid "Move left and select everything from current cursor position"
+msgstr "Переместить влево и выделить все из текущей позиции курсора"
+
+#: src/tau/src/ui/shortcuts_win.glade:260
+msgctxt "shortcut window"
+msgid "Move left and select the next word"
+msgstr "Переместить влево и выделить следующее слово"
+
+#: src/tau/src/ui/shortcuts_win.glade:266
+msgctxt "shortcut window"
+msgid "Move right and select everything from current cursor position"
+msgstr "Переместить вправо и выделить все из текущей позиции курсора"
+
+#: src/tau/src/ui/shortcuts_win.glade:272
+msgctxt "shortcut window"
+msgid "Move right and select the next word"
+msgstr "Переместить вправо и выбрать следующее слово"
+
+#: src/tau/src/ui/shortcuts_win.glade:278
+msgctxt "shortcut window"
+msgid "Move to start of the line and select"
+msgstr "Перейти к началу строки и выделить"
+
+#: src/tau/src/ui/shortcuts_win.glade:284
+msgctxt "shortcut window"
+msgid "Move to start of the document and select"
+msgstr "Перейти к началу документа и выделить"
+
+#: src/tau/src/ui/shortcuts_win.glade:290
+msgctxt "shortcut window"
+msgid "Move to end of the line and select"
+msgstr "Перейти в конец строки и выделить"
+
+#: src/tau/src/ui/shortcuts_win.glade:296
+msgctxt "shortcut window"
+msgid "Move to end of the document and select"
+msgstr "Перейти в конец документа и выделить"
+
+#: src/tau/src/ui/shortcuts_win.glade:302
+msgctxt "shortcut window"
+msgid "Move up for the height of the view and select"
+msgstr "Выделить страницу сверху"
+
+#: src/tau/src/ui/shortcuts_win.glade:308
+msgctxt "shortcut window"
+msgid "Move down for the height of the view and select"
+msgstr "Выделить страницу снизу"
+
+#: src/tau/src/ui/tau.glade:22 src/tau/src/ui/tau.glade:229
+msgid "Save As…"
+msgstr "Сохранить как …"
+
+#: src/tau/src/ui/tau.glade:36 src/tau/src/ui/tau.glade:243
+msgid "Save All"
+msgstr "Сохранить все"
+
+#: src/tau/src/ui/tau.glade:61 src/tau/src/ui/tau.glade:268
+msgid "Find…"
+msgstr "Найти…"
+
+#: src/tau/src/ui/tau.glade:75 src/tau/src/ui/tau.glade:282
+msgid "Replace…"
+msgstr "Заменить…"
+
+#: src/tau/src/ui/tau.glade:100 src/tau/src/ui/tau.glade:307
+msgid "Show Terminal"
+msgstr "Показать терминал"
+
+#: src/tau/src/ui/tau.glade:114 src/tau/src/ui/tau.glade:321
+msgid "Toggle Fullscreen"
+msgstr "Включить полно экранный режим"
+
+#: src/tau/src/ui/tau.glade:164 src/tau/src/ui/tau.glade:371
+msgid "Help"
+msgstr "Справка"
+
+#: src/tau/src/ui/tau.glade:178 src/tau/src/ui/tau.glade:385
+msgid "Keyboard Shortcuts"
+msgstr "Комбинации клавиш"
+
+#: src/tau/src/ui/tau.glade:192 src/tau/src/ui/tau.glade:399
+msgid "About Tau"
+msgstr "О программе Tau"
+
+#: src/tau/src/ui/tau.glade:434 src/tau/src/ui/tau.glade:543
+msgid "Open"
+msgstr "Открыть"
+
+#: src/tau/src/ui/tau.glade:475 src/tau/src/ui/tau.glade:603
+msgid "Save"
+msgstr "Сохранить"
