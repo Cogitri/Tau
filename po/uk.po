@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tau master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Tau/issues\n"
-"POT-Creation-Date: 2020-03-30 06:56+0000\n"
-"PO-Revision-Date: 2020-03-31 10:28+0300\n"
+"POT-Creation-Date: 2020-05-23 10:07+0000\n"
+"PO-Revision-Date: 2020-05-23 16:18+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -32,8 +32,8 @@ msgid ""
 "Tau is a GTK frontend for the xi text editor written in Rust. It’s a very "
 "fast plain text editor."
 msgstr ""
-"Тау — написана мовою Rust оболонка на основі GTK до текстового редактора xi."
-" Це дуже швидкий простий текстовий редактор."
+"Тау — написана мовою Rust оболонка на основі GTK до текстового редактора xi. "
+"Це дуже швидкий простий текстовий редактор."
 
 #: data/org.gnome.Tau.appdata.xml.in.in:28
 msgid "Rasmus “Cogitri” Thomsen"
@@ -47,8 +47,8 @@ msgstr "Текстовий редактор «Тау»"
 #: data/org.gnome.Tau.desktop.in.in:15
 msgid "Text;Editor;Plaintext;Write;gxi;"
 msgstr ""
-"Text;Editor;Plaintext;Write;gxi;текст;редактор;звичайний;запис;гксі;редагуванн"
-"я;"
+"Text;Editor;Plaintext;Write;gxi;текст;редактор;звичайний;запис;гксі;"
+"редагування;"
 
 #: data/org.gnome.Tau.desktop.in.in:18
 msgid "Launch a new Tau instance"
@@ -62,7 +62,7 @@ msgstr "Тема редактора Xi"
 msgid "Sets the theme used for the editing area"
 msgstr "Встановлює тему, яку буде використано для панелі редагування"
 
-#: data/org.gnome.Tau.gschema.xml:17 src/tau/src/ui/prefs_win_handy.glade:447
+#: data/org.gnome.Tau.gschema.xml:17 src/tau/src/ui/prefs_win_handy.glade:449
 msgid "Draw trailing spaces"
 msgstr "Візуалізація кінцевих пробілів"
 
@@ -70,7 +70,7 @@ msgstr "Візуалізація кінцевих пробілів"
 msgid "Draw spaces which are at the end of a line"
 msgstr "Візуалізувати пробіли наприкінці рядків"
 
-#: data/org.gnome.Tau.gschema.xml:25 src/tau/src/ui/prefs_win_handy.glade:464
+#: data/org.gnome.Tau.gschema.xml:25 src/tau/src/ui/prefs_win_handy.glade:466
 msgid "Draw leading spaces"
 msgstr "Візуалізація початкових пробілів"
 
@@ -78,7 +78,7 @@ msgstr "Візуалізація початкових пробілів"
 msgid "Draw spaces which are at the beginning of a line"
 msgstr "Візуалізувати пробіли на початку рядків"
 
-#: data/org.gnome.Tau.gschema.xml:33 src/tau/src/ui/prefs_win_handy.glade:481
+#: data/org.gnome.Tau.gschema.xml:33 src/tau/src/ui/prefs_win_handy.glade:483
 msgid "Draw selected spaces"
 msgstr "Візуалізувати позначені пробіли"
 
@@ -86,7 +86,7 @@ msgstr "Візуалізувати позначені пробіли"
 msgid "Draw spaces whenever they are selected"
 msgstr "Візуалізувати пробіли, якщо їх позначено"
 
-#: data/org.gnome.Tau.gschema.xml:41 src/tau/src/ui/prefs_win_handy.glade:430
+#: data/org.gnome.Tau.gschema.xml:41 src/tau/src/ui/prefs_win_handy.glade:432
 msgid "Draw all spaces"
 msgstr "Візуалізувати усі пробіли"
 
@@ -119,8 +119,8 @@ msgid ""
 "Sets if the current line should be highlighted, which eases navigation "
 "through the document"
 msgstr ""
-"Встановлює, чи буде підсвічено поточний рядок. Підсвічування полегшує"
-" навігацію документом."
+"Встановлює, чи буде підсвічено поточний рядок. Підсвічування полегшує "
+"навігацію документом."
 
 #: data/org.gnome.Tau.gschema.xml:75
 msgid "Sets the height of the window in the next start-up"
@@ -133,11 +133,11 @@ msgstr "Встановлює ширину вікна під час наступ�
 #: data/org.gnome.Tau.gschema.xml:86
 msgid "Sets if the window should be maximized during the next start-up"
 msgstr ""
-"Встановлює, чи має бути максимізовано вікно під час наступного запуску"
-" програми"
+"Встановлює, чи має бути максимізовано вікно під час наступного запуску "
+"програми"
 
-#: data/org.gnome.Tau.gschema.xml:92 src/editview/src/ui/ev.glade:75
-#: src/tau/src/ui/prefs_win_handy.glade:266
+#: data/org.gnome.Tau.gschema.xml:92 src/editview/src/ui/ev.glade:76
+#: src/tau/src/ui/prefs_win_handy.glade:268
 msgid "Tab size"
 msgstr "Розмір табуляції"
 
@@ -145,9 +145,9 @@ msgstr "Розмір табуляції"
 msgid "Amount of spaces that a tab is wide"
 msgstr "Кількість пробілів у одній табуляції"
 
-#: data/org.gnome.Tau.gschema.xml:99 src/editview/src/ui/ev.glade:36
-#: src/tau/src/ui/prefs_win_handy.glade:225
-#: src/tau/src/ui/prefs_win_handy.glade:287
+#: data/org.gnome.Tau.gschema.xml:99 src/editview/src/ui/ev.glade:37
+#: src/tau/src/ui/prefs_win_handy.glade:227
+#: src/tau/src/ui/prefs_win_handy.glade:289
 msgid "Insert spaces instead of tabs"
 msgstr "Вставляти пропуски замість табуляції"
 
@@ -164,8 +164,8 @@ msgid ""
 "If “translate-tabs-to-spaces” is true, Backspace will delete multiple "
 "spaces, up to the previous tab stop"
 msgstr ""
-"Якщо визначено значення «translate-tabs-to-spaces» рівне «true», натискання"
-" Backspace вилучатиме декілька пробілів, аж до наступної позиції табуляції"
+"Якщо визначено значення «translate-tabs-to-spaces» рівне «true», натискання "
+"Backspace вилучатиме декілька пробілів, аж до наступної позиції табуляції"
 
 #: data/org.gnome.Tau.gschema.xml:111
 msgid "Automatically match document’s indentation on newlines"
@@ -180,7 +180,7 @@ msgstr "Шрифт, який буде використано для панелі
 msgid "Wrap lines at the end of the document"
 msgstr "Переносити рядки на межі області документа"
 
-#: data/org.gnome.Tau.gschema.xml:126 src/tau/src/ui/prefs_win_handy.glade:538
+#: data/org.gnome.Tau.gschema.xml:126 src/tau/src/ui/prefs_win_handy.glade:540
 msgid "Draw trailing tabs"
 msgstr "Візуалізувати кінцеві табуляції"
 
@@ -188,7 +188,7 @@ msgstr "Візуалізувати кінцеві табуляції"
 msgid "Draw tabs which are at the end of a line"
 msgstr "Візуалізувати табуляції наприкінці рядків"
 
-#: data/org.gnome.Tau.gschema.xml:134 src/tau/src/ui/prefs_win_handy.glade:555
+#: data/org.gnome.Tau.gschema.xml:134 src/tau/src/ui/prefs_win_handy.glade:557
 msgid "Draw leading tabs"
 msgstr "Візуалізувати початкові табуляції"
 
@@ -196,7 +196,7 @@ msgstr "Візуалізувати початкові табуляції"
 msgid "Draw tabs which are at the beginning of a line"
 msgstr "Візуалізувати табуляції на початку рядків"
 
-#: data/org.gnome.Tau.gschema.xml:142 src/tau/src/ui/prefs_win_handy.glade:572
+#: data/org.gnome.Tau.gschema.xml:142 src/tau/src/ui/prefs_win_handy.glade:574
 msgid "Draw selected tabs"
 msgstr "Візуалізувати позначені табуляції"
 
@@ -204,7 +204,7 @@ msgstr "Візуалізувати позначені табуляції"
 msgid "Draw tabs whenever they are selected"
 msgstr "Візуалізувати табуляції, якщо їх позначено"
 
-#: data/org.gnome.Tau.gschema.xml:150 src/tau/src/ui/prefs_win_handy.glade:521
+#: data/org.gnome.Tau.gschema.xml:150 src/tau/src/ui/prefs_win_handy.glade:523
 msgid "Draw all tabs"
 msgstr "Візуалізувати усі табуляції"
 
@@ -229,8 +229,8 @@ msgid ""
 "A JSON string containing syntax specific settings (e.g. tab width of 2 for "
 "YAML)"
 msgstr ""
-"Рядок JSON, який містить специфічні до синтаксису параметри (наприклад ширину"
-" табуляції 2 для YAML)"
+"Рядок JSON, який містить специфічні до синтаксису параметри (наприклад "
+"ширину табуляції 2 для YAML)"
 
 #: data/org.gnome.Tau.gschema.xml:174
 msgid "Save when Tau moves out of focus"
@@ -241,7 +241,7 @@ msgid "Automatically save all open files when Tau moves out of focus"
 msgstr ""
 "Автоматично зберігати усі відкриті файли, якщо «Тау» втрачає фокусування"
 
-#: data/org.gnome.Tau.gschema.xml:182 src/tau/src/ui/prefs_win_handy.glade:99
+#: data/org.gnome.Tau.gschema.xml:182 src/tau/src/ui/prefs_win_handy.glade:100
 msgid "Show line count"
 msgstr "Показувати кількість рядків"
 
@@ -273,8 +273,8 @@ msgstr "Повний шлях на смужці заголовка"
 msgid ""
 "Whether or not to display full path instead of file name in Tau's title bar."
 msgstr ""
-"Чи слід показувати повний шлях до файла замість назви файла на смужці"
-" заголовка «Тау»."
+"Чи слід показувати повний шлях до файла замість назви файла на смужці "
+"заголовка «Тау»."
 
 #: data/org.gnome.Tau.gschema.xml:214
 msgid "Show terminal"
@@ -317,7 +317,7 @@ msgstr "Повторити"
 msgid "Select All"
 msgstr "Позначити все"
 
-#: src/editview/src/ui/ev.glade:21
+#: src/editview/src/ui/ev.glade:22
 msgid "Enable automatic indentation"
 msgstr "Увімкнути автоматичні відступи"
 
@@ -336,8 +336,8 @@ msgstr "Перемикання між пошуком і пошуком із за
 #: src/editview/src/ui/find_replace.glade:123
 msgid "Show or hide search options such as case sensitivity"
 msgstr ""
-"Показати або приховати параметри пошуку, зокрема чутливість до регістру"
-" символів"
+"Показати або приховати параметри пошуку, зокрема чутливість до регістру "
+"символів"
 
 #: src/editview/src/ui/find_replace.glade:160
 #: src/editview/src/ui/find_replace.glade:170
@@ -411,207 +411,212 @@ msgstr "Циклічний перехід журналом вкладок впе
 
 #: src/tau/src/ui/shortcuts_win.glade:65
 msgctxt "shortcut window"
+msgid "Go to line"
+msgstr "Перейти до рядка"
+
+#: src/tau/src/ui/shortcuts_win.glade:71
+msgctxt "shortcut window"
 msgid "Toggle fullscreen"
 msgstr "Увімкнути/вимкнути повноекранний режим"
 
-#: src/tau/src/ui/shortcuts_win.glade:72 src/tau/src/ui/shortcuts_win.glade:76
+#: src/tau/src/ui/shortcuts_win.glade:78 src/tau/src/ui/shortcuts_win.glade:82
 msgctxt "shortcut window"
 msgid "Find"
 msgstr "Знайти"
 
-#: src/tau/src/ui/shortcuts_win.glade:82
+#: src/tau/src/ui/shortcuts_win.glade:88
 msgctxt "shortcut window"
 msgid "Find the next match"
 msgstr "Знайти наступний збіг"
 
-#: src/tau/src/ui/shortcuts_win.glade:88
+#: src/tau/src/ui/shortcuts_win.glade:94
 msgctxt "shortcut window"
 msgid "Find the previous match"
 msgstr "Знайти попередній збіг"
 
-#: src/tau/src/ui/shortcuts_win.glade:94
+#: src/tau/src/ui/shortcuts_win.glade:100
 msgctxt "shortcut window"
 msgid "Find and replace"
 msgstr "Знайти і замінити"
 
-#: src/tau/src/ui/shortcuts_win.glade:100
+#: src/tau/src/ui/shortcuts_win.glade:106
 msgctxt "shortcut window"
 msgid "Find all matches"
 msgstr "Знайти усі відповідники"
 
-#: src/tau/src/ui/shortcuts_win.glade:106
+#: src/tau/src/ui/shortcuts_win.glade:112
 msgctxt "shortcut window"
 msgid "Close the find window"
 msgstr "Закрити вікно пошуку"
 
-#: src/tau/src/ui/shortcuts_win.glade:114
+#: src/tau/src/ui/shortcuts_win.glade:120
 msgctxt "shortcut window"
 msgid "Editing"
 msgstr "Редагування"
 
-#: src/tau/src/ui/shortcuts_win.glade:118
+#: src/tau/src/ui/shortcuts_win.glade:124
 msgctxt "shortcut window"
 msgid "Highlight the next occurrence of the current selection"
 msgstr "Підсвітити наступне входження поточного позначеного фрагмента"
 
-#: src/tau/src/ui/shortcuts_win.glade:124
+#: src/tau/src/ui/shortcuts_win.glade:130
 msgctxt "shortcut window"
 msgid "Delete the current selection"
 msgstr "Вилучити поточний позначений фрагмент"
 
-#: src/tau/src/ui/shortcuts_win.glade:130
+#: src/tau/src/ui/shortcuts_win.glade:136
 msgctxt "shortcut window"
 msgid "Delete an entire word"
 msgstr "Вилучити усе слово"
 
-#: src/tau/src/ui/shortcuts_win.glade:136
+#: src/tau/src/ui/shortcuts_win.glade:142
 msgctxt "shortcut window"
 msgid "Outdent the current selection"
 msgstr "Скасувати відступ у поточному позначеному фрагменті"
 
-#: src/tau/src/ui/shortcuts_win.glade:142
+#: src/tau/src/ui/shortcuts_win.glade:148
 msgctxt "shortcut window"
 msgid "Move to start of the line"
 msgstr "Перейти на початок рядка"
 
-#: src/tau/src/ui/shortcuts_win.glade:148
+#: src/tau/src/ui/shortcuts_win.glade:154
 msgctxt "shortcut window"
 msgid "Move to start of the document"
 msgstr "Перейти на початок документа"
 
-#: src/tau/src/ui/shortcuts_win.glade:155
+#: src/tau/src/ui/shortcuts_win.glade:161
 msgctxt "shortcut window"
 msgid "Move to end of the line"
 msgstr "Перейти на кінець рядка"
 
-#: src/tau/src/ui/shortcuts_win.glade:161
+#: src/tau/src/ui/shortcuts_win.glade:167
 msgctxt "shortcut window"
 msgid "Move to end of the document"
 msgstr "Перейти на кінець документа"
 
-#: src/tau/src/ui/shortcuts_win.glade:167
+#: src/tau/src/ui/shortcuts_win.glade:173
 msgctxt "shortcut window"
 msgid "Move up for the height of the view"
 msgstr "Перейти вище на один розмір області перегляду"
 
-#: src/tau/src/ui/shortcuts_win.glade:173
+#: src/tau/src/ui/shortcuts_win.glade:179
 msgctxt "shortcut window"
 msgid "Move down for the height of the view"
 msgstr "Перейти нижче на один розмір області перегляду"
 
-#: src/tau/src/ui/shortcuts_win.glade:179
+#: src/tau/src/ui/shortcuts_win.glade:185
 msgctxt "shortcut window"
 msgid "Enable/Disable the cursor"
 msgstr "Увімкнути або вимкнути курсор"
 
-#: src/tau/src/ui/shortcuts_win.glade:186
+#: src/tau/src/ui/shortcuts_win.glade:192
 msgctxt "shortcut window"
 msgid "Copy and Paste"
 msgstr "Копіювання та вставлення"
 
-#: src/tau/src/ui/shortcuts_win.glade:190
+#: src/tau/src/ui/shortcuts_win.glade:196
 msgctxt "shortcut window"
 msgid "Copy the current selection"
 msgstr "Копіювати поточний позначений фрагмент"
 
-#: src/tau/src/ui/shortcuts_win.glade:196
+#: src/tau/src/ui/shortcuts_win.glade:202
 msgctxt "shortcut window"
 msgid "Paste what's currently in the clipboard"
 msgstr "Вставити дані з буфера обміну даними"
 
-#: src/tau/src/ui/shortcuts_win.glade:202
 #: src/tau/src/ui/shortcuts_win.glade:208
+#: src/tau/src/ui/shortcuts_win.glade:214
 msgctxt "shortcut window"
 msgid "Cut the current selection"
 msgstr "Вирізати поточний позначений фрагмент"
 
-#: src/tau/src/ui/shortcuts_win.glade:215
+#: src/tau/src/ui/shortcuts_win.glade:221
 msgctxt "shortcut window"
 msgid "Undo and Redo"
 msgstr "Скасовування та повторення дій"
 
-#: src/tau/src/ui/shortcuts_win.glade:219
+#: src/tau/src/ui/shortcuts_win.glade:225
 msgctxt "shortcut window"
 msgid "Undo"
 msgstr "Скасувати"
 
-#: src/tau/src/ui/shortcuts_win.glade:225
+#: src/tau/src/ui/shortcuts_win.glade:231
 msgctxt "shortcut window"
 msgid "Redo"
 msgstr "Повторити"
 
-#: src/tau/src/ui/shortcuts_win.glade:232
+#: src/tau/src/ui/shortcuts_win.glade:238
 msgctxt "shortcut window"
 msgid "Selections"
 msgstr "Позначення"
 
-#: src/tau/src/ui/shortcuts_win.glade:236
+#: src/tau/src/ui/shortcuts_win.glade:242
 msgctxt "shortcut window"
 msgid "Select all"
 msgstr "Позначити все"
 
-#: src/tau/src/ui/shortcuts_win.glade:242
+#: src/tau/src/ui/shortcuts_win.glade:248
 msgctxt "shortcut window"
 msgid "Move up and select everything from current cursor position"
 msgstr "Перейти вище і позначити усе від поточної позиції курсора"
 
-#: src/tau/src/ui/shortcuts_win.glade:248
+#: src/tau/src/ui/shortcuts_win.glade:254
 msgctxt "shortcut window"
 msgid "Move down and select everything from current cursor position"
 msgstr "Перейти нижче і позначити усе від поточної позиції курсора"
 
-#: src/tau/src/ui/shortcuts_win.glade:254
+#: src/tau/src/ui/shortcuts_win.glade:260
 msgctxt "shortcut window"
 msgid "Move left and select everything from current cursor position"
 msgstr "Перейти ліворуч і позначити усе від поточної позиції курсора"
 
-#: src/tau/src/ui/shortcuts_win.glade:260
+#: src/tau/src/ui/shortcuts_win.glade:266
 msgctxt "shortcut window"
 msgid "Move left and select the next word"
 msgstr "Перейти ліворуч і позначити наступне слово"
 
-#: src/tau/src/ui/shortcuts_win.glade:266
+#: src/tau/src/ui/shortcuts_win.glade:272
 msgctxt "shortcut window"
 msgid "Move right and select everything from current cursor position"
 msgstr "Перейти праворуч і позначити усе від поточної позиції курсора"
 
-#: src/tau/src/ui/shortcuts_win.glade:272
+#: src/tau/src/ui/shortcuts_win.glade:278
 msgctxt "shortcut window"
 msgid "Move right and select the next word"
 msgstr "Перейти праворуч і позначити наступне слово"
 
-#: src/tau/src/ui/shortcuts_win.glade:278
+#: src/tau/src/ui/shortcuts_win.glade:284
 msgctxt "shortcut window"
 msgid "Move to start of the line and select"
 msgstr "Перейти на початок рядка і позначити"
 
-#: src/tau/src/ui/shortcuts_win.glade:284
+#: src/tau/src/ui/shortcuts_win.glade:290
 msgctxt "shortcut window"
 msgid "Move to start of the document and select"
 msgstr "Перейти на початок документа і позначити"
 
-#: src/tau/src/ui/shortcuts_win.glade:290
+#: src/tau/src/ui/shortcuts_win.glade:296
 msgctxt "shortcut window"
 msgid "Move to end of the line and select"
 msgstr "Перейти на кінець рядка і позначити"
 
-#: src/tau/src/ui/shortcuts_win.glade:296
+#: src/tau/src/ui/shortcuts_win.glade:302
 msgctxt "shortcut window"
 msgid "Move to end of the document and select"
 msgstr "Перейти на кінець документа і позначити"
 
-#: src/tau/src/ui/shortcuts_win.glade:302
+#: src/tau/src/ui/shortcuts_win.glade:308
 msgctxt "shortcut window"
 msgid "Move up for the height of the view and select"
 msgstr "Перейти вище на один розмір області перегляду і позначити"
 
-#: src/tau/src/ui/shortcuts_win.glade:308
+#: src/tau/src/ui/shortcuts_win.glade:314
 msgctxt "shortcut window"
 msgid "Move down for the height of the view and select"
 msgstr "Перейти нижче на один розмір області перегляду і позначити"
 
-#: src/tau/src/ui/prefs_win_handy.glade:28 src/tau/src/ui/tau.glade:139
-#: src/tau/src/ui/tau.glade:346
+#: src/tau/src/ui/prefs_win_handy.glade:28 src/tau/src/ui/tau.glade:153
+#: src/tau/src/ui/tau.glade:374
 msgid "Preferences"
 msgstr "Налаштування"
 
@@ -627,149 +632,153 @@ msgstr "Налаштування, які пов'язано із виглядом
 msgid "Display right hand margin"
 msgstr "Показувати праве поле"
 
-#: src/tau/src/ui/prefs_win_handy.glade:86
+#: src/tau/src/ui/prefs_win_handy.glade:87
 msgid "Highlight the current line"
 msgstr "Підсвічувати поточний рядок"
 
-#: src/tau/src/ui/prefs_win_handy.glade:112
+#: src/tau/src/ui/prefs_win_handy.glade:113
 msgid "Show full path in title bar"
 msgstr "Показувати повну адресу на смужці заголовка"
 
-#: src/tau/src/ui/prefs_win_handy.glade:125
+#: src/tau/src/ui/prefs_win_handy.glade:126
 msgid "Restore last opened files on start-up"
 msgstr "Відкривати попередні відкриті файли під час запуску"
 
-#: src/tau/src/ui/prefs_win_handy.glade:139
+#: src/tau/src/ui/prefs_win_handy.glade:140
 msgid "Wrap lines at the end of the view"
 msgstr "Переносити рядки на межі області перегляду"
 
-#: src/tau/src/ui/prefs_win_handy.glade:151
+#: src/tau/src/ui/prefs_win_handy.glade:152
 msgid "Theme configuration"
 msgstr "Налаштування теми"
 
-#: src/tau/src/ui/prefs_win_handy.glade:166
+#: src/tau/src/ui/prefs_win_handy.glade:167
 msgid "Syntax configuration"
 msgstr "Налаштування синтаксису"
 
-#: src/tau/src/ui/prefs_win_handy.glade:170
+#: src/tau/src/ui/prefs_win_handy.glade:171
 msgid "Syntax selection"
 msgstr "Вибір за синтаксисом"
 
-#: src/tau/src/ui/prefs_win_handy.glade:183
+#: src/tau/src/ui/prefs_win_handy.glade:184
 msgid "Syntax-specific tab size"
 msgstr "Специфічний до синтаксису розмір табуляції"
 
-#: src/tau/src/ui/prefs_win_handy.glade:238
+#: src/tau/src/ui/prefs_win_handy.glade:240
 msgid "Apply syntax configuration settings"
 msgstr "Застосувати параметри налаштування синтаксису"
 
-#: src/tau/src/ui/prefs_win_handy.glade:258
+#: src/tau/src/ui/prefs_win_handy.glade:260
 msgid "Editor"
 msgstr "Редактор"
 
-#: src/tau/src/ui/prefs_win_handy.glade:262
+#: src/tau/src/ui/prefs_win_handy.glade:264
 msgid "Indention"
 msgstr "Відступи"
 
-#: src/tau/src/ui/prefs_win_handy.glade:323
+#: src/tau/src/ui/prefs_win_handy.glade:325
 msgid "Automatic indentation"
 msgstr "Автоматичний відступ"
 
-#: src/tau/src/ui/prefs_win_handy.glade:360
+#: src/tau/src/ui/prefs_win_handy.glade:362
 msgid "Delete spaces up to the previous tab stop"
 msgstr "Вилучати пробіли до попередньої позиції табуляції"
 
-#: src/tau/src/ui/prefs_win_handy.glade:375
+#: src/tau/src/ui/prefs_win_handy.glade:377
 msgid "File saving"
 msgstr "Збереження файлів"
 
-#: src/tau/src/ui/prefs_win_handy.glade:379
+#: src/tau/src/ui/prefs_win_handy.glade:381
 msgid "Save files when the Tau goes out of focus"
 msgstr "Зберігати файли, якщо «Тау» втрачає фокус"
 
-#: src/tau/src/ui/prefs_win_handy.glade:394 src/tau/src/main_win.rs:1135
-#: src/tau/src/main_win.rs:1172
+#: src/tau/src/ui/prefs_win_handy.glade:396 src/tau/src/main_win.rs:1152
+#: src/tau/src/main_win.rs:1189
 msgid "Terminal"
 msgstr "Термінал"
 
-#: src/tau/src/ui/prefs_win_handy.glade:398
+#: src/tau/src/ui/prefs_win_handy.glade:400
 msgid "Show the embedded terminal on startup"
 msgstr "Показувати вбудований термінал після запуску"
 
-#: src/tau/src/ui/prefs_win_handy.glade:411
+#: src/tau/src/ui/prefs_win_handy.glade:413
 msgid "What shell to start"
 msgstr "Яку командну оболонку слід запустити"
 
-#: src/tau/src/ui/prefs_win_handy.glade:426
+#: src/tau/src/ui/prefs_win_handy.glade:428
 msgid "Highlighting spaces"
 msgstr "Підсвічування пробілів"
 
-#: src/tau/src/ui/prefs_win_handy.glade:498
+#: src/tau/src/ui/prefs_win_handy.glade:500
 msgid "Don't draw spaces"
 msgstr "Не візуалізувати пробіли"
 
-#: src/tau/src/ui/prefs_win_handy.glade:517
+#: src/tau/src/ui/prefs_win_handy.glade:519
 msgid "Highlighting tabs"
 msgstr "Підсвічування табуляцій"
 
-#: src/tau/src/ui/prefs_win_handy.glade:589
+#: src/tau/src/ui/prefs_win_handy.glade:591
 msgid "Don't draw tabs"
 msgstr "Не візуалізувати табуляції"
 
-#: src/tau/src/ui/prefs_win_handy.glade:608
-#: src/tau/src/ui/prefs_win_handy.glade:612
+#: src/tau/src/ui/prefs_win_handy.glade:610
+#: src/tau/src/ui/prefs_win_handy.glade:614
 msgid "Font configuration"
 msgstr "Налаштування шрифтів"
 
-#: src/tau/src/ui/tau.glade:22 src/tau/src/ui/tau.glade:229
+#: src/tau/src/ui/tau.glade:22 src/tau/src/ui/tau.glade:243
 msgid "Save As…"
 msgstr "Зберегти як…"
 
-#: src/tau/src/ui/tau.glade:36 src/tau/src/ui/tau.glade:243
+#: src/tau/src/ui/tau.glade:36 src/tau/src/ui/tau.glade:257
 msgid "Save All"
 msgstr "Зберегти всі"
 
-#: src/tau/src/ui/tau.glade:61 src/tau/src/ui/tau.glade:268
+#: src/tau/src/ui/tau.glade:61 src/tau/src/ui/tau.glade:282
 msgid "Find…"
 msgstr "Знайти…"
 
-#: src/tau/src/ui/tau.glade:75 src/tau/src/ui/tau.glade:282
+#: src/tau/src/ui/tau.glade:75 src/tau/src/ui/tau.glade:296
 msgid "Replace…"
 msgstr "Замінити…"
 
-#: src/tau/src/ui/tau.glade:100 src/tau/src/ui/tau.glade:307
+#: src/tau/src/ui/tau.glade:89 src/tau/src/ui/tau.glade:310
+msgid "Go To Line…"
+msgstr "Перейти до рядка…"
+
+#: src/tau/src/ui/tau.glade:114 src/tau/src/ui/tau.glade:335
 msgid "Show Terminal"
 msgstr "Показати термінал"
 
-#: src/tau/src/ui/tau.glade:114 src/tau/src/ui/tau.glade:321
+#: src/tau/src/ui/tau.glade:128 src/tau/src/ui/tau.glade:349
 msgid "Toggle Fullscreen"
 msgstr "Увімкнути/вимкнути повноекранний режим"
 
-#: src/tau/src/ui/tau.glade:164 src/tau/src/ui/tau.glade:371
+#: src/tau/src/ui/tau.glade:178 src/tau/src/ui/tau.glade:399
 msgid "Help"
 msgstr "Довідка"
 
-#: src/tau/src/ui/tau.glade:178 src/tau/src/ui/tau.glade:385
+#: src/tau/src/ui/tau.glade:192 src/tau/src/ui/tau.glade:413
 msgid "Keyboard Shortcuts"
 msgstr "Клавіатурні скорочення"
 
-#: src/tau/src/ui/tau.glade:192 src/tau/src/ui/tau.glade:399
+#: src/tau/src/ui/tau.glade:206 src/tau/src/ui/tau.glade:427
 msgid "About Tau"
 msgstr "Про «Тау»"
 
-#: src/tau/src/ui/tau.glade:434 src/tau/src/ui/tau.glade:543
-#: src/tau/src/main_win.rs:1590
+#: src/tau/src/ui/tau.glade:462 src/tau/src/ui/tau.glade:571
+#: src/tau/src/main_win.rs:1604
 msgid "Open"
 msgstr "Відкрити"
 
-#: src/tau/src/ui/tau.glade:475 src/tau/src/ui/tau.glade:603
-#: src/tau/src/main_win.rs:1320 src/tau/src/main_win.rs:1767
+#: src/tau/src/ui/tau.glade:503 src/tau/src/ui/tau.glade:631
+#: src/tau/src/main_win.rs:1337 src/tau/src/main_win.rs:1781
 msgid "Save"
 msgstr "Зберегти"
 
 #: src/editview/src/edit_view.rs:186 src/editview/src/edit_view.rs:188
-#: src/tau/src/main_win.rs:1047 src/tau/src/main_win.rs:1050
-#: src/tau/src/main_win.rs:1873
+#: src/tau/src/main_win.rs:1064 src/tau/src/main_win.rs:1067
+#: src/tau/src/main_win.rs:1887
 msgid "Untitled"
 msgstr "Без назви"
 
@@ -782,12 +791,12 @@ msgid "Column"
 msgstr "Позиція"
 
 #. We localized it ourselves, so we have to turn it into English again when sending it to Xi
-#: src/editview/src/edit_view.rs:1553 src/editview/src/view_item.rs:221
-#: src/editview/src/view_item.rs:337
+#: src/editview/src/edit_view.rs:1552 src/editview/src/view_item.rs:238
+#: src/editview/src/view_item.rs:363
 msgid "Plain Text"
 msgstr "Звичайний текст"
 
-#: src/editview/src/view_item.rs:99 src/editview/src/view_item.rs:238
+#: src/editview/src/view_item.rs:107 src/editview/src/view_item.rs:255
 msgid "Tab Size"
 msgstr "Розмір табуляції"
 
@@ -799,57 +808,67 @@ msgstr "Написана мовою Rust оболонка на основі GTK 
 msgid "translator-credits"
 msgstr "Юрій Чорноіван <yurchor@ukr.net>"
 
-#: src/tau/src/functions.rs:132
+#: src/tau/src/functions.rs:68
 msgid "Welcome to Tau's terminal."
 msgstr "Вітаємо у терміналі Tau."
 
-#: src/tau/src/main.rs:119
+#: src/tau/src/main.rs:113
 msgid "Start a new instance of the application"
 msgstr "Запустити новий екземпляр програми"
 
-#: src/tau/src/main.rs:283
+#: src/tau/src/main.rs:176 src/tau/src/main.rs:216
 msgid "Failed open new view due to error"
 msgstr "Не вдалося відкрити нову панель перегляду через помилку"
 
-#: src/tau/src/main.rs:351 src/tau/src/main_win.rs:1657
-msgid "Failed to open new view due to error"
-msgstr "Не вдалося відкрити нову панель перегляду через помилку"
+#: src/tau/src/main_win.rs:630
+msgid "Handling"
+msgstr "Обробка"
 
-#: src/tau/src/main_win.rs:986 src/tau/src/main_win.rs:994
+#: src/tau/src/main_win.rs:630
+#| msgctxt "shortcut window"
+#| msgid "Selections"
+msgid "action"
+msgstr "дія"
+
+#: src/tau/src/main_win.rs:1003 src/tau/src/main_win.rs:1011
 msgid ""
 "Couldn’t get Documents directory to autosave unnamed file. Please make sure "
 "“XDG_DATA_DIR” or similar is set."
 msgstr ""
-"Не вдалося отримати дані щодо каталогу «Документи» для автоматичного"
-" збереження файла без назви. Будь ласка, переконайтеся, що у середовищі"
-" встановлено змінну «XDG_DATA_DIR» або подібну до неї змінну."
+"Не вдалося отримати дані щодо каталогу «Документи» для автоматичного "
+"збереження файла без назви. Будь ласка, переконайтеся, що у середовищі "
+"встановлено змінну «XDG_DATA_DIR» або подібну до неї змінну."
 
-#: src/tau/src/main_win.rs:1309
+#: src/tau/src/main_win.rs:1326
 msgid "Save unsaved changes"
 msgstr "Зберегти незбережені зміни"
 
-#: src/tau/src/main_win.rs:1312
+#: src/tau/src/main_win.rs:1329
 msgid "Close Without Saving"
 msgstr "Закрити без збереження"
 
-#: src/tau/src/main_win.rs:1316 src/tau/src/main_win.rs:1591
-#: src/tau/src/main_win.rs:1768
+#: src/tau/src/main_win.rs:1333 src/tau/src/main_win.rs:1605
+#: src/tau/src/main_win.rs:1782
 msgid "Cancel"
 msgstr "Скасувати"
 
-#: src/tau/src/main_win.rs:1587
+#: src/tau/src/main_win.rs:1601
 msgid "Open a file to edit"
 msgstr "Відкрити файл для редагування"
 
-#: src/tau/src/main_win.rs:1616
+#: src/tau/src/main_win.rs:1630
 msgid "Couldn’t open file"
 msgstr "Не вдалося відкрити файл"
 
-#: src/tau/src/main_win.rs:1764
+#: src/tau/src/main_win.rs:1671
+msgid "Failed to open new view due to error"
+msgstr "Не вдалося відкрити нову панель перегляду через помилку"
+
+#: src/tau/src/main_win.rs:1778
 msgid "Save file"
 msgstr "Зберегти файл"
 
-#: src/tau/src/main_win.rs:1806
+#: src/tau/src/main_win.rs:1820
 msgid "Couldn’t save file"
 msgstr "Не вдалося зберегти файл"
 
@@ -858,5 +877,5 @@ msgid ""
 "Couldn’t find the xi-syntect-plugin. As such these settings won’t work in "
 "the current session."
 msgstr ""
-"Не вдалося знайти xi-syntect-plugin. Через це, ці параметри не працюватимуть"
-" у поточному сеансі."
+"Не вдалося знайти xi-syntect-plugin. Через це, ці параметри не працюватимуть "
+"у поточному сеансі."
