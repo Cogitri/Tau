@@ -654,6 +654,7 @@ impl MainWin {
         application.set_accels_for_action("app.cycle_backward", &["<Primary>Tab"]);
         application.set_accels_for_action("app.cycle_forward", &["<Primary><Shift>Tab"]);
         application.set_accels_for_action("app.toggle_fullscreen", &["F11"]);
+        application.set_accels_for_action("app.go_to_line", &["<Primary>i"]);
 
         main_win.window.connect_key_press_event(
             clone!(@strong main_win => @default-panic, move |_, ek| {
