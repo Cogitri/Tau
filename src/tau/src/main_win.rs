@@ -627,7 +627,7 @@ impl MainWin {
             let go_to_line_action = SimpleAction::new("go_to_line", None);
             go_to_line_action.connect_activate(
                 clone!(@weak main_win => @default-panic, move |_,_| {
-                    trace!("{} 'find_next' {}", gettext("Handling"), gettext("action"));
+                    trace!("Handling action: 'find_next'");
                     main_win.go_to_line();
                 }),
             );
