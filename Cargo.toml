@@ -3,6 +3,11 @@ members = [
     "src/editview",
     "src/tau",
     "src/tau-linecache",
+    "src/tau-rpc",
+]
+exclude = [
+    "vendor/xi-editor/rust/core-lib",
+    "vendor/xi-editor/rust/rpc",
 ]
 
 [profile.release]

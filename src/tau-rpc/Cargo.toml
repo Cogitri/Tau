@@ -1,0 +1,21 @@
+[package]
+name = "tau-rpc"
+version = "0.0.0"
+authors = ["Rasmus Thomsen <oss@cogitri.dev>"]
+homepage = "https://gitlab.gnome.org/World/Tau"
+description = "RPC backend for Tau"
+repository = "https://gitlab.gnome.org/World/Tau"
+keywords = ["gxi", "xi", "tau"]
+categories = ["editor"]
+license = "MIT"
+edition = "2018"
+
+[dependencies]
+glib = "0.9"
+log = "0.4"
+pipe = "0.3"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+syntect = "3"
+xi-core-lib = { path="../../vendor/xi-editor/rust/core-lib" }
+xi-rpc = { path="../../vendor/xi-editor/rust/rpc" }

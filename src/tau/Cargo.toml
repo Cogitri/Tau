@@ -34,6 +34,7 @@ parking_lot = "0.10"
 serde = { version="1", features = ["derive"] }
 serde_json = "1"
 syntect = "3"
+tau-rpc = { path="../tau-rpc" }
 tokio = "0.1"
 vte-rs = "0.3"
 xrl = "0.0.8"
