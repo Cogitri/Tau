@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tau\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Tau/issues\n"
-"POT-Creation-Date: 2020-03-29 18:08+0000\n"
-"PO-Revision-Date: 2020-04-05 11:38+0200\n"
+"POT-Creation-Date: 2020-05-23 10:07+0000\n"
+"PO-Revision-Date: 2020-05-24 14:32+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -62,7 +62,7 @@ msgstr "Motyw Xi-Editor"
 msgid "Sets the theme used for the editing area"
 msgstr "Ustawia motyw obszaru dokumentu"
 
-#: data/org.gnome.Tau.gschema.xml:17 src/tau/src/ui/prefs_win_handy.glade:447
+#: data/org.gnome.Tau.gschema.xml:17 src/tau/src/ui/prefs_win_handy.glade:449
 msgid "Draw trailing spaces"
 msgstr "Wyświetlanie końcowych spacji"
 
@@ -70,7 +70,7 @@ msgstr "Wyświetlanie końcowych spacji"
 msgid "Draw spaces which are at the end of a line"
 msgstr "Wyświetla spacje na końcach wierszy"
 
-#: data/org.gnome.Tau.gschema.xml:25 src/tau/src/ui/prefs_win_handy.glade:464
+#: data/org.gnome.Tau.gschema.xml:25 src/tau/src/ui/prefs_win_handy.glade:466
 msgid "Draw leading spaces"
 msgstr "Wyświetlanie początkowych spacji"
 
@@ -78,7 +78,7 @@ msgstr "Wyświetlanie początkowych spacji"
 msgid "Draw spaces which are at the beginning of a line"
 msgstr "Wyświetla spacje na początkach wierszy"
 
-#: data/org.gnome.Tau.gschema.xml:33 src/tau/src/ui/prefs_win_handy.glade:481
+#: data/org.gnome.Tau.gschema.xml:33 src/tau/src/ui/prefs_win_handy.glade:483
 msgid "Draw selected spaces"
 msgstr "Wyświetlanie zaznaczonych spacji"
 
@@ -86,7 +86,7 @@ msgstr "Wyświetlanie zaznaczonych spacji"
 msgid "Draw spaces whenever they are selected"
 msgstr "Wyświetla spacje, kiedy są zaznaczone"
 
-#: data/org.gnome.Tau.gschema.xml:41 src/tau/src/ui/prefs_win_handy.glade:430
+#: data/org.gnome.Tau.gschema.xml:41 src/tau/src/ui/prefs_win_handy.glade:432
 msgid "Draw all spaces"
 msgstr "Wyświetlanie wszystkich spacji"
 
@@ -134,8 +134,8 @@ msgstr "Ustawia szerokość okna po następnym uruchomieniu"
 msgid "Sets if the window should be maximized during the next start-up"
 msgstr "Ustawia, czy okno ma być zmaksymalizowane po następnym uruchomieniu"
 
-#: data/org.gnome.Tau.gschema.xml:92 src/editview/src/ui/ev.glade:75
-#: src/tau/src/ui/prefs_win_handy.glade:266
+#: data/org.gnome.Tau.gschema.xml:92 src/editview/src/ui/ev.glade:76
+#: src/tau/src/ui/prefs_win_handy.glade:268
 msgid "Tab size"
 msgstr "Rozmiar tabulacji"
 
@@ -143,9 +143,9 @@ msgstr "Rozmiar tabulacji"
 msgid "Amount of spaces that a tab is wide"
 msgstr "Liczba spacji, na jaką tabulacja jest szeroka"
 
-#: data/org.gnome.Tau.gschema.xml:99 src/editview/src/ui/ev.glade:36
-#: src/tau/src/ui/prefs_win_handy.glade:225
-#: src/tau/src/ui/prefs_win_handy.glade:287
+#: data/org.gnome.Tau.gschema.xml:99 src/editview/src/ui/ev.glade:37
+#: src/tau/src/ui/prefs_win_handy.glade:227
+#: src/tau/src/ui/prefs_win_handy.glade:289
 msgid "Insert spaces instead of tabs"
 msgstr "Wstawianie spacji zamiast tabulacji"
 
@@ -177,7 +177,7 @@ msgstr "Czcionka używana dla dokumentu"
 msgid "Wrap lines at the end of the document"
 msgstr "Zawijanie wierszy na końcu dokumentu"
 
-#: data/org.gnome.Tau.gschema.xml:126 src/tau/src/ui/prefs_win_handy.glade:538
+#: data/org.gnome.Tau.gschema.xml:126 src/tau/src/ui/prefs_win_handy.glade:540
 msgid "Draw trailing tabs"
 msgstr "Wyświetlanie końcowych tabulacji"
 
@@ -185,7 +185,7 @@ msgstr "Wyświetlanie końcowych tabulacji"
 msgid "Draw tabs which are at the end of a line"
 msgstr "Wyświetla tabulacje na końcach wierszy"
 
-#: data/org.gnome.Tau.gschema.xml:134 src/tau/src/ui/prefs_win_handy.glade:555
+#: data/org.gnome.Tau.gschema.xml:134 src/tau/src/ui/prefs_win_handy.glade:557
 msgid "Draw leading tabs"
 msgstr "Wyświetlanie początkowych tabulacji"
 
@@ -193,7 +193,7 @@ msgstr "Wyświetlanie początkowych tabulacji"
 msgid "Draw tabs which are at the beginning of a line"
 msgstr "Wyświetla tabulacje na początkach wierszy"
 
-#: data/org.gnome.Tau.gschema.xml:142 src/tau/src/ui/prefs_win_handy.glade:572
+#: data/org.gnome.Tau.gschema.xml:142 src/tau/src/ui/prefs_win_handy.glade:574
 msgid "Draw selected tabs"
 msgstr "Wyświetlanie zaznaczonych tabulacji"
 
@@ -201,7 +201,7 @@ msgstr "Wyświetlanie zaznaczonych tabulacji"
 msgid "Draw tabs whenever they are selected"
 msgstr "Wyświetla tabulacje, kiedy są zaznaczone"
 
-#: data/org.gnome.Tau.gschema.xml:150 src/tau/src/ui/prefs_win_handy.glade:521
+#: data/org.gnome.Tau.gschema.xml:150 src/tau/src/ui/prefs_win_handy.glade:523
 msgid "Draw all tabs"
 msgstr "Wyświetlanie wszystkich tabulacji"
 
@@ -239,7 +239,7 @@ msgstr ""
 "Automatycznie zapisuje wszystkie otwarte pliki, kiedy program przestaje być "
 "aktywny"
 
-#: data/org.gnome.Tau.gschema.xml:182 src/tau/src/ui/prefs_win_handy.glade:99
+#: data/org.gnome.Tau.gschema.xml:182 src/tau/src/ui/prefs_win_handy.glade:100
 msgid "Show line count"
 msgstr "Liczba wierszy"
 
@@ -313,7 +313,7 @@ msgstr "Ponów"
 msgid "Select All"
 msgstr "Zaznacz wszystko"
 
-#: src/editview/src/ui/ev.glade:21
+#: src/editview/src/ui/ev.glade:22
 msgid "Enable automatic indentation"
 msgstr "Automatyczne wcięcia"
 
@@ -407,209 +407,214 @@ msgstr "Przejście do przodu w historii tabulacji"
 
 #: src/tau/src/ui/shortcuts_win.glade:65
 msgctxt "shortcut window"
+msgid "Go to line"
+msgstr "Przejście do wiersza"
+
+#: src/tau/src/ui/shortcuts_win.glade:71
+msgctxt "shortcut window"
 msgid "Toggle fullscreen"
 msgstr "Przełączenie pełnego ekranu"
 
-#: src/tau/src/ui/shortcuts_win.glade:72 src/tau/src/ui/shortcuts_win.glade:76
+#: src/tau/src/ui/shortcuts_win.glade:78 src/tau/src/ui/shortcuts_win.glade:82
 msgctxt "shortcut window"
 msgid "Find"
 msgstr "Wyszukiwanie"
 
-#: src/tau/src/ui/shortcuts_win.glade:82
+#: src/tau/src/ui/shortcuts_win.glade:88
 msgctxt "shortcut window"
 msgid "Find the next match"
 msgstr "Wyszukanie następnego wyniku"
 
-#: src/tau/src/ui/shortcuts_win.glade:88
+#: src/tau/src/ui/shortcuts_win.glade:94
 msgctxt "shortcut window"
 msgid "Find the previous match"
 msgstr "Wyszukanie poprzedniego wyniku"
 
-#: src/tau/src/ui/shortcuts_win.glade:94
+#: src/tau/src/ui/shortcuts_win.glade:100
 msgctxt "shortcut window"
 msgid "Find and replace"
 msgstr "Wyszukiwanie i zastępowanie"
 
-#: src/tau/src/ui/shortcuts_win.glade:100
+#: src/tau/src/ui/shortcuts_win.glade:106
 msgctxt "shortcut window"
 msgid "Find all matches"
 msgstr "Wyszukanie wszystkich wyników"
 
-#: src/tau/src/ui/shortcuts_win.glade:106
+#: src/tau/src/ui/shortcuts_win.glade:112
 msgctxt "shortcut window"
 msgid "Close the find window"
 msgstr "Zamknięcie okna wyszukiwania"
 
-#: src/tau/src/ui/shortcuts_win.glade:114
+#: src/tau/src/ui/shortcuts_win.glade:120
 msgctxt "shortcut window"
 msgid "Editing"
 msgstr "Redakcja"
 
-#: src/tau/src/ui/shortcuts_win.glade:118
+#: src/tau/src/ui/shortcuts_win.glade:124
 msgctxt "shortcut window"
 msgid "Highlight the next occurrence of the current selection"
 msgstr "Wyróżnienie następnego wystąpienia bieżącego zaznaczenia"
 
-#: src/tau/src/ui/shortcuts_win.glade:124
+#: src/tau/src/ui/shortcuts_win.glade:130
 msgctxt "shortcut window"
 msgid "Delete the current selection"
 msgstr "Usunięcie bieżącego zaznaczenia"
 
-#: src/tau/src/ui/shortcuts_win.glade:130
+#: src/tau/src/ui/shortcuts_win.glade:136
 msgctxt "shortcut window"
 msgid "Delete an entire word"
 msgstr "Usunięcie całego wyrazu"
 
-#: src/tau/src/ui/shortcuts_win.glade:136
+#: src/tau/src/ui/shortcuts_win.glade:142
 msgctxt "shortcut window"
 msgid "Outdent the current selection"
 msgstr "Usunięcie wcięcia bieżącego zaznaczenia"
 
-#: src/tau/src/ui/shortcuts_win.glade:142
+#: src/tau/src/ui/shortcuts_win.glade:148
 msgctxt "shortcut window"
 msgid "Move to start of the line"
 msgstr "Przejście na początek wiersza"
 
-#: src/tau/src/ui/shortcuts_win.glade:148
+#: src/tau/src/ui/shortcuts_win.glade:154
 msgctxt "shortcut window"
 msgid "Move to start of the document"
 msgstr "Przejście na początek dokumentu"
 
-#: src/tau/src/ui/shortcuts_win.glade:155
+#: src/tau/src/ui/shortcuts_win.glade:161
 msgctxt "shortcut window"
 msgid "Move to end of the line"
 msgstr "Przejście na koniec wiersza"
 
-#: src/tau/src/ui/shortcuts_win.glade:161
+#: src/tau/src/ui/shortcuts_win.glade:167
 msgctxt "shortcut window"
 msgid "Move to end of the document"
 msgstr "Przejście na koniec dokumentu"
 
-#: src/tau/src/ui/shortcuts_win.glade:167
+#: src/tau/src/ui/shortcuts_win.glade:173
 msgctxt "shortcut window"
 msgid "Move up for the height of the view"
 msgstr "Przejście na górę widocznego tekstu"
 
-#: src/tau/src/ui/shortcuts_win.glade:173
+#: src/tau/src/ui/shortcuts_win.glade:179
 msgctxt "shortcut window"
 msgid "Move down for the height of the view"
 msgstr "Przejście na dół widocznego tekstu"
 
-#: src/tau/src/ui/shortcuts_win.glade:179
+#: src/tau/src/ui/shortcuts_win.glade:185
 msgctxt "shortcut window"
 msgid "Enable/Disable the cursor"
 msgstr "Włączenie/wyłączenie kursora"
 
-#: src/tau/src/ui/shortcuts_win.glade:186
+#: src/tau/src/ui/shortcuts_win.glade:192
 msgctxt "shortcut window"
 msgid "Copy and Paste"
 msgstr "Kopiowanie i wklejanie"
 
-#: src/tau/src/ui/shortcuts_win.glade:190
+#: src/tau/src/ui/shortcuts_win.glade:196
 msgctxt "shortcut window"
 msgid "Copy the current selection"
 msgstr "Skopiowanie bieżącego zaznaczenia"
 
-#: src/tau/src/ui/shortcuts_win.glade:196
+#: src/tau/src/ui/shortcuts_win.glade:202
 msgctxt "shortcut window"
 msgid "Paste what's currently in the clipboard"
 msgstr "Wklejenie obecnej zawartości schowka"
 
-#: src/tau/src/ui/shortcuts_win.glade:202
 #: src/tau/src/ui/shortcuts_win.glade:208
+#: src/tau/src/ui/shortcuts_win.glade:214
 msgctxt "shortcut window"
 msgid "Cut the current selection"
 msgstr "Wycięcie bieżącego zaznaczenia"
 
-#: src/tau/src/ui/shortcuts_win.glade:215
+#: src/tau/src/ui/shortcuts_win.glade:221
 msgctxt "shortcut window"
 msgid "Undo and Redo"
 msgstr "Cofanie i ponawianie"
 
-#: src/tau/src/ui/shortcuts_win.glade:219
+#: src/tau/src/ui/shortcuts_win.glade:225
 msgctxt "shortcut window"
 msgid "Undo"
 msgstr "Cofnięcie"
 
-#: src/tau/src/ui/shortcuts_win.glade:225
+#: src/tau/src/ui/shortcuts_win.glade:231
 msgctxt "shortcut window"
 msgid "Redo"
 msgstr "Ponowienie"
 
-#: src/tau/src/ui/shortcuts_win.glade:232
+#: src/tau/src/ui/shortcuts_win.glade:238
 msgctxt "shortcut window"
 msgid "Selections"
 msgstr "Zaznaczenia"
 
-#: src/tau/src/ui/shortcuts_win.glade:236
+#: src/tau/src/ui/shortcuts_win.glade:242
 msgctxt "shortcut window"
 msgid "Select all"
 msgstr "Zaznaczenie wszystkiego"
 
-#: src/tau/src/ui/shortcuts_win.glade:242
+#: src/tau/src/ui/shortcuts_win.glade:248
 msgctxt "shortcut window"
 msgid "Move up and select everything from current cursor position"
 msgstr ""
 "Przejście do góry i zaznaczenie wszystkiego od bieżącej pozycji kursora"
 
-#: src/tau/src/ui/shortcuts_win.glade:248
+#: src/tau/src/ui/shortcuts_win.glade:254
 msgctxt "shortcut window"
 msgid "Move down and select everything from current cursor position"
 msgstr "Przejście w dół i zaznaczenie wszystkiego od bieżącej pozycji kursora"
 
-#: src/tau/src/ui/shortcuts_win.glade:254
+#: src/tau/src/ui/shortcuts_win.glade:260
 msgctxt "shortcut window"
 msgid "Move left and select everything from current cursor position"
 msgstr "Przejście w lewo i zaznaczenie wszystkiego od bieżącej pozycji kursora"
 
-#: src/tau/src/ui/shortcuts_win.glade:260
+#: src/tau/src/ui/shortcuts_win.glade:266
 msgctxt "shortcut window"
 msgid "Move left and select the next word"
 msgstr "Przejście w lewo i zaznaczenie następnego wyrazu"
 
-#: src/tau/src/ui/shortcuts_win.glade:266
+#: src/tau/src/ui/shortcuts_win.glade:272
 msgctxt "shortcut window"
 msgid "Move right and select everything from current cursor position"
 msgstr ""
 "Przejście w prawo i zaznaczenie wszystkiego od bieżącej pozycji kursora"
 
-#: src/tau/src/ui/shortcuts_win.glade:272
+#: src/tau/src/ui/shortcuts_win.glade:278
 msgctxt "shortcut window"
 msgid "Move right and select the next word"
 msgstr "Przejście w prawo i zaznaczenie następnego wyrazu"
 
-#: src/tau/src/ui/shortcuts_win.glade:278
+#: src/tau/src/ui/shortcuts_win.glade:284
 msgctxt "shortcut window"
 msgid "Move to start of the line and select"
 msgstr "Przejście na początek wiersza i zaznaczenie"
 
-#: src/tau/src/ui/shortcuts_win.glade:284
+#: src/tau/src/ui/shortcuts_win.glade:290
 msgctxt "shortcut window"
 msgid "Move to start of the document and select"
 msgstr "Przejście na początek dokumentu i zaznaczenie"
 
-#: src/tau/src/ui/shortcuts_win.glade:290
+#: src/tau/src/ui/shortcuts_win.glade:296
 msgctxt "shortcut window"
 msgid "Move to end of the line and select"
 msgstr "Przejście na koniec wiersza i zaznaczenie"
 
-#: src/tau/src/ui/shortcuts_win.glade:296
+#: src/tau/src/ui/shortcuts_win.glade:302
 msgctxt "shortcut window"
 msgid "Move to end of the document and select"
 msgstr "Przejście na koniec dokumentu i zaznaczenie"
 
-#: src/tau/src/ui/shortcuts_win.glade:302
+#: src/tau/src/ui/shortcuts_win.glade:308
 msgctxt "shortcut window"
 msgid "Move up for the height of the view and select"
 msgstr "Przejście na górę widocznego tekstu i zaznaczenie"
 
-#: src/tau/src/ui/shortcuts_win.glade:308
+#: src/tau/src/ui/shortcuts_win.glade:314
 msgctxt "shortcut window"
 msgid "Move down for the height of the view and select"
 msgstr "Przejście na dół widocznego tekstu i zaznaczenie"
 
-#: src/tau/src/ui/prefs_win_handy.glade:28 src/tau/src/ui/tau.glade:139
-#: src/tau/src/ui/tau.glade:346
+#: src/tau/src/ui/prefs_win_handy.glade:28 src/tau/src/ui/tau.glade:153
+#: src/tau/src/ui/tau.glade:374
 msgid "Preferences"
 msgstr "Preferencje"
 
@@ -625,149 +630,153 @@ msgstr "Preferencje związane z wyglądem"
 msgid "Display right hand margin"
 msgstr "Margines po prawej stronie"
 
-#: src/tau/src/ui/prefs_win_handy.glade:86
+#: src/tau/src/ui/prefs_win_handy.glade:87
 msgid "Highlight the current line"
 msgstr "Wyróżnianie bieżącego wiersza"
 
-#: src/tau/src/ui/prefs_win_handy.glade:112
+#: src/tau/src/ui/prefs_win_handy.glade:113
 msgid "Show full path in title bar"
 msgstr "Pełna ścieżka na pasku tytułu"
 
-#: src/tau/src/ui/prefs_win_handy.glade:125
+#: src/tau/src/ui/prefs_win_handy.glade:126
 msgid "Restore last opened files on start-up"
 msgstr "Przywracanie ostatnio otwartych plików podczas uruchamiania"
 
-#: src/tau/src/ui/prefs_win_handy.glade:139
+#: src/tau/src/ui/prefs_win_handy.glade:140
 msgid "Wrap lines at the end of the view"
 msgstr "Zawijanie wierszy na końcu widocznego tekstu"
 
-#: src/tau/src/ui/prefs_win_handy.glade:151
+#: src/tau/src/ui/prefs_win_handy.glade:152
 msgid "Theme configuration"
 msgstr "Konfiguracja motywu"
 
-#: src/tau/src/ui/prefs_win_handy.glade:166
+#: src/tau/src/ui/prefs_win_handy.glade:167
 msgid "Syntax configuration"
 msgstr "Konfiguracja składni"
 
-#: src/tau/src/ui/prefs_win_handy.glade:170
+#: src/tau/src/ui/prefs_win_handy.glade:171
 msgid "Syntax selection"
 msgstr "Zaznaczanie składni"
 
-#: src/tau/src/ui/prefs_win_handy.glade:183
+#: src/tau/src/ui/prefs_win_handy.glade:184
 msgid "Syntax-specific tab size"
 msgstr "Rozmiar tabulacji dla konkretnych składni"
 
-#: src/tau/src/ui/prefs_win_handy.glade:238
+#: src/tau/src/ui/prefs_win_handy.glade:240
 msgid "Apply syntax configuration settings"
 msgstr "Zastosuj ustawienia konfiguracji składni"
 
-#: src/tau/src/ui/prefs_win_handy.glade:258
+#: src/tau/src/ui/prefs_win_handy.glade:260
 msgid "Editor"
 msgstr "Edytor"
 
-#: src/tau/src/ui/prefs_win_handy.glade:262
+#: src/tau/src/ui/prefs_win_handy.glade:264
 msgid "Indention"
 msgstr "Wcięcia"
 
-#: src/tau/src/ui/prefs_win_handy.glade:323
+#: src/tau/src/ui/prefs_win_handy.glade:325
 msgid "Automatic indentation"
 msgstr "Automatyczne wcięcia"
 
-#: src/tau/src/ui/prefs_win_handy.glade:360
+#: src/tau/src/ui/prefs_win_handy.glade:362
 msgid "Delete spaces up to the previous tab stop"
 msgstr "Usuwanie spacji do końca poprzedniej tabulacji"
 
-#: src/tau/src/ui/prefs_win_handy.glade:375
+#: src/tau/src/ui/prefs_win_handy.glade:377
 msgid "File saving"
 msgstr "Zapisywanie plików"
 
-#: src/tau/src/ui/prefs_win_handy.glade:379
+#: src/tau/src/ui/prefs_win_handy.glade:381
 msgid "Save files when the Tau goes out of focus"
 msgstr "Zapisywanie plików, kiedy program przestaje być aktywny"
 
-#: src/tau/src/ui/prefs_win_handy.glade:394 src/tau/src/main_win.rs:1135
-#: src/tau/src/main_win.rs:1172
+#: src/tau/src/ui/prefs_win_handy.glade:396 src/tau/src/main_win.rs:1152
+#: src/tau/src/main_win.rs:1189
 msgid "Terminal"
 msgstr "Terminal"
 
-#: src/tau/src/ui/prefs_win_handy.glade:398
+#: src/tau/src/ui/prefs_win_handy.glade:400
 msgid "Show the embedded terminal on startup"
 msgstr "Wyświetlanie osadzonego terminala po uruchomieniu"
 
-#: src/tau/src/ui/prefs_win_handy.glade:411
+#: src/tau/src/ui/prefs_win_handy.glade:413
 msgid "What shell to start"
 msgstr "Którą powłokę uruchamiać"
 
-#: src/tau/src/ui/prefs_win_handy.glade:426
+#: src/tau/src/ui/prefs_win_handy.glade:428
 msgid "Highlighting spaces"
 msgstr "Wyróżnianie spacji"
 
-#: src/tau/src/ui/prefs_win_handy.glade:498
+#: src/tau/src/ui/prefs_win_handy.glade:500
 msgid "Don't draw spaces"
 msgstr "Wyłączenie wyświetlania spacji"
 
-#: src/tau/src/ui/prefs_win_handy.glade:517
+#: src/tau/src/ui/prefs_win_handy.glade:519
 msgid "Highlighting tabs"
 msgstr "Wyróżnianie tabulacji"
 
-#: src/tau/src/ui/prefs_win_handy.glade:589
+#: src/tau/src/ui/prefs_win_handy.glade:591
 msgid "Don't draw tabs"
 msgstr "Wyłączenie wyświetlania tabulacji"
 
-#: src/tau/src/ui/prefs_win_handy.glade:608
-#: src/tau/src/ui/prefs_win_handy.glade:612
+#: src/tau/src/ui/prefs_win_handy.glade:610
+#: src/tau/src/ui/prefs_win_handy.glade:614
 msgid "Font configuration"
 msgstr "Konfiguracja czcionki"
 
-#: src/tau/src/ui/tau.glade:22 src/tau/src/ui/tau.glade:229
+#: src/tau/src/ui/tau.glade:22 src/tau/src/ui/tau.glade:243
 msgid "Save As…"
 msgstr "Zapisz jako…"
 
-#: src/tau/src/ui/tau.glade:36 src/tau/src/ui/tau.glade:243
+#: src/tau/src/ui/tau.glade:36 src/tau/src/ui/tau.glade:257
 msgid "Save All"
 msgstr "Zapisz wszystko"
 
-#: src/tau/src/ui/tau.glade:61 src/tau/src/ui/tau.glade:268
+#: src/tau/src/ui/tau.glade:61 src/tau/src/ui/tau.glade:282
 msgid "Find…"
 msgstr "Znajdź…"
 
-#: src/tau/src/ui/tau.glade:75 src/tau/src/ui/tau.glade:282
+#: src/tau/src/ui/tau.glade:75 src/tau/src/ui/tau.glade:296
 msgid "Replace…"
 msgstr "Zastąp…"
 
-#: src/tau/src/ui/tau.glade:100 src/tau/src/ui/tau.glade:307
+#: src/tau/src/ui/tau.glade:89 src/tau/src/ui/tau.glade:310
+msgid "Go To Line…"
+msgstr "Przejdź do wiersza…"
+
+#: src/tau/src/ui/tau.glade:114 src/tau/src/ui/tau.glade:335
 msgid "Show Terminal"
 msgstr "Wyświetl terminal"
 
-#: src/tau/src/ui/tau.glade:114 src/tau/src/ui/tau.glade:321
+#: src/tau/src/ui/tau.glade:128 src/tau/src/ui/tau.glade:349
 msgid "Toggle Fullscreen"
 msgstr "Przełącz pełny ekran"
 
-#: src/tau/src/ui/tau.glade:164 src/tau/src/ui/tau.glade:371
+#: src/tau/src/ui/tau.glade:178 src/tau/src/ui/tau.glade:399
 msgid "Help"
 msgstr "Pomoc"
 
-#: src/tau/src/ui/tau.glade:178 src/tau/src/ui/tau.glade:385
+#: src/tau/src/ui/tau.glade:192 src/tau/src/ui/tau.glade:413
 msgid "Keyboard Shortcuts"
 msgstr "Skróty klawiszowe"
 
-#: src/tau/src/ui/tau.glade:192 src/tau/src/ui/tau.glade:399
+#: src/tau/src/ui/tau.glade:206 src/tau/src/ui/tau.glade:427
 msgid "About Tau"
 msgstr "O programie"
 
-#: src/tau/src/ui/tau.glade:434 src/tau/src/ui/tau.glade:543
-#: src/tau/src/main_win.rs:1590
+#: src/tau/src/ui/tau.glade:462 src/tau/src/ui/tau.glade:571
+#: src/tau/src/main_win.rs:1604
 msgid "Open"
 msgstr "Otwórz"
 
-#: src/tau/src/ui/tau.glade:475 src/tau/src/ui/tau.glade:603
-#: src/tau/src/main_win.rs:1320 src/tau/src/main_win.rs:1767
+#: src/tau/src/ui/tau.glade:503 src/tau/src/ui/tau.glade:631
+#: src/tau/src/main_win.rs:1337 src/tau/src/main_win.rs:1781
 msgid "Save"
 msgstr "Zapisz"
 
 #: src/editview/src/edit_view.rs:186 src/editview/src/edit_view.rs:188
-#: src/tau/src/main_win.rs:1047 src/tau/src/main_win.rs:1050
-#: src/tau/src/main_win.rs:1873
+#: src/tau/src/main_win.rs:1064 src/tau/src/main_win.rs:1067
+#: src/tau/src/main_win.rs:1887
 msgid "Untitled"
 msgstr "Bez tytułu"
 
@@ -780,12 +789,12 @@ msgid "Column"
 msgstr "Kolumna"
 
 #. We localized it ourselves, so we have to turn it into English again when sending it to Xi
-#: src/editview/src/edit_view.rs:1553 src/editview/src/view_item.rs:221
-#: src/editview/src/view_item.rs:337
+#: src/editview/src/edit_view.rs:1552 src/editview/src/view_item.rs:238
+#: src/editview/src/view_item.rs:363
 msgid "Plain Text"
 msgstr "Zwykły tekst"
 
-#: src/editview/src/view_item.rs:99 src/editview/src/view_item.rs:238
+#: src/editview/src/view_item.rs:107 src/editview/src/view_item.rs:255
 msgid "Tab Size"
 msgstr "Rozmiar tabulacji"
 
@@ -799,23 +808,27 @@ msgstr ""
 "Piotr Drąg <piotrdrag@gmail.com>, 2019-2020\n"
 "Aviary.pl <community-poland@mozilla.org>, 2019-2020"
 
-#: src/tau/src/functions.rs:132
+#: src/tau/src/functions.rs:68
 msgid "Welcome to Tau's terminal."
 msgstr "Witamy w terminalu Tau."
 
-#: src/tau/src/main.rs:119
+#: src/tau/src/main.rs:113
 msgid "Start a new instance of the application"
 msgstr "Uruchamia nowe wystąpienie programu"
 
-#: src/tau/src/main.rs:283
+#: src/tau/src/main.rs:176 src/tau/src/main.rs:216
 msgid "Failed open new view due to error"
 msgstr "Otwarcie nowego widoku się nie powiodło z powodu błędu"
 
-#: src/tau/src/main.rs:351 src/tau/src/main_win.rs:1657
-msgid "Failed to open new view due to error"
-msgstr "Otwarcie nowego widoku się nie powiodło z powodu błędu"
+#: src/tau/src/main_win.rs:630
+msgid "Handling"
+msgstr "Obsługiwanie"
 
-#: src/tau/src/main_win.rs:986 src/tau/src/main_win.rs:994
+#: src/tau/src/main_win.rs:630
+msgid "action"
+msgstr "działania"
+
+#: src/tau/src/main_win.rs:1003 src/tau/src/main_win.rs:1011
 msgid ""
 "Couldn’t get Documents directory to autosave unnamed file. Please make sure "
 "“XDG_DATA_DIR” or similar is set."
@@ -823,36 +836,40 @@ msgstr ""
 "Nie można uzyskać katalogu Dokumenty, aby automatycznie zapisać plik bez "
 "nazwy. Proszę się upewnić, że ustawiono zmienną „XDG_DATA_DIR” lub podobną."
 
-#: src/tau/src/main_win.rs:1309
+#: src/tau/src/main_win.rs:1326
 msgid "Save unsaved changes"
 msgstr "Zapis niezapisanych zmian"
 
-#: src/tau/src/main_win.rs:1312
+#: src/tau/src/main_win.rs:1329
 msgid "Close Without Saving"
 msgstr "Zamknij bez zapisywania"
 
-#: src/tau/src/main_win.rs:1316 src/tau/src/main_win.rs:1591
-#: src/tau/src/main_win.rs:1768
+#: src/tau/src/main_win.rs:1333 src/tau/src/main_win.rs:1605
+#: src/tau/src/main_win.rs:1782
 msgid "Cancel"
 msgstr "Anuluj"
 
-#: src/tau/src/main_win.rs:1587
+#: src/tau/src/main_win.rs:1601
 msgid "Open a file to edit"
 msgstr "Otwarcie pliku do modyfikacji"
 
-#: src/tau/src/main_win.rs:1616
+#: src/tau/src/main_win.rs:1630
 msgid "Couldn’t open file"
 msgstr "Nie można otworzyć pliku"
 
-#: src/tau/src/main_win.rs:1764
+#: src/tau/src/main_win.rs:1671
+msgid "Failed to open new view due to error"
+msgstr "Otwarcie nowego widoku się nie powiodło z powodu błędu"
+
+#: src/tau/src/main_win.rs:1778
 msgid "Save file"
 msgstr "Zapis pliku"
 
-#: src/tau/src/main_win.rs:1806
+#: src/tau/src/main_win.rs:1820
 msgid "Couldn’t save file"
 msgstr "Nie można zapisać pliku"
 
-#: src/tau/src/prefs_win.rs:434
+#: src/tau/src/prefs_win.rs:435
 msgid ""
 "Couldn’t find the xi-syntect-plugin. As such these settings won’t work in "
 "the current session."
