@@ -1,6 +1,5 @@
 use crate::about_win::AboutWin;
-use crate::errors::{ErrorDialog, ErrorMsg, XiClientError};
-use crate::frontend::{XiEvent, XiRequest};
+use crate::errors::{ErrorDialog, ErrorMsg};
 use crate::functions;
 use crate::prefs_win::PrefsWin;
 use crate::session::SessionHandler;
@@ -9,13 +8,12 @@ use crate::syntax_config::SyntaxParams;
 use crate::view_history::{ViewHistory, ViewHistoryExt};
 use chrono::{DateTime, Utc};
 use editview::{main_state::ShowInvisibles, theme::u32_from_color, EditView, MainState};
-use futures::{future, Future};
 use gdk::{enums::key, ModifierType, WindowState};
 use gdk_pixbuf::Pixbuf;
 use gettextrs::gettext;
 use gio::prelude::*;
 use gio::{ActionMapExt, ApplicationExt, Resource, Settings, SettingsExt, SimpleAction};
-use glib::{clone, Bytes, GString, MainContext, Receiver, SpawnFlags, SyncSender};
+use glib::{clone, Bytes, GString, MainContext, Receiver, SpawnFlags};
 use gtk::prelude::*;
 use gtk::{
     Application, ApplicationWindow, Builder, Button, ButtonsType, DialogFlags, EventBox,
@@ -28,8 +26,8 @@ use std::cell::{Cell, RefCell};
 use std::collections::{BTreeMap, HashMap};
 use std::convert::TryFrom;
 use std::rc::Rc;
+use tau_rpc::*;
 use vte::{Terminal, TerminalExt};
-use xrl::{Client, Style, ViewId, XiNotification};
 
 pub const RESOURCE: &[u8] = include_bytes!("ui/resources.gresource");
 
@@ -115,7 +113,7 @@ pub struct StartedPlugins {
 /// for more information.
 pub struct MainWin {
     /// The handle to communicate with Xi.
-    core: Client,
+    core: Rc<Client>,
     /// The GTK Window.
     window: ApplicationWindow,
     /// The Notebook holding all `EditView`s.
@@ -132,10 +130,6 @@ pub struct MainWin {
     state: Rc<RefCell<MainState>>,
     /// The `WinProp` Struct, used for saving the window state during shutdown
     properties: RefCell<WinProp>,
-    /// A glib `Sender` used to queue up to be created `EditView`s
-    event_tx: SyncSender<XiEvent>,
-    /// A crossbeam_channel `Sender` from whom we receive something when Xi requests something.
-    request_tx: crossbeam_channel::Sender<XiRequest>,
     /// A `HashMap` containing the different configs for each syntax
     syntax_config: RefCell<HashMap<String, SyntaxParams>>,
     /// Indicates which special plugins (for which we have to do additional work) have been started
@@ -154,8 +148,6 @@ pub struct MainWin {
     view_history: Rc<RefCell<ViewHistory>>,
     /// If the window is in fullscreen mode
     fullscreen: Cell<bool>,
-    /// The tokio Runtime to queue futures on. Might be None if Tau has already shut down (so should never happen in practice)
-    runtime_opt: Rc<RefCell<Option<tokio::runtime::Runtime>>>,
     /// The `GtkPaned` which holds the `vte::Terminal` and `GtkNoteBook`
     paned: Paned,
     /// Notebook holding the Terminals
@@ -169,14 +161,9 @@ impl MainWin {
         // The `gio::Application` which this `MainWin` belongs to
         application: &Application,
         // The `xi-core` we can send commands to
-        core: Client,
+        core: Rc<Client>,
         // The `Receiver` on which we receive messages from `xi-core`
-        event_rx: Receiver<XiEvent>,
-        event_tx: SyncSender<XiEvent>,
-        // The `Receiver` on which we receive requests from `xi-core`
-        request_tx: crossbeam_channel::Sender<XiRequest>,
-        // The tokio Runtime xrl uses, we can queue `Future`s on this
-        runtime_opt: Rc<RefCell<Option<tokio::runtime::Runtime>>>,
+        event_rx: Receiver<RpcOperations>,
     ) -> Rc<Self> {
         let gbytes = Bytes::from_static(RESOURCE);
         let resource = Resource::new_from_data(&gbytes).unwrap();
@@ -257,9 +244,7 @@ impl MainWin {
             window,
             notebook,
             builder,
-            event_tx,
             properties,
-            request_tx,
             header_bar,
             fullscreen_bar,
             fullscreen_revealer,
@@ -273,7 +258,6 @@ impl MainWin {
             started_plugins: RefCell::new(Default::default()),
             saving: RefCell::new(false),
             fullscreen: Cell::new(false),
-            runtime_opt,
             paned,
             term_notebook: Notebook::new(),
         });
@@ -474,7 +458,7 @@ impl MainWin {
             undo_action.connect_activate(clone!(@weak main_win => @default-panic, move |_,_| {
                 trace!("Handling action: 'undo'");
                 if let Some(ev) = main_win.get_current_edit_view() {
-                    let _ = main_win.core.undo(ev.view_id);
+                    main_win.core.undo(ev.view_id);
                 }
             }));
             application.add_action(&undo_action);
@@ -484,7 +468,7 @@ impl MainWin {
             redo_action.connect_activate(clone!(@weak main_win => @default-panic, move |_,_| {
                 trace!("Handling action: 'redo'");
                 if let Some(ev) = main_win.get_current_edit_view() {
-                    let _ = main_win.core.redo(ev.view_id);
+                    main_win.core.redo(ev.view_id);
                 }
             }));
             application.add_action(&redo_action);
@@ -495,7 +479,7 @@ impl MainWin {
                 clone!(@weak main_win => @default-panic, move |_,_| {
                     trace!("Handling action: 'select_all'");
                     if let Some(ev) = main_win.get_current_edit_view() {
-                        let _ = main_win.core.select_all(ev.view_id);
+                        main_win.core.select_all(ev.view_id);
                     }
                 }),
             );
@@ -701,7 +685,7 @@ impl MainWin {
 
 impl MainWin {
     /// Open an `ErrorDialog` when with the `Alert`'s msg
-    pub fn alert(&self, params: xrl::Alert) {
+    pub fn alert(&self, params: tau_rpc::Alert) {
         ErrorDialog::new(ErrorMsg {
             msg: params.msg,
             fatal: false,
@@ -709,7 +693,7 @@ impl MainWin {
     }
 
     /// Register the `AvailableThemes` with our `MainState`
-    pub fn available_themes(&self, params: xrl::AvailableThemes) {
+    pub fn available_themes(&self, params: tau_rpc::AvailableThemes) {
         let mut state = self.state.borrow_mut();
         state.themes.clear();
         for theme in params.themes {
@@ -736,11 +720,11 @@ impl MainWin {
             }
         }
 
-        let _ = self.core.set_theme(&state.theme_name);
+        self.core.set_theme(&state.theme_name);
     }
 
     /// Change the theme in our `MainState`
-    pub fn theme_changed(&self, params: xrl::ThemeChanged) {
+    pub fn theme_changed(&self, params: tau_rpc::ThemeChanged) {
         // FIXME: Use annotations instead of constructing the selection style here
         let selection_style = Style {
             id: 0,
@@ -761,7 +745,7 @@ impl MainWin {
     }
 
     /// Forward `ConfigChanged` to the respective `EditView`
-    pub fn config_changed(&self, params: &xrl::ConfigChanged) {
+    pub fn config_changed(&self, params: &tau_rpc::ConfigChanged) {
         let views = self.views.borrow();
         if let Some(ev) = views.get(&params.view_id) {
             ev.config_changed(&params.changes)
@@ -769,7 +753,7 @@ impl MainWin {
     }
 
     /// Forward `FindStatus` to the respective `EditView`
-    pub fn find_status(&self, params: &xrl::FindStatus) {
+    pub fn find_status(&self, params: &tau_rpc::FindStatus) {
         let views = self.views.borrow();
         if let Some(ev) = views.get(&params.view_id) {
             ev.find_status(&params.queries)
@@ -777,7 +761,7 @@ impl MainWin {
     }
 
     /// Forward `ReplaceStatus` to the respective `EditView`
-    pub fn replace_status(&self, params: &xrl::ReplaceStatus) {
+    pub fn replace_status(&self, params: &tau_rpc::ReplaceStatus) {
         let views = self.views.borrow();
         if let Some(ev) = views.get(&params.view_id) {
             ev.replace_status(&params.status)
@@ -785,13 +769,13 @@ impl MainWin {
     }
 
     /// Insert a style into our `MainState`
-    pub fn def_style(&self, params: xrl::Style) {
+    pub fn def_style(&self, params: tau_rpc::Style) {
         let mut state = self.state.borrow_mut();
         state.styles.insert(params.id as usize, params);
     }
 
     /// Forward `Update` to the respective `EditView`
-    pub fn update(&self, params: xrl::Update) {
+    pub fn update(&self, params: tau_rpc::Update) {
         trace!("Handling msg: 'update': {:?}", params);
         let views = self.views.borrow();
         if let Some(ev) = views.get(&params.view_id) {
@@ -811,7 +795,7 @@ impl MainWin {
 
     /// Forward `ScrollTo` to the respective `EditView`. Also set our `GtkNotebook`'s
     /// current page to that `EditView`
-    pub fn scroll_to(&self, params: &xrl::ScrollTo) {
+    pub fn scroll_to(&self, params: &tau_rpc::ScrollTo) {
         trace!("Handling msg: 'scroll_to' {:?}", params);
 
         let views = self.views.borrow();
@@ -822,7 +806,7 @@ impl MainWin {
         }
     }
 
-    fn plugin_started(&self, params: &xrl::PluginStarted) {
+    fn plugin_started(&self, params: &tau_rpc::PluginStarted) {
         if params.plugin == "xi-syntect-plugin" {
             self.started_plugins.borrow_mut().syntect = true;
             if let Some(ev) = self.views.borrow().get(&params.view_id) {
@@ -839,7 +823,7 @@ impl MainWin {
     }
 
     /// Open an error dialog if a plugin has crashed
-    fn plugin_stopped(&self, params: &xrl::PluginStoped) {
+    fn plugin_stopped(&self, params: &tau_rpc::PluginStopped) {
         if params.plugin == "xi-syntect-plugin" {
             self.started_plugins.borrow_mut().syntect = false;
             if let Some(ev) = self.views.borrow().get(&params.view_id) {
@@ -856,26 +840,26 @@ impl MainWin {
     }
 
     /// Measure the width of a string for Xi and send it the result. Used for line wrapping.
-    pub fn measure_width(&self, params: xrl::MeasureWidth) {
+    pub fn measure_width(&self, params: tau_rpc::MeasureWidth) {
         trace!("Handling msg: 'measure_width' {:?}", params);
         if let Some(ev) = self.get_current_edit_view() {
             let mut widths = Vec::new();
 
+            let mut id = 0;
             for mes_width in params.0 {
+                id = mes_width.id;
                 for string in &mes_width.strings {
                     widths.push(ev.line_width(string) as f32)
                 }
             }
 
-            self.request_tx
-                .send(XiRequest::MeasureWidth(vec![widths]))
-                .unwrap();
+            self.core.width_measured(id, &[widths]);
         }
     }
 
     /// Set available syntaxes in our `MainState` and set the syntax_seletion_sensitivity
     /// of all `EditView`s, so it's unsensitive when we don't have any syntaxes to choose from.
-    pub fn available_languages(&self, params: xrl::AvailableLanguages) {
+    pub fn available_languages(&self, params: tau_rpc::AvailableLanguages) {
         debug!("Handling msg: 'available_languages' {:?}", params);
         let mut main_state = self.state.borrow_mut();
         main_state.avail_languages.clear();
@@ -907,7 +891,7 @@ impl MainWin {
     }
 
     /// Forward `LanguageChanged` to the respective `EditView`
-    pub fn language_changed(&self, params: &xrl::LanguageChanged) {
+    pub fn language_changed(&self, params: &tau_rpc::LanguageChanged) {
         debug!("Handling msg: 'language_changed' {:?}", params);
         let views = self.views.borrow();
         if let Some(ev) = views.get(&params.view_id) {
@@ -942,7 +926,7 @@ impl MainWin {
         PrefsWin::new(
             &self.window,
             &self.state,
-            &self.core,
+            self.core.clone(),
             gschema,
             lang.as_deref(),
             &self.started_plugins.borrow(),
@@ -994,7 +978,7 @@ impl MainWin {
 
     fn autosave_view(&self, file_name: Option<String>, view_id: ViewId) -> Result<String, String> {
         if let Some(name) = file_name {
-            let _ = self.core.save(view_id, &name);
+            self.core.save(view_id, &name);
             Ok(name)
         } else {
             let mut doc_dir = match dirs::data_dir() {
@@ -1029,7 +1013,7 @@ impl MainWin {
             }
 
             let name = doc_dir.to_string_lossy().into_owned();
-            let _ = self.core.save(view_id, &name);
+            self.core.save(view_id, &name);
             Ok(name)
         }
     }
@@ -1100,7 +1084,7 @@ pub trait MainWinExt {
 
     fn current_save_as(&self);
 
-    fn handle_event(&self, ev: XiEvent);
+    fn handle_event(&self, ev: RpcOperations);
 
     fn handle_open_button(&self);
 
@@ -1371,7 +1355,7 @@ impl MainWinExt for Rc<MainWin> {
             }
             self.view_id_to_w.borrow_mut().remove(&edit_view.view_id);
             self.views.borrow_mut().remove(&edit_view.view_id);
-            let _ = self.core.close_view(edit_view.view_id);
+            self.core.close_view(edit_view.view_id);
 
             // If we only have 0 or 1 EditViews left (and as such 0/1 tabs, which
             // means the user can't switch tabs anyway) don't display tabs
@@ -1462,24 +1446,24 @@ impl MainWinExt for Rc<MainWin> {
                 }
                 "translate-tabs-to-spaces" => {
                     let val: bool = gschema.get("translate-tabs-to-spaces");
-                    let _ = core.modify_user_config(
+                    core.modify_user_config_domain(
                         "general",
-                        json!({ "translate_tabs_to_spaces": val })
+                        &json!({ "translate_tabs_to_spaces": val })
                     );
                 }
                 "auto-indent" => {
                     let val: bool = gschema.get("auto-indent");
-                    let _ = core.modify_user_config(
+                    core.modify_user_config_domain(
                         "general",
-                        json!({ "autodetect_whitespace": val })
+                        &json!({ "autodetect_whitespace": val })
                     );
                 }
                 "tab-size" => {
                     let val: u32 = gschema.get("tab-size");
                     if val >= 1 && val <= 100 {
-                        let _ = core.modify_user_config(
+                        core.modify_user_config_domain(
                             "general",
-                            json!({ "tab_size": val })
+                            &json!({ "tab_size": val })
                         );
                     }
                 }
@@ -1487,9 +1471,9 @@ impl MainWinExt for Rc<MainWin> {
                     let val: String = gschema.get("font");
                     if let Some((font_name, font_size)) = functions::get_font_properties(&val) {
                         if font_size >= 6.0 && font_size <= 72.0 {
-                            let _ = core.modify_user_config(
+                            core.modify_user_config_domain(
                                 "general",
-                                json!({ "font_face": font_name, "font_size": font_size })
+                                &json!({ "font_face": font_name, "font_size": font_size })
                             );
                             main_win.state.borrow_mut().settings.edit_font = val;
                         }
@@ -1503,16 +1487,16 @@ impl MainWinExt for Rc<MainWin> {
                 }
                 "use-tab-stops" => {
                     let val: bool = gschema.get("use-tab-stops");
-                    let _ = core.modify_user_config(
+                    core.modify_user_config_domain(
                         "general",
-                        json!({ "use_tab_stops": val })
+                        &json!({ "use_tab_stops": val })
                     );
                 }
                 "word-wrap" => {
                     let val: bool = gschema.get("word-wrap");
-                    let _ = core.modify_user_config(
+                    core.modify_user_config_domain(
                         "general",
-                        json!({ "word_wrap": val })
+                        &json!({ "word_wrap": val })
                     );
                 }
                 "syntax-config" => {
@@ -1520,10 +1504,7 @@ impl MainWinExt for Rc<MainWin> {
 
                     for x in &val {
                         if let Ok(val) = serde_json::from_str(x.as_str()) {
-                            let _ = core.notify(
-                                "modify_user_config",
-                                val,
-                            );
+                            core.as_ref().modify_user_config(val);
                         } else {
                             error!("Failed to deserialize syntax config. Resetting...");
                             gschema.reset("syntax-config");
@@ -1646,7 +1627,7 @@ impl MainWinExt for Rc<MainWin> {
         if let Some(edit_view) = self.get_current_edit_view() {
             let name = { edit_view.file_name.borrow().clone() };
             if let Some(ref file_name) = name {
-                let _ = self.core.save(edit_view.view_id, file_name);
+                self.core.save(edit_view.view_id, file_name);
             } else {
                 self.save_as(&edit_view);
             }
@@ -1657,26 +1638,21 @@ impl MainWinExt for Rc<MainWin> {
     fn req_new_view(&self, file_name: Option<String>) {
         trace!("Requesting new view");
 
-        self.runtime_opt.borrow_mut().as_mut().unwrap().spawn(
-            future::lazy(clone!(@strong self.core as core, @strong self.event_tx as new_view_tx => move || {
-                core
-                .new_view(file_name.clone())
-                .then(|res|
-                    future::lazy(move || {
-                        match res {
-                            Ok(view_id) => new_view_tx.send(XiEvent::NewView(Ok((view_id, file_name)))).unwrap(),
-                            Err(e) => {
-                                if let xrl::ClientError::ErrorReturned(value) = e {
-                                    let err: XiClientError = serde_json::from_value(value).unwrap();
-                                    new_view_tx.send(XiEvent::NewView(Err(format!("{}: '{}'", gettext("Failed to open new view due to error"), err.message)))).unwrap()
-                                }
-                            },
-                        }
-                        Ok(())
-                    })
-                )
-            }))
+        let (tx, rx) = MainContext::channel(glib::source::Priority::default());
+
+        rx.attach(
+            None,
+            clone!(@weak self as main_win, @strong file_name => @default-panic, move |res| {
+                match res {
+                    Ok(val) => main_win.new_view(Ok((serde_json::from_value(val).unwrap(), file_name.clone()))),
+                    Err(e) => main_win.new_view(Err(serde_json::from_value(e).unwrap())),
+                }
+                glib::source::Continue(true)
+            }),
         );
+
+        self.core
+            .new_view(file_name.as_ref(), move |res| tx.send(res).unwrap());
     }
 
     /// When `xi-core` tells us to create a new view, we have to connect the ways to close the `EditView`,
@@ -1687,7 +1663,7 @@ impl MainWinExt for Rc<MainWin> {
         let hamburger_button = self.builder.get_object("hamburger_button").unwrap();
         let edit_view = EditView::new(
             &self.state,
-            &self.core,
+            self.core.clone(),
             &hamburger_button,
             file_name,
             view_id,
@@ -1762,7 +1738,7 @@ impl MainWinExt for Rc<MainWin> {
         for edit_view in self.views.borrow().values() {
             let name = { edit_view.file_name.borrow().clone() };
             if let Some(ref file_name) = name {
-                let _ = self.core.save(edit_view.view_id, file_name);
+                self.core.save(edit_view.view_id, file_name);
             } else {
                 self.save_as(&edit_view);
             }
@@ -1803,7 +1779,7 @@ impl MainWinExt for Rc<MainWin> {
                             Ok(_) => {
                                 debug!("Saving file '{:?}'", &file);
                                 let file = file.to_string_lossy();
-                                let _ = main_win.core.save(edit_view.view_id, &file);
+                                main_win.core.save(edit_view.view_id, &file);
                                 if let Some(old_file_name) = edit_view.file_name.borrow().as_ref() {
                                     main_win
                                     .state
@@ -1852,27 +1828,24 @@ impl MainWinExt for Rc<MainWin> {
         }
     }
 
-    fn handle_event(&self, ev: XiEvent) {
-        trace!("Handling msg: {:?}", ev);
-        match ev {
-            XiEvent::Notification(notification) => match notification {
-                XiNotification::Alert(alert) => self.alert(alert),
-                XiNotification::AvailableThemes(themes) => self.available_themes(themes),
-                XiNotification::ConfigChanged(config) => self.config_changed(&config),
-                XiNotification::DefStyle(style) => self.def_style(style),
-                XiNotification::FindStatus(status) => self.find_status(&status),
-                XiNotification::ReplaceStatus(status) => self.replace_status(&status),
-                XiNotification::Update(update) => self.update(update),
-                XiNotification::ScrollTo(scroll) => self.scroll_to(&scroll),
-                XiNotification::ThemeChanged(theme) => self.theme_changed(theme),
-                XiNotification::AvailableLanguages(langs) => self.available_languages(langs),
-                XiNotification::LanguageChanged(lang) => self.language_changed(&lang),
-                XiNotification::PluginStarted(plugin) => self.plugin_started(&plugin),
-                XiNotification::PluginStoped(plugin) => self.plugin_stopped(&plugin),
-                _ => {}
-            },
-            XiEvent::MeasureWidth(measure_width) => self.measure_width(measure_width),
-            XiEvent::NewView(new_view) => self.new_view(new_view),
+    fn handle_event(&self, op: RpcOperations) {
+        trace!("Handling msg: {:?}", op);
+        match op {
+            RpcOperations::Alert(alert) => self.alert(alert),
+            RpcOperations::AvailableThemes(themes) => self.available_themes(themes),
+            RpcOperations::ConfigChanged(config) => self.config_changed(&config),
+            RpcOperations::DefStyle(style) => self.def_style(style),
+            RpcOperations::FindStatus(status) => self.find_status(&status),
+            RpcOperations::ReplaceStatus(status) => self.replace_status(&status),
+            RpcOperations::Update(update) => self.update(update),
+            RpcOperations::ScrollTo(scroll) => self.scroll_to(&scroll),
+            RpcOperations::ThemeChanged(theme) => self.theme_changed(theme),
+            RpcOperations::AvailableLanguages(langs) => self.available_languages(langs),
+            RpcOperations::LanguageChanged(lang) => self.language_changed(&lang),
+            RpcOperations::PluginStarted(plugin) => self.plugin_started(&plugin),
+            RpcOperations::PluginStopped(plugin) => self.plugin_stopped(&plugin),
+            RpcOperations::MeasureWidth(measure_width) => self.measure_width(measure_width),
+            _ => {}
         }
     }
 

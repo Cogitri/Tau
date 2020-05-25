@@ -24,8 +24,8 @@ use std::rc::Rc;
 use std::sync::Arc;
 use std::u32;
 use tau_linecache::{Line, LineCache};
+use tau_rpc::{Client, ConfigChanges, Query, Status, ThemeChanged, Update, ViewId};
 use unicode_segmentation::UnicodeSegmentation;
-use xrl::{Client, ConfigChanges, Query, Status, ThemeChanged, Update, ViewId};
 
 /// Returned by `EditView::get_text_size()` and used to adjust the scrollbars.
 pub struct TextSize {
@@ -42,7 +42,7 @@ pub struct TextSize {
 
 /// The `EditView` is the part of Tau that does the actual editing. This is where you edit documents.
 pub struct EditView {
-    pub(crate) core: Client,
+    pub(crate) core: Rc<Client>,
     pub(crate) main_state: Rc<RefCell<MainState>>,
     pub view_id: ViewId,
     pub file_name: RefCell<Option<String>>,
@@ -66,7 +66,7 @@ impl EditView {
     /// the syntax lang and connects all events which might happen during usage (e.g. scrolling)
     pub fn new(
         main_state: &Rc<RefCell<MainState>>,
-        core: &Client,
+        core: Rc<Client>,
         // The FindReplace dialog is relative to this
         hamburger_button: &MenuButton,
         file_name: Option<String>,
@@ -93,7 +93,7 @@ impl EditView {
         let (update_sender, update_recv) = unbounded();
 
         let edit_view = Rc::new(Self {
-            core: core.clone(),
+            core,
             main_state: main_state.clone(),
             file_name: RefCell::new(file_name),
             pristine: RefCell::new(true),
@@ -160,7 +160,7 @@ impl EditView {
 
     fn connect_im_events(edit_view: &Rc<EditView>, im_context: &IMContextSimple) {
         im_context.connect_commit(clone!(@weak edit_view => @default-panic, move |_, text| {
-            let _ = edit_view.core.insert(edit_view.view_id, text);
+            edit_view.core.insert(edit_view.view_id, text);
         }));
     }
 }
@@ -225,16 +225,18 @@ impl EditView {
         );
 
         if let Some(color) = changed.theme.caret {
-            let _ = self.style_provider.load_from_data(
-                format!(
-                    "* {{ caret-color: rgba({}, {}, {}, {});}}",
-                    color.r,
-                    color.g,
-                    color.b,
-                    f64::from(color.a) / 255.0
+            self.style_provider
+                .load_from_data(
+                    format!(
+                        "* {{ caret-color: rgba({}, {}, {}, {});}}",
+                        color.r,
+                        color.g,
+                        color.b,
+                        f64::from(color.a) / 255.0
+                    )
+                    .as_bytes(),
                 )
-                .as_bytes(),
-            );
+                .unwrap();
         }
     }
 
@@ -380,7 +382,7 @@ impl EditView {
             first_line, last_line
         );
 
-        let _ = self.core.scroll(self.view_id, first_line, last_line);
+        self.core.scroll(self.view_id, first_line, last_line);
         self.view_item.linecount.queue_draw();
     }
 
@@ -1041,18 +1043,18 @@ impl EditView {
         match eb.get_button() {
             1 => {
                 if eb.get_state().contains(ModifierType::SHIFT_MASK) {
-                    let _ = self.core.click_range_select(self.view_id, line, col);
+                    self.core.gesture_range_select(self.view_id, line, col);
                     self.do_copy_primary();
                 } else if eb.get_state().contains(ModifierType::CONTROL_MASK) {
-                    let _ = self.core.click_toggle_sel(self.view_id, line, col);
+                    self.core.gesture_toggle_sel(self.view_id, line, col);
                 } else if eb.get_event_type() == EventType::DoubleButtonPress {
-                    let _ = self.core.click_word_select(self.view_id, line, col);
+                    self.core.gesture_word_select(self.view_id, line, col);
                     self.do_copy_primary();
                 } else if eb.get_event_type() == EventType::TripleButtonPress {
-                    let _ = self.core.click_line_select(self.view_id, line, col);
+                    self.core.gesture_line_select(self.view_id, line, col);
                     self.do_copy_primary();
                 } else {
-                    let _ = self.core.click_point_select(self.view_id, line, col);
+                    self.core.gesture_point_select(self.view_id, line, col);
                 }
             }
             2 => {
@@ -1070,7 +1072,7 @@ impl EditView {
     /// button clicked.
     pub fn handle_drag(&self, x: f64, y: f64) {
         let (col, line) = self.da_px_to_cell(x, y);
-        let _ = self.core.drag(self.view_id, line, col);
+        self.core.drag(self.view_id, line, col);
     }
 
     /// Handles all (special) key press events, e.g. copy, pasting, PgUp/Down etc.
@@ -1100,7 +1102,7 @@ impl EditView {
         let norm = !alt && !ctrl && !meta;
         match ek.get_keyval() {
             key::Delete if !shift => {
-                let _ = self.core.delete(view_id);
+                self.core.delete_forward(view_id);
             }
             key::KP_Delete | key::Delete if norm && shift => {
                 self.do_cut();
@@ -1112,102 +1114,102 @@ impl EditView {
                 self.do_paste();
             }
             key::BackSpace if norm => {
-                let _ = self.core.del(view_id);
+                self.core.delete_backward(view_id);
             }
             key::BackSpace if ctrl => {
-                let _ = self.core.delete_word_backward(view_id);
+                self.core.delete_word_backward(view_id);
             }
             key::Return | key::KP_Enter => {
-                let _ = self.core.insert_newline(view_id);
+                self.core.insert_newline(view_id);
             }
             key::Tab if norm && !shift => {
-                let _ = self.core.insert_tab(view_id);
+                self.core.insert_tab(view_id);
             }
             key::Tab | key::ISO_Left_Tab if norm && shift => {
-                let _ = self.core.outdent(view_id);
+                self.core.outdent(view_id);
             }
             key::Up | key::KP_Up if norm && !shift => {
-                let _ = self.core.up(view_id);
+                self.core.up(view_id);
             }
             key::Down | key::KP_Down if norm && !shift => {
-                let _ = self.core.down(view_id);
+                self.core.down(view_id);
             }
             key::Left | key::KP_Left if norm && !shift => {
-                let _ = self.core.left(view_id);
+                self.core.left(view_id);
             }
             key::Right | key::KP_Right if norm && !shift => {
-                let _ = self.core.right(view_id);
+                self.core.right(view_id);
             }
             key::Up | key::KP_Up if norm && shift => {
-                let _ = self.core.up_sel(view_id);
+                self.core.up_sel(view_id);
                 self.do_copy_primary();
             }
             key::Down | key::KP_Down if norm && shift => {
-                let _ = self.core.down_sel(view_id);
+                self.core.down_sel(view_id);
                 self.do_copy_primary();
             }
             key::Left | key::KP_Left if norm && shift => {
-                let _ = self.core.left_sel(view_id);
+                self.core.left_sel(view_id);
                 self.do_copy_primary();
             }
             key::Right | key::KP_Right if norm && shift => {
-                let _ = self.core.right_sel(view_id);
+                self.core.right_sel(view_id);
                 self.do_copy_primary();
             }
             key::Left | key::KP_Left if ctrl && !shift => {
-                let _ = self.core.move_word_left(view_id);
+                self.core.word_left(view_id);
             }
             key::Right | key::KP_Right if ctrl && !shift => {
-                let _ = self.core.move_word_right(view_id);
+                self.core.word_right(view_id);
             }
             key::Left | key::KP_Left if ctrl && shift => {
-                let _ = self.core.move_word_left_sel(view_id);
+                self.core.word_left_sel(view_id);
                 self.do_copy_primary();
             }
             key::Right | key::KP_Right if ctrl && shift => {
-                let _ = self.core.move_word_right_sel(view_id);
+                self.core.word_right_sel(view_id);
                 self.do_copy_primary();
             }
             key::Home | key::KP_Home if norm && !shift => {
-                let _ = self.core.line_start(view_id);
+                self.core.line_start(view_id);
             }
             key::End | key::KP_End if norm && !shift => {
-                let _ = self.core.line_end(view_id);
+                self.core.line_end(view_id);
             }
             key::Home | key::KP_Home if norm && shift => {
-                let _ = self.core.line_start_sel(view_id);
+                self.core.line_start_sel(view_id);
                 self.do_copy_primary();
             }
             key::End | key::KP_End if norm && shift => {
-                let _ = self.core.line_end_sel(view_id);
+                self.core.line_end_sel(view_id);
                 self.do_copy_primary();
             }
             key::Home | key::KP_Home if ctrl && !shift => {
-                let _ = self.core.document_begin(view_id);
+                self.core.document_begin(view_id);
             }
             key::End | key::KP_End if ctrl && !shift => {
-                let _ = self.core.document_end(view_id);
+                self.core.document_end(view_id);
             }
             key::Home | key::KP_Home if ctrl && shift => {
-                let _ = self.core.document_begin_sel(view_id);
+                self.core.document_begin_sel(view_id);
                 self.do_copy_primary();
             }
             key::End | key::KP_End if ctrl && shift => {
-                let _ = self.core.document_end_sel(view_id);
+                self.core.document_end_sel(view_id);
                 self.do_copy_primary();
             }
             key::Page_Up | key::KP_Page_Up if norm && !shift => {
-                let _ = self.core.page_up(view_id);
+                self.core.page_up(view_id);
             }
             key::Page_Down | key::KP_Page_Down if norm && !shift => {
-                let _ = self.core.page_down(view_id);
+                self.core.page_down(view_id);
             }
             key::Page_Up | key::KP_Page_Up if norm && shift => {
-                let _ = self.core.page_up_sel(view_id);
+                self.core.page_up_sel(view_id);
                 self.do_copy_primary();
             }
             key::Page_Down | key::KP_Page_Down if norm && shift => {
-                let _ = self.core.page_down_sel(view_id);
+                self.core.page_down_sel(view_id);
                 self.do_copy_primary();
             }
             key::Escape => {
@@ -1219,7 +1221,7 @@ impl EditView {
                 main_state.settings.draw_cursor = !draw_cursor;
             }
             key::a | key::backslash | key::slash if ctrl => {
-                let _ = self.core.select_all(view_id);
+                self.core.select_all(view_id);
                 self.do_copy_primary();
             }
             key::c if ctrl => {
@@ -1232,10 +1234,10 @@ impl EditView {
                 self.do_cut();
             }
             key::z if ctrl => {
-                let _ = self.core.undo(view_id);
+                self.core.undo(view_id);
             }
             key::Z if ctrl => {
-                let _ = self.core.redo(view_id);
+                self.core.redo(view_id);
             }
             _ => {
                 debug!("Inserting non char key");
@@ -1260,15 +1262,11 @@ impl EditView {
             Continue(false)
         });
 
-        //TODO: Spawn a future on glib's mainloop instead once that is stable.
-        std::thread::spawn(
-            clone!(@strong self.core as core, @strong self.view_id as view_id => move || {
-                let board_future = core.cut(view_id);
-
-                let val = tokio::runtime::current_thread::block_on_all(board_future).unwrap();
+        self.core.cut(self.view_id, move |res| {
+            if let Ok(val) = res {
                 clipboard_tx.send(val).unwrap();
-            }),
-        );
+            }
+        });
     }
 
     /// Copies text to the clipboard
@@ -1287,15 +1285,11 @@ impl EditView {
             Continue(false)
         });
 
-        //TODO: Spawn a future on glib's mainloop instead once that is stable.
-        std::thread::spawn(
-            clone!(@strong self.core as core, @strong self.view_id as view_id => move || {
-                let board_future = core.copy(view_id);
-
-                let val = tokio::runtime::current_thread::block_on_all(board_future).unwrap();
+        self.core.copy(self.view_id, move |res| {
+            if let Ok(val) = res {
                 clipboard_tx.send(val).unwrap();
-            }),
-        );
+            }
+        });
     }
 
     /// Copies text to primary clipboard
@@ -1313,15 +1307,11 @@ impl EditView {
             Continue(false)
         });
 
-        //TODO: Spawn a future on glib's mainloop instead once that is stable.
-        std::thread::spawn(
-            clone!(@strong self.core as core, @strong self.view_id as view_id => move || {
-                let board_future = core.copy(view_id);
-
-                let val = tokio::runtime::current_thread::block_on_all(board_future).unwrap();
+        self.core.copy(self.view_id, move |res| {
+            if let Ok(val) = res {
                 clipboard_tx.send(val).unwrap();
-            }),
-        );
+            }
+        });
     }
 
     /// Pastes text from the clipboard into the EditView
@@ -1331,7 +1321,7 @@ impl EditView {
         Clipboard::get(&SELECTION_CLIPBOARD).request_text(
             clone!(@strong self.core as core, @strong self.view_id as view_id => move |_, text| {
                 if let Some(clip_content) = text {
-                    let _ = core.insert(view_id, clip_content);
+                    core.insert(view_id, clip_content);
                 }
             }),
         );
@@ -1342,9 +1332,9 @@ impl EditView {
 
         Clipboard::get(&SELECTION_PRIMARY).request_text(
             clone!(@strong self.core as core, @strong self.view_id as view_id => move |_, text| {
-                let _ = core.click_point_select(view_id, line, col);
+                core.gesture_point_select(view_id, line, col);
                 if let Some(clip_content) = text {
-                    let _ = core.insert(view_id, clip_content);
+                    core.insert(view_id, clip_content);
                 }
             }),
         );
@@ -1354,7 +1344,7 @@ impl EditView {
     pub fn do_resize(&self, width: i32, height: i32) {
         trace!("Resizing EditView '{}'", self.view_id);
 
-        let _ = self.core.resize(self.view_id, width, height);
+        self.core.resize(self.view_id, width, height);
     }
 
     /// Opens the find dialog (Ctrl+F)
@@ -1381,7 +1371,7 @@ impl EditView {
                 // No need to pass the actual values of case_sensitive etc. to Xi here, we as soon
                 // as we start typing something into the search box/flick one of the switches we call
                 // EditView::search_changed() anyway, which does that for us.
-                let _ = self.core.find(self.view_id, &needle, false, false, false);
+                self.core.find(self.view_id, &needle, false, false, false);
             }
         }
     }
@@ -1463,9 +1453,12 @@ impl EditView {
     /// Returns `true` if search mode is activated, `false` otherwise
     pub fn find_next(&self) -> bool {
         if self.find_replace.search_bar.get_search_mode() {
-            let _ = self
-                .core
-                .find_next(self.view_id, true, true, xrl::ModifySelection::Set);
+            self.core.find_next(
+                self.view_id,
+                Some(true),
+                Some(true),
+                Some(tau_rpc::ModifySelection::Set),
+            );
             self.do_copy_primary();
             true
         } else {
@@ -1480,9 +1473,12 @@ impl EditView {
     /// Returns `true` if search mode is activated, `false` otherwise
     pub fn find_prev(&self) -> bool {
         if self.find_replace.search_bar.get_search_mode() {
-            let _ = self
-                .core
-                .find_prev(self.view_id, true, true, xrl::ModifySelection::Set);
+            self.core.find_previous(
+                self.view_id,
+                Some(true),
+                Some(true),
+                Some(tau_rpc::ModifySelection::Set),
+            );
             self.do_copy_primary();
             true
         } else {
@@ -1497,7 +1493,7 @@ impl EditView {
     /// Returns `true` if search mode is activated, `false` otherwise
     pub fn find_all(&self) -> bool {
         if self.find_replace.search_bar.get_search_mode() {
-            let _ = self.core.find_all(self.view_id);
+            self.core.find_all(self.view_id);
             self.do_copy_primary();
             return true;
         }
@@ -1510,28 +1506,25 @@ impl EditView {
         let regex = self.find_replace.use_regex_button.get_active();
         let whole_worlds = self.find_replace.whole_word_button.get_active();
         let case_sensitive = self.find_replace.case_sensitive_button.get_active();
-        let _ = self
-            .core
+        self.core
             .find(self.view_id, &needle, case_sensitive, regex, whole_worlds);
     }
 
     /// Replace _one_ match with the replacement string
     pub fn replace(&self) {
         if let Some(replace_chars) = self.find_replace.replace_entry.get_text() {
-            let _ = self
-                .core
+            self.core
                 .replace(self.view_id, replace_chars.as_str(), false);
-            let _ = self.core.replace_next(self.view_id);
+            self.core.replace_next(self.view_id);
         }
     }
 
     /// Replace _all_ matches with the replacement string
     pub fn replace_all(&self) {
         if let Some(replace_chars) = self.find_replace.replace_entry.get_text() {
-            let _ = self
-                .core
+            self.core
                 .replace(self.view_id, replace_chars.as_str(), false);
-            let _ = self.core.replace_all(self.view_id);
+            self.core.replace_all(self.view_id);
         }
     }
 
@@ -1542,7 +1535,7 @@ impl EditView {
 
     pub fn set_language(&self, lang: &str) {
         debug!("Changing language to '{:?}'", lang);
-        let _ = self.core.set_language(self.view_id, lang);
+        self.core.set_language(self.view_id, lang);
     }
 
     pub fn language_changed(&self, syntax: &str) {
@@ -1608,6 +1601,6 @@ impl EditView {
     }
 
     pub fn go_to_line(&self, line: u64) {
-        let _ = self.core.goto_line(self.view_id, line - 1);
+        self.core.goto_line(self.view_id, line - 1);
     }
 }

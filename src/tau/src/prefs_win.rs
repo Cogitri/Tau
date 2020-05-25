@@ -15,7 +15,7 @@ use pango::FontDescription;
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
-use xrl::Client;
+use tau_rpc::Client;
 
 use libhandy::PreferencesWindow;
 
@@ -23,7 +23,7 @@ const TAB_SIZE_DEFAULT: f64 = 4.0;
 const INSERT_SPACES_DEFAULT: bool = false;
 
 pub struct PrefsWin {
-    pub core: Client,
+    pub core: Rc<Client>,
     pub window: PreferencesWindow,
 }
 
@@ -31,7 +31,7 @@ impl PrefsWin {
     pub fn new(
         parent: &ApplicationWindow,
         main_state: &Rc<RefCell<MainState>>,
-        core: &Client,
+        core: Rc<Client>,
         gschema: &Settings,
         current_syntax: Option<&str>,
         started_plugins: &StartedPlugins,
@@ -173,7 +173,7 @@ impl PrefsWin {
                 if let Some(theme_name) = cb.get_active_text() {
                     let theme_name = theme_name.to_string();
                     debug!("Theme changed to '{}'", &theme_name);
-                    let _ =  core.set_theme(&theme_name);
+                    core.set_theme(&theme_name);
 
                     gschema.set("theme-name", &theme_name).unwrap();
 
@@ -443,10 +443,7 @@ impl PrefsWin {
             syntect_warn_automatic_indentation_image.set_visible(false);
         }
 
-        Self {
-            core: core.clone(),
-            window,
-        }
+        Self { core, window }
     }
 }
 

@@ -18,7 +18,6 @@ crossbeam-channel = "0.4"
 dirs = "2"
 editview = { path="../editview" }
 env_logger = "0.7"
-futures = "0.1"
 gdk = ""
 gdk-pixbuf = ""
 gettext-rs = { version="0.4", features=["gettext-system"] }
@@ -35,6 +34,4 @@ serde = { version="1", features = ["derive"] }
 serde_json = "1"
 syntect = "3"
 tau-rpc = { path="../tau-rpc" }
-tokio = "0.1"
 vte-rs = "0.3"
-xrl = "0.0.8"

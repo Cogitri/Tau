@@ -262,14 +262,7 @@ impl ViewItem {
                     edit_view.tab_size.replace(Some(val));
                 }
 
-                let _ = edit_view.core.notify(
-                    "modify_user_config",
-                    json!({
-                        "domain": { "user_override": edit_view.view_id },
-                        "changes": { "tab_size": val },
-                    }),
-                );
-
+                edit_view.core.modify_user_config_domain_user_override(edit_view.view_id, &json!({"tab_size": val }));
                 edit_view.view_item.edit_area.queue_draw();
             }),
         );
@@ -277,13 +270,7 @@ impl ViewItem {
         self.statusbar.insert_spaces_button.connect_toggled(
             clone!(@weak edit_view => @default-panic, move | tb | {
                     let val = tb.get_active();
-                    let _ = edit_view.core.notify(
-                        "modify_user_config",
-                        json!({
-                            "domain": { "user_override": edit_view.view_id },
-                            "changes": { "translate_tabs_to_spaces": val },
-                        }),
-                    );
+                    edit_view.core.modify_user_config_domain_user_override(edit_view.view_id, &json!({ "translate_tabs_to_spaces": val }));
                 }
             ),
         );
@@ -291,13 +278,7 @@ impl ViewItem {
         self.statusbar.auto_indentation_button.connect_toggled(
             clone!(@weak edit_view => @default-panic, move | tb | {
                     let val = tb.get_active();
-                    let _ = edit_view.core.notify(
-                        "modify_user_config",
-                        json!({
-                            "domain": { "user_override": edit_view.view_id },
-                            "changes": { "autodetect_whitespace": val },
-                        }),
-                    );
+                    edit_view.core.modify_user_config_domain_user_override(edit_view.view_id, &json!({ "autodetect_whitespace": val }));
                 }
             ),
         );

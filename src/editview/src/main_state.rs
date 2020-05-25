@@ -29,7 +29,7 @@ pub struct MainState {
     pub themes: Vec<String>,
     pub theme_name: String,
     pub theme: ThemeSettings,
-    pub styles: HashMap<usize, xrl::Style>,
+    pub styles: HashMap<usize, tau_rpc::Style>,
     pub fonts: Vec<String>,
     pub avail_languages: Vec<String>,
     pub selected_language: String,

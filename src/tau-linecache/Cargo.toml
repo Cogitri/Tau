@@ -12,4 +12,4 @@ repository = "https://gitlab.gnome.org/World/tau"
 
 [dependencies]
 log = "0.4"
-xrl = "0.0.8"
+tau-rpc = { path="../tau-rpc" }

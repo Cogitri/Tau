@@ -15,12 +15,11 @@ build = "build.rs"
 [dependencies]
 cairo-rs = ""
 crossbeam-channel = "0.4"
-futures = "0.1"
 gdk = ""
 gettext-rs = { version="0.4", features=["gettext-system"] }
 gio = ""
 glib = ""
-gtk = { version="0.8", features = ["v3_20"] }
+gtk = { version="0.8", features = ["v3_22"] }
 log = "0.4"
 pango = { version="0.8", features = ["v1_38"] }
 pangocairo = ""
@@ -29,6 +28,5 @@ serde = { version="", features = ["derive"] }
 serde_json = ""
 syntect = "3"
 tau-linecache = { path="../tau-linecache" }
-tokio = "0.1"
+tau-rpc = { path="../tau-rpc" }
 unicode-segmentation = "1"
-xrl = "0.0.8"

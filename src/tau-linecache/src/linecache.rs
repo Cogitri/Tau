@@ -1,6 +1,6 @@
 use log::{error, trace};
 use std::cmp::min;
-use xrl::{OperationType, StyleDef, Update};
+use tau_rpc::{OperationType, StyleDef, Update};
 
 /// A Struct representing _one_ line which xi has sent us.
 /// # Fields:
@@ -16,8 +16,8 @@ pub struct Line {
     pub line_num: Option<u64>,
 }
 
-impl From<xrl::Line> for Line {
-    fn from(x: xrl::Line) -> Self {
+impl From<tau_rpc::Line> for Line {
+    fn from(x: tau_rpc::Line) -> Self {
         Self {
             text: x.text,
             cursor: x.cursor,

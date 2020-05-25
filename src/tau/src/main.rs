@@ -68,7 +68,6 @@
 
 mod about_win;
 mod errors;
-mod frontend;
 mod functions;
 mod globals;
 mod main_win;
@@ -79,16 +78,17 @@ mod shortcuts_win;
 mod syntax_config;
 mod view_history;
 
-use crate::errors::XiClientError;
-use crate::frontend::XiEvent;
+use crate::main_win::MainWinExt;
 use crate::main_win_builder::MainWinBuilder;
 use crate::session::SessionHandler;
 use gettextrs::{gettext, TextDomain, TextDomainError};
 use gio::prelude::*;
 use gio::ApplicationFlags;
-use glib::{clone, Char};
+use glib::source::{Continue, Priority};
+use glib::{clone, Char, MainContext};
 use gtk::Application;
 use log::{debug, error, info, warn};
+use serde_json::{from_value, Value};
 use std::cell::RefCell;
 use std::env::args;
 use std::path::Path;
@@ -158,26 +158,45 @@ fn main() {
             .get("restore-session") && !new_instance && !paths.is_empty() {
                 for file in paths {
                     if Path::new(&file).exists() {
-                        if main_win_builder.borrow().spawn_view(Some(file.clone())).is_err() {
-                            error!("Failed to restore file `{}`", file);
-                            schema.session_remove(&file);
-                        }
+                        let (tx, rx) = MainContext::channel::<Result<Value, Value>>(Priority::default());
+                        let main_win = main_win_builder.borrow().main_win.clone();
+                        rx.attach(None, clone!(@strong schema, @strong main_win, @strong file => move |res| {
+                            match res {
+                                Ok(val) => main_win.as_ref().unwrap().new_view(Ok((serde_json::from_value(val).unwrap(), Some(file.clone())))),
+                                Err(e) => {
+                                    error!("Failed to restore file `{}`", &e);
+                                    schema.session_remove(&from_value::<String>(e).unwrap());
+                                }
+                            }
+                            Continue(false)
+                        }));
+
+                        main_win_builder.borrow().spawn_view(Some(file.clone()), move |res| {
+                            tx.send(res).unwrap()
+                        });
                     } else {
                         schema.session_remove(&file);
                         error!("Failed to restore file `{}`", file);
                     }
                 }
-        } else if let Err(e) = main_win_builder.borrow().spawn_view(None) {
-            if let xrl::ClientError::ErrorReturned(value) = e {
-                let err: XiClientError = serde_json::from_value(value).unwrap();
-                main_win_builder.borrow().event_tx
-                    .send(XiEvent::NewView(Err(format!(
-                        "{}: '{}'",
-                        gettext("Failed open new view due to error"),
-                        err.message
-                    ))))
-                    .unwrap()
-            }
+        } else {
+            let (tx, rx) = MainContext::channel::<Result<Value, Value>>(Priority::default());
+            let main_win = main_win_builder.borrow().main_win.clone();
+            rx.attach(None, clone!(@strong schema, @strong main_win => move |res| {
+                match res {
+                    Ok(val) => main_win.as_ref().unwrap().new_view(Ok((serde_json::from_value(val).unwrap(), None))),
+                    Err(e) => {
+                        error!("Failed to open new view due to error `{}`", &e);
+                        schema.session_remove(&from_value::<String>(e.clone()).unwrap());
+                        main_win.as_ref().unwrap().new_view(Err(serde_json::from_value(e).unwrap()));
+                    }
+                }
+                Continue(false)
+            }));
+
+            main_win_builder.borrow().spawn_view(None, move |res| {
+                tx.send(res).unwrap()
+            });
         };
     }));
 
@@ -202,30 +221,35 @@ fn main() {
                     paths.extend(session_paths.iter().cloned())
                 }
 
+            let session_paths_rc = Rc::new(session_paths);
             for file in paths {
-                if let Err(e) = main_win_builder.borrow().spawn_view(Some(file.clone())) {
-                    if session_paths.contains(&file) {
-                        schema.session_remove(&file);
-                        continue;
+                let (tx, rx) = MainContext::channel::<Result<Value, Value>>(Priority::default());
+                let main_win = main_win_builder.borrow().main_win.clone();
+                rx.attach(None, clone!(@strong schema, @strong main_win, @strong file, @strong session_paths_rc => move |res| {
+                    match res {
+                        Ok(val) => main_win.as_ref().unwrap().new_view(Ok((serde_json::from_value(val).unwrap(), Some(file.clone())))),
+                        Err(e) => {
+                            if session_paths_rc.contains(&file) {
+                                error!("Failed to restore file `{}`", &e);
+                                schema.session_remove(&from_value::<String>(e).unwrap());
+                            } else {
+                                main_win.as_ref().unwrap().new_view(Err(serde_json::from_value(e).unwrap()));
+                            }
+                        }
                     }
-                    else if let xrl::ClientError::ErrorReturned(value) = e {
-                        let err: XiClientError = serde_json::from_value(value).unwrap();
-                        main_win_builder.borrow().event_tx
-                            .send(XiEvent::NewView(Err(format!(
-                                "{}: '{}'",
-                                gettext("Failed open new view due to error"),
-                                err.message
-                            ))))
-                            .unwrap()
-                    }
-                }
+                    Continue(false)
+                }));
+
+                main_win_builder.borrow().spawn_view(Some(file.clone()), move |res| {
+                    tx.send(res).unwrap()
+                });
             }
         }),
     );
 
-    application.connect_shutdown(clone!(@strong main_win_builder => move |_| {
-        main_win_builder.borrow_mut().shutdown();
-    }));
+    application.connect_shutdown(move |_| {
+        debug!("Shutting down!");
+    });
 
     if new_instance {
         application.set_flags(ApplicationFlags::HANDLES_OPEN | ApplicationFlags::NON_UNIQUE);
