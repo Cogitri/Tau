@@ -17,11 +17,10 @@ set -e
 export TAU_PLUGIN_DIR="${6}"
 export TAU_LOCALEDIR="${7}"
 export TAU_VERSION="${8}"
-export TAU_XI_BINARY_PATH="${9}"
-export GRESOURCE_BINARY_PATH="${10}"
-export TAU_APP_ID="${11}"
+export GRESOURCE_BINARY_PATH="${9}"
+export TAU_APP_ID="${10}"
 # In case we're in development mode this will be "Tau (Development)"
-export TAU_NAME="${12}"
+export TAU_NAME="${11}"
 
 # ANSI codes for getting colors and resetting it
 RED='\033[0;31m'
@@ -30,7 +29,7 @@ NO_COLOR='\033[0m'
 
 echo -e \
 "
-\tBuild Mode:\t\t${GREEN}${13}${NO_COLOR}
+\tBuild Mode:\t\t${GREEN}${12}${NO_COLOR}
 \tTau Plugindir:\t\t${GREEN}${TAU_PLUGIN_DIR}${NO_COLOR}
 \tTau Localedir:\t\t${GREEN}${TAU_LOCALEDIR}${NO_COLOR}
 \tTau Version:\t\t${GREEN}${TAU_VERSION}${NO_COLOR}
@@ -43,7 +42,7 @@ if [ "$5" = "tau" ]; then
     manifest_path="--manifest-path=${1}/src/tau/Cargo.toml"
 fi
 
-if [ "${13}" = "development" ]; then
+if [ "${12}" = "development" ]; then
     cargo build --target-dir "${4}" ${manifest_path} ${features}
     
     # Cargo can place this here if we're crosscompiling

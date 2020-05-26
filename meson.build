@@ -24,23 +24,6 @@ i18n = import('i18n')
 cargo = find_program('cargo', required: true)
 gresource = find_program('glib-compile-resources', required: true)
 cargo_script = find_program('scripts/cargo.sh', required: true)
-xi_core = find_program('xi-core', required: false)
-
-xi_opt = get_option('xi-core')
-
-if xi_opt == 'auto'
-  if xi_core.found()
-    message('Found xi-core, using system\'s xi-core')
-    xi_opt = 'system'
-  else
-    message('Couldn\'t find xi-core, using builtin xi-core')
-    xi_opt = 'builtin'
-  endif
-elif xi_opt == 'system'
-  if not xi_core.found()
-    message('WARN: Requested system xi-core but couldn\'t find the xi-core binary! Please make sure to have it available during run-time')
-  endif
-endif
 
 if get_option('profile') == 'development'
   profile = 'Devel'
@@ -85,7 +68,6 @@ sources = files(
   'src/tau/src/prefs_win.rs',
   'src/tau/src/globals.rs',
   'src/tau/src/syntax_config.rs',
-  'src/tau/src/frontend.rs',
   'src/tau/src/shortcuts_win.rs',
   'src/tau/src/ui/shortcuts_win.glade',
   'src/tau/src/ui/tau.glade',
@@ -93,15 +75,29 @@ sources = files(
   'src/tau/src/ui/tau.glade',
   'src/tau/src/ui/app.css',
   'src/tau/src/ui/resources.xml',
+  'src/tau-rpc/Cargo.toml',
+  'src/tau-rpc/src/lib.rs',
+  'src/tau-rpc/src/message.rs',
+  'src/tau-rpc/src/errors.rs',
+  'src/tau-rpc/src/client.rs',
+  'src/tau-rpc/src/structs/alert.rs',
+  'src/tau-rpc/src/structs/config.rs',
+  'src/tau-rpc/src/structs/findreplace.rs',
+  'src/tau-rpc/src/structs/language.rs',
+  'src/tau-rpc/src/structs/line.rs',
+  'src/tau-rpc/src/structs/mod.rs',
+  'src/tau-rpc/src/structs/modifyselection.rs',
+  'src/tau-rpc/src/structs/operation.rs',
+  'src/tau-rpc/src/structs/plugins.rs',
+  'src/tau-rpc/src/structs/position.rs',
+  'src/tau-rpc/src/structs/scroll_to.rs',
+  'src/tau-rpc/src/structs/style.rs',
+  'src/tau-rpc/src/structs/theme.rs',
+  'src/tau-rpc/src/structs/update.rs',
+  'src/tau-rpc/src/structs/view.rs',
   'Cargo.toml',
   'Cargo.lock',
 )
-
-if xi_opt == 'builtin'
-  xi_binary_path = join_paths(tau_libexecdir, 'xi-core')
-else
-  xi_binary_path = xi_core.path()
-endif
 
 git = find_program('git', native: true, required: false)
 
@@ -122,31 +118,6 @@ if subdir_xi_check.returncode() != 0 or subdir_syntect_check.returncode() != 0
 endif
 
 xi_vendor_target_dir = join_paths(meson.current_build_dir(), 'vendor', 'xi-editor', 'rust')
-
-if xi_opt == 'builtin'
-  xi_build_path = join_paths(meson.current_source_dir(), 'vendor', 'xi-editor', 'rust')
-  xi_core_dep = custom_target('cargo-build-xi-core',
-                          output: ['xi-core'],
-                          install: true,
-                          install_dir: tau_libexecdir,
-                          install_mode: 'rwxr-xr-x',
-                          console: true,
-                          command: [cargo_script,
-                                    xi_build_path,
-                                    join_paths(meson.build_root(),'@OUTDIR@'),
-                                    '@OUTPUT@',
-                                    xi_vendor_target_dir,
-                                    'xi-core',
-                                    tau_plugin_dir,
-                                    tau_localedir,
-                                    meson.project_version(),
-                                    '',
-                                    '',
-                                    '',
-                                    '',
-                                    get_option('profile'),
-                                   ])
-endif
 
 syntect_build_path = join_paths(meson.current_source_dir(), 'vendor', 'xi-editor', 'rust', 'syntect-plugin')
 syntect_dir = join_paths(tau_plugin_dir, 'syntect')
@@ -178,7 +149,6 @@ xi_syntect_plugin_dep = custom_target('cargo-build-syntect',
                                   '',
                                   '',
                                   '',
-                                  '',
                                   get_option('profile'),
                                  ])
 
@@ -192,11 +162,7 @@ foreach a: synctect_assets
     )
 endforeach
 
-if xi_opt == 'builtin'
-  tau_depends = [xi_syntect_plugin_dep, xi_core_dep]
-else
-  tau_depends = [xi_syntect_plugin_dep]
-endif
+tau_depends = [xi_syntect_plugin_dep]
 
 tau = custom_target('cargo-build-tau',
                         input: sources,
@@ -215,7 +181,6 @@ tau = custom_target('cargo-build-tau',
                                   tau_plugin_dir,
                                   tau_localedir,
                                   version,
-                                  xi_binary_path,
                                   gresource.path(),
                                   application_id,
                                   name,

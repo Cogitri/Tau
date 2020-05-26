@@ -1,9 +1,3 @@
-option('xi-core',
-  description: 'Whether to use a copy of xi-core distributed with Tau or the system\'s one',
-  type: 'combo',
-  choices: ['auto', 'builtin', 'system'],
-)
-
 option('profile',
   description: 'Which profile to build for (development enables debugging&changes App ID, allowing parallel execution of different profiles)',
   type: 'combo',
