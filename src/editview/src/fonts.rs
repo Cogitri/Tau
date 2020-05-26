@@ -1,5 +1,5 @@
 // Copyright (C) 2019-2020 Rasmus Thomsen <oss@cogitri.dev>
-// SPDX-License-Identifier: GPL-3.0-or-later
+// SPDX-License-Identifier: MIT
 
 use log::debug;
 use pango::{FontDescription, FontsetExt, Language};

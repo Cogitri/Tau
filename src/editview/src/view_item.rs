@@ -1,6 +1,6 @@
 // Copyright (C) 2019 Tom Steu <steudtner.tom@gmail.com>
 // Copyright (C) 2019-2020 Rasmus Thomsen <oss@cogitri.dev>
-// SPDX-License-Identifier: GPL-3.0-or-later
+// SPDX-License-Identifier: MIT
 
 use crate::edit_view::EditView;
 use gdk::{Cursor, CursorType, DisplayManager, WindowExt};

@@ -1,6 +1,6 @@
 // Copyright (C) 2017-2018 Brian Vincent <brainn@gmail.com>
 // Copyright (C) 2019-2020 Rasmus Thomsen <oss@cogitri.dev>
-// SPDX-License-Identifier: GPL-3.0-or-later
+// SPDX-License-Identifier: MIT
 
 use crate::main_win::MainWin;
 use gio::prelude::{SettingsExt, SettingsExtManual};
