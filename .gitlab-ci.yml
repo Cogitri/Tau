@@ -52,7 +52,7 @@ test-native:
     - meson -Dprofiling=false -Dintrospection=enabled -Dgtk_doc=false -Dtests=false -Dexamples=false -Dvapi=false -Dglade_vatalog=disabled build
     - ninja -C build install
     - popd
-    - meson _build
+    - meson -Dprofile=development _build
     - ninja -C _build test || cargo test --all
 
 test-cross:
