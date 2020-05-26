@@ -1,3 +1,7 @@
+// Copyright (C) 2017-2018 Brian Vincent <brainn@gmail.com>
+// Copyright (C) 2019-2020 Rasmus Thomsen <oss@cogitri.dev>
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 pub static LOCALEDIR: Option<&str> = option_env!("TAU_LOCALEDIR");
 pub static VERSION: Option<&str> = option_env!("TAU_VERSION");
 pub static PLUGIN_DIR: Option<&str> = option_env!("TAU_PLUGIN_DIR");

@@ -1,3 +1,7 @@
+// Copyright (C) 2017-2018 Brian Vincent <brainn@gmail.com>
+// Copyright (C) 2019-2020 Rasmus Thomsen <oss@cogitri.dev>
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 use log::{error, trace};
 use std::cmp::min;
 use tau_rpc::{OperationType, StyleDef, Update};

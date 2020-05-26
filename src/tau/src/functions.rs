@@ -1,3 +1,7 @@
+// Copyright (C) 2017-2018 Brian Vincent <brainn@gmail.com>
+// Copyright (C) 2019-2020 Rasmus Thomsen <oss@cogitri.dev>
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 use editview::main_state::ShowInvisibles;
 use editview::Settings;
 use gettextrs::gettext;

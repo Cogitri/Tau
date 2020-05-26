@@ -1,3 +1,6 @@
+// Copyright (C) 2019-2020 Rasmus Thomsen <oss@cogitri.dev>
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 use cairo::Context;
 use log::trace;
 use std::f64::consts::PI;

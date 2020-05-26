@@ -1,3 +1,8 @@
+// Based, in part, on xrl (https://github.com/xi-frontend/xrl), which is:
+// Copyright (c) 2017 Corentin Henry
+// Copyright (c) 2020 Rasmus Thomsen <oss@cogitri.dev>
+// SPDX-License-Identifier: MIT
+
 mod client;
 mod errors;
 mod message;

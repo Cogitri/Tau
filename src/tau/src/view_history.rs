@@ -1,3 +1,6 @@
+// Copyright (C) 2019 Tom Steu <steudtner.tom@gmail.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 use gdk::enums::key;
 use glib::object::{ObjectExt, WeakRef};
 use glib::{clone, SignalHandlerId};

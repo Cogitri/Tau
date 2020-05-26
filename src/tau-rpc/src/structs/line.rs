@@ -1,3 +1,7 @@
+// Based on xrl (https://github.com/xi-frontend/xrl), which is:
+// Copyright (c) 2017 Corentin Henry
+// SPDX-License-Identifier: MIT
+
 use serde::{self, Deserialize, Deserializer};
 
 #[derive(Default, Debug, PartialEq, Clone)]

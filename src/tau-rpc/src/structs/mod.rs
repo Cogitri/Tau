@@ -1,3 +1,7 @@
+// Based on xrl (https://github.com/xi-frontend/xrl), which is:
+// Copyright (c) 2017 Corentin Henry
+// SPDX-License-Identifier: MIT
+
 mod alert;
 mod config;
 mod findreplace;

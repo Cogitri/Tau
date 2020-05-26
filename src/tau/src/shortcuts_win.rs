@@ -1,3 +1,6 @@
+// Copyright (C) 2019-2020 Rasmus Thomsen <oss@cogitri.dev>
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 use gtk::prelude::*;
 use gtk::{ApplicationWindow, Builder, ShortcutsWindow};
 use log::trace;

@@ -1,3 +1,7 @@
+// Copyright (C) 2017-2018 Brian Vincent <brainn@gmail.com>
+// Copyright (C) 2019-2020 Rasmus Thomsen <oss@cogitri.dev>
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 //! Welcome to the tau docs!
 //! Since tau isn't a library these docs are meant to help contributors understand tau's code.
 //!
