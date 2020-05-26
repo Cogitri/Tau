@@ -88,7 +88,7 @@ use crate::session::SessionHandler;
 use gettextrs::{gettext, TextDomain, TextDomainError};
 use gio::prelude::*;
 use gio::ApplicationFlags;
-use glib::source::{Continue, Priority};
+use glib::source::Continue;
 use glib::{clone, Char, MainContext};
 use gtk::Application;
 use log::{debug, error, info, warn};
@@ -162,7 +162,7 @@ fn main() {
             .get("restore-session") && !new_instance && !paths.is_empty() {
                 for file in paths {
                     if Path::new(&file).exists() {
-                        let (tx, rx) = MainContext::channel::<Result<Value, Value>>(Priority::default());
+                        let (tx, rx) = MainContext::channel::<Result<Value, Value>>(glib::source::PRIORITY_HIGH);
                         let main_win = main_win_builder.borrow().main_win.clone();
                         rx.attach(None, clone!(@strong schema, @strong main_win, @strong file => move |res| {
                             match res {
@@ -184,7 +184,7 @@ fn main() {
                     }
                 }
         } else {
-            let (tx, rx) = MainContext::channel::<Result<Value, Value>>(Priority::default());
+            let (tx, rx) = MainContext::channel::<Result<Value, Value>>(glib::source::PRIORITY_HIGH);
             let main_win = main_win_builder.borrow().main_win.clone();
             rx.attach(None, clone!(@strong schema, @strong main_win => move |res| {
                 match res {
@@ -227,7 +227,7 @@ fn main() {
 
             let session_paths_rc = Rc::new(session_paths);
             for file in paths {
-                let (tx, rx) = MainContext::channel::<Result<Value, Value>>(Priority::default());
+                let (tx, rx) = MainContext::channel::<Result<Value, Value>>(glib::source::PRIORITY_HIGH);
                 let main_win = main_win_builder.borrow().main_win.clone();
                 rx.attach(None, clone!(@strong schema, @strong main_win, @strong file, @strong session_paths_rc => move |res| {
                     match res {

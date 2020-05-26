@@ -808,6 +808,8 @@ impl MainWin {
                     }
                 }
             }
+        } else {
+            error!("Received update for unknown EditView {}!", params.view_id);
         }
     }
 
@@ -1662,7 +1664,7 @@ impl MainWinExt for Rc<MainWin> {
     fn req_new_view(&self, file_name: Option<String>) {
         trace!("Requesting new view");
 
-        let (tx, rx) = MainContext::channel(glib::source::Priority::default());
+        let (tx, rx) = MainContext::channel(glib::source::PRIORITY_HIGH);
 
         rx.attach(
             None,
