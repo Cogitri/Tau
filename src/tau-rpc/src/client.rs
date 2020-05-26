@@ -58,6 +58,7 @@ impl Client {
                 let mut buf = String::new();
                 while receiver.read_line(&mut buf).is_ok() {
                     let msg = Message::decode(&buf).unwrap();
+                    trace!("Received message from xi: {:?}", msg);
                     match msg {
                         Message::Request(res) => {
                             let Request { method, params, id: _id } = res;
