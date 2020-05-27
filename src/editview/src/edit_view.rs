@@ -162,6 +162,8 @@ impl EditView {
 
         edit_view.view_item.ev_scrolled_window.grab_focus();
 
+        edit_view.update_visible_scroll_region();
+
         edit_view
     }
 
@@ -310,7 +312,6 @@ impl EditView {
             .edit_area
             .set_size(text_width as u32, text_height as u32);
 
-        self.update_visible_scroll_region();
         self.view_item.edit_area.queue_draw();
         self.view_item.linecount.queue_draw();
     }
