@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface domain="tau">
+  <menu id="terminal_context_menu">
+    <item>
+      <attribute name="label" translatable="yes">Copy</attribute>
+      <attribute name="action">app.term_copy</attribute>
+    </item>
+    <item>
+      <attribute name="label" translatable="yes">Paste</attribute>
+      <attribute name="action">app.term_paste</attribute>
+    </item>
+    <item>
+      <attribute name="label" translatable="yes">Select All</attribute>
+      <attribute name="action">app.term_select_all</attribute>
+    </item>
+  </menu>
+</interface>

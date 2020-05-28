@@ -634,6 +634,42 @@ impl MainWin {
             );
             application.add_action(&go_to_line_action);
         }
+        {
+            let term_copy_action = SimpleAction::new("term_copy", None);
+            term_copy_action.connect_activate(
+                clone!(@weak main_win => @default-panic, move |_,_| {
+                    trace!("Handling action: 'term_copy'");
+                    if let Some(term) = main_win.term_notebook.get_nth_page(main_win.term_notebook.get_current_page()).and_then(|w| w.downcast::<Terminal>().ok()) {
+                        term.copy_clipboard();
+                    }
+                }),
+            );
+            application.add_action(&term_copy_action);
+        }
+        {
+            let term_paste_action = SimpleAction::new("term_paste", None);
+            term_paste_action.connect_activate(
+                clone!(@weak main_win => @default-panic, move |_,_| {
+                    trace!("Handling action: 'term_paste'");
+                    if let Some(term) = main_win.term_notebook.get_nth_page(main_win.term_notebook.get_current_page()).and_then(|w| w.downcast::<Terminal>().ok()) {
+                        term.paste_clipboard();
+                    }
+                }),
+            );
+            application.add_action(&term_paste_action);
+        }
+        {
+            let term_select_all_action = SimpleAction::new("term_select_all", None);
+            term_select_all_action.connect_activate(
+                clone!(@weak main_win => @default-panic, move |_,_| {
+                    trace!("Handling action: 'term_select_all'");
+                    if let Some(term) = main_win.term_notebook.get_nth_page(main_win.term_notebook.get_current_page()).and_then(|w| w.downcast::<Terminal>().ok()) {
+                        term.select_all();
+                    }
+                }),
+            );
+            application.add_action(&term_select_all_action);
+        }
 
         // Put keyboard shortcuts here
         application.set_accels_for_action("app.find", &["<Primary>f"]);
@@ -1159,6 +1195,39 @@ impl MainWinExt for Rc<MainWin> {
             None::<&gio::Cancellable>,
         )
         .unwrap();
+
+        term.connect_key_press_event(move |term, ek| {
+            let ctrl = ek.get_state().contains(ModifierType::CONTROL_MASK);
+            let shift = ek.get_state().contains(ModifierType::SHIFT_MASK);
+            match ek.get_keyval() {
+                key::C if ctrl && shift => {
+                    term.copy_clipboard();
+                    return Inhibit(true);
+                }
+                key::V if ctrl && shift => {
+                    term.paste_clipboard();
+                    return Inhibit(true);
+                }
+                _ => {}
+            }
+            Inhibit(false)
+        });
+
+        let context_menu_builder =
+            Builder::new_from_resource("/org/gnome/Tau/terminal_context_menu.glade");
+        let gmenu: gio::Menu = context_menu_builder
+            .get_object("terminal_context_menu")
+            .unwrap();
+        let context_menu = gtk::Menu::new_from_model(&gmenu);
+        context_menu.set_property_attach_widget(Some(&term));
+
+        term.connect_button_press_event(move |_, eb| {
+            if eb.get_button() == 3 {
+                context_menu.popup_at_pointer(Some(&eb));
+            }
+
+            Inhibit(false)
+        });
 
         let top_bar = editview::TopBar::new();
 
