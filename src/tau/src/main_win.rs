@@ -896,23 +896,31 @@ impl MainWin {
     }
 
     /// Measure the width of a string for Xi and send it the result. Used for line wrapping.
-    pub fn measure_width(&self, params: tau_rpc::MeasureWidth) {
+    pub fn measure_width(&self, params: tau_rpc::MeasureWidth, id: u64) {
         trace!("Handling msg: 'measure_width' {:?}", params);
         if let Some(ev) = self.get_current_edit_view() {
-            let mut widths = Vec::new();
+            let mut width_of_single_request = Vec::new();
+            let mut width_of_all_requests = Vec::new();
 
-            let mut id = 0;
             for mes_width in params.0 {
-                id = mes_width.id;
                 for string in &mes_width.strings {
-                    widths.push(ev.line_width(string) as f32)
+                    width_of_single_request.push(
+                        ev.line_width(
+                            string,
+                            self.state
+                                .borrow()
+                                .styles
+                                .get(&(mes_width.id as usize))
+                                .cloned(),
+                        ) as f32,
+                    )
                 }
+                width_of_all_requests.push(width_of_single_request.drain(..).collect());
             }
 
-            self.core.width_measured(id, &[widths]);
+            self.core.width_measured(id, &width_of_all_requests);
         }
     }
-
     /// Set available syntaxes in our `MainState` and set the syntax_seletion_sensitivity
     /// of all `EditView`s, so it's unsensitive when we don't have any syntaxes to choose from.
     pub fn available_languages(&self, params: tau_rpc::AvailableLanguages) {
@@ -1952,7 +1960,9 @@ impl MainWinExt for Rc<MainWin> {
             RpcOperations::LanguageChanged(lang) => self.language_changed(&lang),
             RpcOperations::PluginStarted(plugin) => self.plugin_started(&plugin),
             RpcOperations::PluginStopped(plugin) => self.plugin_stopped(&plugin),
-            RpcOperations::MeasureWidth(measure_width) => self.measure_width(measure_width),
+            RpcOperations::MeasureWidth((id, measure_width)) => {
+                self.measure_width(measure_width, id)
+            }
             _ => {}
         }
     }

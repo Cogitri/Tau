@@ -807,12 +807,48 @@ impl EditView {
     }
 
     /// Checks how wide a line is
-    pub fn line_width(&self, line_string: &str) -> f64 {
+    pub fn line_width(&self, line_string: &str, style_opt: Option<tau_rpc::Style>) -> f64 {
         let pango_ctx = self.view_item.get_pango_ctx();
         let layout = pango::Layout::new(&pango_ctx);
         layout.set_tabs(Some(&self.get_tabs()));
         layout.set_font_description(Some(&self.edit_font.borrow().font_desc));
         layout.set_text(&line_string);
+
+        // No need to handle foreground/background colour here since those do not impact the
+        // line width.
+        if let Some(style) = style_opt {
+            let attr_list = pango::AttrList::new();
+            let str_len = line_string.bytes().len();
+            if let Some(weight) = style.weight {
+                let mut attr =
+                    Attribute::new_weight(pango::Weight::__Unknown(weight as i32)).unwrap();
+                attr.set_start_index(0);
+                attr.set_end_index(str_len as u32);
+                attr_list.change(attr);
+            }
+
+            if let Some(italic) = style.italic {
+                let mut attr = if italic {
+                    Attribute::new_style(pango::Style::Italic).unwrap()
+                } else {
+                    Attribute::new_style(pango::Style::Normal).unwrap()
+                };
+                attr.set_start_index(0);
+                attr.set_end_index(str_len as u32);
+                attr_list.change(attr);
+            }
+
+            if let Some(underline) = style.underline {
+                let mut attr = if underline {
+                    Attribute::new_underline(pango::Underline::Single).unwrap()
+                } else {
+                    Attribute::new_underline(pango::Underline::None).unwrap()
+                };
+                attr.set_start_index(0);
+                attr.set_end_index(str_len as u32);
+                attr_list.change(attr);
+            }
+        }
 
         f64::from(layout.get_extents().1.width / pango::SCALE)
     }
@@ -1011,7 +1047,7 @@ impl EditView {
                 let mut line_text = line.text.to_string();
                 // Only measure width up to the right column
                 line_text.truncate(col as usize);
-                let line_length = self.line_width(&line_text);
+                let line_length = self.line_width(&line_text, None);
 
                 let min = min(
                     begin_selection.unwrap_or(line_length as i64),

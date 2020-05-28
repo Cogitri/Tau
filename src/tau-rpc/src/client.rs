@@ -61,10 +61,10 @@ impl Client {
                     trace!("Received message from xi: {:?}", msg);
                     match msg {
                         Message::Request(res) => {
-                            let Request { method, params, id: _id } = res;
+                            let Request { method, params, id } = res;
                                 let operation = match method.as_str() {
                                     "measure_width" => {
-                                        RpcOperations::MeasureWidth(from_value::<MeasureWidth>(params).unwrap())
+                                        RpcOperations::MeasureWidth((id, from_value::<MeasureWidth>(params).unwrap()))
                                     }
                                     _ => {
                                         unreachable!("Unknown method {}", method);

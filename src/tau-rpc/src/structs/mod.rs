@@ -55,5 +55,5 @@ pub enum RpcOperations {
     ReplaceStatus(ReplaceStatus),
     AvailableLanguages(AvailableLanguages),
     LanguageChanged(LanguageChanged),
-    MeasureWidth(MeasureWidth),
+    MeasureWidth((u64, MeasureWidth)),
 }
