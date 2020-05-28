@@ -1340,6 +1340,8 @@ impl EditView {
                 }
             }),
         );
+
+        self.view_item.ev_scrolled_window.grab_focus();
     }
 
     pub fn do_paste_primary(&self, line: u64, col: u64) {
@@ -1401,6 +1403,7 @@ impl EditView {
                 self.stop_replace();
             } else {
                 self.find_replace.show_replace_button.set_active(true);
+                self.find_replace.replace_entry.grab_focus();
             }
         } else {
             self.find_replace.show_replace_button.set_active(true);
