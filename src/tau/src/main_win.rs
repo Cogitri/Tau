@@ -1136,9 +1136,22 @@ impl MainWinExt for Rc<MainWin> {
     fn add_terminal(&self, always_create_new: bool) {
         let term = Terminal::new();
         let shell: String = self.state.borrow().settings.gschema.get("terminal-path");
+
+        let cwd = if let Some(ev) = self.get_current_edit_view() {
+            if let Some(filename) = &*ev.file_name.borrow() {
+                let path = std::path::Path::new(filename);
+                path.parent()
+                    .and_then(|p| p.to_str().map(|s| s.to_string()))
+            } else {
+                None
+            }
+        } else {
+            None
+        };
+
         term.spawn_sync(
             vte::PtyFlags::DEFAULT,
-            None,
+            cwd.as_deref(),
             &[&std::path::Path::new(&shell)],
             &[],
             SpawnFlags::DEFAULT,
