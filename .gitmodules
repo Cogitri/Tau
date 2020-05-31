@@ -1,4 +1,4 @@
 [submodule "crates_vendor"]
 	path = vendor/xi-editor
-	url = https://github.com/xi-editor/xi-editor
+	url = https://github.com/Cogitri/xi-editor
 	ignore = dirty
