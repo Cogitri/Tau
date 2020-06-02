@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tau master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Tau/issues\n"
-"POT-Creation-Date: 2020-05-23 10:07+0000\n"
-"PO-Revision-Date: 2020-05-23 16:18+0300\n"
+"POT-Creation-Date: 2020-06-02 06:40+0000\n"
+"PO-Revision-Date: 2020-06-02 13:37+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=4; plural=n==1 ? 3 : n%10==1 && n%100!=11 ? 0 : n"
 "%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Lokalize 20.07.70\n"
+"X-Generator: Lokalize 20.03.70\n"
 
 #: data/org.gnome.Tau.appdata.xml.in.in:7 data/org.gnome.Tau.desktop.in.in:3
 msgid "Tau"
@@ -556,61 +556,68 @@ msgid "Select all"
 msgstr "Позначити все"
 
 #: src/tau/src/ui/shortcuts_win.glade:248
+#| msgctxt "shortcut window"
+#| msgid "Highlight the next occurrence of the current selection"
+msgctxt "shortcut window"
+msgid "Select all occurences of the current selection"
+msgstr "Позначити усі входження у поточному позначеному фрагменті"
+
+#: src/tau/src/ui/shortcuts_win.glade:254
 msgctxt "shortcut window"
 msgid "Move up and select everything from current cursor position"
 msgstr "Перейти вище і позначити усе від поточної позиції курсора"
 
-#: src/tau/src/ui/shortcuts_win.glade:254
+#: src/tau/src/ui/shortcuts_win.glade:260
 msgctxt "shortcut window"
 msgid "Move down and select everything from current cursor position"
 msgstr "Перейти нижче і позначити усе від поточної позиції курсора"
 
-#: src/tau/src/ui/shortcuts_win.glade:260
+#: src/tau/src/ui/shortcuts_win.glade:266
 msgctxt "shortcut window"
 msgid "Move left and select everything from current cursor position"
 msgstr "Перейти ліворуч і позначити усе від поточної позиції курсора"
 
-#: src/tau/src/ui/shortcuts_win.glade:266
+#: src/tau/src/ui/shortcuts_win.glade:272
 msgctxt "shortcut window"
 msgid "Move left and select the next word"
 msgstr "Перейти ліворуч і позначити наступне слово"
 
-#: src/tau/src/ui/shortcuts_win.glade:272
+#: src/tau/src/ui/shortcuts_win.glade:278
 msgctxt "shortcut window"
 msgid "Move right and select everything from current cursor position"
 msgstr "Перейти праворуч і позначити усе від поточної позиції курсора"
 
-#: src/tau/src/ui/shortcuts_win.glade:278
+#: src/tau/src/ui/shortcuts_win.glade:284
 msgctxt "shortcut window"
 msgid "Move right and select the next word"
 msgstr "Перейти праворуч і позначити наступне слово"
 
-#: src/tau/src/ui/shortcuts_win.glade:284
+#: src/tau/src/ui/shortcuts_win.glade:290
 msgctxt "shortcut window"
 msgid "Move to start of the line and select"
 msgstr "Перейти на початок рядка і позначити"
 
-#: src/tau/src/ui/shortcuts_win.glade:290
+#: src/tau/src/ui/shortcuts_win.glade:296
 msgctxt "shortcut window"
 msgid "Move to start of the document and select"
 msgstr "Перейти на початок документа і позначити"
 
-#: src/tau/src/ui/shortcuts_win.glade:296
+#: src/tau/src/ui/shortcuts_win.glade:302
 msgctxt "shortcut window"
 msgid "Move to end of the line and select"
 msgstr "Перейти на кінець рядка і позначити"
 
-#: src/tau/src/ui/shortcuts_win.glade:302
+#: src/tau/src/ui/shortcuts_win.glade:308
 msgctxt "shortcut window"
 msgid "Move to end of the document and select"
 msgstr "Перейти на кінець документа і позначити"
 
-#: src/tau/src/ui/shortcuts_win.glade:308
+#: src/tau/src/ui/shortcuts_win.glade:314
 msgctxt "shortcut window"
 msgid "Move up for the height of the view and select"
 msgstr "Перейти вище на один розмір області перегляду і позначити"
 
-#: src/tau/src/ui/shortcuts_win.glade:314
+#: src/tau/src/ui/shortcuts_win.glade:320
 msgctxt "shortcut window"
 msgid "Move down for the height of the view and select"
 msgstr "Перейти нижче на один розмір області перегляду і позначити"
@@ -692,8 +699,8 @@ msgstr "Збереження файлів"
 msgid "Save files when the Tau goes out of focus"
 msgstr "Зберігати файли, якщо «Тау» втрачає фокус"
 
-#: src/tau/src/ui/prefs_win_handy.glade:396 src/tau/src/main_win.rs:1152
-#: src/tau/src/main_win.rs:1189
+#: src/tau/src/ui/prefs_win_handy.glade:396 src/tau/src/main_win.rs:1252
+#: src/tau/src/main_win.rs:1289
 msgid "Terminal"
 msgstr "Термінал"
 
@@ -767,70 +774,56 @@ msgid "About Tau"
 msgstr "Про «Тау»"
 
 #: src/tau/src/ui/tau.glade:462 src/tau/src/ui/tau.glade:571
-#: src/tau/src/main_win.rs:1604
+#: src/tau/src/main_win.rs:1701
 msgid "Open"
 msgstr "Відкрити"
 
 #: src/tau/src/ui/tau.glade:503 src/tau/src/ui/tau.glade:631
-#: src/tau/src/main_win.rs:1337 src/tau/src/main_win.rs:1781
+#: src/tau/src/main_win.rs:1437 src/tau/src/main_win.rs:1873
 msgid "Save"
 msgstr "Зберегти"
 
-#: src/editview/src/edit_view.rs:186 src/editview/src/edit_view.rs:188
-#: src/tau/src/main_win.rs:1064 src/tau/src/main_win.rs:1067
-#: src/tau/src/main_win.rs:1887
+#: src/editview/src/edit_view.rs:195 src/editview/src/edit_view.rs:197
+#: src/tau/src/main_win.rs:1118 src/tau/src/main_win.rs:1121
+#: src/tau/src/main_win.rs:1978
 msgid "Untitled"
 msgstr "Без назви"
 
-#: src/editview/src/edit_view.rs:924 src/editview/src/edit_view.rs:934
+#: src/editview/src/edit_view.rs:977 src/editview/src/edit_view.rs:987
 msgid "Line"
 msgstr "Рядок"
 
-#: src/editview/src/edit_view.rs:939
+#: src/editview/src/edit_view.rs:992
 msgid "Column"
 msgstr "Позиція"
 
 #. We localized it ourselves, so we have to turn it into English again when sending it to Xi
-#: src/editview/src/edit_view.rs:1552 src/editview/src/view_item.rs:238
-#: src/editview/src/view_item.rs:363
+#: src/editview/src/edit_view.rs:1599 src/editview/src/view_item.rs:242
+#: src/editview/src/view_item.rs:348
 msgid "Plain Text"
 msgstr "Звичайний текст"
 
-#: src/editview/src/view_item.rs:107 src/editview/src/view_item.rs:255
+#: src/editview/src/view_item.rs:111 src/editview/src/view_item.rs:259
 msgid "Tab Size"
 msgstr "Розмір табуляції"
 
-#: src/tau/src/about_win.rs:17
+#: src/tau/src/about_win.rs:21
 msgid "GTK frontend for the xi text editor, written in Rust"
 msgstr "Написана мовою Rust оболонка на основі GTK до текстового редактора xi"
 
-#: src/tau/src/about_win.rs:25
+#: src/tau/src/about_win.rs:29
 msgid "translator-credits"
 msgstr "Юрій Чорноіван <yurchor@ukr.net>"
 
-#: src/tau/src/functions.rs:68
+#: src/tau/src/functions.rs:72
 msgid "Welcome to Tau's terminal."
 msgstr "Вітаємо у терміналі Tau."
 
-#: src/tau/src/main.rs:113
+#: src/tau/src/main.rs:117
 msgid "Start a new instance of the application"
 msgstr "Запустити новий екземпляр програми"
 
-#: src/tau/src/main.rs:176 src/tau/src/main.rs:216
-msgid "Failed open new view due to error"
-msgstr "Не вдалося відкрити нову панель перегляду через помилку"
-
-#: src/tau/src/main_win.rs:630
-msgid "Handling"
-msgstr "Обробка"
-
-#: src/tau/src/main_win.rs:630
-#| msgctxt "shortcut window"
-#| msgid "Selections"
-msgid "action"
-msgstr "дія"
-
-#: src/tau/src/main_win.rs:1003 src/tau/src/main_win.rs:1011
+#: src/tau/src/main_win.rs:1057 src/tau/src/main_win.rs:1065
 msgid ""
 "Couldn’t get Documents directory to autosave unnamed file. Please make sure "
 "“XDG_DATA_DIR” or similar is set."
@@ -839,43 +832,53 @@ msgstr ""
 "збереження файла без назви. Будь ласка, переконайтеся, що у середовищі "
 "встановлено змінну «XDG_DATA_DIR» або подібну до неї змінну."
 
-#: src/tau/src/main_win.rs:1326
+#: src/tau/src/main_win.rs:1426
 msgid "Save unsaved changes"
 msgstr "Зберегти незбережені зміни"
 
-#: src/tau/src/main_win.rs:1329
+#: src/tau/src/main_win.rs:1429
 msgid "Close Without Saving"
 msgstr "Закрити без збереження"
 
-#: src/tau/src/main_win.rs:1333 src/tau/src/main_win.rs:1605
-#: src/tau/src/main_win.rs:1782
+#: src/tau/src/main_win.rs:1433 src/tau/src/main_win.rs:1702
+#: src/tau/src/main_win.rs:1874
 msgid "Cancel"
 msgstr "Скасувати"
 
-#: src/tau/src/main_win.rs:1601
+#: src/tau/src/main_win.rs:1698
 msgid "Open a file to edit"
 msgstr "Відкрити файл для редагування"
 
-#: src/tau/src/main_win.rs:1630
+#: src/tau/src/main_win.rs:1727
 msgid "Couldn’t open file"
 msgstr "Не вдалося відкрити файл"
 
-#: src/tau/src/main_win.rs:1671
-msgid "Failed to open new view due to error"
-msgstr "Не вдалося відкрити нову панель перегляду через помилку"
-
-#: src/tau/src/main_win.rs:1778
+#: src/tau/src/main_win.rs:1870
 msgid "Save file"
 msgstr "Зберегти файл"
 
-#: src/tau/src/main_win.rs:1820
+#: src/tau/src/main_win.rs:1912
 msgid "Couldn’t save file"
 msgstr "Не вдалося зберегти файл"
 
-#: src/tau/src/prefs_win.rs:435
+#: src/tau/src/prefs_win.rs:439
 msgid ""
 "Couldn’t find the xi-syntect-plugin. As such these settings won’t work in "
 "the current session."
 msgstr ""
 "Не вдалося знайти xi-syntect-plugin. Через це, ці параметри не працюватимуть "
 "у поточному сеансі."
+
+#~ msgid "Failed open new view due to error"
+#~ msgstr "Не вдалося відкрити нову панель перегляду через помилку"
+
+#~ msgid "Handling"
+#~ msgstr "Обробка"
+
+#~| msgctxt "shortcut window"
+#~| msgid "Selections"
+#~ msgid "action"
+#~ msgstr "дія"
+
+#~ msgid "Failed to open new view due to error"
+#~ msgstr "Не вдалося відкрити нову панель перегляду через помилку"
