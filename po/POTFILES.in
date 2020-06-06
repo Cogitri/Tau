@@ -11,6 +11,7 @@ src/editview/src/ui/find_replace.glade
 src/tau/src/ui/shortcuts_win.glade
 src/tau/src/ui/prefs_win_handy.glade
 src/tau/src/ui/tau.glade
+src/tau/src/ui/terminal_context_menu.glade
 
 # source files
 src/editview/src/draw_invisible.rs
