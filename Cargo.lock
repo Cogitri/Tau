@@ -1669,9 +1669,9 @@ dependencies = [
 
 [[package]]
 name = "vte-rs"
-version = "0.3.0"
+version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "997bd7569d74e21d943ae4bb76ee6e4865f142fbbd45cf9a9a6a248034c9a208"
+checksum = "601697963ef1bebec5b14c5ee7fd9be412412c0e201b02767e415c50ac6c4e84"
 dependencies = [
  "bitflags",
  "gdk",
