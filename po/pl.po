@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tau\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Tau/issues\n"
-"POT-Creation-Date: 2020-05-23 10:07+0000\n"
-"PO-Revision-Date: 2020-05-24 14:32+0200\n"
+"POT-Creation-Date: 2020-06-07 07:37+0000\n"
+"PO-Revision-Date: 2020-06-07 09:39+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -294,10 +294,12 @@ msgid "Cut"
 msgstr "Wytnij"
 
 #: src/editview/src/ui/context_menu.glade:10
+#: src/tau/src/ui/terminal_context_menu.glade:5
 msgid "Copy"
 msgstr "Skopiuj"
 
 #: src/editview/src/ui/context_menu.glade:14
+#: src/tau/src/ui/terminal_context_menu.glade:9
 msgid "Paste"
 msgstr "Wklej"
 
@@ -310,6 +312,7 @@ msgid "Redo"
 msgstr "Ponów"
 
 #: src/editview/src/ui/context_menu.glade:30
+#: src/tau/src/ui/terminal_context_menu.glade:13
 msgid "Select All"
 msgstr "Zaznacz wszystko"
 
@@ -553,62 +556,67 @@ msgstr "Zaznaczenie wszystkiego"
 
 #: src/tau/src/ui/shortcuts_win.glade:248
 msgctxt "shortcut window"
+msgid "Select all occurences of the current selection"
+msgstr "Zaznaczenie wszystkich wystąpień bieżącego zaznaczenia"
+
+#: src/tau/src/ui/shortcuts_win.glade:254
+msgctxt "shortcut window"
 msgid "Move up and select everything from current cursor position"
 msgstr ""
 "Przejście do góry i zaznaczenie wszystkiego od bieżącej pozycji kursora"
 
-#: src/tau/src/ui/shortcuts_win.glade:254
+#: src/tau/src/ui/shortcuts_win.glade:260
 msgctxt "shortcut window"
 msgid "Move down and select everything from current cursor position"
 msgstr "Przejście w dół i zaznaczenie wszystkiego od bieżącej pozycji kursora"
 
-#: src/tau/src/ui/shortcuts_win.glade:260
+#: src/tau/src/ui/shortcuts_win.glade:266
 msgctxt "shortcut window"
 msgid "Move left and select everything from current cursor position"
 msgstr "Przejście w lewo i zaznaczenie wszystkiego od bieżącej pozycji kursora"
 
-#: src/tau/src/ui/shortcuts_win.glade:266
+#: src/tau/src/ui/shortcuts_win.glade:272
 msgctxt "shortcut window"
 msgid "Move left and select the next word"
 msgstr "Przejście w lewo i zaznaczenie następnego wyrazu"
 
-#: src/tau/src/ui/shortcuts_win.glade:272
+#: src/tau/src/ui/shortcuts_win.glade:278
 msgctxt "shortcut window"
 msgid "Move right and select everything from current cursor position"
 msgstr ""
 "Przejście w prawo i zaznaczenie wszystkiego od bieżącej pozycji kursora"
 
-#: src/tau/src/ui/shortcuts_win.glade:278
+#: src/tau/src/ui/shortcuts_win.glade:284
 msgctxt "shortcut window"
 msgid "Move right and select the next word"
 msgstr "Przejście w prawo i zaznaczenie następnego wyrazu"
 
-#: src/tau/src/ui/shortcuts_win.glade:284
+#: src/tau/src/ui/shortcuts_win.glade:290
 msgctxt "shortcut window"
 msgid "Move to start of the line and select"
 msgstr "Przejście na początek wiersza i zaznaczenie"
 
-#: src/tau/src/ui/shortcuts_win.glade:290
+#: src/tau/src/ui/shortcuts_win.glade:296
 msgctxt "shortcut window"
 msgid "Move to start of the document and select"
 msgstr "Przejście na początek dokumentu i zaznaczenie"
 
-#: src/tau/src/ui/shortcuts_win.glade:296
+#: src/tau/src/ui/shortcuts_win.glade:302
 msgctxt "shortcut window"
 msgid "Move to end of the line and select"
 msgstr "Przejście na koniec wiersza i zaznaczenie"
 
-#: src/tau/src/ui/shortcuts_win.glade:302
+#: src/tau/src/ui/shortcuts_win.glade:308
 msgctxt "shortcut window"
 msgid "Move to end of the document and select"
 msgstr "Przejście na koniec dokumentu i zaznaczenie"
 
-#: src/tau/src/ui/shortcuts_win.glade:308
+#: src/tau/src/ui/shortcuts_win.glade:314
 msgctxt "shortcut window"
 msgid "Move up for the height of the view and select"
 msgstr "Przejście na górę widocznego tekstu i zaznaczenie"
 
-#: src/tau/src/ui/shortcuts_win.glade:314
+#: src/tau/src/ui/shortcuts_win.glade:320
 msgctxt "shortcut window"
 msgid "Move down for the height of the view and select"
 msgstr "Przejście na dół widocznego tekstu i zaznaczenie"
@@ -690,8 +698,8 @@ msgstr "Zapisywanie plików"
 msgid "Save files when the Tau goes out of focus"
 msgstr "Zapisywanie plików, kiedy program przestaje być aktywny"
 
-#: src/tau/src/ui/prefs_win_handy.glade:396 src/tau/src/main_win.rs:1152
-#: src/tau/src/main_win.rs:1189
+#: src/tau/src/ui/prefs_win_handy.glade:396 src/tau/src/main_win.rs:1252
+#: src/tau/src/main_win.rs:1289
 msgid "Terminal"
 msgstr "Terminal"
 
@@ -765,70 +773,58 @@ msgid "About Tau"
 msgstr "O programie"
 
 #: src/tau/src/ui/tau.glade:462 src/tau/src/ui/tau.glade:571
-#: src/tau/src/main_win.rs:1604
+#: src/tau/src/main_win.rs:1701
 msgid "Open"
 msgstr "Otwórz"
 
 #: src/tau/src/ui/tau.glade:503 src/tau/src/ui/tau.glade:631
-#: src/tau/src/main_win.rs:1337 src/tau/src/main_win.rs:1781
+#: src/tau/src/main_win.rs:1437 src/tau/src/main_win.rs:1873
 msgid "Save"
 msgstr "Zapisz"
 
-#: src/editview/src/edit_view.rs:186 src/editview/src/edit_view.rs:188
-#: src/tau/src/main_win.rs:1064 src/tau/src/main_win.rs:1067
-#: src/tau/src/main_win.rs:1887
+#: src/editview/src/edit_view.rs:195 src/editview/src/edit_view.rs:197
+#: src/tau/src/main_win.rs:1118 src/tau/src/main_win.rs:1121
+#: src/tau/src/main_win.rs:1978
 msgid "Untitled"
 msgstr "Bez tytułu"
 
-#: src/editview/src/edit_view.rs:924 src/editview/src/edit_view.rs:934
+#: src/editview/src/edit_view.rs:977 src/editview/src/edit_view.rs:987
 msgid "Line"
 msgstr "Wiersz"
 
-#: src/editview/src/edit_view.rs:939
+#: src/editview/src/edit_view.rs:992
 msgid "Column"
 msgstr "Kolumna"
 
 #. We localized it ourselves, so we have to turn it into English again when sending it to Xi
-#: src/editview/src/edit_view.rs:1552 src/editview/src/view_item.rs:238
-#: src/editview/src/view_item.rs:363
+#: src/editview/src/edit_view.rs:1599 src/editview/src/view_item.rs:242
+#: src/editview/src/view_item.rs:348
 msgid "Plain Text"
 msgstr "Zwykły tekst"
 
-#: src/editview/src/view_item.rs:107 src/editview/src/view_item.rs:255
+#: src/editview/src/view_item.rs:111 src/editview/src/view_item.rs:259
 msgid "Tab Size"
 msgstr "Rozmiar tabulacji"
 
-#: src/tau/src/about_win.rs:17
+#: src/tau/src/about_win.rs:21
 msgid "GTK frontend for the xi text editor, written in Rust"
 msgstr "Interfejs GTK dla edytora tekstu xi, napisany w języku Rust"
 
-#: src/tau/src/about_win.rs:25
+#: src/tau/src/about_win.rs:29
 msgid "translator-credits"
 msgstr ""
 "Piotr Drąg <piotrdrag@gmail.com>, 2019-2020\n"
 "Aviary.pl <community-poland@mozilla.org>, 2019-2020"
 
-#: src/tau/src/functions.rs:68
+#: src/tau/src/functions.rs:72
 msgid "Welcome to Tau's terminal."
 msgstr "Witamy w terminalu Tau."
 
-#: src/tau/src/main.rs:113
+#: src/tau/src/main.rs:117
 msgid "Start a new instance of the application"
 msgstr "Uruchamia nowe wystąpienie programu"
 
-#: src/tau/src/main.rs:176 src/tau/src/main.rs:216
-msgid "Failed open new view due to error"
-msgstr "Otwarcie nowego widoku się nie powiodło z powodu błędu"
-
-#: src/tau/src/main_win.rs:630
-msgid "Handling"
-msgstr "Obsługiwanie"
-
-#: src/tau/src/main_win.rs:630
-msgid "action"
-msgstr "działania"
-
-#: src/tau/src/main_win.rs:1003 src/tau/src/main_win.rs:1011
+#: src/tau/src/main_win.rs:1057 src/tau/src/main_win.rs:1065
 msgid ""
 "Couldn’t get Documents directory to autosave unnamed file. Please make sure "
 "“XDG_DATA_DIR” or similar is set."
@@ -836,40 +832,36 @@ msgstr ""
 "Nie można uzyskać katalogu Dokumenty, aby automatycznie zapisać plik bez "
 "nazwy. Proszę się upewnić, że ustawiono zmienną „XDG_DATA_DIR” lub podobną."
 
-#: src/tau/src/main_win.rs:1326
+#: src/tau/src/main_win.rs:1426
 msgid "Save unsaved changes"
 msgstr "Zapis niezapisanych zmian"
 
-#: src/tau/src/main_win.rs:1329
+#: src/tau/src/main_win.rs:1429
 msgid "Close Without Saving"
 msgstr "Zamknij bez zapisywania"
 
-#: src/tau/src/main_win.rs:1333 src/tau/src/main_win.rs:1605
-#: src/tau/src/main_win.rs:1782
+#: src/tau/src/main_win.rs:1433 src/tau/src/main_win.rs:1702
+#: src/tau/src/main_win.rs:1874
 msgid "Cancel"
 msgstr "Anuluj"
 
-#: src/tau/src/main_win.rs:1601
+#: src/tau/src/main_win.rs:1698
 msgid "Open a file to edit"
 msgstr "Otwarcie pliku do modyfikacji"
 
-#: src/tau/src/main_win.rs:1630
+#: src/tau/src/main_win.rs:1727
 msgid "Couldn’t open file"
 msgstr "Nie można otworzyć pliku"
 
-#: src/tau/src/main_win.rs:1671
-msgid "Failed to open new view due to error"
-msgstr "Otwarcie nowego widoku się nie powiodło z powodu błędu"
-
-#: src/tau/src/main_win.rs:1778
+#: src/tau/src/main_win.rs:1870
 msgid "Save file"
 msgstr "Zapis pliku"
 
-#: src/tau/src/main_win.rs:1820
+#: src/tau/src/main_win.rs:1912
 msgid "Couldn’t save file"
 msgstr "Nie można zapisać pliku"
 
-#: src/tau/src/prefs_win.rs:435
+#: src/tau/src/prefs_win.rs:439
 msgid ""
 "Couldn’t find the xi-syntect-plugin. As such these settings won’t work in "
 "the current session."
