@@ -1,0 +1,870 @@
+# Romanian translation for tau.
+# Copyright (C) 2020 tau's COPYRIGHT HOLDER
+# This file is distributed under the same license as the tau package.
+# Florentina Mușat <florentina.musat.28@gmail.com>, 2020.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: tau master\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Tau/issues\n"
+"POT-Creation-Date: 2020-06-09 15:21+0000\n"
+"PO-Revision-Date: 2020-07-22 16:43+0300\n"
+"Language-Team: Romanian <gnomero-list@lists.sourceforge.net>\n"
+"Language: ro\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < "
+"20)) ? 1 : 2);;\n"
+"Last-Translator: Florentina Mușat <florentina.musat.28@gmail.com>\n"
+"X-Generator: Poedit 2.3.1\n"
+
+#: data/org.gnome.Tau.appdata.xml.in.in:7 data/org.gnome.Tau.desktop.in.in:3
+msgid "Tau"
+msgstr "Tau"
+
+#: data/org.gnome.Tau.appdata.xml.in.in:8
+msgid "GTK frontend for the xi text editor"
+msgstr "Interfață GTK pentru editorul de text xi"
+
+#: data/org.gnome.Tau.appdata.xml.in.in:13
+msgid ""
+"Tau is a GTK frontend for the xi text editor written in Rust. It’s a very "
+"fast plain text editor."
+msgstr ""
+"Tau este o interfață GTK pentru editorul de text xi scris în Rust. Este un "
+"editor de text simplu foarte rapid."
+
+#: data/org.gnome.Tau.appdata.xml.in.in:28
+msgid "Rasmus “Cogitri” Thomsen"
+msgstr "Rasmus „Cogitri” Thomsen"
+
+#: data/org.gnome.Tau.desktop.in.in:5
+msgid "The Tau text editor"
+msgstr "Editorul de text Tau"
+
+#. Translators: Search terms to find this application. Do NOT translate or localize the semicolons! The list MUST also end with a semicolon!
+#: data/org.gnome.Tau.desktop.in.in:15
+msgid "Text;Editor;Plaintext;Write;gxi;"
+msgstr "Text;Editor;Plaintext;Write;gxi;Text simplu;Scrie;"
+
+#: data/org.gnome.Tau.desktop.in.in:18
+msgid "Launch a new Tau instance"
+msgstr "Lansează o instanță Tau nouă"
+
+#: data/org.gnome.Tau.gschema.xml:9
+msgid "Xi-Editor’s theme"
+msgstr "Temă Xi-Editor"
+
+#: data/org.gnome.Tau.gschema.xml:10
+msgid "Sets the theme used for the editing area"
+msgstr "Stabilește tema utilizată pentru zona de editare"
+
+#: data/org.gnome.Tau.gschema.xml:17 src/tau/src/ui/prefs_win_handy.glade:449
+msgid "Draw trailing spaces"
+msgstr "Desenează spațiile de urmărire"
+
+#: data/org.gnome.Tau.gschema.xml:18
+msgid "Draw spaces which are at the end of a line"
+msgstr "Desenează spațiile care sunt la sfârșitul unei linii"
+
+#: data/org.gnome.Tau.gschema.xml:25 src/tau/src/ui/prefs_win_handy.glade:466
+msgid "Draw leading spaces"
+msgstr "Desenează spațiile de conducere"
+
+#: data/org.gnome.Tau.gschema.xml:26
+msgid "Draw spaces which are at the beginning of a line"
+msgstr "Desenează spațiile care sunt la începutul unei linii"
+
+#: data/org.gnome.Tau.gschema.xml:33 src/tau/src/ui/prefs_win_handy.glade:483
+msgid "Draw selected spaces"
+msgstr "Desenează spațiile selectate"
+
+#: data/org.gnome.Tau.gschema.xml:34
+msgid "Draw spaces whenever they are selected"
+msgstr "Desenează spațiile oricând sunt selectate"
+
+#: data/org.gnome.Tau.gschema.xml:41 src/tau/src/ui/prefs_win_handy.glade:432
+msgid "Draw all spaces"
+msgstr "Desenează toate spațiile"
+
+#: data/org.gnome.Tau.gschema.xml:42
+msgid "Draw spaces, no matter the position"
+msgstr "Desenează spații, indiferent de poziție"
+
+#: data/org.gnome.Tau.gschema.xml:49
+msgid "Draw a right hand margin"
+msgstr "Desenează o margine de mâna dreaptă"
+
+#: data/org.gnome.Tau.gschema.xml:50
+msgid "Draw a right hand margin to limit the text width"
+msgstr "Desenează o margine de mâna dreaptă pentru a limita lățimea textului"
+
+#: data/org.gnome.Tau.gschema.xml:58
+msgid "At what column to display the margin"
+msgstr "La ce coloană să se afișeze marginea"
+
+#: data/org.gnome.Tau.gschema.xml:59
+msgid "Sets the column at which the margin should be drawn"
+msgstr "Stabilește coloana la care marginea ar trebui să fie desenată"
+
+#: data/org.gnome.Tau.gschema.xml:66
+msgid "Whether the current line should be highlighted"
+msgstr "Dacă linia curentă ar trebui să fie evidențiată"
+
+#: data/org.gnome.Tau.gschema.xml:67
+msgid ""
+"Sets if the current line should be highlighted, which eases navigation "
+"through the document"
+msgstr ""
+"Stabilește dacă linia curentă ar trebui să fie evidențiată, ceea ce "
+"facilitează navigația prin document"
+
+#: data/org.gnome.Tau.gschema.xml:75
+msgid "Sets the height of the window in the next start-up"
+msgstr "Stabilește înălțimea ferestrei la pornirea următoare"
+
+#: data/org.gnome.Tau.gschema.xml:81
+msgid "Sets the width of the window in the next start-up"
+msgstr "Stabilește lățimea ferestrei la pornirea următoare"
+
+#: data/org.gnome.Tau.gschema.xml:86
+msgid "Sets if the window should be maximized during the next start-up"
+msgstr ""
+"Stabilește dacă fereastra ar trebui să fie maximizată în timpul pornirii "
+"următoare"
+
+#: data/org.gnome.Tau.gschema.xml:92 src/editview/src/ui/ev.glade:76
+#: src/tau/src/ui/prefs_win_handy.glade:268
+msgid "Tab size"
+msgstr "Dimensiune tab"
+
+#: data/org.gnome.Tau.gschema.xml:93
+msgid "Amount of spaces that a tab is wide"
+msgstr "Numărul de spații pe care un tab este larg"
+
+#: data/org.gnome.Tau.gschema.xml:99 src/editview/src/ui/ev.glade:37
+#: src/tau/src/ui/prefs_win_handy.glade:227
+#: src/tau/src/ui/prefs_win_handy.glade:289
+msgid "Insert spaces instead of tabs"
+msgstr "Inserează spații în loc de taburi"
+
+#: data/org.gnome.Tau.gschema.xml:100
+msgid "Whether spaces should be inserted instead of tabs"
+msgstr "Dacă ar trebui să fie inserate spații în loc de taburi"
+
+#: data/org.gnome.Tau.gschema.xml:105
+msgid "Treat indentation with spaces like tabs"
+msgstr "Tratează identația cu spații precum taburile"
+
+#: data/org.gnome.Tau.gschema.xml:106
+msgid ""
+"If “translate-tabs-to-spaces” is true, Backspace will delete multiple "
+"spaces, up to the previous tab stop"
+msgstr ""
+"Dacă „translate-tabs-to-spaces” este adevărat, Backspace va șterge spații "
+"multiple, până la oprirea tab anterioară"
+
+#: data/org.gnome.Tau.gschema.xml:111
+msgid "Automatically match document’s indentation on newlines"
+msgstr "Potrivește automat identația documentului la linii noi"
+
+#: data/org.gnome.Tau.gschema.xml:116
+msgid "The font used for editing"
+msgstr "Fontul utilizat pentru editare"
+
+#: data/org.gnome.Tau.gschema.xml:121
+msgid "Wrap lines at the end of the document"
+msgstr "Încadrează liniile la sfârșitul documentului"
+
+#: data/org.gnome.Tau.gschema.xml:126 src/tau/src/ui/prefs_win_handy.glade:540
+msgid "Draw trailing tabs"
+msgstr "Desenează taburile de urmărire"
+
+#: data/org.gnome.Tau.gschema.xml:127
+msgid "Draw tabs which are at the end of a line"
+msgstr "Desenează taburile care sunt la sfârșitul unei linii"
+
+#: data/org.gnome.Tau.gschema.xml:134 src/tau/src/ui/prefs_win_handy.glade:557
+msgid "Draw leading tabs"
+msgstr "Desenează taburi de conducere"
+
+#: data/org.gnome.Tau.gschema.xml:135
+msgid "Draw tabs which are at the beginning of a line"
+msgstr "Desenează taburi care sunt la începutul unei linii"
+
+#: data/org.gnome.Tau.gschema.xml:142 src/tau/src/ui/prefs_win_handy.glade:574
+msgid "Draw selected tabs"
+msgstr "Desenează taburile selectate"
+
+#: data/org.gnome.Tau.gschema.xml:143
+msgid "Draw tabs whenever they are selected"
+msgstr "Desenează taburi oricând sunt selectate"
+
+#: data/org.gnome.Tau.gschema.xml:150 src/tau/src/ui/prefs_win_handy.glade:523
+msgid "Draw all tabs"
+msgstr "Desenează toate taburile"
+
+#: data/org.gnome.Tau.gschema.xml:151
+msgid "Draw all tabs, no matter the position"
+msgstr "Desenează toate taburile, indiferent de poziție"
+
+#: data/org.gnome.Tau.gschema.xml:158
+msgid "Draw the cursor"
+msgstr "Desenează cursorul"
+
+#: data/org.gnome.Tau.gschema.xml:159
+msgid "Whether to draw the cursor"
+msgstr "Dacă să se deseneze cursorul"
+
+#: data/org.gnome.Tau.gschema.xml:166
+msgid "Syntax specific settings"
+msgstr "Configurări specifice de sintaxă"
+
+#: data/org.gnome.Tau.gschema.xml:167
+msgid ""
+"A JSON string containing syntax specific settings (e.g. tab width of 2 for "
+"YAML)"
+msgstr ""
+"Un șir JSON care conține configurări specifice de sintaxă (de ex. lățimea "
+"tab-ului de 2 pentru YAML)"
+
+#: data/org.gnome.Tau.gschema.xml:174
+msgid "Save when Tau moves out of focus"
+msgstr "Salvează când Tau se mișcă în afara focusului"
+
+#: data/org.gnome.Tau.gschema.xml:175
+msgid "Automatically save all open files when Tau moves out of focus"
+msgstr ""
+"Salvează automat toate fișierele deschise când Tau se mișcă în afara "
+"focusului"
+
+#: data/org.gnome.Tau.gschema.xml:182 src/tau/src/ui/prefs_win_handy.glade:100
+msgid "Show line count"
+msgstr "Arată numărul liniei"
+
+#: data/org.gnome.Tau.gschema.xml:183
+msgid "Whether or not to show the line count in the editing pane"
+msgstr "Dacă să se arate sau nu numărul liniei în panoul de editare"
+
+#: data/org.gnome.Tau.gschema.xml:190
+msgid "Open files"
+msgstr "Deschide fișiere"
+
+#: data/org.gnome.Tau.gschema.xml:191
+msgid "List of file paths open in the current or most recent session"
+msgstr ""
+"Lista căilor de fișier deschise în sesiunea curentă sau cea mai recentă"
+
+#: data/org.gnome.Tau.gschema.xml:198
+msgid "Restore session"
+msgstr "Restaurează sesiunea"
+
+#: data/org.gnome.Tau.gschema.xml:199
+msgid "Whether or not to restore last session on start-up"
+msgstr "Dacă să se restaureze sau nu ultima sesiune la pornire"
+
+#: data/org.gnome.Tau.gschema.xml:206
+msgid "Full path in title bar"
+msgstr "Cale completă în bara de titlu"
+
+#: data/org.gnome.Tau.gschema.xml:207
+msgid ""
+"Whether or not to display full path instead of file name in Tau's title bar."
+msgstr ""
+"Dacă să se afișeze sau nu calea completă în locul numelui de fișier în bara "
+"de titlu a lui Tau."
+
+#: data/org.gnome.Tau.gschema.xml:214
+msgid "Show terminal"
+msgstr "Arată terminalul"
+
+#: data/org.gnome.Tau.gschema.xml:215
+msgid "Whether or not to show an integrated terminal in Tau's editing pane"
+msgstr ""
+"Dacă să se arate sau nu un terminal integrat în panoul de editare al lui Tau"
+
+#: data/org.gnome.Tau.gschema.xml:222
+msgid "Path to the shell executable"
+msgstr "Calea către executabilul shell"
+
+#: data/org.gnome.Tau.gschema.xml:223
+msgid "The path to the shell you want to use."
+msgstr "Calea către shell-ul pe care doriți să îl utilizați."
+
+#: src/editview/src/ui/context_menu.glade:6
+msgid "Cut"
+msgstr "Taie"
+
+#: src/editview/src/ui/context_menu.glade:10
+#: src/tau/src/ui/terminal_context_menu.glade:5
+msgid "Copy"
+msgstr "Copiază"
+
+#: src/editview/src/ui/context_menu.glade:14
+#: src/tau/src/ui/terminal_context_menu.glade:9
+msgid "Paste"
+msgstr "Lipește"
+
+#: src/editview/src/ui/context_menu.glade:20
+msgid "Undo"
+msgstr "Refă"
+
+#: src/editview/src/ui/context_menu.glade:24
+msgid "Redo"
+msgstr "Repetă"
+
+#: src/editview/src/ui/context_menu.glade:30
+#: src/tau/src/ui/terminal_context_menu.glade:13
+msgid "Select All"
+msgstr "Selectează toate"
+
+#: src/editview/src/ui/ev.glade:22
+msgid "Enable automatic indentation"
+msgstr "Activează identația automată"
+
+#: src/editview/src/ui/find_replace.glade:32
+msgid "Find"
+msgstr "Caută"
+
+#: src/editview/src/ui/find_replace.glade:82
+msgid "Find and select all search matches"
+msgstr "Caută și selectează toate potrivirile de căutare"
+
+#: src/editview/src/ui/find_replace.glade:102
+msgid "Switch between Search and Search-and-Replace"
+msgstr "Comută între caută și caută și înlocuiește"
+
+#: src/editview/src/ui/find_replace.glade:123
+msgid "Show or hide search options such as case sensitivity"
+msgstr ""
+"Arată sau ascunde opțiunile de căutare cum ar fi majuscule semnificative"
+
+#: src/editview/src/ui/find_replace.glade:160
+#: src/editview/src/ui/find_replace.glade:170
+msgid "Replace"
+msgstr "Înlocuiește"
+
+#: src/editview/src/ui/find_replace.glade:182
+msgid "Replace All"
+msgstr "Înlocuiește toate"
+
+#: src/editview/src/ui/find_replace.glade:211
+msgid "Regular expressions"
+msgstr "Expresii regulate"
+
+#: src/editview/src/ui/find_replace.glade:226
+msgid "Case sensitive"
+msgstr "Majuscule semnificative"
+
+#: src/editview/src/ui/find_replace.glade:240
+msgid "Match whole word only"
+msgstr "Potrivește doar întregul cuvânt"
+
+#: src/editview/src/ui/find_replace.glade:265
+msgid "No Results"
+msgstr "Nu există rezultate"
+
+#: src/tau/src/ui/shortcuts_win.glade:14
+msgctxt "shortcut window"
+msgid "Documents"
+msgstr "Documente"
+
+#: src/tau/src/ui/shortcuts_win.glade:18
+msgctxt "shortcut window"
+msgid "Create new document"
+msgstr "Creează un document nou"
+
+#: src/tau/src/ui/shortcuts_win.glade:24
+msgctxt "shortcut window"
+msgid "Open a document"
+msgstr "Deschide un document"
+
+#: src/tau/src/ui/shortcuts_win.glade:30
+msgctxt "shortcut window"
+msgid "Save the document"
+msgstr "Salvează documentul"
+
+#: src/tau/src/ui/shortcuts_win.glade:36
+msgctxt "shortcut window"
+msgid "Save the document as…"
+msgstr "Salvează documentul ca…"
+
+#: src/tau/src/ui/shortcuts_win.glade:42
+msgctxt "shortcut window"
+msgid "Close the document"
+msgstr "Închide documentul"
+
+#: src/tau/src/ui/shortcuts_win.glade:49
+msgctxt "shortcut window"
+msgid "Navigation"
+msgstr "Navigare"
+
+#: src/tau/src/ui/shortcuts_win.glade:53
+msgctxt "shortcut window"
+msgid "Cycle tab history backward"
+msgstr "Ciclează istoricul tabului înapoi"
+
+#: src/tau/src/ui/shortcuts_win.glade:59
+msgctxt "shortcut window"
+msgid "Cycle tab history forward"
+msgstr "Ciclează istoricul tabului înainte"
+
+#: src/tau/src/ui/shortcuts_win.glade:65
+msgctxt "shortcut window"
+msgid "Go to line"
+msgstr "Navighează la linia"
+
+#: src/tau/src/ui/shortcuts_win.glade:71
+msgctxt "shortcut window"
+msgid "Toggle fullscreen"
+msgstr "Comută modul ecran complet"
+
+#: src/tau/src/ui/shortcuts_win.glade:78 src/tau/src/ui/shortcuts_win.glade:82
+msgctxt "shortcut window"
+msgid "Find"
+msgstr "Caută"
+
+#: src/tau/src/ui/shortcuts_win.glade:88
+msgctxt "shortcut window"
+msgid "Find the next match"
+msgstr "Caută potrivirea următoare"
+
+#: src/tau/src/ui/shortcuts_win.glade:94
+msgctxt "shortcut window"
+msgid "Find the previous match"
+msgstr "Caută potrivirea anterioară"
+
+#: src/tau/src/ui/shortcuts_win.glade:100
+msgctxt "shortcut window"
+msgid "Find and replace"
+msgstr "Caută și înlocuiește"
+
+#: src/tau/src/ui/shortcuts_win.glade:106
+msgctxt "shortcut window"
+msgid "Find all matches"
+msgstr "Caută toate potrivirile"
+
+#: src/tau/src/ui/shortcuts_win.glade:112
+msgctxt "shortcut window"
+msgid "Close the find window"
+msgstr "Închide fereastra de căutare"
+
+#: src/tau/src/ui/shortcuts_win.glade:120
+msgctxt "shortcut window"
+msgid "Editing"
+msgstr "Editare"
+
+#: src/tau/src/ui/shortcuts_win.glade:124
+msgctxt "shortcut window"
+msgid "Highlight the next occurrence of the current selection"
+msgstr "Evidențiază următoarea apariție a selecției curente"
+
+#: src/tau/src/ui/shortcuts_win.glade:130
+msgctxt "shortcut window"
+msgid "Delete the current selection"
+msgstr "Șterge selecția curentă"
+
+#: src/tau/src/ui/shortcuts_win.glade:136
+msgctxt "shortcut window"
+msgid "Delete an entire word"
+msgstr "Șterge un întreg cuvânt"
+
+#: src/tau/src/ui/shortcuts_win.glade:142
+msgctxt "shortcut window"
+msgid "Outdent the current selection"
+msgstr "Nu indenta selecția curentă"
+
+#: src/tau/src/ui/shortcuts_win.glade:148
+msgctxt "shortcut window"
+msgid "Move to start of the line"
+msgstr "Mută la începutul liniei"
+
+#: src/tau/src/ui/shortcuts_win.glade:154
+msgctxt "shortcut window"
+msgid "Move to start of the document"
+msgstr "Mută la începutul documentului"
+
+#: src/tau/src/ui/shortcuts_win.glade:161
+msgctxt "shortcut window"
+msgid "Move to end of the line"
+msgstr "Mută la sfârșitul liniei"
+
+#: src/tau/src/ui/shortcuts_win.glade:167
+msgctxt "shortcut window"
+msgid "Move to end of the document"
+msgstr "Mută la sfârșitul documentului"
+
+#: src/tau/src/ui/shortcuts_win.glade:173
+msgctxt "shortcut window"
+msgid "Move up for the height of the view"
+msgstr "Mută în sus pentru înălțimea vizualizării"
+
+#: src/tau/src/ui/shortcuts_win.glade:179
+msgctxt "shortcut window"
+msgid "Move down for the height of the view"
+msgstr "Mută în jos pentru înălțimea vizualizării"
+
+#: src/tau/src/ui/shortcuts_win.glade:185
+msgctxt "shortcut window"
+msgid "Enable/Disable the cursor"
+msgstr "Activează/dezactivează cursorul"
+
+#: src/tau/src/ui/shortcuts_win.glade:192
+msgctxt "shortcut window"
+msgid "Copy and Paste"
+msgstr "Copiere și lipire"
+
+#: src/tau/src/ui/shortcuts_win.glade:196
+msgctxt "shortcut window"
+msgid "Copy the current selection"
+msgstr "Copiază selecția curentă"
+
+#: src/tau/src/ui/shortcuts_win.glade:202
+msgctxt "shortcut window"
+msgid "Paste what's currently in the clipboard"
+msgstr "Lipește ce se află acum în clipboard"
+
+#: src/tau/src/ui/shortcuts_win.glade:208
+#: src/tau/src/ui/shortcuts_win.glade:214
+msgctxt "shortcut window"
+msgid "Cut the current selection"
+msgstr "Taie selecția curentă"
+
+#: src/tau/src/ui/shortcuts_win.glade:221
+msgctxt "shortcut window"
+msgid "Undo and Redo"
+msgstr "Refă și repetă"
+
+#: src/tau/src/ui/shortcuts_win.glade:225
+msgctxt "shortcut window"
+msgid "Undo"
+msgstr "Refă"
+
+#: src/tau/src/ui/shortcuts_win.glade:231
+msgctxt "shortcut window"
+msgid "Redo"
+msgstr "Repetă"
+
+#: src/tau/src/ui/shortcuts_win.glade:238
+msgctxt "shortcut window"
+msgid "Selections"
+msgstr "Selectări"
+
+#: src/tau/src/ui/shortcuts_win.glade:242
+msgctxt "shortcut window"
+msgid "Select all"
+msgstr "Selectează toate"
+
+#: src/tau/src/ui/shortcuts_win.glade:248
+msgctxt "shortcut window"
+msgid "Select all occurences of the current selection"
+msgstr "Selectează toate aparițiile selecției curente"
+
+#: src/tau/src/ui/shortcuts_win.glade:254
+msgctxt "shortcut window"
+msgid "Move up and select everything from current cursor position"
+msgstr "Mută în sus și selectează tot de la poziția curentă a cursorului"
+
+#: src/tau/src/ui/shortcuts_win.glade:260
+msgctxt "shortcut window"
+msgid "Move down and select everything from current cursor position"
+msgstr "Mută în jos și selectează tot de la poziția curentă a cursorului"
+
+#: src/tau/src/ui/shortcuts_win.glade:266
+msgctxt "shortcut window"
+msgid "Move left and select everything from current cursor position"
+msgstr "Mută la stânga și selectează tot de la poziția curentă a cursorului"
+
+#: src/tau/src/ui/shortcuts_win.glade:272
+msgctxt "shortcut window"
+msgid "Move left and select the next word"
+msgstr "Mută la stânga și selectează cuvântul următor"
+
+#: src/tau/src/ui/shortcuts_win.glade:278
+msgctxt "shortcut window"
+msgid "Move right and select everything from current cursor position"
+msgstr "Mută la dreapta și selectează tot de la poziția curentă a cursorului"
+
+#: src/tau/src/ui/shortcuts_win.glade:284
+msgctxt "shortcut window"
+msgid "Move right and select the next word"
+msgstr "Mută la dreapta și selectează următorul cuvânt"
+
+#: src/tau/src/ui/shortcuts_win.glade:290
+msgctxt "shortcut window"
+msgid "Move to start of the line and select"
+msgstr "Mută la începutul liniei și selectează"
+
+#: src/tau/src/ui/shortcuts_win.glade:296
+msgctxt "shortcut window"
+msgid "Move to start of the document and select"
+msgstr "Mută la începutul documentului și selectează"
+
+#: src/tau/src/ui/shortcuts_win.glade:302
+msgctxt "shortcut window"
+msgid "Move to end of the line and select"
+msgstr "Mută la sfârșitul liniei și selectează"
+
+#: src/tau/src/ui/shortcuts_win.glade:308
+msgctxt "shortcut window"
+msgid "Move to end of the document and select"
+msgstr "Mută la sfârșitul documentului și selectează"
+
+#: src/tau/src/ui/shortcuts_win.glade:314
+msgctxt "shortcut window"
+msgid "Move up for the height of the view and select"
+msgstr "Mută în sus pentru înălțimea vizualizării și selectează"
+
+#: src/tau/src/ui/shortcuts_win.glade:320
+msgctxt "shortcut window"
+msgid "Move down for the height of the view and select"
+msgstr "Mută în jos pentru înălțimea vizualizării și selectează"
+
+#: src/tau/src/ui/prefs_win_handy.glade:28 src/tau/src/ui/tau.glade:153
+#: src/tau/src/ui/tau.glade:374
+msgid "Preferences"
+msgstr "Preferințe"
+
+#: src/tau/src/ui/prefs_win_handy.glade:39
+msgid "View"
+msgstr "Vizualizare"
+
+#: src/tau/src/ui/prefs_win_handy.glade:40
+msgid "Preferences related to the View’s look"
+msgstr "Preferințe legate de aspectul vizualizării"
+
+#: src/tau/src/ui/prefs_win_handy.glade:44
+msgid "Display right hand margin"
+msgstr "Afișează marginea de mâna dreaptă"
+
+#: src/tau/src/ui/prefs_win_handy.glade:87
+msgid "Highlight the current line"
+msgstr "Evidențiază linia curentă"
+
+#: src/tau/src/ui/prefs_win_handy.glade:113
+msgid "Show full path in title bar"
+msgstr "Arată calea completă în bara de titlu"
+
+#: src/tau/src/ui/prefs_win_handy.glade:126
+msgid "Restore last opened files on start-up"
+msgstr "Restaurează fișierele deschise ultima dată la pornire"
+
+#: src/tau/src/ui/prefs_win_handy.glade:140
+msgid "Wrap lines at the end of the view"
+msgstr "Încadrează liniile la sfârșitul vizualizării"
+
+#: src/tau/src/ui/prefs_win_handy.glade:152
+msgid "Theme configuration"
+msgstr "Configurație de temă"
+
+#: src/tau/src/ui/prefs_win_handy.glade:167
+msgid "Syntax configuration"
+msgstr "Configurație de sintaxă"
+
+#: src/tau/src/ui/prefs_win_handy.glade:171
+msgid "Syntax selection"
+msgstr "Selecție de sintaxă"
+
+#: src/tau/src/ui/prefs_win_handy.glade:184
+msgid "Syntax-specific tab size"
+msgstr "Dimensiune de tab specifică sintaxei"
+
+#: src/tau/src/ui/prefs_win_handy.glade:240
+msgid "Apply syntax configuration settings"
+msgstr "Aplică setările de configurare a sintaxei"
+
+#: src/tau/src/ui/prefs_win_handy.glade:260
+msgid "Editor"
+msgstr "Editor"
+
+#: src/tau/src/ui/prefs_win_handy.glade:264
+msgid "Indention"
+msgstr "Identație"
+
+#: src/tau/src/ui/prefs_win_handy.glade:325
+msgid "Automatic indentation"
+msgstr "Identație automată"
+
+#: src/tau/src/ui/prefs_win_handy.glade:362
+msgid "Delete spaces up to the previous tab stop"
+msgstr "Șterge spații până la oprirea tab anterioară"
+
+#: src/tau/src/ui/prefs_win_handy.glade:377
+msgid "File saving"
+msgstr "Salvarea fișierului"
+
+#: src/tau/src/ui/prefs_win_handy.glade:381
+msgid "Save files when the Tau goes out of focus"
+msgstr "Salvează fișiere când Tau iese din focus"
+
+#: src/tau/src/ui/prefs_win_handy.glade:396 src/tau/src/main_win.rs:1252
+#: src/tau/src/main_win.rs:1289
+msgid "Terminal"
+msgstr "Terminal"
+
+#: src/tau/src/ui/prefs_win_handy.glade:400
+msgid "Show the embedded terminal on startup"
+msgstr "Arată terminalul încorporat la pornire"
+
+#: src/tau/src/ui/prefs_win_handy.glade:413
+msgid "What shell to start"
+msgstr "Care shell să se pornească"
+
+#: src/tau/src/ui/prefs_win_handy.glade:428
+msgid "Highlighting spaces"
+msgstr "Se evidențiază spațiile"
+
+#: src/tau/src/ui/prefs_win_handy.glade:500
+msgid "Don't draw spaces"
+msgstr "Nu desena spații"
+
+#: src/tau/src/ui/prefs_win_handy.glade:519
+msgid "Highlighting tabs"
+msgstr "Se evidențiază taburile"
+
+#: src/tau/src/ui/prefs_win_handy.glade:591
+msgid "Don't draw tabs"
+msgstr "Nu desena taburi"
+
+#: src/tau/src/ui/prefs_win_handy.glade:610
+#: src/tau/src/ui/prefs_win_handy.glade:614
+msgid "Font configuration"
+msgstr "Configurație de font"
+
+#: src/tau/src/ui/tau.glade:22 src/tau/src/ui/tau.glade:243
+msgid "Save As…"
+msgstr "Salvează ca…"
+
+#: src/tau/src/ui/tau.glade:36 src/tau/src/ui/tau.glade:257
+msgid "Save All"
+msgstr "Salvează toate"
+
+#: src/tau/src/ui/tau.glade:61 src/tau/src/ui/tau.glade:282
+msgid "Find…"
+msgstr "Caută…"
+
+#: src/tau/src/ui/tau.glade:75 src/tau/src/ui/tau.glade:296
+msgid "Replace…"
+msgstr "Înlocuiește…"
+
+#: src/tau/src/ui/tau.glade:89 src/tau/src/ui/tau.glade:310
+msgid "Go To Line…"
+msgstr "Navighează la linia…"
+
+#: src/tau/src/ui/tau.glade:114 src/tau/src/ui/tau.glade:335
+msgid "Show Terminal"
+msgstr "Arată terminalul"
+
+#: src/tau/src/ui/tau.glade:128 src/tau/src/ui/tau.glade:349
+msgid "Toggle Fullscreen"
+msgstr "Comută pe ecran complet"
+
+#: src/tau/src/ui/tau.glade:178 src/tau/src/ui/tau.glade:399
+msgid "Help"
+msgstr "Ajutor"
+
+#: src/tau/src/ui/tau.glade:192 src/tau/src/ui/tau.glade:413
+msgid "Keyboard Shortcuts"
+msgstr "Scurtături de tastatură"
+
+#: src/tau/src/ui/tau.glade:206 src/tau/src/ui/tau.glade:427
+msgid "About Tau"
+msgstr "Despre Tau"
+
+#: src/tau/src/ui/tau.glade:462 src/tau/src/ui/tau.glade:571
+#: src/tau/src/main_win.rs:1701
+msgid "Open"
+msgstr "Deschide"
+
+#: src/tau/src/ui/tau.glade:503 src/tau/src/ui/tau.glade:631
+#: src/tau/src/main_win.rs:1437 src/tau/src/main_win.rs:1873
+msgid "Save"
+msgstr "Salvează"
+
+#: src/editview/src/edit_view.rs:195 src/editview/src/edit_view.rs:197
+#: src/tau/src/main_win.rs:1118 src/tau/src/main_win.rs:1121
+#: src/tau/src/main_win.rs:1978
+msgid "Untitled"
+msgstr "Fără titlu"
+
+#: src/editview/src/edit_view.rs:977 src/editview/src/edit_view.rs:987
+msgid "Line"
+msgstr "Linie"
+
+#: src/editview/src/edit_view.rs:992
+msgid "Column"
+msgstr "Coloană"
+
+#. We localized it ourselves, so we have to turn it into English again when sending it to Xi
+#: src/editview/src/edit_view.rs:1599 src/editview/src/view_item.rs:242
+#: src/editview/src/view_item.rs:348
+msgid "Plain Text"
+msgstr "Text simplu"
+
+#: src/editview/src/view_item.rs:111 src/editview/src/view_item.rs:259
+msgid "Tab Size"
+msgstr "Dimensiune tab"
+
+#: src/tau/src/about_win.rs:21
+msgid "GTK frontend for the xi text editor, written in Rust"
+msgstr "Interfața GTK pentru editorul de text xi, scris în Rust"
+
+#: src/tau/src/about_win.rs:29
+msgid "translator-credits"
+msgstr ""
+"Florentina Mușat <florentina [dot] musat [dot] 28 [at] gmail [dot] com>, "
+"2020"
+
+#: src/tau/src/functions.rs:72
+msgid "Welcome to Tau's terminal."
+msgstr "Bine ați venit la terminalul lui Tau."
+
+#: src/tau/src/main.rs:117
+msgid "Start a new instance of the application"
+msgstr "Începe o instanță nouă a aplicației"
+
+#: src/tau/src/main_win.rs:1057 src/tau/src/main_win.rs:1065
+msgid ""
+"Couldn’t get Documents directory to autosave unnamed file. Please make sure "
+"“XDG_DATA_DIR” or similar is set."
+msgstr ""
+"Nu s-a putut face ca directorul Documente să salveze automat fișierul "
+"nedenumit. Asigurați-vă că „XDG_DATA_DIR” sau similare sunt stabilite."
+
+#: src/tau/src/main_win.rs:1426
+msgid "Save unsaved changes"
+msgstr "Salvează modificările nesalvate"
+
+#: src/tau/src/main_win.rs:1429
+msgid "Close Without Saving"
+msgstr "Închide fără să salvezi"
+
+#: src/tau/src/main_win.rs:1433 src/tau/src/main_win.rs:1702
+#: src/tau/src/main_win.rs:1874
+msgid "Cancel"
+msgstr "Anulează"
+
+#: src/tau/src/main_win.rs:1698
+msgid "Open a file to edit"
+msgstr "Deschide un fișier pentru a-l edita"
+
+#: src/tau/src/main_win.rs:1727
+msgid "Couldn’t open file"
+msgstr "Nu s-a putut deschide fișierul"
+
+#: src/tau/src/main_win.rs:1870
+msgid "Save file"
+msgstr "Salvează fișierul"
+
+#: src/tau/src/main_win.rs:1912
+msgid "Couldn’t save file"
+msgstr "Nu s-a putut salva fișierul"
+
+#: src/tau/src/prefs_win.rs:439
+msgid ""
+"Couldn’t find the xi-syntect-plugin. As such these settings won’t work in "
+"the current session."
+msgstr ""
+"Nu s-a putut găsi xi-syntect-plugin. Ca atare aceste configurări nu vor "
+"funcționa în sesiunea curentă."
