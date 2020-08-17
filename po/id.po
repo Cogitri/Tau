@@ -7,15 +7,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tau master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Tau/issues\n"
-"POT-Creation-Date: 2020-04-08 19:32+0000\n"
-"PO-Revision-Date: 2020-04-10 20:33+0700\n"
+"POT-Creation-Date: 2020-06-07 07:37+0000\n"
+"PO-Revision-Date: 2020-08-17 20:55+0700\n"
+"Last-Translator: Andika Triwidada <andika@gmail.com>\n"
 "Language-Team: Indonesian <gnome-l10n-id@googlegroups.com>\n"
 "Language: id\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Last-Translator: Andika Triwidada <andika@gmail.com>\n"
-"X-Generator: Poedit 2.3\n"
+"X-Generator: Poedit 2.4.1\n"
 
 #: data/org.gnome.Tau.appdata.xml.in.in:7 data/org.gnome.Tau.desktop.in.in:3
 msgid "Tau"
@@ -223,8 +223,8 @@ msgid ""
 "A JSON string containing syntax specific settings (e.g. tab width of 2 for "
 "YAML)"
 msgstr ""
-"Sebuah string JSON yang berisi pengaturan spesifik sintaks (mis. lebar tab "
-"2 untuk YAML)"
+"Sebuah string JSON yang berisi pengaturan spesifik sintaks (mis. lebar tab 2 "
+"untuk YAML)"
 
 #: data/org.gnome.Tau.gschema.xml:174
 msgid "Save when Tau moves out of focus"
@@ -292,10 +292,12 @@ msgid "Cut"
 msgstr "Potong"
 
 #: src/editview/src/ui/context_menu.glade:10
+#: src/tau/src/ui/terminal_context_menu.glade:5
 msgid "Copy"
 msgstr "Salin"
 
 #: src/editview/src/ui/context_menu.glade:14
+#: src/tau/src/ui/terminal_context_menu.glade:9
 msgid "Paste"
 msgstr "Tempel"
 
@@ -308,6 +310,7 @@ msgid "Redo"
 msgstr "Jadi Lagi"
 
 #: src/editview/src/ui/context_menu.glade:30
+#: src/tau/src/ui/terminal_context_menu.glade:13
 msgid "Select All"
 msgstr "Pilih Semua"
 
@@ -394,221 +397,228 @@ msgid "Navigation"
 msgstr "Navigasi"
 
 #: src/tau/src/ui/shortcuts_win.glade:53
-#, fuzzy
 msgctxt "shortcut window"
 msgid "Cycle tab history backward"
-msgstr "Siklus tab Sejarah mundur"
+msgstr "Siklus tab riwayat mundur"
 
 #: src/tau/src/ui/shortcuts_win.glade:59
-#, fuzzy
 msgctxt "shortcut window"
 msgid "Cycle tab history forward"
-msgstr "Siklus tab Sejarah maju"
+msgstr "Siklus tab riwayat maju"
 
 #: src/tau/src/ui/shortcuts_win.glade:65
+msgctxt "shortcut window"
+msgid "Go to line"
+msgstr "Pergi ke baris"
+
+#: src/tau/src/ui/shortcuts_win.glade:71
 msgctxt "shortcut window"
 msgid "Toggle fullscreen"
 msgstr "Jungkit mode layar penuh"
 
-#: src/tau/src/ui/shortcuts_win.glade:72 src/tau/src/ui/shortcuts_win.glade:76
+#: src/tau/src/ui/shortcuts_win.glade:78 src/tau/src/ui/shortcuts_win.glade:82
 msgctxt "shortcut window"
 msgid "Find"
 msgstr "Cari"
 
-#: src/tau/src/ui/shortcuts_win.glade:82
+#: src/tau/src/ui/shortcuts_win.glade:88
 msgctxt "shortcut window"
 msgid "Find the next match"
 msgstr "Cari cocok berikutnya"
 
-#: src/tau/src/ui/shortcuts_win.glade:88
+#: src/tau/src/ui/shortcuts_win.glade:94
 msgctxt "shortcut window"
 msgid "Find the previous match"
 msgstr "Cari cocok sebelumnya"
 
-#: src/tau/src/ui/shortcuts_win.glade:94
+#: src/tau/src/ui/shortcuts_win.glade:100
 msgctxt "shortcut window"
 msgid "Find and replace"
 msgstr "Cari dan ganti"
 
-#: src/tau/src/ui/shortcuts_win.glade:100
+#: src/tau/src/ui/shortcuts_win.glade:106
 msgctxt "shortcut window"
 msgid "Find all matches"
 msgstr "Temukan semua kecocokan"
 
-#: src/tau/src/ui/shortcuts_win.glade:106
+#: src/tau/src/ui/shortcuts_win.glade:112
 msgctxt "shortcut window"
 msgid "Close the find window"
 msgstr "Tutup jendela pencarian"
 
-#: src/tau/src/ui/shortcuts_win.glade:114
+#: src/tau/src/ui/shortcuts_win.glade:120
 msgctxt "shortcut window"
 msgid "Editing"
 msgstr "Penyuntingan"
 
-#: src/tau/src/ui/shortcuts_win.glade:118
+#: src/tau/src/ui/shortcuts_win.glade:124
 msgctxt "shortcut window"
 msgid "Highlight the next occurrence of the current selection"
 msgstr "Sorot kemunculan berikutnya dari pilihan saat ini"
 
-#: src/tau/src/ui/shortcuts_win.glade:124
+#: src/tau/src/ui/shortcuts_win.glade:130
 msgctxt "shortcut window"
 msgid "Delete the current selection"
 msgstr "Menghapus pilihan saat ini"
 
-#: src/tau/src/ui/shortcuts_win.glade:130
+#: src/tau/src/ui/shortcuts_win.glade:136
 msgctxt "shortcut window"
 msgid "Delete an entire word"
 msgstr "Menghapus seluruh kata"
 
-#: src/tau/src/ui/shortcuts_win.glade:136
-#, fuzzy
+#: src/tau/src/ui/shortcuts_win.glade:142
 msgctxt "shortcut window"
 msgid "Outdent the current selection"
 msgstr "Outdent pilihan saat ini"
 
-#: src/tau/src/ui/shortcuts_win.glade:142
+#: src/tau/src/ui/shortcuts_win.glade:148
 msgctxt "shortcut window"
 msgid "Move to start of the line"
 msgstr "Pindah ke awal baris"
 
-#: src/tau/src/ui/shortcuts_win.glade:148
+#: src/tau/src/ui/shortcuts_win.glade:154
 msgctxt "shortcut window"
 msgid "Move to start of the document"
 msgstr "Pindah ke awal dokumen"
 
-#: src/tau/src/ui/shortcuts_win.glade:155
+#: src/tau/src/ui/shortcuts_win.glade:161
 msgctxt "shortcut window"
 msgid "Move to end of the line"
 msgstr "Pindah ke akhir baris"
 
-#: src/tau/src/ui/shortcuts_win.glade:161
+#: src/tau/src/ui/shortcuts_win.glade:167
 msgctxt "shortcut window"
 msgid "Move to end of the document"
 msgstr "Pindah ke akhir dokumen"
 
-#: src/tau/src/ui/shortcuts_win.glade:167
+#: src/tau/src/ui/shortcuts_win.glade:173
 msgctxt "shortcut window"
 msgid "Move up for the height of the view"
 msgstr "Pindah ke atas ke ketinggian tampilan"
 
-#: src/tau/src/ui/shortcuts_win.glade:173
+#: src/tau/src/ui/shortcuts_win.glade:179
 msgctxt "shortcut window"
 msgid "Move down for the height of the view"
 msgstr "Pindah ke bawah ke ketinggian tampilan"
 
-#: src/tau/src/ui/shortcuts_win.glade:179
+#: src/tau/src/ui/shortcuts_win.glade:185
 msgctxt "shortcut window"
 msgid "Enable/Disable the cursor"
 msgstr "Aktifkan/nonaktifkan kursor"
 
-#: src/tau/src/ui/shortcuts_win.glade:186
+#: src/tau/src/ui/shortcuts_win.glade:192
 msgctxt "shortcut window"
 msgid "Copy and Paste"
 msgstr "Salin dan Tempel"
 
-#: src/tau/src/ui/shortcuts_win.glade:190
+#: src/tau/src/ui/shortcuts_win.glade:196
 msgctxt "shortcut window"
 msgid "Copy the current selection"
 msgstr "Salin pilihan saat ini"
 
-#: src/tau/src/ui/shortcuts_win.glade:196
+#: src/tau/src/ui/shortcuts_win.glade:202
 msgctxt "shortcut window"
 msgid "Paste what's currently in the clipboard"
 msgstr "Tempelkan apa yang saat ini ada di papan klip"
 
-#: src/tau/src/ui/shortcuts_win.glade:202
 #: src/tau/src/ui/shortcuts_win.glade:208
+#: src/tau/src/ui/shortcuts_win.glade:214
 msgctxt "shortcut window"
 msgid "Cut the current selection"
 msgstr "Potong pilihan saat ini"
 
-#: src/tau/src/ui/shortcuts_win.glade:215
+#: src/tau/src/ui/shortcuts_win.glade:221
 msgctxt "shortcut window"
 msgid "Undo and Redo"
 msgstr "Tak Jadi dan Jadi Lagi"
 
-#: src/tau/src/ui/shortcuts_win.glade:219
+#: src/tau/src/ui/shortcuts_win.glade:225
 msgctxt "shortcut window"
 msgid "Undo"
 msgstr "Tak Jadi"
 
-#: src/tau/src/ui/shortcuts_win.glade:225
+#: src/tau/src/ui/shortcuts_win.glade:231
 msgctxt "shortcut window"
 msgid "Redo"
 msgstr "Jadi Lagi"
 
-#: src/tau/src/ui/shortcuts_win.glade:232
+#: src/tau/src/ui/shortcuts_win.glade:238
 msgctxt "shortcut window"
 msgid "Selections"
 msgstr "Pilihan"
 
-#: src/tau/src/ui/shortcuts_win.glade:236
+#: src/tau/src/ui/shortcuts_win.glade:242
 msgctxt "shortcut window"
 msgid "Select all"
 msgstr "Pilih semua"
 
-#: src/tau/src/ui/shortcuts_win.glade:242
+#: src/tau/src/ui/shortcuts_win.glade:248
+msgctxt "shortcut window"
+msgid "Select all occurences of the current selection"
+msgstr "Sorot semua kemunculan dari pilihan saat ini"
+
+#: src/tau/src/ui/shortcuts_win.glade:254
 msgctxt "shortcut window"
 msgid "Move up and select everything from current cursor position"
 msgstr "Pindah ke atas dan pilih semuanya dari posisi kursor saat ini"
 
-#: src/tau/src/ui/shortcuts_win.glade:248
+#: src/tau/src/ui/shortcuts_win.glade:260
 msgctxt "shortcut window"
 msgid "Move down and select everything from current cursor position"
 msgstr "Pindah ke bawah dan pilih semuanya dari posisi kursor saat ini"
 
-#: src/tau/src/ui/shortcuts_win.glade:254
+#: src/tau/src/ui/shortcuts_win.glade:266
 msgctxt "shortcut window"
 msgid "Move left and select everything from current cursor position"
 msgstr "Pindah ke kiri dan pilih semuanya dari posisi kursor saat ini"
 
-#: src/tau/src/ui/shortcuts_win.glade:260
+#: src/tau/src/ui/shortcuts_win.glade:272
 msgctxt "shortcut window"
 msgid "Move left and select the next word"
 msgstr "Pindah ke kiri dan pilih kata berikutnya"
 
-#: src/tau/src/ui/shortcuts_win.glade:266
+#: src/tau/src/ui/shortcuts_win.glade:278
 msgctxt "shortcut window"
 msgid "Move right and select everything from current cursor position"
 msgstr "Pindah ke kanan dan pilih semuanya dari posisi kursor saat ini"
 
-#: src/tau/src/ui/shortcuts_win.glade:272
+#: src/tau/src/ui/shortcuts_win.glade:284
 msgctxt "shortcut window"
 msgid "Move right and select the next word"
 msgstr "Pindah ke kanan dan pilih kata berikutnya"
 
-#: src/tau/src/ui/shortcuts_win.glade:278
+#: src/tau/src/ui/shortcuts_win.glade:290
 msgctxt "shortcut window"
 msgid "Move to start of the line and select"
 msgstr "Pindah ke awal baris dan pilih"
 
-#: src/tau/src/ui/shortcuts_win.glade:284
+#: src/tau/src/ui/shortcuts_win.glade:296
 msgctxt "shortcut window"
 msgid "Move to start of the document and select"
 msgstr "Pindah ke awal dokumen dan pilih"
 
-#: src/tau/src/ui/shortcuts_win.glade:290
+#: src/tau/src/ui/shortcuts_win.glade:302
 msgctxt "shortcut window"
 msgid "Move to end of the line and select"
 msgstr "Pindah ke akhir baris dan pilih"
 
-#: src/tau/src/ui/shortcuts_win.glade:296
+#: src/tau/src/ui/shortcuts_win.glade:308
 msgctxt "shortcut window"
 msgid "Move to end of the document and select"
 msgstr "Pindah ke akhir dokumen dan pilih"
 
-#: src/tau/src/ui/shortcuts_win.glade:302
+#: src/tau/src/ui/shortcuts_win.glade:314
 msgctxt "shortcut window"
 msgid "Move up for the height of the view and select"
 msgstr "Pindah ke atas ke ketinggian tampilan dan pilih"
 
-#: src/tau/src/ui/shortcuts_win.glade:308
+#: src/tau/src/ui/shortcuts_win.glade:320
 msgctxt "shortcut window"
 msgid "Move down for the height of the view and select"
 msgstr "Pindah ke bawah ke ketinggian tampilan dan pilih"
 
-#: src/tau/src/ui/prefs_win_handy.glade:28 src/tau/src/ui/tau.glade:139
-#: src/tau/src/ui/tau.glade:346
+#: src/tau/src/ui/prefs_win_handy.glade:28 src/tau/src/ui/tau.glade:153
+#: src/tau/src/ui/tau.glade:374
 msgid "Preferences"
 msgstr "Preferensi"
 
@@ -665,9 +675,8 @@ msgid "Editor"
 msgstr "Penyunting"
 
 #: src/tau/src/ui/prefs_win_handy.glade:264
-#, fuzzy
 msgid "Indention"
-msgstr "Indention"
+msgstr "Indentasi"
 
 #: src/tau/src/ui/prefs_win_handy.glade:325
 msgid "Automatic indentation"
@@ -685,33 +694,30 @@ msgstr "Penyimpanan berkas"
 msgid "Save files when the Tau goes out of focus"
 msgstr "Menyimpan berkas ketika Tau lepas dari fokus"
 
-#: src/tau/src/ui/prefs_win_handy.glade:396 src/tau/src/main_win.rs:1135
-#: src/tau/src/main_win.rs:1172
+#: src/tau/src/ui/prefs_win_handy.glade:396 src/tau/src/main_win.rs:1252
+#: src/tau/src/main_win.rs:1289
 msgid "Terminal"
 msgstr "Terminal"
 
 #: src/tau/src/ui/prefs_win_handy.glade:400
-#, fuzzy
 msgid "Show the embedded terminal on startup"
-msgstr "Tampilkan terminal tertanam pada saat startup"
+msgstr "Tampilkan terminal tertanam pada saat awal mula"
 
 #: src/tau/src/ui/prefs_win_handy.glade:413
 msgid "What shell to start"
 msgstr "Shell apa yang dimulai"
 
 #: src/tau/src/ui/prefs_win_handy.glade:428
-#, fuzzy
 msgid "Highlighting spaces"
-msgstr "Menyoroti Ruang"
+msgstr "Menyoroti spasi"
 
 #: src/tau/src/ui/prefs_win_handy.glade:500
 msgid "Don't draw spaces"
 msgstr "Jangan menggambar spasi"
 
 #: src/tau/src/ui/prefs_win_handy.glade:519
-#, fuzzy
 msgid "Highlighting tabs"
-msgstr "Menyorot tab"
+msgstr "Menyoroti tab"
 
 #: src/tau/src/ui/prefs_win_handy.glade:591
 msgid "Don't draw tabs"
@@ -722,143 +728,137 @@ msgstr "Jangan menggambar tab"
 msgid "Font configuration"
 msgstr "Konfigurasi fonta"
 
-#: src/tau/src/ui/tau.glade:22 src/tau/src/ui/tau.glade:229
+#: src/tau/src/ui/tau.glade:22 src/tau/src/ui/tau.glade:243
 msgid "Save As…"
 msgstr "Simpan Sebagai…"
 
-#: src/tau/src/ui/tau.glade:36 src/tau/src/ui/tau.glade:243
+#: src/tau/src/ui/tau.glade:36 src/tau/src/ui/tau.glade:257
 msgid "Save All"
 msgstr "Simpan Semua"
 
-#: src/tau/src/ui/tau.glade:61 src/tau/src/ui/tau.glade:268
+#: src/tau/src/ui/tau.glade:61 src/tau/src/ui/tau.glade:282
 msgid "Find…"
 msgstr "Cari…"
 
-#: src/tau/src/ui/tau.glade:75 src/tau/src/ui/tau.glade:282
+#: src/tau/src/ui/tau.glade:75 src/tau/src/ui/tau.glade:296
 msgid "Replace…"
 msgstr "Ganti…"
 
-#: src/tau/src/ui/tau.glade:100 src/tau/src/ui/tau.glade:307
+#: src/tau/src/ui/tau.glade:89 src/tau/src/ui/tau.glade:310
+msgid "Go To Line…"
+msgstr "Ke Barise…"
+
+#: src/tau/src/ui/tau.glade:114 src/tau/src/ui/tau.glade:335
 msgid "Show Terminal"
 msgstr "Tampilkan Terminal"
 
-#: src/tau/src/ui/tau.glade:114 src/tau/src/ui/tau.glade:321
+#: src/tau/src/ui/tau.glade:128 src/tau/src/ui/tau.glade:349
 msgid "Toggle Fullscreen"
 msgstr "Jungkit Mode Layar Penuh"
 
-#: src/tau/src/ui/tau.glade:164 src/tau/src/ui/tau.glade:371
+#: src/tau/src/ui/tau.glade:178 src/tau/src/ui/tau.glade:399
 msgid "Help"
 msgstr "Bantuan"
 
-#: src/tau/src/ui/tau.glade:178 src/tau/src/ui/tau.glade:385
+#: src/tau/src/ui/tau.glade:192 src/tau/src/ui/tau.glade:413
 msgid "Keyboard Shortcuts"
 msgstr "Pintasan Papan Tik"
 
-#: src/tau/src/ui/tau.glade:192 src/tau/src/ui/tau.glade:399
+#: src/tau/src/ui/tau.glade:206 src/tau/src/ui/tau.glade:427
 msgid "About Tau"
 msgstr "Tentang Tau"
 
-#: src/tau/src/ui/tau.glade:434 src/tau/src/ui/tau.glade:543
-#: src/tau/src/main_win.rs:1590
+#: src/tau/src/ui/tau.glade:462 src/tau/src/ui/tau.glade:571
+#: src/tau/src/main_win.rs:1701
 msgid "Open"
 msgstr "Buka"
 
-#: src/tau/src/ui/tau.glade:475 src/tau/src/ui/tau.glade:603
-#: src/tau/src/main_win.rs:1320 src/tau/src/main_win.rs:1767
+#: src/tau/src/ui/tau.glade:503 src/tau/src/ui/tau.glade:631
+#: src/tau/src/main_win.rs:1437 src/tau/src/main_win.rs:1873
 msgid "Save"
 msgstr "Simpan"
 
-#: src/editview/src/edit_view.rs:186 src/editview/src/edit_view.rs:188
-#: src/tau/src/main_win.rs:1047 src/tau/src/main_win.rs:1050
-#: src/tau/src/main_win.rs:1873
+#: src/editview/src/edit_view.rs:195 src/editview/src/edit_view.rs:197
+#: src/tau/src/main_win.rs:1118 src/tau/src/main_win.rs:1121
+#: src/tau/src/main_win.rs:1978
 msgid "Untitled"
 msgstr "Tanpa judul"
 
-#: src/editview/src/edit_view.rs:924 src/editview/src/edit_view.rs:934
+#: src/editview/src/edit_view.rs:977 src/editview/src/edit_view.rs:987
 msgid "Line"
 msgstr "Baris"
 
-#: src/editview/src/edit_view.rs:939
+#: src/editview/src/edit_view.rs:992
 msgid "Column"
 msgstr "Kolom"
 
 #. We localized it ourselves, so we have to turn it into English again when sending it to Xi
-#: src/editview/src/edit_view.rs:1553 src/editview/src/view_item.rs:221
-#: src/editview/src/view_item.rs:337
+#: src/editview/src/edit_view.rs:1599 src/editview/src/view_item.rs:242
+#: src/editview/src/view_item.rs:348
 msgid "Plain Text"
 msgstr "Teks Polos"
 
-#: src/editview/src/view_item.rs:99 src/editview/src/view_item.rs:238
+#: src/editview/src/view_item.rs:111 src/editview/src/view_item.rs:259
 msgid "Tab Size"
 msgstr "Ukuran Tab"
 
-#: src/tau/src/about_win.rs:17
+#: src/tau/src/about_win.rs:21
 msgid "GTK frontend for the xi text editor, written in Rust"
 msgstr "Frontend GTK untuk penyunting teks xi, ditulis dalam Rust"
 
-#: src/tau/src/about_win.rs:25
+#: src/tau/src/about_win.rs:29
 msgid "translator-credits"
 msgstr "Andika Triwidada <andika@gmail.com>, 2020."
 
-#: src/tau/src/functions.rs:132
+#: src/tau/src/functions.rs:72
 msgid "Welcome to Tau's terminal."
 msgstr "Selamat datang di terminal Tau."
 
-#: src/tau/src/main.rs:119
+#: src/tau/src/main.rs:117
 msgid "Start a new instance of the application"
 msgstr "Memulai sebuah instance baru dari aplikasi"
 
-#: src/tau/src/main.rs:283
-msgid "Failed open new view due to error"
-msgstr "Gagal membuka tampilan baru karena kesalahan"
-
-#: src/tau/src/main.rs:351 src/tau/src/main_win.rs:1657
-msgid "Failed to open new view due to error"
-msgstr "Gagal membuka tampilan baru karena kesalahan"
-
-#: src/tau/src/main_win.rs:986 src/tau/src/main_win.rs:994
-#, fuzzy
+#: src/tau/src/main_win.rs:1057 src/tau/src/main_win.rs:1065
 msgid ""
 "Couldn’t get Documents directory to autosave unnamed file. Please make sure "
 "“XDG_DATA_DIR” or similar is set."
 msgstr ""
-"Tidak bisa mendapatkan direktori dokumen untuk autosave berkas tanpa nama. "
+"Tidak bisa mendapatkan direktori Dokumen untuk autosave berkas tanpa nama. "
 "Pastikan \"XDG_DATA_DIR\" atau yang serupa sudah diatur."
 
-#: src/tau/src/main_win.rs:1309
+#: src/tau/src/main_win.rs:1426
 msgid "Save unsaved changes"
 msgstr "Menyimpan perubahan yang belum disimpan"
 
-#: src/tau/src/main_win.rs:1312
+#: src/tau/src/main_win.rs:1429
 msgid "Close Without Saving"
 msgstr "Tutup Tanpa Menyimpan"
 
-#: src/tau/src/main_win.rs:1316 src/tau/src/main_win.rs:1591
-#: src/tau/src/main_win.rs:1768
+#: src/tau/src/main_win.rs:1433 src/tau/src/main_win.rs:1702
+#: src/tau/src/main_win.rs:1874
 msgid "Cancel"
 msgstr "Batal"
 
-#: src/tau/src/main_win.rs:1587
+#: src/tau/src/main_win.rs:1698
 msgid "Open a file to edit"
 msgstr "Membuka berkas untuk menyunting"
 
-#: src/tau/src/main_win.rs:1616
+#: src/tau/src/main_win.rs:1727
 msgid "Couldn’t open file"
 msgstr "Tidak dapat membuka berkas"
 
-#: src/tau/src/main_win.rs:1764
+#: src/tau/src/main_win.rs:1870
 msgid "Save file"
 msgstr "Simpan berkas"
 
-#: src/tau/src/main_win.rs:1806
+#: src/tau/src/main_win.rs:1912
 msgid "Couldn’t save file"
 msgstr "Tidak bisa menyimpan berkas"
 
-#: src/tau/src/prefs_win.rs:435
-#, fuzzy
+#: src/tau/src/prefs_win.rs:439
 msgid ""
 "Couldn’t find the xi-syntect-plugin. As such these settings won’t work in "
 "the current session."
 msgstr ""
-"Tidak dapat menemukan plugin Xi-syntect. Dengan demikian pengaturan ini "
-"tidak akan bekerja pada sesi saat ini."
+"Tidak dapat menemukan xi-syntect-plugin. Karena pengaturan ini tidak akan "
+"bekerja pada sesi saat ini."
