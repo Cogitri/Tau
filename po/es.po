@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tau\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Tau/issues\n"
-"POT-Creation-Date: 2020-06-07 07:37+0000\n"
+"POT-Creation-Date: 2020-06-09 15:21+0000\n"
 "PO-Revision-Date: 2020-06-09 17:17+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Spanish - Spain <gnome-es-list@gnome.org>\n"
@@ -557,8 +557,6 @@ msgid "Select all"
 msgstr "Seleccionar todo"
 
 #: src/tau/src/ui/shortcuts_win.glade:248
-#| msgctxt "shortcut window"
-#| msgid "Highlight the next occurrence of the current selection"
 msgctxt "shortcut window"
 msgid "Select all occurences of the current selection"
 msgstr "Seleccionar todas las ocurrencias de la selección actual"
@@ -822,7 +820,7 @@ msgstr ""
 
 #: src/tau/src/functions.rs:72
 msgid "Welcome to Tau's terminal."
-msgstr "Bienvenido a la terminal de Tau"
+msgstr "Bienvenido/a a la terminal de Tau"
 
 #: src/tau/src/main.rs:117
 msgid "Start a new instance of the application"
