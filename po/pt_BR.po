@@ -1,15 +1,16 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# Brazilian Portuguese translation of Tau.
+# Copyright (C) YEAR Tau'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the gxi package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Maxice8 <unknown email address>, unknown YEAR.
+# Enrico Nicoletto <liverig@gmail.com>, 2020.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Tau\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-11 11:59+0200\n"
-"PO-Revision-Date: 2020-04-12 09:48-0300\n"
-"Last-Translator: maxice8 <thinkabit.ukim@gmail.com>\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Tau/issues\n"
+"POT-Creation-Date: 2020-06-07 07:37+0000\n"
+"PO-Revision-Date: 2020-09-09 19:31-0300\n"
+"Last-Translator: Enrico Nicoletto <liverig@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://hosted.weblate.org/projects/gxi/"
 "translation/pt_BR/>\n"
 "Language: pt_BR\n"
@@ -17,7 +18,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Poedit 2.3\n"
+"X-Generator: Poedit 2.4.1\n"
 
 #: data/org.gnome.Tau.appdata.xml.in.in:7 data/org.gnome.Tau.desktop.in.in:3
 msgid "Tau"
@@ -37,207 +38,9 @@ msgstr "Tau é um editor de texto em GTK rápido e simples"
 msgid "Rasmus “Cogitri” Thomsen"
 msgstr "Rasmus \"Cogitri\" Thomsen"
 
-#: data/org.gnome.Tau.appdata.xml.in.in:315
-#: data/org.gnome.Tau.appdata.xml.in.in:345
-msgid "Changes in this release:"
-msgstr "Mudanças nesta edição:"
-
-#: data/org.gnome.Tau.appdata.xml.in.in:317
-msgid "Keybind Shift+Tab to outdent"
-msgstr ""
-
-#: data/org.gnome.Tau.appdata.xml.in.in:318
-msgid "Keybind Escape to stopping the current search"
-msgstr ""
-
-#: data/org.gnome.Tau.appdata.xml.in.in:319
-msgid "Keybind Ctrl+Backspace to delete_word_backward"
-msgstr ""
-
-#: data/org.gnome.Tau.appdata.xml.in.in:320
-msgid "Open in existing tab if there's an empty tab"
-msgstr "Abrir na taba atual se a mesma estiver vazia"
-
-#: data/org.gnome.Tau.appdata.xml.in.in:321
-msgid "Add zh_Hans and zh-Hant to LINGUAS file"
-msgstr ""
-"Foram adicionadas traduções em Chinês simplificado e Chinês tradicional"
-
-#: data/org.gnome.Tau.appdata.xml.in.in:322
-msgid "Support setting a custom tab size"
-msgstr "Suporte para tamanho arbitrário da tabulação"
-
-#: data/org.gnome.Tau.appdata.xml.in.in:324
-msgid "Bugfixes in this relase:"
-msgstr "Falhas resolvidas nesta edição:"
-
-#: data/org.gnome.Tau.appdata.xml.in.in:326
-msgid "Remove startup_id property of ApplicationWindow"
-msgstr ""
-
-#: data/org.gnome.Tau.appdata.xml.in.in:327
-msgid "Measure FontMetrics in en-US locale"
-msgstr ""
-
-#: data/org.gnome.Tau.appdata.xml.in.in:328
-msgid "Use IMContextSimple to fix inserting dead/non latin characters"
-msgstr ""
-
-#: data/org.gnome.Tau.appdata.xml.in.in:329
-msgid ""
-"Update languages: Chinese (Traditional), Portuguese (Brazil) and Norwegian "
-"Bokmål"
-msgstr ""
-"Traduções atualizadas: Chinês tradicional, Português Brasileiro e Norueguês"
-
-#: data/org.gnome.Tau.appdata.xml.in.in:335
-msgid "Bugfix release to fix build on flathub and trace log app_id on startup."
-msgstr ""
-
-#: data/org.gnome.Tau.appdata.xml.in.in:340
-msgid "Bugfix release to include meson_options.txt in the release tarballs."
-msgstr ""
-"Versão para conserto de problemas que incluem um arquivo (meson_options.txt) "
-"que não estava disponível."
-
-#: data/org.gnome.Tau.appdata.xml.in.in:347
-msgid "Display an ErrorDialog if Xi sends 'error'"
-msgstr "Mostrar um dialogo de erro se Xi enviar um erro"
-
-#: data/org.gnome.Tau.appdata.xml.in.in:348
-msgid "Rework the FindReplace dialog to be more compact"
-msgstr "Refazer o diálogo de achar-e-substituir para ser mais compacto"
-
-#: data/org.gnome.Tau.appdata.xml.in.in:349
-msgid ""
-"Add a regex, case sensitive and whole word matching option to the find dialog"
-msgstr ""
-"Diálogo de pesquisa agora tem suporte a expressões regulares, Diferenciar "
-"Maiúsculas/Minúsculas e considerar apenas palavras completas"
-
-#: data/org.gnome.Tau.appdata.xml.in.in:350
-msgid "Set Ctrl+W as shortcut for closing the current tab"
-msgstr ""
-
-#: data/org.gnome.Tau.appdata.xml.in.in:351
-msgid ""
-"Makes cut/copy operations non-blocking (fixes copy/paste when word-wrap is "
-"enabled)"
-msgstr ""
-"Operações de copiar e colar não irão mais travar a interface enquanto são "
-"feitas"
-
-#: data/org.gnome.Tau.appdata.xml.in.in:352
-msgid "Fix scrolling when the cursor goes out of the view"
-msgstr ""
-
-#: data/org.gnome.Tau.appdata.xml.in.in:358
-msgid ""
-"This release adds an option for creating a right hand margin. It uses a "
-"different save dialog, and fixes pressing 'Cancel' in it."
-msgstr ""
-"Essa versão adiciona uma opção para mostrar uma margem direita. Também usa "
-"um diálogo de salvar diferente, e conserta apertar “Cancelar” nele."
-
-#: data/org.gnome.Tau.appdata.xml.in.in:363
-msgid ""
-"This release made the linecount nicer (as in more visible/readable). gxi "
-"also offers a Norwegian Bokmål translation."
-msgstr ""
-
-#: data/org.gnome.Tau.appdata.xml.in.in:368
-msgid ""
-"Ask user if changes should be saved upon closing. Also makes panics more "
-"readable."
-msgstr ""
-"Perguntar se mudanças devem ser salvas antes. Também faz pânicos serem mais "
-"legíveis."
-
-#: data/org.gnome.Tau.appdata.xml.in.in:373
-msgid ""
-"This release fixes the linecount upon deleting lines and fixes some crashes. "
-"It also adds a new icon."
-msgstr ""
-"Essa versão corrige a contagem de linhas quando são deletadas e também "
-"elimina certas terminações abruptas do programa. Um novo ícone também é "
-"adicionado."
-
-#: data/org.gnome.Tau.appdata.xml.in.in:381
-msgid "This release fixes the build without appstream-util."
-msgstr "Essa versão corrige a construção sem appstream-util."
-
-#: data/org.gnome.Tau.appdata.xml.in.in:386
-msgid "This release contains the following feature changes:"
-msgstr "Essa versão possui as seguintes mudanças de funções:"
-
-#: data/org.gnome.Tau.appdata.xml.in.in:388
-msgid "More verbose trace logging"
-msgstr "Maior verbosidade no logging"
-
-#: data/org.gnome.Tau.appdata.xml.in.in:389
-msgid "Use a thread to handle CoreMsgs instead of add_idle"
-msgstr "Use uma thread para responder CoreMsgs ao invés de add_idle"
-
-#: data/org.gnome.Tau.appdata.xml.in.in:390
-msgid "Display error window if xi-editor crashes"
-msgstr ""
-"Mostre mensagem de erro se xi-editor terminar execução de forma abrupta"
-
-#: data/org.gnome.Tau.appdata.xml.in.in:391
-msgid "Add newline to end of the file if it doesn't terminate with one"
-msgstr "Adicione um fim de linha automaticamente no arquivo"
-
-#: data/org.gnome.Tau.appdata.xml.in.in:392
-msgid "Only draw trailing spaces"
-msgstr "Mostrar apenas espaços desnecessários à direita do texto"
-
-#: data/org.gnome.Tau.appdata.xml.in.in:393
-msgid "Also use for sending stuff to xi"
-msgstr "(Também use para enviar conteúdo para xi"
-
-#: data/org.gnome.Tau.appdata.xml.in.in:394
-msgid "Build against system gettext"
-msgstr "Use o gettext do sistema"
-
-#: data/org.gnome.Tau.appdata.xml.in.in:400
-msgid ""
-"Fix hangs during startup, add 'Replace…' button and shortcut. Adds an option "
-"to visually draw spaces/tabs."
-msgstr ""
-"Corrige travamentos na inicialização do programa, botão e atalho de  "
-"'Substituir…' adicionado. Adiciona uma opção para mostrar espaçamento por "
-"espaços e por tabulações"
-
-#: data/org.gnome.Tau.appdata.xml.in.in:405
-msgid ""
-"Use FileChooserNative instead of FileChooserDialog, fixes file opening/"
-"saving in flatpaks."
-msgstr ""
-"Use FileChooserNative em vez de FileChooserDialog, corrige abrir e salvar "
-"arquivos em flatpaks."
-
-#: data/org.gnome.Tau.appdata.xml.in.in:410
-msgid ""
-"Use GSettings to determine the default font, making for a more seamless "
-"experience on first start."
-msgstr ""
-"Use GSettings para determinar a fonte padrão, permitindo uma melhor "
-"experiência no primeiro uso "
-
-#: data/org.gnome.Tau.appdata.xml.in.in:415
-msgid "Use GSettings for GXI config instead of a TOML file, add appdata."
-msgstr ""
-"Use GSettings para configuração do GXI em vez de arquivo em TOML, adiciona "
-"appdata."
-
 #: data/org.gnome.Tau.desktop.in.in:5
 msgid "The Tau text editor"
 msgstr "O editor de texto Tau"
-
-#. Translators: Do NOT translate or transliterate this text (this is an icon file name)!
-#: data/org.gnome.Tau.desktop.in.in:9
-msgid "@application_id@"
-msgstr "@application_id@"
 
 #. Translators: Search terms to find this application. Do NOT translate or localize the semicolons! The list MUST also end with a semicolon!
 #: data/org.gnome.Tau.desktop.in.in:15
@@ -436,7 +239,7 @@ msgstr "Mostrar número de linha"
 
 #: data/org.gnome.Tau.gschema.xml:183
 msgid "Whether or not to show the line count in the editing pane"
-msgstr ""
+msgstr "Se deve, ou não, mostrar o contador de linhas no painel de edição"
 
 #: data/org.gnome.Tau.gschema.xml:190
 msgid "Open files"
@@ -444,7 +247,7 @@ msgstr "Abrir arquivos"
 
 #: data/org.gnome.Tau.gschema.xml:191
 msgid "List of file paths open in the current or most recent session"
-msgstr ""
+msgstr "Lista de caminhos de arquivos abertos na sessão atual ou mais recente"
 
 #: data/org.gnome.Tau.gschema.xml:198
 msgid "Restore session"
@@ -452,7 +255,7 @@ msgstr "Restaurar sessão"
 
 #: data/org.gnome.Tau.gschema.xml:199
 msgid "Whether or not to restore last session on start-up"
-msgstr ""
+msgstr "Se deve, ou não, restaurar a última sessão ao iniciar"
 
 #: data/org.gnome.Tau.gschema.xml:206
 msgid "Full path in title bar"
@@ -462,6 +265,8 @@ msgstr "Caminho completo na barra de título"
 msgid ""
 "Whether or not to display full path instead of file name in Tau's title bar."
 msgstr ""
+"Se deve, ou não, exibir o caminho completo ao invés do nome do arquivo na "
+"barra de títulos do Tau."
 
 #: data/org.gnome.Tau.gschema.xml:214
 msgid "Show terminal"
@@ -470,6 +275,7 @@ msgstr "Mostrar Terminal"
 #: data/org.gnome.Tau.gschema.xml:215
 msgid "Whether or not to show an integrated terminal in Tau's editing pane"
 msgstr ""
+"Se deve, ou não, mostrar um terminal integrado no painel de edição do Tau"
 
 #: data/org.gnome.Tau.gschema.xml:222
 msgid "Path to the shell executable"
@@ -484,10 +290,12 @@ msgid "Cut"
 msgstr "Recortar"
 
 #: src/editview/src/ui/context_menu.glade:10
+#: src/tau/src/ui/terminal_context_menu.glade:5
 msgid "Copy"
 msgstr "Copiar"
 
 #: src/editview/src/ui/context_menu.glade:14
+#: src/tau/src/ui/terminal_context_menu.glade:9
 msgid "Paste"
 msgstr "Colar"
 
@@ -500,6 +308,7 @@ msgid "Redo"
 msgstr "Refazer"
 
 #: src/editview/src/ui/context_menu.glade:30
+#: src/tau/src/ui/terminal_context_menu.glade:13
 msgid "Select All"
 msgstr "Selecionar tudo"
 
@@ -522,6 +331,8 @@ msgstr "Trocar entre Achar e Achar-e-substituir"
 #: src/editview/src/ui/find_replace.glade:123
 msgid "Show or hide search options such as case sensitivity"
 msgstr ""
+"Mostra ou oculta opções de pesquisa tais como sensibilidade a caixa alta/"
+"baixa"
 
 #: src/editview/src/ui/find_replace.glade:160
 #: src/editview/src/ui/find_replace.glade:170
@@ -572,7 +383,7 @@ msgstr "Salvar o documento"
 #: src/tau/src/ui/shortcuts_win.glade:36
 msgctxt "shortcut window"
 msgid "Save the document as…"
-msgstr "Salvar o documento como..."
+msgstr "Salvar o documento como…"
 
 #: src/tau/src/ui/shortcuts_win.glade:42
 msgctxt "shortcut window"
@@ -596,225 +407,235 @@ msgstr "Documento anterior"
 
 #: src/tau/src/ui/shortcuts_win.glade:65
 msgctxt "shortcut window"
+msgid "Go to line"
+msgstr "Vai para a linha"
+
+#: src/tau/src/ui/shortcuts_win.glade:71
+msgctxt "shortcut window"
 msgid "Toggle fullscreen"
 msgstr "Tela inteira"
 
-#: src/tau/src/ui/shortcuts_win.glade:72 src/tau/src/ui/shortcuts_win.glade:76
+#: src/tau/src/ui/shortcuts_win.glade:78 src/tau/src/ui/shortcuts_win.glade:82
 msgctxt "shortcut window"
 msgid "Find"
 msgstr "Achar"
 
-#: src/tau/src/ui/shortcuts_win.glade:82
+#: src/tau/src/ui/shortcuts_win.glade:88
 msgctxt "shortcut window"
 msgid "Find the next match"
 msgstr "Ir para o próximo resultado"
 
-#: src/tau/src/ui/shortcuts_win.glade:88
+#: src/tau/src/ui/shortcuts_win.glade:94
 msgctxt "shortcut window"
 msgid "Find the previous match"
 msgstr "Ir para o resultado anterior"
 
-#: src/tau/src/ui/shortcuts_win.glade:94
+#: src/tau/src/ui/shortcuts_win.glade:100
 msgctxt "shortcut window"
 msgid "Find and replace"
 msgstr "Achar e substituir"
 
-#: src/tau/src/ui/shortcuts_win.glade:100
+#: src/tau/src/ui/shortcuts_win.glade:106
 msgctxt "shortcut window"
 msgid "Find all matches"
 msgstr "Selecionar todos os resultados"
 
-#: src/tau/src/ui/shortcuts_win.glade:106
+#: src/tau/src/ui/shortcuts_win.glade:112
 msgctxt "shortcut window"
 msgid "Close the find window"
 msgstr "Fechar janela de busca"
 
-#: src/tau/src/ui/shortcuts_win.glade:114
+#: src/tau/src/ui/shortcuts_win.glade:120
 msgctxt "shortcut window"
 msgid "Editing"
 msgstr "Editando"
 
-#: src/tau/src/ui/shortcuts_win.glade:118
+#: src/tau/src/ui/shortcuts_win.glade:124
 msgctxt "shortcut window"
 msgid "Highlight the next occurrence of the current selection"
 msgstr "Realçar próxima ocorrência da busca atual"
 
-#: src/tau/src/ui/shortcuts_win.glade:124
+#: src/tau/src/ui/shortcuts_win.glade:130
 msgctxt "shortcut window"
 msgid "Delete the current selection"
 msgstr "Apagar tudo selecionado"
 
-#: src/tau/src/ui/shortcuts_win.glade:130
+#: src/tau/src/ui/shortcuts_win.glade:136
 msgctxt "shortcut window"
 msgid "Delete an entire word"
 msgstr "Apagar a palavra"
 
-#: src/tau/src/ui/shortcuts_win.glade:136
+#: src/tau/src/ui/shortcuts_win.glade:142
 msgctxt "shortcut window"
 msgid "Outdent the current selection"
-msgstr ""
+msgstr "Recua a seleção atual"
 
-#: src/tau/src/ui/shortcuts_win.glade:142
+#: src/tau/src/ui/shortcuts_win.glade:148
 msgctxt "shortcut window"
 msgid "Move to start of the line"
 msgstr "Ir para o início da linha"
 
-#: src/tau/src/ui/shortcuts_win.glade:148
+#: src/tau/src/ui/shortcuts_win.glade:154
 msgctxt "shortcut window"
 msgid "Move to start of the document"
 msgstr "Ir para o início do documento"
 
-#: src/tau/src/ui/shortcuts_win.glade:155
+#: src/tau/src/ui/shortcuts_win.glade:161
 msgctxt "shortcut window"
 msgid "Move to end of the line"
 msgstr "Ir para o fim da linha"
 
-#: src/tau/src/ui/shortcuts_win.glade:161
+#: src/tau/src/ui/shortcuts_win.glade:167
 msgctxt "shortcut window"
 msgid "Move to end of the document"
 msgstr "Ir para o fim do documento"
 
-#: src/tau/src/ui/shortcuts_win.glade:167
+#: src/tau/src/ui/shortcuts_win.glade:173
 msgctxt "shortcut window"
 msgid "Move up for the height of the view"
 msgstr "Subir uma página"
 
-#: src/tau/src/ui/shortcuts_win.glade:173
+#: src/tau/src/ui/shortcuts_win.glade:179
 msgctxt "shortcut window"
 msgid "Move down for the height of the view"
 msgstr "Descer uma página "
 
-#: src/tau/src/ui/shortcuts_win.glade:179
+#: src/tau/src/ui/shortcuts_win.glade:185
 msgctxt "shortcut window"
 msgid "Enable/Disable the cursor"
 msgstr "Ativar/Desativar o cursor"
 
-#: src/tau/src/ui/shortcuts_win.glade:186
+#: src/tau/src/ui/shortcuts_win.glade:192
 msgctxt "shortcut window"
 msgid "Copy and Paste"
 msgstr "Copiar e Colar"
 
-#: src/tau/src/ui/shortcuts_win.glade:190
+#: src/tau/src/ui/shortcuts_win.glade:196
 msgctxt "shortcut window"
 msgid "Copy the current selection"
 msgstr "Copiar"
 
-#: src/tau/src/ui/shortcuts_win.glade:196
+#: src/tau/src/ui/shortcuts_win.glade:202
 msgctxt "shortcut window"
 msgid "Paste what's currently in the clipboard"
 msgstr "Colar"
 
-#: src/tau/src/ui/shortcuts_win.glade:202
 #: src/tau/src/ui/shortcuts_win.glade:208
+#: src/tau/src/ui/shortcuts_win.glade:214
 msgctxt "shortcut window"
 msgid "Cut the current selection"
 msgstr "Recortar"
 
-#: src/tau/src/ui/shortcuts_win.glade:215
+#: src/tau/src/ui/shortcuts_win.glade:221
 msgctxt "shortcut window"
 msgid "Undo and Redo"
 msgstr "Desfazer e Refazer"
 
-#: src/tau/src/ui/shortcuts_win.glade:219
+#: src/tau/src/ui/shortcuts_win.glade:225
 msgctxt "shortcut window"
 msgid "Undo"
 msgstr "Desfazer"
 
-#: src/tau/src/ui/shortcuts_win.glade:225
+#: src/tau/src/ui/shortcuts_win.glade:231
 msgctxt "shortcut window"
 msgid "Redo"
 msgstr "Refazer"
 
 # Usado em Atalhos de teclado, todos os comandos são relacionados a selecionar texto
-#: src/tau/src/ui/shortcuts_win.glade:232
+#: src/tau/src/ui/shortcuts_win.glade:238
 msgctxt "shortcut window"
 msgid "Selections"
 msgstr "Selecionando texto"
 
-#: src/tau/src/ui/shortcuts_win.glade:236
+#: src/tau/src/ui/shortcuts_win.glade:242
 msgctxt "shortcut window"
 msgid "Select all"
 msgstr "Selecionar tudo"
 
-#: src/tau/src/ui/shortcuts_win.glade:242
+#: src/tau/src/ui/shortcuts_win.glade:248
+msgctxt "shortcut window"
+msgid "Select all occurences of the current selection"
+msgstr "Seleciona todas as ocorrências da seleção atual"
+
+#: src/tau/src/ui/shortcuts_win.glade:254
 msgctxt "shortcut window"
 msgid "Move up and select everything from current cursor position"
 msgstr "Selecionar tudo acima da posição do cursor"
 
-#: src/tau/src/ui/shortcuts_win.glade:248
+#: src/tau/src/ui/shortcuts_win.glade:260
 msgctxt "shortcut window"
 msgid "Move down and select everything from current cursor position"
 msgstr "Selecionar tudo abaixo da posição do cursor"
 
-#: src/tau/src/ui/shortcuts_win.glade:254
+#: src/tau/src/ui/shortcuts_win.glade:266
 msgctxt "shortcut window"
 msgid "Move left and select everything from current cursor position"
 msgstr "Selecionar próximo caracter a direita"
 
-#: src/tau/src/ui/shortcuts_win.glade:260
+#: src/tau/src/ui/shortcuts_win.glade:272
 msgctxt "shortcut window"
 msgid "Move left and select the next word"
 msgstr "Selecionar próxima palavra a esquerda"
 
-#: src/tau/src/ui/shortcuts_win.glade:266
+#: src/tau/src/ui/shortcuts_win.glade:278
 msgctxt "shortcut window"
 msgid "Move right and select everything from current cursor position"
 msgstr "Selecionar próximo caracter a esquerda"
 
-#: src/tau/src/ui/shortcuts_win.glade:272
+#: src/tau/src/ui/shortcuts_win.glade:284
 msgctxt "shortcut window"
 msgid "Move right and select the next word"
 msgstr "Selecionar próxima palavra a direita"
 
-#: src/tau/src/ui/shortcuts_win.glade:278
+#: src/tau/src/ui/shortcuts_win.glade:290
 msgctxt "shortcut window"
 msgid "Move to start of the line and select"
 msgstr ""
 "ir para o início da linha e selecionar tudo entre o cursor e o início da "
 "linha"
 
-#: src/tau/src/ui/shortcuts_win.glade:284
+#: src/tau/src/ui/shortcuts_win.glade:296
 msgctxt "shortcut window"
 msgid "Move to start of the document and select"
 msgstr ""
 "Ir para o início do documento e selecionar tudo entre o cursor e o início do "
 "documento"
 
-#: src/tau/src/ui/shortcuts_win.glade:290
+#: src/tau/src/ui/shortcuts_win.glade:302
 msgctxt "shortcut window"
 msgid "Move to end of the line and select"
 msgstr ""
 "Ir para o fim da linha e selecionar tudo entre o cursor e o fim da linha"
 
-#: src/tau/src/ui/shortcuts_win.glade:296
+#: src/tau/src/ui/shortcuts_win.glade:308
 msgctxt "shortcut window"
 msgid "Move to end of the document and select"
 msgstr ""
 "Ir para o fim do documento e selecionar tudo entre o cursor e o fim do "
 "documento"
 
-#: src/tau/src/ui/shortcuts_win.glade:302
+#: src/tau/src/ui/shortcuts_win.glade:314
 msgctxt "shortcut window"
 msgid "Move up for the height of the view and select"
 msgstr "Subir uma página e selecionar tudo entre o cursor e a página anterior"
 
-#: src/tau/src/ui/shortcuts_win.glade:308
+#: src/tau/src/ui/shortcuts_win.glade:320
 msgctxt "shortcut window"
 msgid "Move down for the height of the view and select"
 msgstr "Descer uma página e selecionar tudo entre o cursor e a página anterior"
 
-#: src/tau/src/ui/prefs_win_handy.glade:28 src/tau/src/ui/tau.glade:139
-#: src/tau/src/ui/tau.glade:346
+#: src/tau/src/ui/prefs_win_handy.glade:28 src/tau/src/ui/tau.glade:153
+#: src/tau/src/ui/tau.glade:374
 msgid "Preferences"
 msgstr "Preferencias"
 
 #: src/tau/src/ui/prefs_win_handy.glade:39
 msgid "View"
-msgstr ""
+msgstr "Visualizar"
 
 #: src/tau/src/ui/prefs_win_handy.glade:40
 msgid "Preferences related to the View’s look"
-msgstr ""
+msgstr "Preferências relacionadas a aparência da Visualização"
 
 #: src/tau/src/ui/prefs_win_handy.glade:44
 msgid "Display right hand margin"
@@ -881,8 +702,8 @@ msgstr "Salvando arquivos"
 msgid "Save files when the Tau goes out of focus"
 msgstr "Salvar arquivos quando Tau perde o foco"
 
-#: src/tau/src/ui/prefs_win_handy.glade:396 src/tau/src/main_win.rs:1135
-#: src/tau/src/main_win.rs:1172
+#: src/tau/src/ui/prefs_win_handy.glade:396 src/tau/src/main_win.rs:1252
+#: src/tau/src/main_win.rs:1289
 msgid "Terminal"
 msgstr "Terminal"
 
@@ -916,102 +737,100 @@ msgstr "Não mostrar tabulações"
 msgid "Font configuration"
 msgstr "Configuração da fonte"
 
-#: src/tau/src/ui/tau.glade:22 src/tau/src/ui/tau.glade:229
+#: src/tau/src/ui/tau.glade:22 src/tau/src/ui/tau.glade:243
 msgid "Save As…"
-msgstr "Salvar Como..."
+msgstr "Salvar Como…"
 
-#: src/tau/src/ui/tau.glade:36 src/tau/src/ui/tau.glade:243
+#: src/tau/src/ui/tau.glade:36 src/tau/src/ui/tau.glade:257
 msgid "Save All"
 msgstr "Salvar Todos"
 
-#: src/tau/src/ui/tau.glade:61 src/tau/src/ui/tau.glade:268
+#: src/tau/src/ui/tau.glade:61 src/tau/src/ui/tau.glade:282
 msgid "Find…"
-msgstr "Achar..."
+msgstr "Localizar…"
 
-#: src/tau/src/ui/tau.glade:75 src/tau/src/ui/tau.glade:282
+#: src/tau/src/ui/tau.glade:75 src/tau/src/ui/tau.glade:296
 msgid "Replace…"
-msgstr "Substituir..."
+msgstr "Substituir…"
 
-#: src/tau/src/ui/tau.glade:100 src/tau/src/ui/tau.glade:307
+#: src/tau/src/ui/tau.glade:89 src/tau/src/ui/tau.glade:310
+msgid "Go To Line…"
+msgstr "Ir para a linha…"
+
+#: src/tau/src/ui/tau.glade:114 src/tau/src/ui/tau.glade:335
 msgid "Show Terminal"
 msgstr "Mostrar Terminal"
 
-#: src/tau/src/ui/tau.glade:114 src/tau/src/ui/tau.glade:321
+#: src/tau/src/ui/tau.glade:128 src/tau/src/ui/tau.glade:349
 msgid "Toggle Fullscreen"
 msgstr "Tela Inteira"
 
-#: src/tau/src/ui/tau.glade:164 src/tau/src/ui/tau.glade:371
+#: src/tau/src/ui/tau.glade:178 src/tau/src/ui/tau.glade:399
 msgid "Help"
 msgstr "Ajuda"
 
-#: src/tau/src/ui/tau.glade:178 src/tau/src/ui/tau.glade:385
+#: src/tau/src/ui/tau.glade:192 src/tau/src/ui/tau.glade:413
 msgid "Keyboard Shortcuts"
 msgstr "Atalhos de teclado"
 
-#: src/tau/src/ui/tau.glade:192 src/tau/src/ui/tau.glade:399
+#: src/tau/src/ui/tau.glade:206 src/tau/src/ui/tau.glade:427
 msgid "About Tau"
 msgstr "Sobre"
 
-#: src/tau/src/ui/tau.glade:434 src/tau/src/ui/tau.glade:543
-#: src/tau/src/main_win.rs:1590
+#: src/tau/src/ui/tau.glade:462 src/tau/src/ui/tau.glade:571
+#: src/tau/src/main_win.rs:1701
 msgid "Open"
 msgstr "Abrir"
 
-#: src/tau/src/ui/tau.glade:475 src/tau/src/ui/tau.glade:603
-#: src/tau/src/main_win.rs:1320 src/tau/src/main_win.rs:1767
+#: src/tau/src/ui/tau.glade:503 src/tau/src/ui/tau.glade:631
+#: src/tau/src/main_win.rs:1437 src/tau/src/main_win.rs:1873
 msgid "Save"
 msgstr "Salvar"
 
-#: src/editview/src/edit_view.rs:186 src/editview/src/edit_view.rs:188
-#: src/tau/src/main_win.rs:1047 src/tau/src/main_win.rs:1050
-#: src/tau/src/main_win.rs:1873
+#: src/editview/src/edit_view.rs:195 src/editview/src/edit_view.rs:197
+#: src/tau/src/main_win.rs:1118 src/tau/src/main_win.rs:1121
+#: src/tau/src/main_win.rs:1978
 msgid "Untitled"
 msgstr "Sem Titulo"
 
-#: src/editview/src/edit_view.rs:924 src/editview/src/edit_view.rs:934
+#: src/editview/src/edit_view.rs:977 src/editview/src/edit_view.rs:987
 msgid "Line"
 msgstr "Linha"
 
-#: src/editview/src/edit_view.rs:939
+#: src/editview/src/edit_view.rs:992
 msgid "Column"
 msgstr "Coluna"
 
 #. We localized it ourselves, so we have to turn it into English again when sending it to Xi
-#: src/editview/src/edit_view.rs:1553 src/editview/src/view_item.rs:221
-#: src/editview/src/view_item.rs:337
+#: src/editview/src/edit_view.rs:1599 src/editview/src/view_item.rs:242
+#: src/editview/src/view_item.rs:348
 msgid "Plain Text"
 msgstr "Texto Simples"
 
 # Isso é usado na barra inferior
-#: src/editview/src/view_item.rs:99 src/editview/src/view_item.rs:238
+#: src/editview/src/view_item.rs:111 src/editview/src/view_item.rs:259
 msgid "Tab Size"
 msgstr "Largura da tabulação"
 
-#: src/tau/src/about_win.rs:17
+#: src/tau/src/about_win.rs:21
 msgid "GTK frontend for the xi text editor, written in Rust"
 msgstr "Frontend em GTK para o editor de texto xi, escrito em Rust"
 
-#: src/tau/src/about_win.rs:25
+#: src/tau/src/about_win.rs:29
 msgid "translator-credits"
-msgstr "maxice8"
+msgstr ""
+"maxice8\n"
+"Enrico Nicoletto <liverig@gmail.com>"
 
-#: src/tau/src/functions.rs:132
+#: src/tau/src/functions.rs:72
 msgid "Welcome to Tau's terminal."
 msgstr "Bem vindo ao terminal inbutido do Tau."
 
-#: src/tau/src/main.rs:119
+#: src/tau/src/main.rs:117
 msgid "Start a new instance of the application"
 msgstr "Iniciar nova instância"
 
-#: src/tau/src/main.rs:283
-msgid "Failed open new view due to error"
-msgstr "Falhar em abrir nova taba"
-
-#: src/tau/src/main.rs:351 src/tau/src/main_win.rs:1657
-msgid "Failed to open new view due to error"
-msgstr "Falhar em abrir nova taba"
-
-#: src/tau/src/main_win.rs:986 src/tau/src/main_win.rs:994
+#: src/tau/src/main_win.rs:1057 src/tau/src/main_win.rs:1065
 msgid ""
 "Couldn’t get Documents directory to autosave unnamed file. Please make sure "
 "“XDG_DATA_DIR” or similar is set."
@@ -1019,42 +838,176 @@ msgstr ""
 "Não foi possível achar diretório de documentos para salvar automaticamente. "
 "Por favor garanta que “XDG_DATA_DIR” ou similar esteja definido no ambiente."
 
-#: src/tau/src/main_win.rs:1309
+#: src/tau/src/main_win.rs:1426
 msgid "Save unsaved changes"
 msgstr "Salvar mudanças não salvas"
 
-#: src/tau/src/main_win.rs:1312
+#: src/tau/src/main_win.rs:1429
 msgid "Close Without Saving"
 msgstr "Fechar sem salvar"
 
-#: src/tau/src/main_win.rs:1316 src/tau/src/main_win.rs:1591
-#: src/tau/src/main_win.rs:1768
+#: src/tau/src/main_win.rs:1433 src/tau/src/main_win.rs:1702
+#: src/tau/src/main_win.rs:1874
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: src/tau/src/main_win.rs:1587
+#: src/tau/src/main_win.rs:1698
 msgid "Open a file to edit"
 msgstr "Abrir um arquivo para edição"
 
-#: src/tau/src/main_win.rs:1616
+#: src/tau/src/main_win.rs:1727
 msgid "Couldn’t open file"
 msgstr "Não foi possível abrir o arquivo"
 
-#: src/tau/src/main_win.rs:1764
+#: src/tau/src/main_win.rs:1870
 msgid "Save file"
 msgstr "Salvar arquivo"
 
-#: src/tau/src/main_win.rs:1806
+#: src/tau/src/main_win.rs:1912
 msgid "Couldn’t save file"
 msgstr "Não foi possível salvar o arquivo"
 
-#: src/tau/src/prefs_win.rs:435
+#: src/tau/src/prefs_win.rs:439
 msgid ""
 "Couldn’t find the xi-syntect-plugin. As such these settings won’t work in "
 "the current session."
 msgstr ""
 "Não foi possível achar o plugin de sintaxe específicas.  Funções de sintaxes "
 "específicas não estarão disponíveis nesta sessão."
+
+#~ msgid "Changes in this release:"
+#~ msgstr "Mudanças nesta edição:"
+
+#~ msgid "Open in existing tab if there's an empty tab"
+#~ msgstr "Abrir na taba atual se a mesma estiver vazia"
+
+#~ msgid "Add zh_Hans and zh-Hant to LINGUAS file"
+#~ msgstr ""
+#~ "Foram adicionadas traduções em Chinês simplificado e Chinês tradicional"
+
+#~ msgid "Support setting a custom tab size"
+#~ msgstr "Suporte para tamanho arbitrário da tabulação"
+
+#~ msgid "Bugfixes in this relase:"
+#~ msgstr "Falhas resolvidas nesta edição:"
+
+#~ msgid ""
+#~ "Update languages: Chinese (Traditional), Portuguese (Brazil) and "
+#~ "Norwegian Bokmål"
+#~ msgstr ""
+#~ "Traduções atualizadas: Chinês tradicional, Português Brasileiro e "
+#~ "Norueguês"
+
+#~ msgid "Bugfix release to include meson_options.txt in the release tarballs."
+#~ msgstr ""
+#~ "Versão para conserto de problemas que incluem um arquivo (meson_options."
+#~ "txt) que não estava disponível."
+
+#~ msgid "Display an ErrorDialog if Xi sends 'error'"
+#~ msgstr "Mostrar um dialogo de erro se Xi enviar um erro"
+
+#~ msgid "Rework the FindReplace dialog to be more compact"
+#~ msgstr "Refazer o diálogo de achar-e-substituir para ser mais compacto"
+
+#~ msgid ""
+#~ "Add a regex, case sensitive and whole word matching option to the find "
+#~ "dialog"
+#~ msgstr ""
+#~ "Diálogo de pesquisa agora tem suporte a expressões regulares, Diferenciar "
+#~ "Maiúsculas/Minúsculas e considerar apenas palavras completas"
+
+#~ msgid ""
+#~ "Makes cut/copy operations non-blocking (fixes copy/paste when word-wrap "
+#~ "is enabled)"
+#~ msgstr ""
+#~ "Operações de copiar e colar não irão mais travar a interface enquanto são "
+#~ "feitas"
+
+#~ msgid ""
+#~ "This release adds an option for creating a right hand margin. It uses a "
+#~ "different save dialog, and fixes pressing 'Cancel' in it."
+#~ msgstr ""
+#~ "Essa versão adiciona uma opção para mostrar uma margem direita. Também "
+#~ "usa um diálogo de salvar diferente, e conserta apertar “Cancelar” nele."
+
+#~ msgid ""
+#~ "Ask user if changes should be saved upon closing. Also makes panics more "
+#~ "readable."
+#~ msgstr ""
+#~ "Perguntar se mudanças devem ser salvas antes. Também faz pânicos serem "
+#~ "mais legíveis."
+
+#~ msgid ""
+#~ "This release fixes the linecount upon deleting lines and fixes some "
+#~ "crashes. It also adds a new icon."
+#~ msgstr ""
+#~ "Essa versão corrige a contagem de linhas quando são deletadas e também "
+#~ "elimina certas terminações abruptas do programa. Um novo ícone também é "
+#~ "adicionado."
+
+#~ msgid "This release fixes the build without appstream-util."
+#~ msgstr "Essa versão corrige a construção sem appstream-util."
+
+#~ msgid "This release contains the following feature changes:"
+#~ msgstr "Essa versão possui as seguintes mudanças de funções:"
+
+#~ msgid "More verbose trace logging"
+#~ msgstr "Maior verbosidade no logging"
+
+#~ msgid "Use a thread to handle CoreMsgs instead of add_idle"
+#~ msgstr "Use uma thread para responder CoreMsgs ao invés de add_idle"
+
+#~ msgid "Display error window if xi-editor crashes"
+#~ msgstr ""
+#~ "Mostre mensagem de erro se xi-editor terminar execução de forma abrupta"
+
+#~ msgid "Add newline to end of the file if it doesn't terminate with one"
+#~ msgstr "Adicione um fim de linha automaticamente no arquivo"
+
+#~ msgid "Only draw trailing spaces"
+#~ msgstr "Mostrar apenas espaços desnecessários à direita do texto"
+
+#~ msgid "Also use for sending stuff to xi"
+#~ msgstr "(Também use para enviar conteúdo para xi"
+
+#~ msgid "Build against system gettext"
+#~ msgstr "Use o gettext do sistema"
+
+#~ msgid ""
+#~ "Fix hangs during startup, add 'Replace…' button and shortcut. Adds an "
+#~ "option to visually draw spaces/tabs."
+#~ msgstr ""
+#~ "Corrige travamentos na inicialização do programa, botão e atalho de  "
+#~ "'Substituir…' adicionado. Adiciona uma opção para mostrar espaçamento por "
+#~ "espaços e por tabulações"
+
+#~ msgid ""
+#~ "Use FileChooserNative instead of FileChooserDialog, fixes file opening/"
+#~ "saving in flatpaks."
+#~ msgstr ""
+#~ "Use FileChooserNative em vez de FileChooserDialog, corrige abrir e salvar "
+#~ "arquivos em flatpaks."
+
+#~ msgid ""
+#~ "Use GSettings to determine the default font, making for a more seamless "
+#~ "experience on first start."
+#~ msgstr ""
+#~ "Use GSettings para determinar a fonte padrão, permitindo uma melhor "
+#~ "experiência no primeiro uso "
+
+#~ msgid "Use GSettings for GXI config instead of a TOML file, add appdata."
+#~ msgstr ""
+#~ "Use GSettings para configuração do GXI em vez de arquivo em TOML, "
+#~ "adiciona appdata."
+
+#~ msgid "@application_id@"
+#~ msgstr "@application_id@"
+
+#~ msgid "Failed open new view due to error"
+#~ msgstr "Falhar em abrir nova taba"
+
+#~ msgid "Failed to open new view due to error"
+#~ msgstr "Falhar em abrir nova taba"
 
 #~ msgid "Theme"
 #~ msgstr "Tema"
