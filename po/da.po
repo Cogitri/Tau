@@ -2,13 +2,12 @@
 # Copyright (C) 2020 tau's COPYRIGHT HOLDER
 # This file is distributed under the same license as the tau package.
 # scootergrisen, 2020.
-#
 msgid ""
 msgstr ""
 "Project-Id-Version: tau master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Tau/issues\n"
-"POT-Creation-Date: 2020-01-05 17:21+0000\n"
-"PO-Revision-Date: 2020-01-27 15:43+0200\n"
+"POT-Creation-Date: 2020-09-06 12:17+0000\n"
+"PO-Revision-Date: 2020-10-10 00:00+0200\n"
 "Last-Translator: scootergrisen\n"
 "Language-Team: Danish <dansk@dansk-gruppen.dk>\n"
 "Language: da\n"
@@ -58,23 +57,23 @@ msgstr "Xi-Editors tema"
 msgid "Sets the theme used for the editing area"
 msgstr "Indstiller det tema, som skal bruges til redigeringsområdet"
 
-#: data/org.gnome.Tau.gschema.xml:17
+#: data/org.gnome.Tau.gschema.xml:17 src/tau/src/ui/prefs_win_handy.glade:449
 msgid "Draw trailing spaces"
 msgstr "Tegn efterstillede mellemrum"
 
 #: data/org.gnome.Tau.gschema.xml:18
 msgid "Draw spaces which are at the end of a line"
-msgstr "Tegn mellemrum som er ved en linjes slutning"
+msgstr "Tegn mellemrum som er ved slutningen af en linje"
 
-#: data/org.gnome.Tau.gschema.xml:25
+#: data/org.gnome.Tau.gschema.xml:25 src/tau/src/ui/prefs_win_handy.glade:466
 msgid "Draw leading spaces"
 msgstr "Tegn foranstillede mellemrum"
 
 #: data/org.gnome.Tau.gschema.xml:26
 msgid "Draw spaces which are at the beginning of a line"
-msgstr "Tegn mellemrum som er ved en linjes begyndelse"
+msgstr "Tegn mellemrum som er ved begyndelsen af en linje"
 
-#: data/org.gnome.Tau.gschema.xml:33
+#: data/org.gnome.Tau.gschema.xml:33 src/tau/src/ui/prefs_win_handy.glade:483
 msgid "Draw selected spaces"
 msgstr "Tegn markerede mellemrum"
 
@@ -82,7 +81,7 @@ msgstr "Tegn markerede mellemrum"
 msgid "Draw spaces whenever they are selected"
 msgstr "Tegn mellemrum når de er markeret"
 
-#: data/org.gnome.Tau.gschema.xml:41
+#: data/org.gnome.Tau.gschema.xml:41 src/tau/src/ui/prefs_win_handy.glade:432
 msgid "Draw all spaces"
 msgstr "Tegn alle mellemrum"
 
@@ -130,10 +129,8 @@ msgstr "Indstiller bredden på vinduet ved den næste opstart"
 msgid "Sets if the window should be maximized during the next start-up"
 msgstr "Indstiller om vinduet skal være maksimeret ved den næste opstart"
 
-#: data/org.gnome.Tau.gschema.xml:92 src/editview/src/ui/ev.glade:75
-#: src/tau/src/ui/prefs_win.glade:160 src/tau/src/ui/prefs_win.glade:627
-#: src/tau/src/ui/prefs_win_handy.glade:231
-#: src/tau/src/ui/prefs_win_handy.glade:609
+#: data/org.gnome.Tau.gschema.xml:92 src/editview/src/ui/ev.glade:76
+#: src/tau/src/ui/prefs_win_handy.glade:268
 msgid "Tab size"
 msgstr "Tabulatorstørrelse"
 
@@ -141,10 +138,9 @@ msgstr "Tabulatorstørrelse"
 msgid "Amount of spaces that a tab is wide"
 msgstr "Antal mellemrum som en tabulator er bred"
 
-#: data/org.gnome.Tau.gschema.xml:99 src/editview/src/ui/ev.glade:36
-#: src/tau/src/ui/prefs_win.glade:310 src/tau/src/ui/prefs_win.glade:682
-#: src/tau/src/ui/prefs_win_handy.glade:256
-#: src/tau/src/ui/prefs_win_handy.glade:664
+#: data/org.gnome.Tau.gschema.xml:99 src/editview/src/ui/ev.glade:37
+#: src/tau/src/ui/prefs_win_handy.glade:227
+#: src/tau/src/ui/prefs_win_handy.glade:289
 msgid "Insert spaces instead of tabs"
 msgstr "Indsæt mellemrum i stedet for tabulatorer"
 
@@ -153,7 +149,8 @@ msgid "Whether spaces should be inserted instead of tabs"
 msgstr "Om der skal indsættes mellemrum i stedet for tabulatorer"
 
 #: data/org.gnome.Tau.gschema.xml:105
-msgid "Treat indention with spaces like tabs"
+#| msgid "Treat indention with spaces like tabs"
+msgid "Treat indentation with spaces like tabs"
 msgstr "Behandl indrykning med mellemrum som tabulatorer"
 
 #: data/org.gnome.Tau.gschema.xml:106
@@ -165,19 +162,19 @@ msgstr ""
 "mellemrum, op til det forrige tabulatorstop"
 
 #: data/org.gnome.Tau.gschema.xml:111
-msgid "Automatically match document’s indention on newlines"
+#| msgid "Automatically match document’s indention on newlines"
+msgid "Automatically match document’s indentation on newlines"
 msgstr "Automatisk match af dokumentets indrykning ved linjeskift"
 
 #: data/org.gnome.Tau.gschema.xml:116
 msgid "The font used for editing"
 msgstr "Skrifttypen som bruges ved redigering"
 
-#: data/org.gnome.Tau.gschema.xml:121 src/tau/src/ui/prefs_win.glade:195
-#: src/tau/src/ui/prefs_win_handy.glade:156
+#: data/org.gnome.Tau.gschema.xml:121
 msgid "Wrap lines at the end of the document"
 msgstr "Ombryd linjer ved slutningen af dokumentet"
 
-#: data/org.gnome.Tau.gschema.xml:126
+#: data/org.gnome.Tau.gschema.xml:126 src/tau/src/ui/prefs_win_handy.glade:540
 msgid "Draw trailing tabs"
 msgstr "Tegn efterstillede tabulatorer"
 
@@ -185,7 +182,7 @@ msgstr "Tegn efterstillede tabulatorer"
 msgid "Draw tabs which are at the end of a line"
 msgstr "Tegn tabulatorer som er ved slutningen af en linje"
 
-#: data/org.gnome.Tau.gschema.xml:134
+#: data/org.gnome.Tau.gschema.xml:134 src/tau/src/ui/prefs_win_handy.glade:557
 msgid "Draw leading tabs"
 msgstr "Tegn foranstillede tabulatorer"
 
@@ -193,7 +190,7 @@ msgstr "Tegn foranstillede tabulatorer"
 msgid "Draw tabs which are at the beginning of a line"
 msgstr "Tegn tabulatorer som er ved begyndelsen af en linje"
 
-#: data/org.gnome.Tau.gschema.xml:142
+#: data/org.gnome.Tau.gschema.xml:142 src/tau/src/ui/prefs_win_handy.glade:574
 msgid "Draw selected tabs"
 msgstr "Tegn markerede tabulatorer"
 
@@ -201,7 +198,7 @@ msgstr "Tegn markerede tabulatorer"
 msgid "Draw tabs whenever they are selected"
 msgstr "Tegn tabulatorer når de er markeret"
 
-#: data/org.gnome.Tau.gschema.xml:150
+#: data/org.gnome.Tau.gschema.xml:150 src/tau/src/ui/prefs_win_handy.glade:523
 msgid "Draw all tabs"
 msgstr "Tegn alle tabulatorer"
 
@@ -237,7 +234,7 @@ msgstr "Gem når Tau mister fokus"
 msgid "Automatically save all open files when Tau moves out of focus"
 msgstr "Gem automatisk alle åbne filer når Tau mister fokus"
 
-#: data/org.gnome.Tau.gschema.xml:182
+#: data/org.gnome.Tau.gschema.xml:182 src/tau/src/ui/prefs_win_handy.glade:100
 msgid "Show line count"
 msgstr "Vis antal linjer"
 
@@ -253,8 +250,7 @@ msgstr "Åbne filer"
 msgid "List of file paths open in the current or most recent session"
 msgstr "Liste over filstier som er åbne i den nuværende eller sidste session"
 
-#: data/org.gnome.Tau.gschema.xml:198 src/tau/src/ui/prefs_win.glade:386
-#: src/tau/src/ui/prefs_win_handy.glade:136
+#: data/org.gnome.Tau.gschema.xml:198
 msgid "Restore session"
 msgstr "Gendan session"
 
@@ -267,19 +263,41 @@ msgid "Full path in title bar"
 msgstr "Fuld sti i titellinjen"
 
 #: data/org.gnome.Tau.gschema.xml:207
+#| msgid ""
+#| "Weather or not to display full path instead of file name in Tau's title "
+#| "bar."
 msgid ""
-"Weather or not to display full path instead of file name in Tau's title bar."
+"Whether or not to display full path instead of file name in Tau's title bar."
 msgstr "Om filnavnets fulde sti skal vises i Taus titellinje."
+
+#: data/org.gnome.Tau.gschema.xml:214
+msgid "Show terminal"
+msgstr "Vis terminal"
+
+#: data/org.gnome.Tau.gschema.xml:215
+#| msgid "Whether or not to show the line count in the editing pane"
+msgid "Whether or not to show an integrated terminal in Tau's editing pane"
+msgstr "Om der skal vises en integreret terminal i Taus redigeringsrude"
+
+#: data/org.gnome.Tau.gschema.xml:222
+msgid "Path to the shell executable"
+msgstr "Sti til den eksekverbare skal"
+
+#: data/org.gnome.Tau.gschema.xml:223
+msgid "The path to the shell you want to use."
+msgstr "Stien til den skal du vil bruge."
 
 #: src/editview/src/ui/context_menu.glade:6
 msgid "Cut"
 msgstr "Klip"
 
 #: src/editview/src/ui/context_menu.glade:10
+#: src/tau/src/ui/terminal_context_menu.glade:5
 msgid "Copy"
 msgstr "Kopiér"
 
 #: src/editview/src/ui/context_menu.glade:14
+#: src/tau/src/ui/terminal_context_menu.glade:9
 msgid "Paste"
 msgstr "Indsæt"
 
@@ -292,12 +310,13 @@ msgid "Redo"
 msgstr "Omgør"
 
 #: src/editview/src/ui/context_menu.glade:30
+#: src/tau/src/ui/terminal_context_menu.glade:13
 msgid "Select All"
 msgstr "Markér alt"
 
-#: src/editview/src/ui/ev.glade:21 src/tau/src/ui/prefs_win.glade:272
-#: src/tau/src/ui/prefs_win_handy.glade:295
-msgid "Enable automatic indention"
+#: src/editview/src/ui/ev.glade:22
+#| msgid "Enable automatic indention"
+msgid "Enable automatic indentation"
 msgstr "Aktivér automatisk indrykning"
 
 #: src/editview/src/ui/find_replace.glade:32
@@ -388,23 +407,18 @@ msgstr "Forlæns gennemløb af fanebladshistorikken"
 
 #: src/tau/src/ui/shortcuts_win.glade:65
 msgctxt "shortcut window"
+msgid "Go to line"
+msgstr "Gå til linje"
+
+#: src/tau/src/ui/shortcuts_win.glade:71
+msgctxt "shortcut window"
 msgid "Toggle fullscreen"
 msgstr "Fuldskærm til/fra"
 
-#: src/tau/src/ui/shortcuts_win.glade:72
-msgctxt "shortcut window"
-msgid "Editing"
-msgstr "Redigering"
-
-#: src/tau/src/ui/shortcuts_win.glade:76
+#: src/tau/src/ui/shortcuts_win.glade:78 src/tau/src/ui/shortcuts_win.glade:82
 msgctxt "shortcut window"
 msgid "Find"
 msgstr "Find"
-
-#: src/tau/src/ui/shortcuts_win.glade:82
-msgctxt "shortcut window"
-msgid "Find and Replace"
-msgstr "Find og erstat"
 
 #: src/tau/src/ui/shortcuts_win.glade:88
 msgctxt "shortcut window"
@@ -417,108 +431,220 @@ msgid "Find the previous match"
 msgstr "Find det forrige match"
 
 #: src/tau/src/ui/shortcuts_win.glade:100
+#| msgctxt "shortcut window"
+#| msgid "Find and Replace"
+msgctxt "shortcut window"
+msgid "Find and replace"
+msgstr "Find og erstat"
+
+#: src/tau/src/ui/shortcuts_win.glade:106
 msgctxt "shortcut window"
 msgid "Find all matches"
 msgstr "Find alle match"
 
-#: src/tau/src/ui/shortcuts_win.glade:106
+#: src/tau/src/ui/shortcuts_win.glade:112
+#| msgctxt "shortcut window"
+#| msgid "Close the document"
 msgctxt "shortcut window"
-msgid "Go to line"
-msgstr "Gå til linje"
+msgid "Close the find window"
+msgstr "Luk vinduet find"
 
-#: src/tau/src/ui/prefs_win.glade:28 src/tau/src/ui/prefs_win_handy.glade:28
-#: src/tau/src/ui/tau.glade:125 src/tau/src/ui/tau.glade:313
-msgid "Preferences"
-msgstr "Indstillinger"
-
-#: src/tau/src/ui/prefs_win.glade:53 src/tau/src/ui/prefs_win_handy.glade:170
-msgid "Theme"
-msgstr "Tema"
-
-#: src/tau/src/ui/prefs_win.glade:75 src/tau/src/ui/prefs_win_handy.glade:555
-msgid "Font"
-msgstr "Skrifttype"
-
-#: src/tau/src/ui/prefs_win.glade:123
-msgid "Appearance"
-msgstr "Udseende"
-
-#: src/tau/src/ui/prefs_win.glade:180 src/tau/src/ui/prefs_win_handy.glade:330
-msgid "Delete spaces up to the previous tab stop"
-msgstr "Slet mellemrum op til det forrige tabulatorstop"
-
-#: src/tau/src/ui/prefs_win.glade:214 src/tau/src/ui/prefs_win_handy.glade:52
-msgid "Display right margin at the column:"
-msgstr "Vis højre margen ved kolonnen:"
-
-#: src/tau/src/ui/prefs_win.glade:253 src/tau/src/ui/prefs_win_handy.glade:92
-msgid "Highlight the current line"
-msgstr "Fremhæv den nuværende linje"
-
-#: src/tau/src/ui/prefs_win.glade:343 src/tau/src/ui/prefs_win_handy.glade:346
-msgid "Save files when the Tau goes out of focus"
-msgstr "Gem filer når Tau mister fokus"
-
-#: src/tau/src/ui/prefs_win.glade:358 src/tau/src/ui/prefs_win_handy.glade:104
-msgid "Show Line Count"
-msgstr "Vis antal linjer"
-
-#: src/tau/src/ui/prefs_win.glade:372 src/tau/src/ui/prefs_win_handy.glade:120
-#: src/tau/src/ui/prefs_win_handy.glade:124
-msgid "Show full path in title bar"
-msgstr "Vis fuld sti i titellinjen"
-
-#: src/tau/src/ui/prefs_win.glade:410
-msgid "Highlight tabs"
-msgstr "Fremhæv tabulatorer"
-
-#: src/tau/src/ui/prefs_win.glade:421
-msgid "Highlight spaces"
-msgstr "Fremhæv mellemrum"
-
-#: src/tau/src/ui/prefs_win.glade:430 src/tau/src/ui/prefs_win.glade:445
-#: src/tau/src/ui/prefs_win_handy.glade:394
-#: src/tau/src/ui/prefs_win_handy.glade:409
-msgid "All"
-msgstr "Alle"
-
-#: src/tau/src/ui/prefs_win.glade:460 src/tau/src/ui/prefs_win.glade:475
-#: src/tau/src/ui/prefs_win_handy.glade:424
-#: src/tau/src/ui/prefs_win_handy.glade:439
-msgid "Trailing"
-msgstr "Efterstillede"
-
-#: src/tau/src/ui/prefs_win.glade:490 src/tau/src/ui/prefs_win.glade:505
-#: src/tau/src/ui/prefs_win_handy.glade:454
-#: src/tau/src/ui/prefs_win_handy.glade:469
-msgid "Leading"
-msgstr "Foranstillede"
-
-#: src/tau/src/ui/prefs_win.glade:520 src/tau/src/ui/prefs_win.glade:535
-#: src/tau/src/ui/prefs_win_handy.glade:484
-#: src/tau/src/ui/prefs_win_handy.glade:499
-msgid "Selected"
-msgstr "Markerede"
-
-#: src/tau/src/ui/prefs_win.glade:550 src/tau/src/ui/prefs_win.glade:564
-#: src/tau/src/ui/prefs_win_handy.glade:514
-#: src/tau/src/ui/prefs_win_handy.glade:528
-msgid "None"
-msgstr "Ingen"
-
-#: src/tau/src/ui/prefs_win.glade:593
+#: src/tau/src/ui/shortcuts_win.glade:120
+msgctxt "shortcut window"
 msgid "Editing"
 msgstr "Redigering"
 
-#: src/tau/src/ui/prefs_win.glade:609 src/tau/src/ui/prefs_win_handy.glade:597
-msgid "What language to apply these settings for"
-msgstr "Sprog som indstillingerne skal anvendes på"
+#: src/tau/src/ui/shortcuts_win.glade:124
+#| msgid "Highlight the current line"
+msgctxt "shortcut window"
+msgid "Highlight the next occurrence of the current selection"
+msgstr "Fremhæv den næste forekomst af den nuværende markering"
 
-#: src/tau/src/ui/prefs_win.glade:728 src/tau/src/ui/prefs_win_handy.glade:579
-#: src/tau/src/ui/prefs_win_handy.glade:583
-#: src/tau/src/ui/prefs_win_handy.glade:588
-msgid "Syntax Configuration"
-msgstr "Konfiguration af syntaks"
+#: src/tau/src/ui/shortcuts_win.glade:130
+#| msgid "Highlight the current line"
+msgctxt "shortcut window"
+msgid "Delete the current selection"
+msgstr "Slet den nuværende markering"
+
+#: src/tau/src/ui/shortcuts_win.glade:136
+msgctxt "shortcut window"
+msgid "Delete an entire word"
+msgstr "Slet et helt ord"
+
+# scootergrisen: tjek oversættelsen af "Outdent"
+#: src/tau/src/ui/shortcuts_win.glade:142
+#| msgid "Highlight the current line"
+msgctxt "shortcut window"
+msgid "Outdent the current selection"
+msgstr "Udryk den nuværende markering"
+
+#: src/tau/src/ui/shortcuts_win.glade:148
+msgctxt "shortcut window"
+msgid "Move to start of the line"
+msgstr "Flyt til begyndelsen af linjen"
+
+#: src/tau/src/ui/shortcuts_win.glade:154
+#| msgctxt "shortcut window"
+#| msgid "Save the document"
+msgctxt "shortcut window"
+msgid "Move to start of the document"
+msgstr "Flyt til begyndelsen af dokumentet"
+
+#: src/tau/src/ui/shortcuts_win.glade:161
+msgctxt "shortcut window"
+msgid "Move to end of the line"
+msgstr "Flyt til slutningen af linjen"
+
+#: src/tau/src/ui/shortcuts_win.glade:167
+#| msgid "Wrap lines at the end of the document"
+msgctxt "shortcut window"
+msgid "Move to end of the document"
+msgstr "Flyt til slutningen af dokumentet"
+
+# scootergrisen: tjek om kan finde noget bedre
+#: src/tau/src/ui/shortcuts_win.glade:173
+msgctxt "shortcut window"
+msgid "Move up for the height of the view"
+msgstr "Flyt op i samme højde som visningen"
+
+# scootergrisen: tjek om kan finde noget bedre
+#: src/tau/src/ui/shortcuts_win.glade:179
+msgctxt "shortcut window"
+msgid "Move down for the height of the view"
+msgstr "Flyt ned i samme højde som visningen"
+
+#: src/tau/src/ui/shortcuts_win.glade:185
+#| msgid "Draw the cursor"
+msgctxt "shortcut window"
+msgid "Enable/Disable the cursor"
+msgstr "Aktivér/deaktivér markøren"
+
+#: src/tau/src/ui/shortcuts_win.glade:192
+msgctxt "shortcut window"
+msgid "Copy and Paste"
+msgstr "Kopiér og indsæt"
+
+#: src/tau/src/ui/shortcuts_win.glade:196
+#| msgid "Highlight the current line"
+msgctxt "shortcut window"
+msgid "Copy the current selection"
+msgstr "Kopiér den nuværende markering"
+
+#: src/tau/src/ui/shortcuts_win.glade:202
+msgctxt "shortcut window"
+msgid "Paste what's currently in the clipboard"
+msgstr "Indsæt udklipsholderens indhold"
+
+#: src/tau/src/ui/shortcuts_win.glade:208
+#: src/tau/src/ui/shortcuts_win.glade:214
+#| msgid "Highlight the current line"
+msgctxt "shortcut window"
+msgid "Cut the current selection"
+msgstr "Klip den nuværende markering"
+
+#: src/tau/src/ui/shortcuts_win.glade:221
+#| msgctxt "shortcut window"
+#| msgid "Find and Replace"
+msgctxt "shortcut window"
+msgid "Undo and Redo"
+msgstr "Fortryd og omgør"
+
+#: src/tau/src/ui/shortcuts_win.glade:225
+#| msgid "Undo"
+msgctxt "shortcut window"
+msgid "Undo"
+msgstr "Fortryd"
+
+#: src/tau/src/ui/shortcuts_win.glade:231
+#| msgid "Redo"
+msgctxt "shortcut window"
+msgid "Redo"
+msgstr "Omgør"
+
+#: src/tau/src/ui/shortcuts_win.glade:238
+#| msgid "Selected"
+msgctxt "shortcut window"
+msgid "Selections"
+msgstr "Markeringer"
+
+#: src/tau/src/ui/shortcuts_win.glade:242
+#| msgid "Select All"
+msgctxt "shortcut window"
+msgid "Select all"
+msgstr "Markér alt"
+
+#: src/tau/src/ui/shortcuts_win.glade:248
+msgctxt "shortcut window"
+msgid "Select all occurences of the current selection"
+msgstr "Markér alle forekomster af den nuværende markering"
+
+#: src/tau/src/ui/shortcuts_win.glade:254
+msgctxt "shortcut window"
+msgid "Move up and select everything from current cursor position"
+msgstr "Flyt op og markér alt fra nuværende markørplacering"
+
+#: src/tau/src/ui/shortcuts_win.glade:260
+msgctxt "shortcut window"
+msgid "Move down and select everything from current cursor position"
+msgstr "Flyt ned og markér alt fra nuværende markørplacering"
+
+#: src/tau/src/ui/shortcuts_win.glade:266
+msgctxt "shortcut window"
+msgid "Move left and select everything from current cursor position"
+msgstr "Flyt til venstre og markér alt fra nuværende markørplacering"
+
+#: src/tau/src/ui/shortcuts_win.glade:272
+msgctxt "shortcut window"
+msgid "Move left and select the next word"
+msgstr "Flyt til venstre og markér det næste ord"
+
+#: src/tau/src/ui/shortcuts_win.glade:278
+msgctxt "shortcut window"
+msgid "Move right and select everything from current cursor position"
+msgstr "Flyt til højre og markér alt fra nuværende markørplacering"
+
+#: src/tau/src/ui/shortcuts_win.glade:284
+msgctxt "shortcut window"
+msgid "Move right and select the next word"
+msgstr "Flyt til højre og markér det næste ord"
+
+#: src/tau/src/ui/shortcuts_win.glade:290
+msgctxt "shortcut window"
+msgid "Move to start of the line and select"
+msgstr "Flyt til begyndelsen af linjen og markér"
+
+#: src/tau/src/ui/shortcuts_win.glade:296
+msgctxt "shortcut window"
+msgid "Move to start of the document and select"
+msgstr "Flyt til begyndelsen af dokumentet og markér"
+
+#: src/tau/src/ui/shortcuts_win.glade:302
+msgctxt "shortcut window"
+msgid "Move to end of the line and select"
+msgstr "Flyt til slutningen af linjen og markér"
+
+#: src/tau/src/ui/shortcuts_win.glade:308
+#| msgid "Wrap lines at the end of the document"
+msgctxt "shortcut window"
+msgid "Move to end of the document and select"
+msgstr "Flyt til slutningen af dokumentet og markér"
+
+# scootergrisen: tjek om kan finde noget bedre
+#: src/tau/src/ui/shortcuts_win.glade:314
+msgctxt "shortcut window"
+msgid "Move up for the height of the view and select"
+msgstr "Flyt op i samme højde som visningen og markér"
+
+# scootergrisen: tjek om kan finde noget bedre
+#: src/tau/src/ui/shortcuts_win.glade:320
+msgctxt "shortcut window"
+msgid "Move down for the height of the view and select"
+msgstr "Flyt ned i samme højde som visningen og markér"
+
+#: src/tau/src/ui/prefs_win_handy.glade:28 src/tau/src/ui/tau.glade:153
+#: src/tau/src/ui/tau.glade:374
+msgid "Preferences"
+msgstr "Indstillinger"
 
 #: src/tau/src/ui/prefs_win_handy.glade:39
 msgid "View"
@@ -529,174 +655,210 @@ msgid "Preferences related to the View’s look"
 msgstr "Indstillinger som har relation til visningens udseende"
 
 #: src/tau/src/ui/prefs_win_handy.glade:44
-msgid "Right-hand Margin"
-msgstr "Højre margen"
+#| msgid "Draw a right hand margin"
+msgid "Display right hand margin"
+msgstr "Vis margen i højre side"
 
-#: src/tau/src/ui/prefs_win_handy.glade:88
-msgid "Line Highlighting"
-msgstr "Linjefremhævning"
+#: src/tau/src/ui/prefs_win_handy.glade:87
+msgid "Highlight the current line"
+msgstr "Fremhæv den nuværende linje"
 
-#: src/tau/src/ui/prefs_win_handy.glade:108
-msgid "Show the line count in the editing pane"
-msgstr "Vis antallet af linjer i redigeringsruden"
+#: src/tau/src/ui/prefs_win_handy.glade:113
+msgid "Show full path in title bar"
+msgstr "Vis fuld sti i titellinjen"
 
-#: src/tau/src/ui/prefs_win_handy.glade:140
+#: src/tau/src/ui/prefs_win_handy.glade:126
 msgid "Restore last opened files on start-up"
 msgstr "Gendan filer som var åbne sidst ved opstart"
 
-#: src/tau/src/ui/prefs_win_handy.glade:153
-msgid "Line Wrapping"
-msgstr "Linjeombrydning"
+#: src/tau/src/ui/prefs_win_handy.glade:140
+#| msgid "Wrap lines at the end of the document"
+msgid "Wrap lines at the end of the view"
+msgstr "Ombryd linjer ved slutningen af visningen"
 
-#: src/tau/src/ui/prefs_win_handy.glade:171
-msgid "What theme to use for the editing pane"
-msgstr "Tema som skal bruges i redigeringsruden"
-
-#: src/tau/src/ui/prefs_win_handy.glade:175
-msgid "Theme Configuration"
+#: src/tau/src/ui/prefs_win_handy.glade:152
+#| msgid "Theme Configuration"
+msgid "Theme configuration"
 msgstr "Konfiguration af tema"
 
-#: src/tau/src/ui/prefs_win_handy.glade:194
-#: src/tau/src/ui/prefs_win_handy.glade:198
+#: src/tau/src/ui/prefs_win_handy.glade:167
+#| msgid "Syntax Configuration"
+msgid "Syntax configuration"
+msgstr "Konfiguration af syntaks"
+
+#: src/tau/src/ui/prefs_win_handy.glade:171
+#| msgid "Syntax specific settings"
+msgid "Syntax selection"
+msgstr "Syntaksmarkering"
+
+#: src/tau/src/ui/prefs_win_handy.glade:184
+#| msgid "Syntax specific settings"
+msgid "Syntax-specific tab size"
+msgstr "Syntaksspecifik tabulatorstørrelse"
+
+#: src/tau/src/ui/prefs_win_handy.glade:240
+#| msgid "Syntax Configuration"
+msgid "Apply syntax configuration settings"
+msgstr "Anvend indstillinger for konfiguration af syntaks"
+
+#: src/tau/src/ui/prefs_win_handy.glade:260
 msgid "Editor"
 msgstr "Editor"
 
-#: src/tau/src/ui/prefs_win_handy.glade:199
-msgid "Preferences related to the Editor’s behavior"
-msgstr "Indstillinger som har relation til editorens opførsel"
+#: src/tau/src/ui/prefs_win_handy.glade:264
+#| msgid "Automatic Indention"
+msgid "Indention"
+msgstr "Indrykning"
 
-#: src/tau/src/ui/prefs_win_handy.glade:203 src/editview/src/view_item.rs:98
-#: src/editview/src/view_item.rs:233
-msgid "Tab Size"
-msgstr "Tabulatorstørrelse"
-
-#: src/tau/src/ui/prefs_win_handy.glade:248
-msgid "Inserting Spaces Instead of Tabs"
-msgstr "Indsætter mellemrum i stedet for tabulatorer"
-
-#: src/tau/src/ui/prefs_win_handy.glade:287
-msgid "Automatic Indention"
+#: src/tau/src/ui/prefs_win_handy.glade:325
+#| msgid "Automatic Indention"
+msgid "Automatic indentation"
 msgstr "Automatisk indrykning"
 
-#: src/tau/src/ui/prefs_win_handy.glade:326
-msgid "Use Tab Stops for Spaces"
-msgstr "Brug tabulatorstop til mellemrum"
+#: src/tau/src/ui/prefs_win_handy.glade:362
+msgid "Delete spaces up to the previous tab stop"
+msgstr "Slet mellemrum op til det forrige tabulatorstop"
 
-#: src/tau/src/ui/prefs_win_handy.glade:342
-msgid "Automatic Saving"
-msgstr "Gem automatisk"
+# scootergrisen: tjek at det er oversat godt
+#: src/tau/src/ui/prefs_win_handy.glade:377
+msgid "File saving"
+msgstr "Gemme filer"
 
-#: src/tau/src/ui/prefs_win_handy.glade:358
-msgid "Drawing Tabs and Spaces"
-msgstr "Tegner tabulatorer og mellemrum"
+#: src/tau/src/ui/prefs_win_handy.glade:381
+msgid "Save files when the Tau goes out of focus"
+msgstr "Gem filer når Tau mister fokus"
 
-#: src/tau/src/ui/prefs_win_handy.glade:372
-msgid "Tabs"
-msgstr "Tabulatorer"
+#: src/tau/src/ui/prefs_win_handy.glade:396 src/tau/src/main_win.rs:1252
+#: src/tau/src/main_win.rs:1289
+msgid "Terminal"
+msgstr "Terminal"
 
-#: src/tau/src/ui/prefs_win_handy.glade:384
-msgid "Spaces"
-msgstr "Mellemrum"
+#: src/tau/src/ui/prefs_win_handy.glade:400
+msgid "Show the embedded terminal on startup"
+msgstr "Vis den indlejrede terminal ved opstart"
 
-#: src/tau/src/ui/prefs_win_handy.glade:551
-msgid "Fonts"
-msgstr "Skrifttyper"
+#: src/tau/src/ui/prefs_win_handy.glade:413
+msgid "What shell to start"
+msgstr "Hvilken skal der skal startes"
 
-#: src/tau/src/ui/prefs_win_handy.glade:556
-msgid "What font to use in the editing pane"
-msgstr "Skrifttype som skal bruges i redigeringsruden"
+#: src/tau/src/ui/prefs_win_handy.glade:428
+#| msgid "Highlight spaces"
+msgid "Highlighting spaces"
+msgstr "Fremhævning af mellemrum"
 
-#: src/tau/src/ui/prefs_win_handy.glade:560
-msgid "Font Configuration"
+#: src/tau/src/ui/prefs_win_handy.glade:500
+#| msgid "Draw all spaces"
+msgid "Don't draw spaces"
+msgstr "Tegn ikke mellemrum"
+
+#: src/tau/src/ui/prefs_win_handy.glade:519
+#| msgid "Highlight tabs"
+msgid "Highlighting tabs"
+msgstr "Fremhævning af tabulatorer"
+
+#: src/tau/src/ui/prefs_win_handy.glade:591
+#| msgid "Draw all tabs"
+msgid "Don't draw tabs"
+msgstr "Tegn ikke tabulatorer"
+
+#: src/tau/src/ui/prefs_win_handy.glade:610
+#: src/tau/src/ui/prefs_win_handy.glade:614
+#| msgid "Font Configuration"
+msgid "Font configuration"
 msgstr "Konfiguration af skrifttype"
 
-#: src/tau/src/ui/prefs_win_handy.glade:584
-msgid "Specify syntax specific configuration"
-msgstr "Angiv syntaksspecifik konfiguration"
-
-#: src/tau/src/ui/tau.glade:22 src/tau/src/ui/tau.glade:210
+#: src/tau/src/ui/tau.glade:22 src/tau/src/ui/tau.glade:243
 msgid "Save As…"
 msgstr "Gem som …"
 
-#: src/tau/src/ui/tau.glade:36 src/tau/src/ui/tau.glade:224
+#: src/tau/src/ui/tau.glade:36 src/tau/src/ui/tau.glade:257
 msgid "Save All"
 msgstr "Gem alle"
 
-#: src/tau/src/ui/tau.glade:61 src/tau/src/ui/tau.glade:249
+#: src/tau/src/ui/tau.glade:61 src/tau/src/ui/tau.glade:282
 msgid "Find…"
 msgstr "Find …"
 
-#: src/tau/src/ui/tau.glade:75 src/tau/src/ui/tau.glade:263
+#: src/tau/src/ui/tau.glade:75 src/tau/src/ui/tau.glade:296
 msgid "Replace…"
 msgstr "Erstat …"
 
-#: src/tau/src/ui/tau.glade:100 src/tau/src/ui/tau.glade:288
+#: src/tau/src/ui/tau.glade:89 src/tau/src/ui/tau.glade:310
+msgid "Go To Line…"
+msgstr "Gå til linje …"
+
+# scootergrisen: tjek om Terminal skal oversættes med stort
+#: src/tau/src/ui/tau.glade:114 src/tau/src/ui/tau.glade:335
+msgid "Show Terminal"
+msgstr "Vis terminal"
+
+#: src/tau/src/ui/tau.glade:128 src/tau/src/ui/tau.glade:349
 msgid "Toggle Fullscreen"
 msgstr "Fuldskærm til/fra"
 
-#: src/tau/src/ui/tau.glade:150 src/tau/src/ui/tau.glade:338
+#: src/tau/src/ui/tau.glade:178 src/tau/src/ui/tau.glade:399
 msgid "Help"
 msgstr "Hjælp"
 
-#: src/tau/src/ui/tau.glade:164 src/tau/src/ui/tau.glade:352
+#: src/tau/src/ui/tau.glade:192 src/tau/src/ui/tau.glade:413
 msgid "Keyboard Shortcuts"
 msgstr "Tastaturgenveje"
 
-#: src/tau/src/ui/tau.glade:178 src/tau/src/ui/tau.glade:366
+#: src/tau/src/ui/tau.glade:206 src/tau/src/ui/tau.glade:427
 msgid "About Tau"
 msgstr "Om Tau"
 
-#: src/tau/src/ui/tau.glade:406 src/tau/src/ui/tau.glade:516
-#: src/tau/src/main_win.rs:1429
+#: src/tau/src/ui/tau.glade:462 src/tau/src/ui/tau.glade:571
+#: src/tau/src/main_win.rs:1701
 msgid "Open"
 msgstr "Åbn"
 
-#: src/tau/src/ui/tau.glade:447 src/tau/src/ui/tau.glade:557
-#: src/tau/src/main_win.rs:1166 src/tau/src/main_win.rs:1600
+#: src/tau/src/ui/tau.glade:503 src/tau/src/ui/tau.glade:631
+#: src/tau/src/main_win.rs:1437 src/tau/src/main_win.rs:1873
 msgid "Save"
 msgstr "Gem"
 
-#: src/editview/src/edit_view.rs:180 src/editview/src/edit_view.rs:182
-#: src/tau/src/main_win.rs:1014 src/tau/src/main_win.rs:1017
-#: src/tau/src/main_win.rs:1701
+#: src/editview/src/edit_view.rs:195 src/editview/src/edit_view.rs:197
+#: src/tau/src/main_win.rs:1118 src/tau/src/main_win.rs:1121
+#: src/tau/src/main_win.rs:1978
 msgid "Untitled"
 msgstr "Unavngivet"
 
-#: src/editview/src/edit_view.rs:910 src/editview/src/edit_view.rs:920
+#: src/editview/src/edit_view.rs:977 src/editview/src/edit_view.rs:987
 msgid "Line"
 msgstr "Linje"
 
-#: src/editview/src/edit_view.rs:925
+#: src/editview/src/edit_view.rs:992
 msgid "Column"
 msgstr "Kolonne"
 
 #. We localized it ourselves, so we have to turn it into English again when sending it to Xi
-#: src/editview/src/edit_view.rs:1555 src/editview/src/view_item.rs:217
-#: src/editview/src/view_item.rs:331
+#: src/editview/src/edit_view.rs:1599 src/editview/src/view_item.rs:242
+#: src/editview/src/view_item.rs:348
 msgid "Plain Text"
 msgstr "Ren tekst"
 
-#: src/tau/src/about_win.rs:17
+#: src/editview/src/view_item.rs:111 src/editview/src/view_item.rs:259
+msgid "Tab Size"
+msgstr "Tabulatorstørrelse"
+
+#: src/tau/src/about_win.rs:21
 msgid "GTK frontend for the xi text editor, written in Rust"
 msgstr "GTK-frontend til teksteditoren xi, skrevet i Rust"
 
-#: src/tau/src/about_win.rs:25
+#: src/tau/src/about_win.rs:29
 msgid "translator-credits"
 msgstr "scootergrisen"
 
-#: src/tau/src/main.rs:122
+#: src/tau/src/functions.rs:72
+msgid "Welcome to Tau's terminal."
+msgstr "Velkommen til Taus terminal."
+
+#: src/tau/src/main.rs:117
 msgid "Start a new instance of the application"
 msgstr "Start en ny instans af programmet"
 
-#: src/tau/src/main.rs:286
-msgid "Failed open new view due to error"
-msgstr "Kunne ikke åbne ny visning pga. fejl"
-
-#: src/tau/src/main.rs:354 src/tau/src/main_win.rs:1496
-msgid "Failed to open new view due to error"
-msgstr "Kunne ikke åbne ny visning pga. fejl"
-
-#: src/tau/src/main_win.rs:953 src/tau/src/main_win.rs:961
+#: src/tau/src/main_win.rs:1057 src/tau/src/main_win.rs:1065
 msgid ""
 "Couldn’t get Documents directory to autosave unnamed file. Please make sure "
 "“XDG_DATA_DIR” or similar is set."
@@ -704,36 +866,36 @@ msgstr ""
 "Kunne ikke hente dokumentets mappe til automatisk at gemme unavngivet fil. "
 "Sørg venligst for at “XDG_DATA_DIR” eller lignende er indstillet."
 
-#: src/tau/src/main_win.rs:1155
+#: src/tau/src/main_win.rs:1426
 msgid "Save unsaved changes"
 msgstr "Gem ændringer som ikke er gemt"
 
-#: src/tau/src/main_win.rs:1158
+#: src/tau/src/main_win.rs:1429
 msgid "Close Without Saving"
 msgstr "Luk uden at gemme"
 
-#: src/tau/src/main_win.rs:1162 src/tau/src/main_win.rs:1430
-#: src/tau/src/main_win.rs:1601
+#: src/tau/src/main_win.rs:1433 src/tau/src/main_win.rs:1702
+#: src/tau/src/main_win.rs:1874
 msgid "Cancel"
 msgstr "Annuller"
 
-#: src/tau/src/main_win.rs:1426
+#: src/tau/src/main_win.rs:1698
 msgid "Open a file to edit"
 msgstr "Åbn en fil som skal redigeres"
 
-#: src/tau/src/main_win.rs:1455
+#: src/tau/src/main_win.rs:1727
 msgid "Couldn’t open file"
 msgstr "Kunne ikke åbne filen"
 
-#: src/tau/src/main_win.rs:1597
+#: src/tau/src/main_win.rs:1870
 msgid "Save file"
 msgstr "Gem fil"
 
-#: src/tau/src/main_win.rs:1634
+#: src/tau/src/main_win.rs:1912
 msgid "Couldn’t save file"
 msgstr "Kunne ikke gemme filen"
 
-#: src/tau/src/prefs_win.rs:141
+#: src/tau/src/prefs_win.rs:439
 msgid ""
 "Couldn’t find the xi-syntect-plugin. As such these settings won’t work in "
 "the current session."
