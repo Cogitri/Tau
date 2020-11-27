@@ -1,0 +1,874 @@
+# Czech translation for tau.
+# Copyright (C) 2020 tau's COPYRIGHT HOLDER
+# This file is distributed under the same license as the tau package.
+# Marek Černocký <marek@manet.cz>, 2020.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: tau\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Tau/issues\n"
+"POT-Creation-Date: 2020-11-01 13:35+0000\n"
+"PO-Revision-Date: 2020-11-24 15:24+0100\n"
+"Last-Translator: Marek Černocký <marek@manet.cz>\n"
+"Language-Team: Czech <gnome-cs-list@gnome.org>\n"
+"Language: cs\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+
+#: data/org.gnome.Tau.appdata.xml.in.in:7 data/org.gnome.Tau.desktop.in.in:3
+msgid "Tau"
+msgstr "Tau"
+
+#: data/org.gnome.Tau.appdata.xml.in.in:8
+msgid "GTK frontend for the xi text editor"
+msgstr "Uživatelské rozhraní GTK pro exitor Xi"
+
+#: data/org.gnome.Tau.appdata.xml.in.in:13
+msgid ""
+"Tau is a GTK frontend for the xi text editor written in Rust. It’s a very "
+"fast plain text editor."
+msgstr ""
+"Tau je uživatelské rozhraní, založené na GTK, pro editor Xi. Je napsané v "
+"jazyce Rust a výsledkem je velmi rychlý editor pro prosté texty."
+
+#: data/org.gnome.Tau.appdata.xml.in.in:28
+msgid "Rasmus “Cogitri” Thomsen"
+msgstr "Rasmus „Cogitri“ Thomsen"
+
+#: data/org.gnome.Tau.desktop.in.in:5
+msgid "The Tau text editor"
+msgstr "Textový editor Tau"
+
+#. Translators: Search terms to find this application. Do NOT translate or localize the semicolons! The list MUST also end with a semicolon!
+#: data/org.gnome.Tau.desktop.in.in:15
+msgid "Text;Editor;Plaintext;Write;gxi;"
+msgstr ""
+"text;editor;textový editor;prostý text;psát;psaní;editovat;editace;gxi;xi;"
+
+#: data/org.gnome.Tau.desktop.in.in:18
+msgid "Launch a new Tau instance"
+msgstr "Spustit novou instanci Tau"
+
+#: data/org.gnome.Tau.gschema.xml:9
+msgid "Xi-Editor’s theme"
+msgstr "Motiv editoru Xi"
+
+#: data/org.gnome.Tau.gschema.xml:10
+msgid "Sets the theme used for the editing area"
+msgstr "Nastavuje motiv používaný pro oblast úprav."
+
+#: data/org.gnome.Tau.gschema.xml:17 src/tau/src/ui/prefs_win_handy.glade:449
+msgid "Draw trailing spaces"
+msgstr "Vykreslovat koncové mezery"
+
+#: data/org.gnome.Tau.gschema.xml:18
+msgid "Draw spaces which are at the end of a line"
+msgstr "Zda vykreslovat mezery, které se nachází na konci řádku."
+
+#: data/org.gnome.Tau.gschema.xml:25 src/tau/src/ui/prefs_win_handy.glade:466
+msgid "Draw leading spaces"
+msgstr "Vykreslovat úvodní mezery"
+
+#: data/org.gnome.Tau.gschema.xml:26
+msgid "Draw spaces which are at the beginning of a line"
+msgstr "Zda vykreslovat mezery, které se nachází na začátku řádku."
+
+#: data/org.gnome.Tau.gschema.xml:33 src/tau/src/ui/prefs_win_handy.glade:483
+msgid "Draw selected spaces"
+msgstr "Vykreslovat vybrané mezery"
+
+#: data/org.gnome.Tau.gschema.xml:34
+msgid "Draw spaces whenever they are selected"
+msgstr "Zda vykreslovat mezery, i když se nacházejí ve výběru."
+
+#: data/org.gnome.Tau.gschema.xml:41 src/tau/src/ui/prefs_win_handy.glade:432
+msgid "Draw all spaces"
+msgstr "Vykreslovat všechny mezery"
+
+#: data/org.gnome.Tau.gschema.xml:42
+msgid "Draw spaces, no matter the position"
+msgstr "Zda vykreslovat všechny mezery, bez ohledu na to, kde se nacházejí."
+
+#: data/org.gnome.Tau.gschema.xml:49
+msgid "Draw a right hand margin"
+msgstr "Vykreslovat pravý okraj"
+
+#: data/org.gnome.Tau.gschema.xml:50
+msgid "Draw a right hand margin to limit the text width"
+msgstr "Zda vykreslovat hranici pravého okraje, který omezuje šířku textu."
+
+#: data/org.gnome.Tau.gschema.xml:58
+msgid "At what column to display the margin"
+msgstr "Sloupec pravého okraje"
+
+#: data/org.gnome.Tau.gschema.xml:59
+msgid "Sets the column at which the margin should be drawn"
+msgstr "Nastavuje sloupec, ve kterém se má vykreslovat okraj."
+
+#: data/org.gnome.Tau.gschema.xml:66
+msgid "Whether the current line should be highlighted"
+msgstr "Zvýrazňovat aktuální řádek"
+
+#: data/org.gnome.Tau.gschema.xml:67
+msgid ""
+"Sets if the current line should be highlighted, which eases navigation "
+"through the document"
+msgstr ""
+"Určuje, jestli má být při pohybu po dokumentu zvýrazňován aktuální řádek."
+
+#: data/org.gnome.Tau.gschema.xml:75
+msgid "Sets the height of the window in the next start-up"
+msgstr "Výška okna pro příští spuštění"
+
+#: data/org.gnome.Tau.gschema.xml:81
+msgid "Sets the width of the window in the next start-up"
+msgstr "Šířka okna pro příští spuštění"
+
+#: data/org.gnome.Tau.gschema.xml:86
+msgid "Sets if the window should be maximized during the next start-up"
+msgstr "Zda má být okno maximalizováno při příštím spuštění"
+
+#: data/org.gnome.Tau.gschema.xml:92 src/editview/src/ui/ev.glade:76
+#: src/tau/src/ui/prefs_win_handy.glade:268
+msgid "Tab size"
+msgstr "Velikost tabulátoru"
+
+#: data/org.gnome.Tau.gschema.xml:93
+msgid "Amount of spaces that a tab is wide"
+msgstr "Určuje počet mezer na šířku jednoho tabulátoru."
+
+#: data/org.gnome.Tau.gschema.xml:99 src/editview/src/ui/ev.glade:37
+#: src/tau/src/ui/prefs_win_handy.glade:227
+#: src/tau/src/ui/prefs_win_handy.glade:289
+msgid "Insert spaces instead of tabs"
+msgstr "Místo tabulátorů vkládat mezery"
+
+#: data/org.gnome.Tau.gschema.xml:100
+msgid "Whether spaces should be inserted instead of tabs"
+msgstr "Zda se mají místo tabulátorů vkládat mezery."
+
+#: data/org.gnome.Tau.gschema.xml:105
+msgid "Treat indentation with spaces like tabs"
+msgstr "Chovat se k odsazení s mezerami stejně, jako s tabulátory"
+
+#: data/org.gnome.Tau.gschema.xml:106
+msgid ""
+"If “translate-tabs-to-spaces” is true, Backspace will delete multiple "
+"spaces, up to the previous tab stop"
+msgstr ""
+"Když je zapnuto „translate-tabs-to-spaces“, smaže klávesa Backspace několik "
+"mezer, až na úroveň předchozího tabulátoru."
+
+#: data/org.gnome.Tau.gschema.xml:111
+msgid "Automatically match document’s indentation on newlines"
+msgstr "Automaticky přizpůsobovat odsazení dokumentů na nových řádcích"
+
+#: data/org.gnome.Tau.gschema.xml:116
+msgid "The font used for editing"
+msgstr "Font používaný při úpravách"
+
+#: data/org.gnome.Tau.gschema.xml:121
+msgid "Wrap lines at the end of the document"
+msgstr "Zalamovat řádky na konci zobrazení"
+
+#: data/org.gnome.Tau.gschema.xml:126 src/tau/src/ui/prefs_win_handy.glade:540
+msgid "Draw trailing tabs"
+msgstr "Vykreslovat koncové tabulátory"
+
+#: data/org.gnome.Tau.gschema.xml:127
+msgid "Draw tabs which are at the end of a line"
+msgstr "Zda vykreslovat tabulátory, které se nacházejí na konci řádku."
+
+#: data/org.gnome.Tau.gschema.xml:134 src/tau/src/ui/prefs_win_handy.glade:557
+msgid "Draw leading tabs"
+msgstr "Vykreslovat úvodní tabulátory"
+
+#: data/org.gnome.Tau.gschema.xml:135
+msgid "Draw tabs which are at the beginning of a line"
+msgstr "Vykreslovat tabulátory, které se nacházejí na začátku řádku."
+
+#: data/org.gnome.Tau.gschema.xml:142 src/tau/src/ui/prefs_win_handy.glade:574
+msgid "Draw selected tabs"
+msgstr "Vykreslovat vybrané tabulátory"
+
+#: data/org.gnome.Tau.gschema.xml:143
+msgid "Draw tabs whenever they are selected"
+msgstr "Zda vykreslovat tabulátory, i když se nacházejí ve výběru."
+
+#: data/org.gnome.Tau.gschema.xml:150 src/tau/src/ui/prefs_win_handy.glade:523
+msgid "Draw all tabs"
+msgstr "Vykreslovat všechny tabulátory"
+
+#: data/org.gnome.Tau.gschema.xml:151
+msgid "Draw all tabs, no matter the position"
+msgstr "Zda vykreslovat všechny tabulátory, bez ohledu na to, kde se nacházejí."
+
+#: data/org.gnome.Tau.gschema.xml:158
+msgid "Draw the cursor"
+msgstr "Vykreslovat kurzor"
+
+#: data/org.gnome.Tau.gschema.xml:159
+msgid "Whether to draw the cursor"
+msgstr "Zda má, či nemá, být zobrazený textový kurzor."
+
+#: data/org.gnome.Tau.gschema.xml:166
+msgid "Syntax specific settings"
+msgstr "Nastavení specifická pro syntax"
+
+#: data/org.gnome.Tau.gschema.xml:167
+msgid ""
+"A JSON string containing syntax specific settings (e.g. tab width of 2 for "
+"YAML)"
+msgstr ""
+"Řetězec ve formátu JSON obsahující nastavení, týkající se speciálně syntaxe "
+"(např. šířka tabulátoru 2 pro YAML)."
+
+#: data/org.gnome.Tau.gschema.xml:174
+msgid "Save when Tau moves out of focus"
+msgstr "Ukládat při ztrátě zaměření"
+
+#: data/org.gnome.Tau.gschema.xml:175
+msgid "Automatically save all open files when Tau moves out of focus"
+msgstr ""
+"Zda má aplikace Tau, když ztratí zaměření, automaticky uložit všechny "
+"otevřené soubory."
+
+#: data/org.gnome.Tau.gschema.xml:182 src/tau/src/ui/prefs_win_handy.glade:100
+msgid "Show line count"
+msgstr "Zobrazovat čísla řádků"
+
+#: data/org.gnome.Tau.gschema.xml:183
+msgid "Whether or not to show the line count in the editing pane"
+msgstr "Zda v panelu pro úpravy zobrazovat, či nezobrazovat, počet řádků."
+
+#: data/org.gnome.Tau.gschema.xml:190
+msgid "Open files"
+msgstr "Otevřené soubory"
+
+#: data/org.gnome.Tau.gschema.xml:191
+msgid "List of file paths open in the current or most recent session"
+msgstr ""
+"Seznam cest k otevřeným souborům v aktuálním a nejposlednějších sezeních."
+
+#: data/org.gnome.Tau.gschema.xml:198
+msgid "Restore session"
+msgstr "Obnovovat sezení"
+
+#: data/org.gnome.Tau.gschema.xml:199
+msgid "Whether or not to restore last session on start-up"
+msgstr "Zda při spuštění obnovit, či neobnovit, sezení z posledně."
+
+#: data/org.gnome.Tau.gschema.xml:206
+msgid "Full path in title bar"
+msgstr "Plná cesta v záhlavní liště"
+
+#: data/org.gnome.Tau.gschema.xml:207
+msgid ""
+"Whether or not to display full path instead of file name in Tau's title bar."
+msgstr ""
+"Zda v záhlavní liště aplikace Tau místo názvu upravovaného souboru zobrazovat "
+"celou cestu."
+
+#: data/org.gnome.Tau.gschema.xml:214
+msgid "Show terminal"
+msgstr "Zobrazovat terminál"
+
+#: data/org.gnome.Tau.gschema.xml:215
+msgid "Whether or not to show an integrated terminal in Tau's editing pane"
+msgstr ""
+"Zda v panelu pro úpravy zobrazovat, či nezobrazovat, integrovaný terminál."
+
+#: data/org.gnome.Tau.gschema.xml:222
+msgid "Path to the shell executable"
+msgstr "Cesta k spustitelnému shellu"
+
+#: data/org.gnome.Tau.gschema.xml:223
+msgid "The path to the shell you want to use."
+msgstr "Cesta k shellu, který chcete používat."
+
+#: src/editview/src/ui/context_menu.glade:6
+msgid "Cut"
+msgstr "Vyjmout"
+
+#: src/editview/src/ui/context_menu.glade:10
+#: src/tau/src/ui/terminal_context_menu.glade:5
+msgid "Copy"
+msgstr "Zkopírovat"
+
+#: src/editview/src/ui/context_menu.glade:14
+#: src/tau/src/ui/terminal_context_menu.glade:9
+msgid "Paste"
+msgstr "Vložit"
+
+#: src/editview/src/ui/context_menu.glade:20
+msgid "Undo"
+msgstr "Zpět"
+
+#: src/editview/src/ui/context_menu.glade:24
+msgid "Redo"
+msgstr "Znovu"
+
+#: src/editview/src/ui/context_menu.glade:30
+#: src/tau/src/ui/terminal_context_menu.glade:13
+msgid "Select All"
+msgstr "Vybrat vše"
+
+#: src/editview/src/ui/ev.glade:22
+msgid "Enable automatic indentation"
+msgstr "Automaticky odsazovat"
+
+#: src/editview/src/ui/find_replace.glade:32
+msgid "Find"
+msgstr "Najít"
+
+#: src/editview/src/ui/find_replace.glade:82
+msgid "Find and select all search matches"
+msgstr "Najít a vybrat všechny výskyty"
+
+#: src/editview/src/ui/find_replace.glade:102
+msgid "Switch between Search and Search-and-Replace"
+msgstr "Přepnout mezi funkcí „najít“ a „najít a nahradit“"
+
+#: src/editview/src/ui/find_replace.glade:123
+msgid "Show or hide search options such as case sensitivity"
+msgstr ""
+"Zobrazit nebo skrýt volby hledání, jako je např. rozlišování velikosti písmen"
+
+#: src/editview/src/ui/find_replace.glade:160
+#: src/editview/src/ui/find_replace.glade:170
+msgid "Replace"
+msgstr "Nahradit"
+
+#: src/editview/src/ui/find_replace.glade:182
+msgid "Replace All"
+msgstr "Nahradit vše"
+
+#: src/editview/src/ui/find_replace.glade:211
+msgid "Regular expressions"
+msgstr "Regulární výrazy"
+
+#: src/editview/src/ui/find_replace.glade:226
+msgid "Case sensitive"
+msgstr "Rozlišovat velikost písmen"
+
+#: src/editview/src/ui/find_replace.glade:240
+msgid "Match whole word only"
+msgstr "Pouze shoda celých slov"
+
+#: src/editview/src/ui/find_replace.glade:265
+msgid "No Results"
+msgstr "Nejsou žádné výsledky"
+
+#: src/tau/src/ui/shortcuts_win.glade:14
+msgctxt "shortcut window"
+msgid "Documents"
+msgstr "Dokumenty"
+
+#: src/tau/src/ui/shortcuts_win.glade:18
+msgctxt "shortcut window"
+msgid "Create new document"
+msgstr "Vytvořit nový dokument"
+
+#: src/tau/src/ui/shortcuts_win.glade:24
+msgctxt "shortcut window"
+msgid "Open a document"
+msgstr "Otevřít nový dokument"
+
+#: src/tau/src/ui/shortcuts_win.glade:30
+msgctxt "shortcut window"
+msgid "Save the document"
+msgstr "Uložit dokument"
+
+#: src/tau/src/ui/shortcuts_win.glade:36
+msgctxt "shortcut window"
+msgid "Save the document as…"
+msgstr "Uložit dokument jako"
+
+#: src/tau/src/ui/shortcuts_win.glade:42
+msgctxt "shortcut window"
+msgid "Close the document"
+msgstr "Zavřít dokument"
+
+#: src/tau/src/ui/shortcuts_win.glade:49
+msgctxt "shortcut window"
+msgid "Navigation"
+msgstr "Navigace"
+
+#: src/tau/src/ui/shortcuts_win.glade:53
+msgctxt "shortcut window"
+msgid "Cycle tab history backward"
+msgstr "Procházet karty vpřed"
+
+#: src/tau/src/ui/shortcuts_win.glade:59
+msgctxt "shortcut window"
+msgid "Cycle tab history forward"
+msgstr "Procházet karty vzad"
+
+#: src/tau/src/ui/shortcuts_win.glade:65
+msgctxt "shortcut window"
+msgid "Go to line"
+msgstr "Přejít na řádek"
+
+#: src/tau/src/ui/shortcuts_win.glade:71
+msgctxt "shortcut window"
+msgid "Toggle fullscreen"
+msgstr "Přepnout celou obrazovku"
+
+#: src/tau/src/ui/shortcuts_win.glade:78 src/tau/src/ui/shortcuts_win.glade:82
+msgctxt "shortcut window"
+msgid "Find"
+msgstr "Najít"
+
+#: src/tau/src/ui/shortcuts_win.glade:88
+msgctxt "shortcut window"
+msgid "Find the next match"
+msgstr "Najít následující výskyt"
+
+#: src/tau/src/ui/shortcuts_win.glade:94
+msgctxt "shortcut window"
+msgid "Find the previous match"
+msgstr "Najít předchozí výskyt"
+
+#: src/tau/src/ui/shortcuts_win.glade:100
+msgctxt "shortcut window"
+msgid "Find and replace"
+msgstr "Najít a nahradit"
+
+#: src/tau/src/ui/shortcuts_win.glade:106
+msgctxt "shortcut window"
+msgid "Find all matches"
+msgstr "Najít všechny výskyty"
+
+#: src/tau/src/ui/shortcuts_win.glade:112
+msgctxt "shortcut window"
+msgid "Close the find window"
+msgstr "Zavřít okno hledání"
+
+#: src/tau/src/ui/shortcuts_win.glade:120
+msgctxt "shortcut window"
+msgid "Editing"
+msgstr "Úpravy"
+
+#: src/tau/src/ui/shortcuts_win.glade:124
+msgctxt "shortcut window"
+msgid "Highlight the next occurrence of the current selection"
+msgstr "Zvýraznit následující výskyt aktuálního výběru"
+
+#: src/tau/src/ui/shortcuts_win.glade:130
+msgctxt "shortcut window"
+msgid "Delete the current selection"
+msgstr "Smazat aktuální výběr"
+
+#: src/tau/src/ui/shortcuts_win.glade:136
+msgctxt "shortcut window"
+msgid "Delete an entire word"
+msgstr "Smazat celé slovo"
+
+#: src/tau/src/ui/shortcuts_win.glade:142
+msgctxt "shortcut window"
+msgid "Outdent the current selection"
+msgstr "Zmenšit odsazení aktuálního výběru"
+
+#: src/tau/src/ui/shortcuts_win.glade:148
+msgctxt "shortcut window"
+msgid "Move to start of the line"
+msgstr "Přejít na začátek řádku"
+
+#: src/tau/src/ui/shortcuts_win.glade:154
+msgctxt "shortcut window"
+msgid "Move to start of the document"
+msgstr "Přejít na začátek dokumentu"
+
+#: src/tau/src/ui/shortcuts_win.glade:161
+msgctxt "shortcut window"
+msgid "Move to end of the line"
+msgstr "Přejít na konec řádku"
+
+#: src/tau/src/ui/shortcuts_win.glade:167
+msgctxt "shortcut window"
+msgid "Move to end of the document"
+msgstr "Přejít na konec dokumentu"
+
+#: src/tau/src/ui/shortcuts_win.glade:173
+msgctxt "shortcut window"
+msgid "Move up for the height of the view"
+msgstr "Přejít výš o výšku zobrazení"
+
+#: src/tau/src/ui/shortcuts_win.glade:179
+msgctxt "shortcut window"
+msgid "Move down for the height of the view"
+msgstr "Přejít níž o výšku zobrazení"
+
+#: src/tau/src/ui/shortcuts_win.glade:185
+msgctxt "shortcut window"
+msgid "Enable/Disable the cursor"
+msgstr "Zapnout/vypnout kurzor"
+
+#: src/tau/src/ui/shortcuts_win.glade:192
+msgctxt "shortcut window"
+msgid "Copy and Paste"
+msgstr "Kopírování a vkládání"
+
+#: src/tau/src/ui/shortcuts_win.glade:196
+msgctxt "shortcut window"
+msgid "Copy the current selection"
+msgstr "Zkopírovat aktuální výběr do schránky"
+
+#: src/tau/src/ui/shortcuts_win.glade:202
+msgctxt "shortcut window"
+msgid "Paste what's currently in the clipboard"
+msgstr "Vložit aktuální obsah ze schránky"
+
+#: src/tau/src/ui/shortcuts_win.glade:208
+#: src/tau/src/ui/shortcuts_win.glade:214
+msgctxt "shortcut window"
+msgid "Cut the current selection"
+msgstr "Vyjmout aktuální výběr do schránky"
+
+#: src/tau/src/ui/shortcuts_win.glade:221
+msgctxt "shortcut window"
+msgid "Undo and Redo"
+msgstr "Vracení a opakování"
+
+#: src/tau/src/ui/shortcuts_win.glade:225
+msgctxt "shortcut window"
+msgid "Undo"
+msgstr "Vrátit zpět poslední činnost"
+
+#: src/tau/src/ui/shortcuts_win.glade:231
+msgctxt "shortcut window"
+msgid "Redo"
+msgstr "Znovu provést poslední vrácenou činnost"
+
+#: src/tau/src/ui/shortcuts_win.glade:238
+msgctxt "shortcut window"
+msgid "Selections"
+msgstr "Vybírání"
+
+#: src/tau/src/ui/shortcuts_win.glade:242
+msgctxt "shortcut window"
+msgid "Select all"
+msgstr "Vybrat vše"
+
+#: src/tau/src/ui/shortcuts_win.glade:248
+msgctxt "shortcut window"
+msgid "Select all occurences of the current selection"
+msgstr "Vybrat všechny výskyty aktuálního výběru"
+
+#: src/tau/src/ui/shortcuts_win.glade:254
+msgctxt "shortcut window"
+msgid "Move up and select everything from current cursor position"
+msgstr ""
+"Posunout se výš a přidat při tom do výběru vše od aktuální pozice"
+
+#: src/tau/src/ui/shortcuts_win.glade:260
+msgctxt "shortcut window"
+msgid "Move down and select everything from current cursor position"
+msgstr ""
+"Posunout se níž a přidat při tom do výběru vše od aktuální pozice"
+
+#: src/tau/src/ui/shortcuts_win.glade:266
+msgctxt "shortcut window"
+msgid "Move left and select everything from current cursor position"
+msgstr ""
+"Posunout se vlevo a přidat při tom do výběru vše od aktuální pozice"
+
+#: src/tau/src/ui/shortcuts_win.glade:272
+msgctxt "shortcut window"
+msgid "Move left and select the next word"
+msgstr "Posunout se vlevo a přidat při tom do výběru celé další slovo"
+
+#: src/tau/src/ui/shortcuts_win.glade:278
+msgctxt "shortcut window"
+msgid "Move right and select everything from current cursor position"
+msgstr ""
+"Posunout se vpravo a přidat při tom do výběru vše od aktuální pozice"
+
+#: src/tau/src/ui/shortcuts_win.glade:284
+msgctxt "shortcut window"
+msgid "Move right and select the next word"
+msgstr "Posunout se vpravo a přidat při tom do výběru celé další slovo"
+
+#: src/tau/src/ui/shortcuts_win.glade:290
+msgctxt "shortcut window"
+msgid "Move to start of the line and select"
+msgstr ""
+"Přejít na začátek řádku a přidat při tom do výběru vše od aktuální pozice"
+
+#: src/tau/src/ui/shortcuts_win.glade:296
+msgctxt "shortcut window"
+msgid "Move to start of the document and select"
+msgstr ""
+"Přejít na začátek dokumentu a přidat při tom do výběru vše od aktuální pozice"
+
+#: src/tau/src/ui/shortcuts_win.glade:302
+msgctxt "shortcut window"
+msgid "Move to end of the line and select"
+msgstr "Přejít na konec řádku a přidat při tom do výběru vše od aktuální pozice"
+
+#: src/tau/src/ui/shortcuts_win.glade:308
+msgctxt "shortcut window"
+msgid "Move to end of the document and select"
+msgstr ""
+"Přejít na konec dokumentu a přidat při tom do výběru vše od aktuální pozice"
+
+#: src/tau/src/ui/shortcuts_win.glade:314
+msgctxt "shortcut window"
+msgid "Move up for the height of the view and select"
+msgstr ""
+"Přejít výš o výšku zobrazení a přidat při tom do výběru vše od aktuální pozice"
+
+#: src/tau/src/ui/shortcuts_win.glade:320
+msgctxt "shortcut window"
+msgid "Move down for the height of the view and select"
+msgstr ""
+"Přejít níž o výšku zobrazení a přidat při tom do výběru vše od aktuální pozice"
+
+#: src/tau/src/ui/prefs_win_handy.glade:28 src/tau/src/ui/tau.glade:153
+#: src/tau/src/ui/tau.glade:374
+msgid "Preferences"
+msgstr "Předvolby"
+
+#: src/tau/src/ui/prefs_win_handy.glade:39
+msgid "View"
+msgstr "Zobrazení"
+
+#: src/tau/src/ui/prefs_win_handy.glade:40
+msgid "Preferences related to the View’s look"
+msgstr "Předvolby vztahující se k vzhledu zobrazení"
+
+#: src/tau/src/ui/prefs_win_handy.glade:44
+msgid "Display right hand margin"
+msgstr "Zobrazovat pravý okraj"
+
+#: src/tau/src/ui/prefs_win_handy.glade:87
+msgid "Highlight the current line"
+msgstr "Zvýrazňovat aktuální řádek"
+
+#: src/tau/src/ui/prefs_win_handy.glade:113
+msgid "Show full path in title bar"
+msgstr "Zobrazovat plnou cestu v záhlavní liště"
+
+#: src/tau/src/ui/prefs_win_handy.glade:126
+msgid "Restore last opened files on start-up"
+msgstr "Při spuštění obnovit naposledy otevřené soubory"
+
+#: src/tau/src/ui/prefs_win_handy.glade:140
+msgid "Wrap lines at the end of the view"
+msgstr "Zalamovat řádky na konci zobrazení"
+
+#: src/tau/src/ui/prefs_win_handy.glade:152
+msgid "Theme configuration"
+msgstr "Nastavení motivu"
+
+#: src/tau/src/ui/prefs_win_handy.glade:167
+msgid "Syntax configuration"
+msgstr "Nastavení syntaxe"
+
+#: src/tau/src/ui/prefs_win_handy.glade:171
+msgid "Syntax selection"
+msgstr "Výběr syntaxe"
+
+#: src/tau/src/ui/prefs_win_handy.glade:184
+msgid "Syntax-specific tab size"
+msgstr "Velikost tabulátoru pro syntax"
+
+#: src/tau/src/ui/prefs_win_handy.glade:240
+msgid "Apply syntax configuration settings"
+msgstr "Použít nastavení syntaxe"
+
+#: src/tau/src/ui/prefs_win_handy.glade:260
+msgid "Editor"
+msgstr "Editor"
+
+#: src/tau/src/ui/prefs_win_handy.glade:264
+msgid "Indention"
+msgstr "Odsazování"
+
+#: src/tau/src/ui/prefs_win_handy.glade:325
+msgid "Automatic indentation"
+msgstr "Automatické odsazování"
+
+#: src/tau/src/ui/prefs_win_handy.glade:362
+msgid "Delete spaces up to the previous tab stop"
+msgstr "Mazat mezery až po předchozí tabulační pozici"
+
+#: src/tau/src/ui/prefs_win_handy.glade:377
+msgid "File saving"
+msgstr "Ukládání souborů"
+
+#: src/tau/src/ui/prefs_win_handy.glade:381
+msgid "Save files when the Tau goes out of focus"
+msgstr "Uložit soubory, když Tau ztratí zaměření"
+
+#: src/tau/src/ui/prefs_win_handy.glade:396 src/tau/src/main_win.rs:1252
+#: src/tau/src/main_win.rs:1289
+msgid "Terminal"
+msgstr "Terminál"
+
+#: src/tau/src/ui/prefs_win_handy.glade:400
+msgid "Show the embedded terminal on startup"
+msgstr "Po spuštění zobrazit vložený terminál"
+
+#: src/tau/src/ui/prefs_win_handy.glade:413
+msgid "What shell to start"
+msgstr "Který shell spustit"
+
+#: src/tau/src/ui/prefs_win_handy.glade:428
+msgid "Highlighting spaces"
+msgstr "Zvýrazňovat mezery"
+
+#: src/tau/src/ui/prefs_win_handy.glade:500
+msgid "Don't draw spaces"
+msgstr "Nevykreslovat mezery"
+
+#: src/tau/src/ui/prefs_win_handy.glade:519
+msgid "Highlighting tabs"
+msgstr "Zvýrazňovat tabulátory"
+
+#: src/tau/src/ui/prefs_win_handy.glade:591
+msgid "Don't draw tabs"
+msgstr "Nevykreslovat tabulátory"
+
+#: src/tau/src/ui/prefs_win_handy.glade:610
+#: src/tau/src/ui/prefs_win_handy.glade:614
+msgid "Font configuration"
+msgstr "Nastavení fontu"
+
+#: src/tau/src/ui/tau.glade:22 src/tau/src/ui/tau.glade:243
+msgid "Save As…"
+msgstr "Uložit jako…"
+
+#: src/tau/src/ui/tau.glade:36 src/tau/src/ui/tau.glade:257
+msgid "Save All"
+msgstr "Uložit vše"
+
+#: src/tau/src/ui/tau.glade:61 src/tau/src/ui/tau.glade:282
+msgid "Find…"
+msgstr "Najít…"
+
+#: src/tau/src/ui/tau.glade:75 src/tau/src/ui/tau.glade:296
+msgid "Replace…"
+msgstr "Nahradit…"
+
+#: src/tau/src/ui/tau.glade:89 src/tau/src/ui/tau.glade:310
+msgid "Go To Line…"
+msgstr "Přejít na řádek…"
+
+#: src/tau/src/ui/tau.glade:114 src/tau/src/ui/tau.glade:335
+msgid "Show Terminal"
+msgstr "Zobrazit terminál"
+
+#: src/tau/src/ui/tau.glade:128 src/tau/src/ui/tau.glade:349
+msgid "Toggle Fullscreen"
+msgstr "Přepnout celou obrazovku"
+
+#: src/tau/src/ui/tau.glade:178 src/tau/src/ui/tau.glade:399
+msgid "Help"
+msgstr "Nápověda"
+
+#: src/tau/src/ui/tau.glade:192 src/tau/src/ui/tau.glade:413
+msgid "Keyboard Shortcuts"
+msgstr "Klávesové zkratky"
+
+#: src/tau/src/ui/tau.glade:206 src/tau/src/ui/tau.glade:427
+msgid "About Tau"
+msgstr "O aplikaci Tau"
+
+#: src/tau/src/ui/tau.glade:462 src/tau/src/ui/tau.glade:571
+#: src/tau/src/main_win.rs:1701
+msgid "Open"
+msgstr "Otevřít"
+
+#: src/tau/src/ui/tau.glade:503 src/tau/src/ui/tau.glade:631
+#: src/tau/src/main_win.rs:1437 src/tau/src/main_win.rs:1873
+msgid "Save"
+msgstr "Uložit"
+
+#: src/editview/src/edit_view.rs:195 src/editview/src/edit_view.rs:197
+#: src/tau/src/main_win.rs:1118 src/tau/src/main_win.rs:1121
+#: src/tau/src/main_win.rs:1978
+msgid "Untitled"
+msgstr "Nepojmenovaný"
+
+#: src/editview/src/edit_view.rs:977 src/editview/src/edit_view.rs:987
+msgid "Line"
+msgstr "Řádek"
+
+#: src/editview/src/edit_view.rs:992
+msgid "Column"
+msgstr "Sloupec"
+
+#. We localized it ourselves, so we have to turn it into English again when sending it to Xi
+#: src/editview/src/edit_view.rs:1599 src/editview/src/view_item.rs:242
+#: src/editview/src/view_item.rs:348
+msgid "Plain Text"
+msgstr "Prostý text"
+
+#: src/editview/src/view_item.rs:111 src/editview/src/view_item.rs:259
+msgid "Tab Size"
+msgstr "Velikost tabulátoru"
+
+#: src/tau/src/about_win.rs:21
+msgid "GTK frontend for the xi text editor, written in Rust"
+msgstr "Uživatelské rozhraní GTK pro exitor Xi, napsané v jazyce Rust"
+
+#: src/tau/src/about_win.rs:29
+msgid "translator-credits"
+msgstr "Marek Černocký <marek@manet.cz>"
+
+#: src/tau/src/functions.rs:72
+msgid "Welcome to Tau's terminal."
+msgstr "Vítejte v terminálu aplikace Tau."
+
+#: src/tau/src/main.rs:117
+msgid "Start a new instance of the application"
+msgstr "Spustit novou instanci aplikace"
+
+#: src/tau/src/main_win.rs:1057 src/tau/src/main_win.rs:1065
+msgid ""
+"Couldn’t get Documents directory to autosave unnamed file. Please make sure "
+"“XDG_DATA_DIR” or similar is set."
+msgstr ""
+"Nezdařilo se zjistit složku pro dokumenty, aby se do ní automaticky uložil "
+"nepojmenovaný soubor. Zkontrolujte, jestli je nastavená proměnná "
+"„XDG_DATA_DIR“, nebo jiná s podobným významem."
+
+#: src/tau/src/main_win.rs:1426
+msgid "Save unsaved changes"
+msgstr "Uložit neuložené změny?"
+
+#: src/tau/src/main_win.rs:1429
+msgid "Close Without Saving"
+msgstr "Zavřít bez uložení"
+
+#: src/tau/src/main_win.rs:1433 src/tau/src/main_win.rs:1702
+#: src/tau/src/main_win.rs:1874
+msgid "Cancel"
+msgstr "Zrušit"
+
+#: src/tau/src/main_win.rs:1698
+msgid "Open a file to edit"
+msgstr "Otevření souboru pro úpravy"
+
+#: src/tau/src/main_win.rs:1727
+msgid "Couldn’t open file"
+msgstr "Nezdařilo se otevřít soubor"
+
+#: src/tau/src/main_win.rs:1870
+msgid "Save file"
+msgstr "Uložení souboru"
+
+#: src/tau/src/main_win.rs:1912
+msgid "Couldn’t save file"
+msgstr "Nezdařilo se uložit soubor"
+
+#: src/tau/src/prefs_win.rs:439
+msgid ""
+"Couldn’t find the xi-syntect-plugin. As such these settings won’t work in "
+"the current session."
+msgstr ""
+"Nezdařilo se najít zásuvný modul xi-syntect-plugin. Z toho důvodu tato "
+"nastavení nebudou v aktuálním sezení fungovat."
