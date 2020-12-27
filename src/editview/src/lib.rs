@@ -7,6 +7,7 @@
 pub mod draw_invisible;
 pub mod edit_view;
 pub mod fonts;
+pub mod i18n;
 pub mod main_state;
 pub mod theme;
 mod view_item;

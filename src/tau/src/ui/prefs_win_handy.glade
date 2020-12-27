@@ -32,7 +32,7 @@
     <child>
       <object class="HdyPreferencesPage">
         <property name="icon_name">folder-documents-symbolic</property>
-        <property name="title">View</property>
+        <property name="title" translatable="yes">View</property>
         <property name="visible">True</property>
         <child>
           <object class="HdyPreferencesGroup">

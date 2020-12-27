@@ -5,6 +5,7 @@
 
 use crate::draw_invisible;
 use crate::fonts::Font;
+use crate::i18n::ni18n_f;
 use crate::main_state::{MainState, ShowInvisibles};
 use crate::theme::{color_from_u32, set_margin_source_color, set_source_color, PangoColor};
 use crate::view_item::{FindReplace, TopBar, ViewItem};
@@ -1487,9 +1488,12 @@ impl EditView {
     /// Displays how many matches have been found in the find/replace dialog.
     pub fn find_status(&self, queries: &[Query]) {
         for query in queries {
-            self.find_replace
-                .find_status_label
-                .set_text(&format!("{} Results", query.matches));
+            self.find_replace.find_status_label.set_text(&ni18n_f(
+                "{} Result",
+                "{} Results",
+                query.matches as u32,
+                &[&query.matches.to_string()],
+            ));
             debug!("query {:?}", query);
         }
     }
