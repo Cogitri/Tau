@@ -1,713 +1,868 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# Swedish translation for tau.
+# Copyright © 2020, 2021 Tau's COPYRIGHT HOLDER
 # This file is distributed under the same license as the tau package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Anders Jonsson <anders.jonsson@norsjovallen.se>, 2020, 2021.
+# Gleb Vassiljev <gleb@netkom.se>, 2020.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: tau\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-17 00:36+0200\n"
-"PO-Revision-Date: 2019-08-08 14:46+0200\n"
-"Language-Team: \n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Tau/issues\n"
+"POT-Creation-Date: 2020-12-27 19:29+0000\n"
+"PO-Revision-Date: 2021-01-14 01:28+0100\n"
+"Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
+"Language-Team: <tp-sv@listor.tp-sv.se>\n"
+"Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.2.3\n"
-"Last-Translator: \n"
+"X-Generator: Poedit 2.4.2\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"Language: sv\n"
 
-#: data/org.gnome.Tau.appdata.xml.in:7 data/org.gnome.Tau.desktop.in:3
+#: data/org.gnome.Tau.appdata.xml.in.in:7 data/org.gnome.Tau.desktop.in.in:3
 msgid "Tau"
-msgstr ""
+msgstr "Tau"
 
-#: data/org.gnome.Tau.appdata.xml.in:8
+#: data/org.gnome.Tau.appdata.xml.in.in:8
 msgid "GTK frontend for the xi text editor"
-msgstr ""
+msgstr "GTK-gränssnitt för textredigeraren xi"
 
-#: data/org.gnome.Tau.appdata.xml.in:12
+#: data/org.gnome.Tau.appdata.xml.in.in:13
 msgid ""
-"Tau is a GTK frontend for the xi text editor written in Rust. It's a very "
+"Tau is a GTK frontend for the xi text editor written in Rust. It’s a very "
 "fast plain text editor."
 msgstr ""
+"Tau är ett GTK-gränssnitt för textredigeraren xi, skrivet i Rust. Det är en "
+"väldigt snabb redigerare för vanlig text."
 
-#: data/org.gnome.Tau.appdata.xml.in:27
-msgid "Rasmus \"Cogitri\" Thomsen"
-msgstr ""
+#: data/org.gnome.Tau.appdata.xml.in.in:28
+msgid "Rasmus “Cogitri” Thomsen"
+msgstr "Rasmus ”Cogitri” Thomsen"
 
-#: data/org.gnome.Tau.desktop.in:5
+#: data/org.gnome.Tau.desktop.in.in:5
 msgid "The Tau text editor"
-msgstr ""
+msgstr "Textredigeraren Tau"
 
-#: data/org.gnome.Tau.desktop.in:8
-msgid "org.gnome.Tau"
-msgstr ""
-
-#: data/org.gnome.Tau.desktop.in:13
+#. Translators: Search terms to find this application. Do NOT translate or localize the semicolons! The list MUST also end with a semicolon!
+#: data/org.gnome.Tau.desktop.in.in:15
 msgid "Text;Editor;Plaintext;Write;gxi;"
-msgstr ""
+msgstr "Text;Redigerare;Vanlig text;Skriv;gxi;"
 
-#: data/org.gnome.Tau.desktop.in:16
+#: data/org.gnome.Tau.desktop.in.in:18
 msgid "Launch a new Tau instance"
-msgstr ""
+msgstr "Starta en ny Tau-instans"
 
 #: data/org.gnome.Tau.gschema.xml:9
-msgid "Xi-Editor's theme"
-msgstr ""
+msgid "Xi-Editor’s theme"
+msgstr "Xi-redigerarens tema"
 
 #: data/org.gnome.Tau.gschema.xml:10
 msgid "Sets the theme used for the editing area"
-msgstr ""
+msgstr "Ställer in tema som används i redigeringsytan"
 
-#: data/org.gnome.Tau.gschema.xml:17
+#: data/org.gnome.Tau.gschema.xml:17 src/tau/src/ui/prefs_win_handy.glade:449
 msgid "Draw trailing spaces"
-msgstr ""
+msgstr "Rita ut avslutande blanksteg"
 
 #: data/org.gnome.Tau.gschema.xml:18
 msgid "Draw spaces which are at the end of a line"
-msgstr ""
+msgstr "Rita ut blanksteg som är i slutet av raden"
 
-#: data/org.gnome.Tau.gschema.xml:25
+#: data/org.gnome.Tau.gschema.xml:25 src/tau/src/ui/prefs_win_handy.glade:466
 msgid "Draw leading spaces"
-msgstr ""
+msgstr "Rita ut inledande blanksteg"
 
 #: data/org.gnome.Tau.gschema.xml:26
 msgid "Draw spaces which are at the beginning of a line"
-msgstr ""
+msgstr "Rita ut blanksteg som är i början av raden"
 
-#: data/org.gnome.Tau.gschema.xml:33
-msgid "Draw all spaces"
-msgstr ""
+#: data/org.gnome.Tau.gschema.xml:33 src/tau/src/ui/prefs_win_handy.glade:483
+msgid "Draw selected spaces"
+msgstr "Rita ut markerade blanksteg"
 
 #: data/org.gnome.Tau.gschema.xml:34
-msgid "Draw spaces, no matter the position"
-msgstr ""
+msgid "Draw spaces whenever they are selected"
+msgstr "Rita ut blanksteg närhelst de markeras"
 
-#: data/org.gnome.Tau.gschema.xml:41
-msgid "Draw a right hand margin"
-msgstr ""
+#: data/org.gnome.Tau.gschema.xml:41 src/tau/src/ui/prefs_win_handy.glade:432
+msgid "Draw all spaces"
+msgstr "Rita ut alla blanksteg"
 
 #: data/org.gnome.Tau.gschema.xml:42
-msgid "Draw a right hand margin to limit the text width"
-msgstr ""
+msgid "Draw spaces, no matter the position"
+msgstr "Rita ut blanksteg, oavsett position"
 
 #: data/org.gnome.Tau.gschema.xml:49
-msgid "At what column to display the margin"
-msgstr ""
+msgid "Draw a right hand margin"
+msgstr "Rita ut en marginal på höger sida"
 
 #: data/org.gnome.Tau.gschema.xml:50
-msgid "Sets the column at which the margin should be drawn"
-msgstr ""
-
-#: data/org.gnome.Tau.gschema.xml:57
-msgid "Whether the current line should be highlighted"
-msgstr ""
+msgid "Draw a right hand margin to limit the text width"
+msgstr "Rita ut en marginal på höger sida för att begränsa textbredd"
 
 #: data/org.gnome.Tau.gschema.xml:58
+msgid "At what column to display the margin"
+msgstr "På vilken kolumn som marginalen ska visas"
+
+#: data/org.gnome.Tau.gschema.xml:59
+msgid "Sets the column at which the margin should be drawn"
+msgstr "Ställer in kolumnen på vilken marginalen kommer att ritas"
+
+#: data/org.gnome.Tau.gschema.xml:66
+msgid "Whether the current line should be highlighted"
+msgstr "Huruvida den aktuella raden ska framhävas"
+
+#: data/org.gnome.Tau.gschema.xml:67
 msgid ""
 "Sets if the current line should be highlighted, which eases navigation "
 "through the document"
 msgstr ""
-
-#: data/org.gnome.Tau.gschema.xml:65
-msgid "Sets the height of the window in the next startup"
-msgstr ""
-
-#: data/org.gnome.Tau.gschema.xml:70
-msgid "Sets the width of the window in the next startup"
-msgstr ""
+"Ställer in huruvida den aktuella raden ska framhävas, vilket underlättar "
+"navigering i dokumentet"
 
 #: data/org.gnome.Tau.gschema.xml:75
-msgid "Sets if the window should be maximized during the next startup"
-msgstr ""
-
-#: data/org.gnome.Tau.gschema.xml:80 src/tau/src/ui/prefs_win.glade:149
-msgid "Tab size"
-msgstr ""
+msgid "Sets the height of the window in the next start-up"
+msgstr "Ställer in höjden på fönstret under nästa uppstart"
 
 #: data/org.gnome.Tau.gschema.xml:81
-msgid "Amount of spaces that a tab is wide"
-msgstr ""
+msgid "Sets the width of the window in the next start-up"
+msgstr "Ställer in bredden på fönstret under nästa uppstart"
 
-#: data/org.gnome.Tau.gschema.xml:87
-msgid "Insert spaces instead of tabs"
-msgstr ""
+#: data/org.gnome.Tau.gschema.xml:86
+msgid "Sets if the window should be maximized during the next start-up"
+msgstr "Ställer in huruvida fönstret ska vara maximerat under nästa uppstart"
 
-#: data/org.gnome.Tau.gschema.xml:88
-msgid "Whether spaces should be inserted instead of tabs"
-msgstr ""
+#: data/org.gnome.Tau.gschema.xml:92 src/editview/src/ui/ev.glade:76
+#: src/tau/src/ui/prefs_win_handy.glade:268
+msgid "Tab size"
+msgstr "Tabbstorlek"
 
 #: data/org.gnome.Tau.gschema.xml:93
-msgid "Treat indention with spaces like tabs"
-msgstr ""
+msgid "Amount of spaces that a tab is wide"
+msgstr "Antal blanksteg som en tabb ska motsvara"
 
-#: data/org.gnome.Tau.gschema.xml:94
+#: data/org.gnome.Tau.gschema.xml:99 src/editview/src/ui/ev.glade:37
+#: src/tau/src/ui/prefs_win_handy.glade:227
+#: src/tau/src/ui/prefs_win_handy.glade:289
+msgid "Insert spaces instead of tabs"
+msgstr "Infoga blanksteg istället för tabbar"
+
+#: data/org.gnome.Tau.gschema.xml:100
+msgid "Whether spaces should be inserted instead of tabs"
+msgstr "Huruvida blanksteg ska infogas istället för tabbar"
+
+#: data/org.gnome.Tau.gschema.xml:105
+msgid "Treat indentation with spaces like tabs"
+msgstr "Hantera indentering med blanksteg som tabbar"
+
+#: data/org.gnome.Tau.gschema.xml:106
 msgid ""
-"If translate-tabs-to-spaces is true, backspaces will delete multiple spaces, "
-"up to the previous tab stop"
+"If “translate-tabs-to-spaces” is true, Backspace will delete multiple "
+"spaces, up to the previous tab stop"
 msgstr ""
+"Om ”translate-tabs-to-spaces” är true (sant), så kommer backstegsknappen att "
+"radera flera blanksteg upp till föregående tabbstopp"
 
-#: data/org.gnome.Tau.gschema.xml:99
-msgid "Automatically match document's indention on newlines"
-msgstr ""
+#: data/org.gnome.Tau.gschema.xml:111
+msgid "Automatically match document’s indentation on newlines"
+msgstr "Matcha automatiskt dokumentets indentering vid nyrad"
 
-#: data/org.gnome.Tau.gschema.xml:104
+#: data/org.gnome.Tau.gschema.xml:116
 msgid "The font used for editing"
-msgstr ""
+msgstr "Typsnitt som används för redigering"
 
-#: data/org.gnome.Tau.gschema.xml:109 src/tau/src/ui/prefs_win.glade:184
+#: data/org.gnome.Tau.gschema.xml:121
 msgid "Wrap lines at the end of the document"
-msgstr ""
+msgstr "Radbryt text i slutet på dokumentet"
 
-#: data/org.gnome.Tau.gschema.xml:114
+#: data/org.gnome.Tau.gschema.xml:126 src/tau/src/ui/prefs_win_handy.glade:540
 msgid "Draw trailing tabs"
-msgstr ""
+msgstr "Rita ut avslutande tabbar"
 
-#: data/org.gnome.Tau.gschema.xml:115
+#: data/org.gnome.Tau.gschema.xml:127
 msgid "Draw tabs which are at the end of a line"
-msgstr ""
+msgstr "Rita ut tabbar som är på slutet av raden"
 
-#: data/org.gnome.Tau.gschema.xml:122
+#: data/org.gnome.Tau.gschema.xml:134 src/tau/src/ui/prefs_win_handy.glade:557
 msgid "Draw leading tabs"
-msgstr ""
+msgstr "Rita ut inledande tabbar"
 
-#: data/org.gnome.Tau.gschema.xml:123
+#: data/org.gnome.Tau.gschema.xml:135
 msgid "Draw tabs which are at the beginning of a line"
-msgstr ""
+msgstr "Rita ut tabbar som är i början av raden"
 
-#: data/org.gnome.Tau.gschema.xml:130
+#: data/org.gnome.Tau.gschema.xml:142 src/tau/src/ui/prefs_win_handy.glade:574
+msgid "Draw selected tabs"
+msgstr "Rita ut markerade tabbar"
+
+#: data/org.gnome.Tau.gschema.xml:143
+msgid "Draw tabs whenever they are selected"
+msgstr "Rita ut tabbar närhelst de markeras"
+
+#: data/org.gnome.Tau.gschema.xml:150 src/tau/src/ui/prefs_win_handy.glade:523
 msgid "Draw all tabs"
-msgstr ""
+msgstr "Rita ut alla tabbar"
 
-#: data/org.gnome.Tau.gschema.xml:131
+#: data/org.gnome.Tau.gschema.xml:151
 msgid "Draw all tabs, no matter the position"
-msgstr ""
+msgstr "Rita ut alla tabbar, oberoende av positionen"
 
-#: src/editview/src/ui/ev.glade:97
-msgid "document-text"
-msgstr ""
+#: data/org.gnome.Tau.gschema.xml:158
+msgid "Draw the cursor"
+msgstr "Rita ut markören"
 
-#: src/editview/src/ui/ev.glade:104 src/editview/src/ui/ev.glade:219
-msgid "text"
-msgstr ""
+#: data/org.gnome.Tau.gschema.xml:159
+msgid "Whether to draw the cursor"
+msgstr "Huruvida markören ska ritas ut"
 
-#: src/editview/src/ui/ev.glade:180 src/editview/src/ui/ev.glade:192
-#: src/tau/src/ui/prefs_win.glade:133
-msgid "0"
+#: data/org.gnome.Tau.gschema.xml:166
+msgid "Syntax specific settings"
+msgstr "Syntaxspecifika inställningar"
+
+#: data/org.gnome.Tau.gschema.xml:167
+msgid ""
+"A JSON string containing syntax specific settings (e.g. tab width of 2 for "
+"YAML)"
 msgstr ""
+"En JSON-sträng som innehåller syntaxspecifika inställningar (t.ex. "
+"tabbredden 2 för YAML)"
+
+#: data/org.gnome.Tau.gschema.xml:174
+msgid "Save when Tau moves out of focus"
+msgstr "Spara när Tau förlorar fokus"
+
+#: data/org.gnome.Tau.gschema.xml:175
+msgid "Automatically save all open files when Tau moves out of focus"
+msgstr "Spara automatiskt alla öppna filer när Tau förlorar fokus"
+
+#: data/org.gnome.Tau.gschema.xml:182 src/tau/src/ui/prefs_win_handy.glade:100
+msgid "Show line count"
+msgstr "Visa radantal"
+
+#: data/org.gnome.Tau.gschema.xml:183
+msgid "Whether or not to show the line count in the editing pane"
+msgstr "Huruvida radantal ska visas i redigeringspanelen"
+
+#: data/org.gnome.Tau.gschema.xml:190
+msgid "Open files"
+msgstr "Öppna filer"
+
+#: data/org.gnome.Tau.gschema.xml:191
+msgid "List of file paths open in the current or most recent session"
+msgstr ""
+"Lista över filsökvägar som är öppna i den aktuella eller senaste sessionen"
+
+#: data/org.gnome.Tau.gschema.xml:198
+msgid "Restore session"
+msgstr "Återställ session"
+
+#: data/org.gnome.Tau.gschema.xml:199
+msgid "Whether or not to restore last session on start-up"
+msgstr "Huruvida den senaste sessionen ska återställas vid uppstart eller inte"
+
+#: data/org.gnome.Tau.gschema.xml:206
+msgid "Full path in title bar"
+msgstr "Fullständig sökväg i namnlist"
+
+#: data/org.gnome.Tau.gschema.xml:207
+msgid ""
+"Whether or not to display full path instead of file name in Tau's title bar."
+msgstr ""
+"Huruvida den fullständiga filsökvägen ska visas istället för filnamn i Taus "
+"namnlist."
+
+#: data/org.gnome.Tau.gschema.xml:214
+msgid "Show terminal"
+msgstr "Visa terminal"
+
+#: data/org.gnome.Tau.gschema.xml:215
+msgid "Whether or not to show an integrated terminal in Tau's editing pane"
+msgstr "Huruvida en integrerad terminal ska visas i Taus redigeringspanel"
+
+#: data/org.gnome.Tau.gschema.xml:222
+msgid "Path to the shell executable"
+msgstr "Sökväg till exekverbar fil för skalet"
+
+#: data/org.gnome.Tau.gschema.xml:223
+msgid "The path to the shell you want to use."
+msgstr "Sökvägen till skalet som du vill använda."
+
+#: src/editview/src/ui/context_menu.glade:6
+msgid "Cut"
+msgstr "Klipp ut"
+
+#: src/editview/src/ui/context_menu.glade:10
+#: src/tau/src/ui/terminal_context_menu.glade:5
+msgid "Copy"
+msgstr "Kopiera"
+
+#: src/editview/src/ui/context_menu.glade:14
+#: src/tau/src/ui/terminal_context_menu.glade:9
+msgid "Paste"
+msgstr "Klistra in"
+
+#: src/editview/src/ui/context_menu.glade:20
+msgid "Undo"
+msgstr "Ångra"
+
+#: src/editview/src/ui/context_menu.glade:24
+msgid "Redo"
+msgstr "Gör om"
+
+#: src/editview/src/ui/context_menu.glade:30
+#: src/tau/src/ui/terminal_context_menu.glade:13
+msgid "Select All"
+msgstr "Markera allt"
+
+#: src/editview/src/ui/ev.glade:22
+msgid "Enable automatic indentation"
+msgstr "Aktivera automatisk indentering"
 
 #: src/editview/src/ui/find_replace.glade:32
 msgid "Find"
-msgstr ""
+msgstr "Sök"
 
 #: src/editview/src/ui/find_replace.glade:82
+msgid "Find and select all search matches"
+msgstr "Sök och markera alla sökträffar"
+
+#: src/editview/src/ui/find_replace.glade:102
 msgid "Switch between Search and Search-and-Replace"
-msgstr ""
+msgstr "Växla mellan Sök och Sök-och-ersätt"
 
-#: src/editview/src/ui/find_replace.glade:103
+#: src/editview/src/ui/find_replace.glade:123
 msgid "Show or hide search options such as case sensitivity"
-msgstr ""
+msgstr "Visa eller dölj sökalternativ så som skiftlägeskänslighet"
 
-#: src/editview/src/ui/find_replace.glade:140
-#: src/editview/src/ui/find_replace.glade:150
+#: src/editview/src/ui/find_replace.glade:160
+#: src/editview/src/ui/find_replace.glade:170
 msgid "Replace"
-msgstr ""
+msgstr "Ersätt"
 
-#: src/editview/src/ui/find_replace.glade:162
+#: src/editview/src/ui/find_replace.glade:182
 msgid "Replace All"
-msgstr ""
+msgstr "Ersätt alla"
 
-#: src/editview/src/ui/find_replace.glade:191
+#: src/editview/src/ui/find_replace.glade:211
 msgid "Regular expressions"
-msgstr ""
+msgstr "Reguljära uttryck"
 
-#: src/editview/src/ui/find_replace.glade:206
+#: src/editview/src/ui/find_replace.glade:226
 msgid "Case sensitive"
-msgstr ""
+msgstr "Skiftlägeskänslig"
 
-#: src/editview/src/ui/find_replace.glade:220
+#: src/editview/src/ui/find_replace.glade:240
 msgid "Match whole word only"
-msgstr ""
+msgstr "Matcha endast hela ord"
 
-#: src/editview/src/ui/find_replace.glade:245
+#: src/editview/src/ui/find_replace.glade:265
 msgid "No Results"
-msgstr ""
+msgstr "Inga resultat"
 
-#: src/tau/src/ui/prefs_win.glade:17 src/tau/src/ui/tau.glade:139
-msgid "Preferences"
-msgstr ""
+#: src/tau/src/ui/shortcuts_win.glade:14
+msgctxt "shortcut window"
+msgid "Documents"
+msgstr "Dokument"
 
-#: src/tau/src/ui/prefs_win.glade:42 src/tau/src/main_win.rs:431
-msgid "Theme"
-msgstr ""
+#: src/tau/src/ui/shortcuts_win.glade:18
+msgctxt "shortcut window"
+msgid "Create new document"
+msgstr "Skapa nytt dokument"
 
-#: src/tau/src/ui/prefs_win.glade:64
-msgid "Font"
-msgstr ""
+#: src/tau/src/ui/shortcuts_win.glade:24
+msgctxt "shortcut window"
+msgid "Open a document"
+msgstr "Öppna ett dokument"
 
-#: src/tau/src/ui/prefs_win.glade:112
-msgid "Appearance"
-msgstr ""
+#: src/tau/src/ui/shortcuts_win.glade:30
+msgctxt "shortcut window"
+msgid "Save the document"
+msgstr "Spara dokumentet"
 
-#: src/tau/src/ui/prefs_win.glade:169
-msgid "Delete spaces up to the previous tab stop"
-msgstr ""
+#: src/tau/src/ui/shortcuts_win.glade:36
+msgctxt "shortcut window"
+msgid "Save the document as…"
+msgstr "Spara dokumentet som…"
 
-#: src/tau/src/ui/prefs_win.glade:203
-msgid "Display right margin at the column:"
-msgstr ""
+#: src/tau/src/ui/shortcuts_win.glade:42
+msgctxt "shortcut window"
+msgid "Close the document"
+msgstr "Stäng dokumentet"
 
-#: src/tau/src/ui/prefs_win.glade:242
-msgid "Highlight the current line"
-msgstr ""
+#: src/tau/src/ui/shortcuts_win.glade:49
+msgctxt "shortcut window"
+msgid "Navigation"
+msgstr "Navigering"
 
-#: src/tau/src/ui/prefs_win.glade:267
-msgid "Tabs"
-msgstr ""
+#: src/tau/src/ui/shortcuts_win.glade:53
+msgctxt "shortcut window"
+msgid "Cycle tab history backward"
+msgstr "Växla bakåt i flikhistorik"
 
-#: src/tau/src/ui/prefs_win.glade:276 src/tau/src/ui/prefs_win.glade:320
-msgid "Trailing"
-msgstr ""
+#: src/tau/src/ui/shortcuts_win.glade:59
+msgctxt "shortcut window"
+msgid "Cycle tab history forward"
+msgstr "Växla framåt i flikhistorik"
 
-#: src/tau/src/ui/prefs_win.glade:291 src/tau/src/ui/prefs_win.glade:335
-msgid "All"
-msgstr ""
+#: src/tau/src/ui/shortcuts_win.glade:65
+msgctxt "shortcut window"
+msgid "Go to line"
+msgstr "Gå till rad"
 
-#: src/tau/src/ui/prefs_win.glade:306 src/tau/src/ui/prefs_win.glade:361
-msgid "Leading"
-msgstr ""
+#: src/tau/src/ui/shortcuts_win.glade:71
+msgctxt "shortcut window"
+msgid "Toggle fullscreen"
+msgstr "Växla helskärm"
 
-#: src/tau/src/ui/prefs_win.glade:352
-msgid "Spaces"
-msgstr ""
+#: src/tau/src/ui/shortcuts_win.glade:78 src/tau/src/ui/shortcuts_win.glade:82
+msgctxt "shortcut window"
+msgid "Find"
+msgstr "Sök"
 
-#: src/tau/src/ui/prefs_win.glade:390
+#: src/tau/src/ui/shortcuts_win.glade:88
+msgctxt "shortcut window"
+msgid "Find the next match"
+msgstr "Sök nästa matchning"
+
+#: src/tau/src/ui/shortcuts_win.glade:94
+msgctxt "shortcut window"
+msgid "Find the previous match"
+msgstr "Sök föregående matchning"
+
+#: src/tau/src/ui/shortcuts_win.glade:100
+msgctxt "shortcut window"
+msgid "Find and replace"
+msgstr "Sök och ersätt"
+
+#: src/tau/src/ui/shortcuts_win.glade:106
+msgctxt "shortcut window"
+msgid "Find all matches"
+msgstr "Hitta alla träffar"
+
+#: src/tau/src/ui/shortcuts_win.glade:112
+msgctxt "shortcut window"
+msgid "Close the find window"
+msgstr "Stäng sökfönstret"
+
+#: src/tau/src/ui/shortcuts_win.glade:120
+msgctxt "shortcut window"
 msgid "Editing"
-msgstr ""
+msgstr "Redigering"
 
-#: src/tau/src/ui/tau.glade:22
+#: src/tau/src/ui/shortcuts_win.glade:124
+msgctxt "shortcut window"
+msgid "Highlight the next occurrence of the current selection"
+msgstr "Framhäv nästa förekomst av aktuell markering"
+
+#: src/tau/src/ui/shortcuts_win.glade:130
+msgctxt "shortcut window"
+msgid "Delete the current selection"
+msgstr "Ta bort aktuell markering"
+
+#: src/tau/src/ui/shortcuts_win.glade:136
+msgctxt "shortcut window"
+msgid "Delete an entire word"
+msgstr "Ta bort ett helt ord"
+
+#: src/tau/src/ui/shortcuts_win.glade:142
+msgctxt "shortcut window"
+msgid "Outdent the current selection"
+msgstr "Minska indrag för aktuell markering"
+
+#: src/tau/src/ui/shortcuts_win.glade:148
+msgctxt "shortcut window"
+msgid "Move to start of the line"
+msgstr "Gå till början på raden"
+
+#: src/tau/src/ui/shortcuts_win.glade:154
+msgctxt "shortcut window"
+msgid "Move to start of the document"
+msgstr "Gå till början på dokumentet"
+
+#: src/tau/src/ui/shortcuts_win.glade:161
+msgctxt "shortcut window"
+msgid "Move to end of the line"
+msgstr "Gå till slutet på raden"
+
+#: src/tau/src/ui/shortcuts_win.glade:167
+msgctxt "shortcut window"
+msgid "Move to end of the document"
+msgstr "Gå till slutet på dokumentet"
+
+#: src/tau/src/ui/shortcuts_win.glade:173
+msgctxt "shortcut window"
+msgid "Move up for the height of the view"
+msgstr "Gå uppåt motsvarande höjden av vyn"
+
+#: src/tau/src/ui/shortcuts_win.glade:179
+msgctxt "shortcut window"
+msgid "Move down for the height of the view"
+msgstr "Gå nedåt motsvarande höjden av vyn"
+
+#: src/tau/src/ui/shortcuts_win.glade:185
+msgctxt "shortcut window"
+msgid "Enable/Disable the cursor"
+msgstr "Aktivera/inaktivera markören"
+
+#: src/tau/src/ui/shortcuts_win.glade:192
+msgctxt "shortcut window"
+msgid "Copy and Paste"
+msgstr "Kopiera och klistra in"
+
+#: src/tau/src/ui/shortcuts_win.glade:196
+msgctxt "shortcut window"
+msgid "Copy the current selection"
+msgstr "Kopiera aktuell markering"
+
+#: src/tau/src/ui/shortcuts_win.glade:202
+msgctxt "shortcut window"
+msgid "Paste what's currently in the clipboard"
+msgstr "Klistra in innehållet i urklipp"
+
+#: src/tau/src/ui/shortcuts_win.glade:208
+#: src/tau/src/ui/shortcuts_win.glade:214
+msgctxt "shortcut window"
+msgid "Cut the current selection"
+msgstr "Klipp ut aktuell markering"
+
+#: src/tau/src/ui/shortcuts_win.glade:221
+msgctxt "shortcut window"
+msgid "Undo and Redo"
+msgstr "Ångra och gör om"
+
+#: src/tau/src/ui/shortcuts_win.glade:225
+msgctxt "shortcut window"
+msgid "Undo"
+msgstr "Ångra"
+
+#: src/tau/src/ui/shortcuts_win.glade:231
+msgctxt "shortcut window"
+msgid "Redo"
+msgstr "Gör om"
+
+#: src/tau/src/ui/shortcuts_win.glade:238
+msgctxt "shortcut window"
+msgid "Selections"
+msgstr "Markeringar"
+
+#: src/tau/src/ui/shortcuts_win.glade:242
+msgctxt "shortcut window"
+msgid "Select all"
+msgstr "Markera allt"
+
+# TODO: occurrences
+#: src/tau/src/ui/shortcuts_win.glade:248
+msgctxt "shortcut window"
+msgid "Select all occurences of the current selection"
+msgstr "Markera alla förekomster av aktuell markering"
+
+#: src/tau/src/ui/shortcuts_win.glade:254
+msgctxt "shortcut window"
+msgid "Move up and select everything from current cursor position"
+msgstr "Gå uppåt och markera allt från aktuell markörposition"
+
+#: src/tau/src/ui/shortcuts_win.glade:260
+msgctxt "shortcut window"
+msgid "Move down and select everything from current cursor position"
+msgstr "Gå nedåt och markera allt från aktuell markörposition"
+
+#: src/tau/src/ui/shortcuts_win.glade:266
+msgctxt "shortcut window"
+msgid "Move left and select everything from current cursor position"
+msgstr "Gå åt vänster och markera allt från aktuell markörposition"
+
+#: src/tau/src/ui/shortcuts_win.glade:272
+msgctxt "shortcut window"
+msgid "Move left and select the next word"
+msgstr "Gå åt vänster och markera nästa ord"
+
+#: src/tau/src/ui/shortcuts_win.glade:278
+msgctxt "shortcut window"
+msgid "Move right and select everything from current cursor position"
+msgstr "Gå åt höger och markera allt från aktuell markörposition"
+
+#: src/tau/src/ui/shortcuts_win.glade:284
+msgctxt "shortcut window"
+msgid "Move right and select the next word"
+msgstr "Gå åt höger och markera nästa ord"
+
+#: src/tau/src/ui/shortcuts_win.glade:290
+msgctxt "shortcut window"
+msgid "Move to start of the line and select"
+msgstr "Gå till början på raden och markera"
+
+#: src/tau/src/ui/shortcuts_win.glade:296
+msgctxt "shortcut window"
+msgid "Move to start of the document and select"
+msgstr "Gå till början på dokumentet och markera"
+
+#: src/tau/src/ui/shortcuts_win.glade:302
+msgctxt "shortcut window"
+msgid "Move to end of the line and select"
+msgstr "Gå till slutet på raden och markera"
+
+#: src/tau/src/ui/shortcuts_win.glade:308
+msgctxt "shortcut window"
+msgid "Move to end of the document and select"
+msgstr "Gå till slutet på dokumentet och markera"
+
+#: src/tau/src/ui/shortcuts_win.glade:314
+msgctxt "shortcut window"
+msgid "Move up for the height of the view and select"
+msgstr "Gå uppåt motsvarande höjden av vyn och markera"
+
+#: src/tau/src/ui/shortcuts_win.glade:320
+msgctxt "shortcut window"
+msgid "Move down for the height of the view and select"
+msgstr "Gå nedåt motsvarande höjden av vyn och markera"
+
+#: src/tau/src/ui/prefs_win_handy.glade:28 src/tau/src/ui/tau.glade:153
+#: src/tau/src/ui/tau.glade:374
+msgid "Preferences"
+msgstr "Inställningar"
+
+#: src/tau/src/ui/prefs_win_handy.glade:35
+#: src/tau/src/ui/prefs_win_handy.glade:39
+msgid "View"
+msgstr "Vy"
+
+#: src/tau/src/ui/prefs_win_handy.glade:40
+msgid "Preferences related to the View’s look"
+msgstr "Inställningar relaterade till vyns utseende"
+
+#: src/tau/src/ui/prefs_win_handy.glade:44
+msgid "Display right hand margin"
+msgstr "Visa marginal på höger sida"
+
+#: src/tau/src/ui/prefs_win_handy.glade:87
+msgid "Highlight the current line"
+msgstr "Framhäv den aktuella raden"
+
+#: src/tau/src/ui/prefs_win_handy.glade:113
+msgid "Show full path in title bar"
+msgstr "Visa fullständig sökväg i namnlist"
+
+#: src/tau/src/ui/prefs_win_handy.glade:126
+msgid "Restore last opened files on start-up"
+msgstr "Återställ senast öppnade filer vid uppstart"
+
+#: src/tau/src/ui/prefs_win_handy.glade:140
+msgid "Wrap lines at the end of the view"
+msgstr "Radbryt text i slutet på vyn"
+
+#: src/tau/src/ui/prefs_win_handy.glade:152
+msgid "Theme configuration"
+msgstr "Temakonfiguration"
+
+#: src/tau/src/ui/prefs_win_handy.glade:167
+msgid "Syntax configuration"
+msgstr "Syntaxkonfiguration"
+
+#: src/tau/src/ui/prefs_win_handy.glade:171
+msgid "Syntax selection"
+msgstr "Syntaxval"
+
+#: src/tau/src/ui/prefs_win_handy.glade:184
+msgid "Syntax-specific tab size"
+msgstr "Syntaxspecifik tabbstorlek"
+
+#: src/tau/src/ui/prefs_win_handy.glade:240
+msgid "Apply syntax configuration settings"
+msgstr "Tillämpa syntaxkonfigurationsinställningar"
+
+#: src/tau/src/ui/prefs_win_handy.glade:260
+msgid "Editor"
+msgstr "Redigerare"
+
+#: src/tau/src/ui/prefs_win_handy.glade:264
+msgid "Indention"
+msgstr "Indentering"
+
+#: src/tau/src/ui/prefs_win_handy.glade:325
+msgid "Automatic indentation"
+msgstr "Automatisk indentering"
+
+#: src/tau/src/ui/prefs_win_handy.glade:362
+msgid "Delete spaces up to the previous tab stop"
+msgstr "Ta bort blanksteg upp till föregående tabbstopp"
+
+#: src/tau/src/ui/prefs_win_handy.glade:377
+msgid "File saving"
+msgstr "Sparande av filer"
+
+#: src/tau/src/ui/prefs_win_handy.glade:381
+msgid "Save files when the Tau goes out of focus"
+msgstr "Spara filer när Tau förlorar fokus"
+
+#: src/tau/src/ui/prefs_win_handy.glade:396 src/tau/src/main_win.rs:1252
+#: src/tau/src/main_win.rs:1289
+msgid "Terminal"
+msgstr "Terminal"
+
+#: src/tau/src/ui/prefs_win_handy.glade:400
+msgid "Show the embedded terminal on startup"
+msgstr "Visa den inbäddade terminalen vid uppstart"
+
+#: src/tau/src/ui/prefs_win_handy.glade:413
+msgid "What shell to start"
+msgstr "Vilket skal som ska startas"
+
+#: src/tau/src/ui/prefs_win_handy.glade:428
+msgid "Highlighting spaces"
+msgstr "Framhävande av blanksteg"
+
+#: src/tau/src/ui/prefs_win_handy.glade:500
+msgid "Don't draw spaces"
+msgstr "Rita inte ut blanksteg"
+
+#: src/tau/src/ui/prefs_win_handy.glade:519
+msgid "Highlighting tabs"
+msgstr "Framhävande av tabbar"
+
+#: src/tau/src/ui/prefs_win_handy.glade:591
+msgid "Don't draw tabs"
+msgstr "Rita inte ut tabbar"
+
+#: src/tau/src/ui/prefs_win_handy.glade:610
+#: src/tau/src/ui/prefs_win_handy.glade:614
+msgid "Font configuration"
+msgstr "Typsnittskonfiguration"
+
+#: src/tau/src/ui/tau.glade:22 src/tau/src/ui/tau.glade:243
 msgid "Save As…"
-msgstr ""
+msgstr "Spara som…"
 
-#: src/tau/src/ui/tau.glade:36
+#: src/tau/src/ui/tau.glade:36 src/tau/src/ui/tau.glade:257
 msgid "Save All"
-msgstr ""
+msgstr "Spara alla"
 
-#: src/tau/src/ui/tau.glade:61
+#: src/tau/src/ui/tau.glade:61 src/tau/src/ui/tau.glade:282
 msgid "Find…"
-msgstr ""
+msgstr "Sök…"
 
-#: src/tau/src/ui/tau.glade:75
+#: src/tau/src/ui/tau.glade:75 src/tau/src/ui/tau.glade:296
 msgid "Replace…"
-msgstr ""
+msgstr "Ersätt…"
 
-#: src/tau/src/ui/tau.glade:100
-msgid "Auto Indent"
-msgstr ""
+#: src/tau/src/ui/tau.glade:89 src/tau/src/ui/tau.glade:310
+msgid "Go To Line…"
+msgstr "Gå till rad…"
 
-#: src/tau/src/ui/tau.glade:114
-msgid "Insert Spaces"
-msgstr ""
+#: src/tau/src/ui/tau.glade:114 src/tau/src/ui/tau.glade:335
+msgid "Show Terminal"
+msgstr "Visa terminal"
 
-#: src/tau/src/ui/tau.glade:164
+#: src/tau/src/ui/tau.glade:128 src/tau/src/ui/tau.glade:349
+msgid "Toggle Fullscreen"
+msgstr "Växla helskärm"
+
+#: src/tau/src/ui/tau.glade:178 src/tau/src/ui/tau.glade:399
 msgid "Help"
-msgstr ""
+msgstr "Hjälp"
 
-#: src/tau/src/ui/tau.glade:178
-msgid "About"
-msgstr ""
+#: src/tau/src/ui/tau.glade:192 src/tau/src/ui/tau.glade:413
+msgid "Keyboard Shortcuts"
+msgstr "Tangentbordsgenvägar"
 
-#: src/tau/src/ui/tau.glade:203
-msgid "Close All"
-msgstr ""
+#: src/tau/src/ui/tau.glade:206 src/tau/src/ui/tau.glade:427
+msgid "About Tau"
+msgstr "Om Tau"
 
-#: src/tau/src/ui/tau.glade:217
-msgid "Close"
-msgstr ""
-
-#: src/tau/src/ui/tau.glade:231
-msgid "Quit"
-msgstr ""
-
-#: src/tau/src/ui/tau.glade:265 src/tau/src/main_win.rs:607
+#: src/tau/src/ui/tau.glade:462 src/tau/src/ui/tau.glade:571
+#: src/tau/src/main_win.rs:1701
 msgid "Open"
-msgstr ""
+msgstr "Öppna"
 
-#: src/tau/src/ui/tau.glade:306 src/tau/src/main_win.rs:664
-#: src/tau/src/main_win.rs:890
+#: src/tau/src/ui/tau.glade:503 src/tau/src/ui/tau.glade:631
+#: src/tau/src/main_win.rs:1437 src/tau/src/main_win.rs:1873
 msgid "Save"
-msgstr ""
+msgstr "Spara"
 
-#: src/editview/src/edit_view.rs:67 src/tau/src/main_win.rs:747
-msgid "Creating new EditView"
-msgstr ""
-
-#: src/editview/src/edit_view.rs:106
-msgid "Xi-Update sender disconnected"
-msgstr ""
-
-#: src/editview/src/edit_view.rs:136
-msgid "Connecting"
-msgstr ""
-
-#: src/editview/src/edit_view.rs:137
-msgid "events for EditView"
-msgstr ""
-
-#: src/editview/src/edit_view.rs:150 src/editview/src/edit_view.rs:152
+#: src/editview/src/edit_view.rs:196 src/editview/src/edit_view.rs:198
+#: src/tau/src/main_win.rs:1118 src/tau/src/main_win.rs:1121
+#: src/tau/src/main_win.rs:1978
 msgid "Untitled"
-msgstr ""
+msgstr "Namnlös"
 
-#: src/editview/src/edit_view.rs:163
-msgid "Setting title for EditView"
-msgstr ""
-
-#: src/editview/src/edit_view.rs:176 src/editview/src/edit_view.rs:213
-#: src/editview/src/edit_view.rs:247 src/editview/src/edit_view.rs:293
-#: src/editview/src/edit_view.rs:320 src/editview/src/edit_view.rs:600
-#: src/editview/src/edit_view.rs:792 src/editview/src/edit_view.rs:901
-#: src/editview/src/edit_view.rs:951 src/tau/src/main_win.rs:214
-#: src/tau/src/main_win.rs:222 src/tau/src/main_win.rs:230
-#: src/tau/src/main_win.rs:238 src/tau/src/main_win.rs:246
-#: src/tau/src/main_win.rs:254 src/tau/src/main_win.rs:262
-#: src/tau/src/main_win.rs:270 src/tau/src/main_win.rs:278
-#: src/tau/src/main_win.rs:286 src/tau/src/main_win.rs:295
-#: src/tau/src/main_win.rs:509 src/tau/src/main_win.rs:517
-#: src/tau/src/main_win.rs:543 src/tau/src/main_win.rs:560
-#: src/tau/src/main_win.rs:591
-msgid "Handling"
-msgstr ""
-
-#: src/editview/src/edit_view.rs:177 src/editview/src/edit_view.rs:214
-#: src/editview/src/edit_view.rs:248 src/editview/src/edit_view.rs:294
-#: src/editview/src/edit_view.rs:321 src/editview/src/edit_view.rs:601
-#: src/editview/src/edit_view.rs:793 src/editview/src/edit_view.rs:902
-#: src/editview/src/edit_view.rs:952
-msgid "for EditView"
-msgstr ""
-
-#: src/editview/src/edit_view.rs:193
-msgid "Setting edit font to"
-msgstr ""
-
-#: src/editview/src/edit_view.rs:277
-msgid "Allocating DrawingArea size"
-msgstr ""
-
-#: src/editview/src/edit_view.rs:278
-msgid "Width"
-msgstr ""
-
-#: src/editview/src/edit_view.rs:280
-msgid "Height"
-msgstr ""
-
-#: src/editview/src/edit_view.rs:308
-msgid "Updating visible scroll region"
-msgstr ""
-
-#: src/editview/src/edit_view.rs:395
-msgid "Drawing EditView"
-msgstr ""
-
-#: src/editview/src/edit_view.rs:396
-msgid "vertical adjustment"
-msgstr ""
-
-#: src/editview/src/edit_view.rs:399
-msgid "horizontal adjustment"
-msgstr ""
-
-#: src/editview/src/edit_view.rs:802
+#: src/editview/src/edit_view.rs:978 src/editview/src/edit_view.rs:988
 msgid "Line"
-msgstr ""
+msgstr "Rad"
 
-#: src/editview/src/edit_view.rs:806
+#: src/editview/src/edit_view.rs:993
 msgid "Column"
-msgstr ""
+msgstr "Kolumn"
 
-#: src/editview/src/edit_view.rs:891
-msgid ""
-"Couldn't update hscrollbar value because I couldn't get the line to scroll "
-"to!"
-msgstr ""
-
-#: src/editview/src/edit_view.rs:958
-msgid "Processing key press"
-msgstr ""
-
-#: src/editview/src/edit_view.rs:959
-msgid "value"
-msgstr ""
-
-#: src/editview/src/edit_view.rs:961
-msgid "state"
-msgstr ""
-
-#: src/editview/src/edit_view.rs:963
-msgid "length"
-msgstr ""
-
-#: src/editview/src/edit_view.rs:965
-msgid "group"
-msgstr ""
-
-#: src/editview/src/edit_view.rs:967
-msgid "unicode"
-msgstr ""
-
-#: src/editview/src/edit_view.rs:1112
-msgid "Adding cutting text op to idle queue"
-msgstr ""
-
-#: src/editview/src/edit_view.rs:1137
-msgid "Adding copying text op to idle queue"
-msgstr ""
-
-#. if let Some(text) = Clipboard::get(&SELECTION_CLIPBOARD).wait_for_text() {
-#. self.core.insert(view_id, &text);
-#. }
-#: src/editview/src/edit_view.rs:1165
-msgid "Pasting text"
-msgstr ""
-
-#: src/editview/src/edit_view.rs:1175
-msgid "Pasting primary text"
-msgstr ""
-
-#: src/editview/src/edit_view.rs:1187
-msgid "Resizing EditView"
-msgstr ""
-
-#: src/editview/src/edit_view.rs:1345
-msgid "Changing language to"
-msgstr ""
-
-#: src/editview/src/edit_view.rs:1350
-msgid "Language has been changed to"
-msgstr ""
-
-#: src/editview/src/edit_view.rs:1353
+#. We localized it ourselves, so we have to turn it into English again when sending it to Xi
+#: src/editview/src/edit_view.rs:1603 src/editview/src/view_item.rs:242
+#: src/editview/src/view_item.rs:348
 msgid "Plain Text"
-msgstr ""
+msgstr "Vanlig text"
 
-#: src/editview/src/edit_view.rs:1371
-msgid "Couldn't determine what position the following language is in"
-msgstr ""
+#: src/editview/src/view_item.rs:111 src/editview/src/view_item.rs:259
+msgid "Tab Size"
+msgstr "Tabbstorlek"
 
-#: src/tau/src/about_win.rs:16
+#: src/tau/src/about_win.rs:21
 msgid "GTK frontend for the xi text editor, written in Rust"
-msgstr ""
+msgstr "GTK-gränssnitt för textredigeraren xi, skrivet i Rust"
 
-#: src/tau/src/about_win.rs:24
+#: src/tau/src/about_win.rs:29
 msgid "translator-credits"
 msgstr ""
+"Gleb Vassiljev <gleb@netkom.se>\n"
+"Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
+"Skicka synpunkter på översättningen till\n"
+"<tp-sv@listor.tp-sv.se>."
 
-#: src/tau/src/about_win.rs:30
-msgid "Showing about window"
-msgstr ""
+#: src/tau/src/functions.rs:72
+msgid "Welcome to Tau's terminal."
+msgstr "Välkommen till Taus terminal."
 
-#: src/tau/src/errors.rs:30
-msgid "No default application"
-msgstr ""
-
-#: src/tau/src/errors.rs:32
-msgid "Default application has wrong type"
-msgstr ""
-
-#: src/tau/src/main.rs:115
+#: src/tau/src/main.rs:117
 msgid "Start a new instance of the application"
-msgstr ""
+msgstr "Starta en ny instans av programmet"
 
-#: src/tau/src/main.rs:135
-msgid "Starting Tau"
-msgstr ""
-
-#: src/tau/src/main.rs:239
-msgid "Activating new view"
-msgstr ""
-
-#: src/tau/src/main.rs:246
-msgid "Failed to open new, empty view due to error"
-msgstr ""
-
-#: src/tau/src/main.rs:251
-msgid "Opening new file"
-msgstr ""
-
-#: src/tau/src/main.rs:261
-msgid "Failed to open new due to error"
-msgstr ""
-
-#: src/tau/src/main.rs:261
-msgid "Path"
-msgstr ""
-
-#: src/tau/src/main.rs:268
-msgid "Shutting down…"
-msgstr ""
-
-#: src/tau/src/main_win.rs:127
-msgid "Failed to get default CssProvider!"
-msgstr ""
-
-#: src/tau/src/main_win.rs:149
-msgid "Theme name"
-msgstr ""
-
-#: src/tau/src/main_win.rs:186
-msgid "User chose to cancel exiting"
-msgstr ""
-
-#: src/tau/src/main_win.rs:189
-msgid "User chose to close the application"
-msgstr ""
-
-#: src/tau/src/main_win.rs:214 src/tau/src/main_win.rs:222
-#: src/tau/src/main_win.rs:230 src/tau/src/main_win.rs:238
-#: src/tau/src/main_win.rs:246 src/tau/src/main_win.rs:254
-#: src/tau/src/main_win.rs:262 src/tau/src/main_win.rs:270
-#: src/tau/src/main_win.rs:278 src/tau/src/main_win.rs:286
-#: src/tau/src/main_win.rs:295
-msgid "action"
-msgstr ""
-
-#: src/tau/src/main_win.rs:298
-msgid "User chose to not quit application"
-msgstr ""
-
-#: src/tau/src/main_win.rs:300
-msgid "User chose to quit application"
-msgstr ""
-
-#: src/tau/src/main_win.rs:372
-msgid "Showing main window"
-msgstr ""
-
-#: src/tau/src/main_win.rs:391
-msgid "Handling XiEvent"
-msgstr ""
-
-#: src/tau/src/main_win.rs:433
-msgid "isn't available, setting to default"
-msgstr ""
-
-#: src/tau/src/main_win.rs:476
+#: src/tau/src/main_win.rs:1057 src/tau/src/main_win.rs:1065
 msgid ""
-"Couldn't find syntect plugin, functionality will be limited! Only found the "
-"following plugins"
+"Couldn’t get Documents directory to autosave unnamed file. Please make sure "
+"“XDG_DATA_DIR” or similar is set."
 msgstr ""
+"Kunde inte erhålla Dokument-katalog för att automatiskt spara namnlös fil. "
+"Säkerställ att ”XDG_DATA_DIR” eller liknande har ställts in."
 
-#: src/tau/src/main_win.rs:533
-msgid "Plugin"
-msgstr ""
-
-#: src/tau/src/main_win.rs:535
-msgid "has crashed"
-msgstr ""
-
-#: src/tau/src/main_win.rs:536
-msgid "functionality will be limited"
-msgstr ""
-
-#: src/tau/src/main_win.rs:604
-msgid "Open a file to edit"
-msgstr ""
-
-#: src/tau/src/main_win.rs:608 src/tau/src/main_win.rs:665
-#: src/tau/src/main_win.rs:886
-msgid "Cancel"
-msgstr ""
-
-#: src/tau/src/main_win.rs:616
-msgid "FileChooserNative open response"
-msgstr ""
-
-#: src/tau/src/main_win.rs:626
-msgid "Couldn't open file"
-msgstr ""
-
-#: src/tau/src/main_win.rs:661
-msgid "Save file"
-msgstr ""
-
-#: src/tau/src/main_win.rs:673
-msgid "FileChooserNative save response"
-msgstr ""
-
-#: src/tau/src/main_win.rs:683
-msgid "Saving file"
-msgstr ""
-
-#: src/tau/src/main_win.rs:690
-msgid "Couldn't save file"
-msgstr ""
-
-#: src/tau/src/main_win.rs:731
-msgid ""
-"Couldn't get current EditView. This may only mean that you don't have an "
-"editing tab open right now."
-msgstr ""
-
-#: src/tau/src/main_win.rs:736
-msgid "Requesting new view"
-msgstr ""
-
-#: src/tau/src/main_win.rs:807
-msgid "Closing all EditViews"
-msgstr ""
-
-#: src/tau/src/main_win.rs:841
-msgid "Closing current Editview"
-msgstr ""
-
-#: src/tau/src/main_win.rs:852
-msgid "Closing Editview"
-msgstr ""
-
-#: src/tau/src/main_win.rs:879
+#: src/tau/src/main_win.rs:1426
 msgid "Save unsaved changes"
-msgstr ""
+msgstr "Spara osparade ändringar"
 
-#: src/tau/src/main_win.rs:882
+#: src/tau/src/main_win.rs:1429
 msgid "Close Without Saving"
-msgstr ""
+msgstr "Stäng utan att spara"
 
-#: src/tau/src/main_win.rs:905
-msgid "Save dialog has been destroyed before the user clicked a button"
-msgstr ""
+#: src/tau/src/main_win.rs:1433 src/tau/src/main_win.rs:1702
+#: src/tau/src/main_win.rs:1874
+msgid "Cancel"
+msgstr "Avbryt"
 
-#: src/tau/src/main_win.rs:1097
-msgid "Unknown key change event"
-msgstr ""
+#: src/tau/src/main_win.rs:1698
+msgid "Open a file to edit"
+msgstr "Öppna en fil för redigering"
 
-#: src/tau/src/panic_handler.rs:39
-msgid "gxi crash reporter"
-msgstr ""
+#: src/tau/src/main_win.rs:1727
+msgid "Couldn’t open file"
+msgstr "Kunde inte öppna filen"
 
-#: src/tau/src/panic_handler.rs:49
-msgid "It seems like gxi has crashed, sorry!"
-msgstr ""
+#: src/tau/src/main_win.rs:1870
+msgid "Save file"
+msgstr "Spara fil"
 
-#: src/tau/src/panic_handler.rs:50
+#: src/tau/src/main_win.rs:1912
+msgid "Couldn’t save file"
+msgstr "Kunde inte spara filen"
+
+#: src/tau/src/prefs_win.rs:439
 msgid ""
-"Please send the contents of the file below to our GitHub issue tracker so we "
-"can fix it! Thank you =)"
+"Couldn’t find the xi-syntect-plugin. As such these settings won’t work in "
+"the current session."
 msgstr ""
-
-#: src/tau/src/panic_handler.rs:53
-msgid "File"
-msgstr ""
-
-#: src/tau/src/panic_handler.rs:53
-msgid "URL"
-msgstr ""
-
-#: src/tau/src/prefs_win.rs:61
-msgid "Setting active theme"
-msgstr ""
-
-#: src/tau/src/prefs_win.rs:70
-msgid "Theme changed to"
-msgstr ""
+"Kunde inte hitta xi-syntect-insticksmodulen. Därför kommer dessa "
+"inställningar inte fungera i aktuell session."
